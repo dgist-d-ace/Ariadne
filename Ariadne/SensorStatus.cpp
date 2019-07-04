@@ -10,7 +10,6 @@ DataContainer *dataContainer;
 
 SensorStatus::SensorStatus() {
     dataContainer = DataContainer::getInstance();
-    //	MainWindow = selfDriving::getInstance();
 
     dataContainer->setValue_UtoP_AorM(1);
 
