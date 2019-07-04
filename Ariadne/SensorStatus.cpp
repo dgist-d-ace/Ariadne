@@ -1,9 +1,12 @@
 #include "SensorStatus.h"
+#include "DataContainer.h"
 
 #define UPDATE_PLATFORM_STATUS 100
 #define UPDATE_SENSOR_CONNECTION 101
 #define UPDATE_SENSOR_STATUS 102
 #define UPDATE_SENSOR_AUTOSTARTUP 103
+
+DataContainer *dataContainer;
 
 SensorStatus::SensorStatus() {
     dataContainer = DataContainer::getInstance();
@@ -48,16 +51,20 @@ void SensorStatus::updateSensorConnection() {
     case 0:
         break;
     case 1:
-        platformcom_thread = thread([&]() { comPlatform(); });
+		cout << "플랫폼 실행\n";
+        //platformcom_thread = ([&]() { comPlatform(); });
         break;
     case 2:
-        lidarcom_thread = thread([&]() { comLidar(); });
+		cout << "라이다 실행\n";
+        //lidarcom_thread = thread([&]() { comLidar(); });
         break;
     case 3:
-        camera1com_thread = thread([&]() { comCamera1(); });
+		cout << "카메라 실행\n";
+        //camera1com_thread = thread([&]() { comCamera1(); });
         break;
     case 4:
-        gpscom_thread = thread([&]() { comGps(); });
+		cout << "gps 실행\n";
+        //gpscom_thread = thread([&]() { comGps(); });
         break;
     case 5:
         sensorCount = -1;
@@ -202,14 +209,14 @@ void SensorStatus::updateSensorAutostartup()
     case 19:
         // 오토 모드 실행
             // 오토 모드 스레드 실행
-        if (automode_thread.joinable())
-        {
-            loopStatusAutomode = true;
-        }
-        else
-        {
-            automode_thread = thread([&]() { /*automode();*/ });
-        }
+        //if (mission_thread.joinable())
+        //{
+        //    loopStatusAutomode = true;
+        //}
+        //else
+        //{
+        //    mission_thread = thread([&]() { /*automode();*/ });
+        //}
 
         sensorAutoCount = -1;
         //KillTimer(hwnd, UPDATE_SENSOR_AUTOSTARTUP);
@@ -258,3 +265,4 @@ void SensorStatus::comPlatform()
 void SensorStatus::comLidar() {}
 void SensorStatus::comCamera1() {}
 void SensorStatus::comGps() {}
+
