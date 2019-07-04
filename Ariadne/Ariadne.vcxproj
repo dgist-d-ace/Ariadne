@@ -126,7 +126,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MissionAct.cpp" />
     <ClCompile Include="SensorStatus.cpp" />
-    <ClCompile Include="Threads.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Ariadne.h" />
@@ -143,8 +142,10 @@
     <ClInclude Include="DataContainer.h" />
     <ClInclude Include="GeneratedFiles\ui_Ariadne.h" />
     <ClInclude Include="MissionAct.h" />
-    <ClInclude Include="SensorStatus.h" />
-    <ClInclude Include="Threads.h" />
+    <QtMoc Include="SensorStatus.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>
+    </QtMoc>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

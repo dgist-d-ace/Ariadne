@@ -2,7 +2,6 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_Ariadne.h"
-#include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
 #include <QTimer>
 #include "DataContainer.h"

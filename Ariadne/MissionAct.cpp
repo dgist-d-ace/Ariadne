@@ -36,7 +36,7 @@ void Mission::doMission0() // 가장 기본 상태일때 주행
 {	
 	cout << "기본 주행 모드를 시작합니다." << endl;
 
-	// BK: SensorStatus* sensorStatus = new SensorStatus;
+	SensorStatus* sensorStatus = new SensorStatus;
 
 	while (!emergencyStop())
 	{

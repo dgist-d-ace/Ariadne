@@ -54,12 +54,12 @@
     <ClCompile Include="GeneratedFiles\qrc_Ariadne.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="Threads.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Ariadne.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="SensorStatus.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -86,14 +86,8 @@
     <ClInclude Include="MissionAct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SensorStatus.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_Ariadne.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Threads.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

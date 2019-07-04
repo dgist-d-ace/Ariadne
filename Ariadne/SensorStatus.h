@@ -1,7 +1,8 @@
 #include "CSerialPort.h"
 #include "ComPlatform.h"
-#include "Ariadne.h"
+//#include "Ariadne.h"
 
+#include <QObject>
 #include <QThread>
 #include <QMutex>
 #include <QString>
@@ -57,9 +58,10 @@ class SensorStatus : public QObject
 	Q_OBJECT
 public:
     Ariadne *MainWindow;
+	SensorStatus();
 
 private:
-    SensorStatus();
+    
 	
     MissionThread mission_thread;
 	PlatformComThread platformcom_thread;
