@@ -17,34 +17,26 @@ SensorStatus::SensorStatus() {
     //SetTimer(hwnd, UPDATE_SENSOR_AUTOSTARTUP, 1000, TimerProc);
 
     TimerAutostartup = new QTimer(this);
-    QTimer::connect(TimerAutostartup, SIGNAL(timeout()), this, SLOT(updateSensor(UPDATE_SENSOR_AUTOSTARTUP)));
+    QTimer::connect(TimerAutostartup, &QTimer::timeout, this, &SensorStatus::SlotUpdateSensorAutostartup);
     TimerAutostartup->start(1000);
 }
 
-void SensorStatus::updateSensor(UINT_PTR nIDEvent)
-{
-    // TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-
-    switch (nIDEvent)
-    {
-    case UPDATE_PLATFORM_STATUS:
-        showPlatformControlValue();
-        break;
-
-    case UPDATE_SENSOR_CONNECTION:
-        updateSensorConnection();
-        break;
-
-    case UPDATE_SENSOR_STATUS:
-        updateSensorStatus();
-        break;
-
-    case UPDATE_SENSOR_AUTOSTARTUP:
-        updateSensorAutostartup();
-        break;
-
-    }
+void SensorStatus::SlotUpdatePlatformStatus() {
+	showPlatformControlValue();
 }
+
+void SensorStatus::SlotUpdateSensorConnection() {
+	updateSensorConnection();
+}
+
+void SensorStatus::SlotUpdateSensorStatus() {
+	updateSensorStatus();
+}
+
+void SensorStatus::SlotUpdateSensorAutostartup() {
+	updateSensorAutostartup();
+}
+
 void SensorStatus::updateSensorConnection() {
 
     switch (sensorCount) {
@@ -72,7 +64,7 @@ void SensorStatus::updateSensorConnection() {
         delete TimerSensorConnection;
         //SetTimer(hwnd, UPDATE_SENSOR_STATUS, 1000, NULL);
         TimerSensorStatus = new QTimer(this);
-        QTimer::connect(TimerSensorStatus, SIGNAL(timeout()), this, SLOT(updateSensor(UPDATE_SENSOR_STATUS)));
+        QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &SensorStatus::SlotUpdateSensorStatus);
         TimerSensorStatus->start(1000);
     }
     sensorCount++;
@@ -185,7 +177,7 @@ void SensorStatus::updateSensorAutostartup()
         // 센서 연결 타이머 실행
         //SetTimer(hwnd, UPDATE_SENSOR_CONNECTION, 1000, NULL);
         TimerSensorConnection = new QTimer(this);
-        QTimer::connect(TimerSensorConnection, SIGNAL(timeout()), this, SLOT(updateSensor(UPDATE_SENSOR_CONNECTION)));
+        QTimer::connect(TimerSensorConnection, &QTimer::timeout, this, &SensorStatus::SlotUpdateSensorConnection);
         TimerSensorConnection->start(1000);
         break;
 

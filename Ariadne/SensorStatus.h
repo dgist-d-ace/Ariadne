@@ -57,12 +57,10 @@ class SensorStatus : public QObject
 {
 	Q_OBJECT
 public:
-    Ariadne *MainWindow;
 	SensorStatus();
 
 private:
     
-	
     MissionThread mission_thread;
 	PlatformComThread platformcom_thread;
     LidarComThread lidarcom_thread;
@@ -93,7 +91,13 @@ private:
     QTimer* TimerSensorConnection;
     QTimer* TimerSensorStatus;
 
-private slots:
-    void updateSensor(UINT_PTR nIDEvent);
+public slots:
+	void SensorStatus::SlotUpdatePlatformStatus();
+
+	void SensorStatus::SlotUpdateSensorConnection();
+
+	void SensorStatus::SlotUpdateSensorStatus();
+
+	void SensorStatus::SlotUpdateSensorAutostartup();
 
 };
