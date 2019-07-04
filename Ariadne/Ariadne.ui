@@ -20,7 +20,7 @@
       <x>10</x>
       <y>180</y>
       <width>241</width>
-      <height>171</height>
+      <height>211</height>
      </rect>
     </property>
     <property name="title">
@@ -141,6 +141,19 @@
       <string>GPS</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="pushButton_2">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>170</y>
+       <width>93</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>확인</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
@@ -159,9 +172,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>350</y>
+      <y>390</y>
       <width>241</width>
-      <height>271</height>
+      <height>241</height>
      </rect>
     </property>
     <property name="title">
@@ -171,9 +184,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>20</y>
+       <y>40</y>
        <width>101</width>
-       <height>41</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -184,9 +197,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>70</y>
+       <y>80</y>
        <width>101</width>
-       <height>41</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -199,7 +212,7 @@
        <x>10</x>
        <y>120</y>
        <width>101</width>
-       <height>41</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -210,9 +223,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>170</y>
+       <y>160</y>
        <width>101</width>
-       <height>41</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -223,9 +236,9 @@
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>70</y>
+       <y>80</y>
        <width>101</width>
-       <height>41</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -238,7 +251,7 @@
        <x>130</x>
        <y>120</y>
        <width>101</width>
-       <height>41</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -249,9 +262,9 @@
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>170</y>
+       <y>160</y>
        <width>101</width>
-       <height>41</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -262,9 +275,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>220</y>
+       <y>200</y>
        <width>101</width>
-       <height>41</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -275,9 +288,9 @@
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>220</y>
+       <y>200</y>
        <width>101</width>
-       <height>41</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -288,9 +301,9 @@
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>20</y>
+       <y>40</y>
        <width>101</width>
-       <height>41</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -302,7 +315,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>630</y>
+      <y>640</y>
       <width>1171</width>
       <height>161</height>
      </rect>
@@ -328,7 +341,7 @@
       <property name="geometry">
        <rect>
         <x>80</x>
-        <y>20</y>
+        <y>10</y>
         <width>51</width>
         <height>51</height>
        </rect>
@@ -341,7 +354,7 @@
       <property name="geometry">
        <rect>
         <x>80</x>
-        <y>80</y>
+        <y>60</y>
         <width>51</width>
         <height>51</height>
        </rect>
@@ -354,7 +367,7 @@
       <property name="geometry">
        <rect>
         <x>140</x>
-        <y>80</y>
+        <y>60</y>
         <width>51</width>
         <height>51</height>
        </rect>
@@ -367,7 +380,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>80</y>
+        <y>60</y>
         <width>51</width>
         <height>51</height>
        </rect>
@@ -380,13 +393,82 @@
       <property name="geometry">
        <rect>
         <x>160</x>
-        <y>20</y>
+        <y>10</y>
         <width>22</width>
-        <height>51</height>
+        <height>41</height>
        </rect>
       </property>
       <property name="orientation">
        <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>120</y>
+        <width>64</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>GEAR</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>140</y>
+        <width>64</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>SPEED</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="GearInput">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>120</y>
+        <width>113</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="SpeedInput">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>140</y>
+        <width>113</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_11">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>170</y>
+        <width>64</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>STEER</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_8">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>170</y>
+        <width>113</width>
+        <height>21</height>
+       </rect>
       </property>
      </widget>
     </widget>
