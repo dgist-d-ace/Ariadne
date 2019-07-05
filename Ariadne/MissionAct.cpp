@@ -6,6 +6,8 @@
 
 using namespace std;
 
+DataContainer* dataContainer;
+
 Mission::Mission() {
 	dataContainer = DataContainer::getInstance();
 }

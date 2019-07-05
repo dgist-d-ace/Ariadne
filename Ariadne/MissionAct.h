@@ -1,12 +1,10 @@
 #pragma once
-#include "DataContainer.h"
 
 // TODO: automode thread 생성하기
 
 class Mission
 {
 private:
-	DataContainer* dataContainer;
 
 protected:
 	

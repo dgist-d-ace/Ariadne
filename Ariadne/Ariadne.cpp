@@ -36,7 +36,6 @@ CString Ariadne::ConvertQstringtoCString(QString qs)
 
 void Ariadne::clicked_btn_mission0() {
     mission.doMission0();
-    std::cout << "button이 클릭되었습니다." << std::endl;
 
     // for test
     QString Temp;

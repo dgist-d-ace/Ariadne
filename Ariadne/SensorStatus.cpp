@@ -1,12 +1,9 @@
 #include "SensorStatus.h"
-#include "DataContainer.h"
 
 #define UPDATE_PLATFORM_STATUS 100
 #define UPDATE_SENSOR_CONNECTION 101
 #define UPDATE_SENSOR_STATUS 102
 #define UPDATE_SENSOR_AUTOSTARTUP 103
-
-DataContainer *dataContainer;
 
 SensorStatus::SensorStatus() {
     dataContainer = DataContainer::getInstance();
@@ -43,25 +40,28 @@ void SensorStatus::updateSensorConnection() {
         break;
     case 1:
 		cout << "플랫폼 실행\n";
-        //platformcom_thread = ([&]() { comPlatform(); });
+		//thread 종료 시 다시 시작하기 위해서 slot에 thread를 다시 시작하는 함수를 구현할 필요가 있음
+		//connect(&platformcom_thread, SIGNAL(finished()), this, SLOT(quit()));
+		platformcom_thread.start();
         break;
     case 2:
 		cout << "라이다 실행\n";
-        //lidarcom_thread = thread([&]() { comLidar(); });
+		//connect(&lidarcom_thread, SIGNAL(finished()), this, SLOT(quit()));
+		lidarcom_thread.start();
         break;
     case 3:
 		cout << "카메라 실행\n";
-        //camera1com_thread = thread([&]() { comCamera1(); });
+		//connect(&camera1com_thread, SIGNAL(finished()), this, SLOT(quit()));
+		camera1com_thread.start();
         break;
     case 4:
 		cout << "gps 실행\n";
-        //gpscom_thread = thread([&]() { comGps(); });
+		//connect(&gpscom_thread, SIGNAL(finished()), this, SLOT(quit()));
+		gpscom_thread.start();
         break;
     case 5:
         sensorCount = -1;
-        //KillTimer(hwnd, UPDATE_SENSOR_CONNECTION);
         delete TimerSensorConnection;
-        //SetTimer(hwnd, UPDATE_SENSOR_STATUS, 1000, NULL);
         TimerSensorStatus = new QTimer(this);
         QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &SensorStatus::SlotUpdateSensorStatus);
         TimerSensorStatus->start(1000);
@@ -76,31 +76,31 @@ void SensorStatus::updateSensorStatus()
     // 플랫폼 연결 상태
     if (dataContainer->getValue_platform_status() > 5)
     {
-        cout << "플랫폼 연결" << endl;
+        cout << "플랫폼과 연결되었습니다." << endl;
     }
     else if (dataContainer->getValue_platform_status() > 0)
     {
-        cout << "플랫폼과의 연결 지연" << endl;
+        cout << "플랫폼과 통신이 지연되고 있습니다." << endl;
     }
     else if (dataContainer->getValue_platform_status() == 0)
     {
-        cout << "플랫폼과의 통신 중단" << endl;
+        cout << "플랫폼과 통신이 실패하였습니다." << endl;
     }
     dataContainer->setValue_platform_status(0);
 
     // LiDAR 연결 상태
-    if (dataContainer->getValue_lidar_status() > 0)
+    if (dataContainer->getValue_lidar_status() > 5)
     {
-        cout << "Lidar is on" << endl;
+        cout << "라이다와 연결되었습니다." << endl;
     }
 
     else if (dataContainer->getValue_lidar_status() == 0)
     {
-        cout << "라이다와 통신 지연" << endl;
+        cout << "라이다와 통신이 지연되고 있습니다." << endl;
     }
     else if (dataContainer->getValue_lidar_status() < 0)
     {
-        cout << "라이다와 통신 중단" << endl;
+        cout << "라이다와 통신이 실패하였습니다." << endl;
     }
 
     dataContainer->setValue_lidar_status(dataContainer->getValue_lidar_status() - 1);
@@ -108,15 +108,15 @@ void SensorStatus::updateSensorStatus()
     // CAMERA1 연결 상태
     if (dataContainer->getValue_camera1_status() > 5)
     {
-        cout << "camera 연결" << endl;
+        cout << "카메라1과 연결되었습니다." << endl;
     }
     else if (dataContainer->getValue_camera1_status() > 0)
     {
-        cout << "camera 연결 지연" << endl;
+        cout << "카메라1과 통신이 지연되고 있습니다." << endl;
     }
     else if (dataContainer->getValue_camera1_status() == 0)
     {
-        cout << "camera 통신 중단" << endl;
+        cout << "카메라1과 통신이 실패하였습니다." << endl;
     }
     dataContainer->setValue_camera1_status(0);
 
@@ -124,15 +124,15 @@ void SensorStatus::updateSensorStatus()
     // GPS 연결상태
     if (dataContainer->getValue_gps_status() > 5)
     {
-        cout << "GPS 연결" << endl;
+        cout << "GPS와 연결되었습니다." << endl;
     }
     else if (dataContainer->getValue_gps_status() > 0)
     {
-        cout << "GPS 연결 지연" << endl;
+        cout << "GPS와 통신이 지연되고 있습니다." << endl;
     }
     else if (dataContainer->getValue_gps_status() == 0)
     {
-        cout << "GPS 통신 중단" << endl;
+        cout << "GPS와 통신이 실패하였습니다." << endl;
     }
     dataContainer->setValue_gps_status(0);
 }
@@ -200,14 +200,11 @@ void SensorStatus::updateSensorAutostartup()
     case 19:
         // 오토 모드 실행
             // 오토 모드 스레드 실행
-        //if (mission_thread.joinable())
-        //{
-        //    loopStatusAutomode = true;
-        //}
-        //else
-        //{
-        //    mission_thread = thread([&]() { /*automode();*/ });
-        //}
+        if (!mission_thread.isRunning())
+        {
+			//connect(&mission_thread, SIGNAL(finished()), this, SLOT(deleteLater()));
+			mission_thread.start();
+        }
 
         sensorAutoCount = -1;
         //KillTimer(hwnd, UPDATE_SENSOR_AUTOSTARTUP);
@@ -256,4 +253,43 @@ void SensorStatus::comPlatform()
 void SensorStatus::comLidar() {}
 void SensorStatus::comCamera1() {}
 void SensorStatus::comGps() {}
+
+void MissionThread::run() {
+	//구현 필요
+	cout << "미션 스레드가 생성되었습니다.\n";
+	exec();
+}
+
+void PlatformComThread::run() {
+	//구현 필요
+	cout << "플랫폼 스레드가 생성되었습니다.\n";
+	exec();
+}
+
+void LidarComThread::run() {
+	//구현 필요
+	cout << "라이다 스레드가 생성되었습니다.\n";
+	exec();
+}
+
+void Camera1ComThread::run() {
+	//구현 필요
+	cout << "카메라1 스레드가 생성되었습니다.\n";
+	exec();
+}
+
+void Camera2ComThread::run() {
+	//구현 필요
+	cout << "카메라2 스레드가 생성되었습니다.\n";
+	exec();
+}
+
+void RTKComThread::run() {
+	//구현 필요
+	cout << "GPS 스레드가 생성되었습니다.\n";
+	exec();
+	
+}
+
+
 
