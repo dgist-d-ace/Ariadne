@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'Ariadne.ui'
 **
-** Created by: Qt User Interface Compiler version 5.12.3
+** Created by: Qt User Interface Compiler version 5.12.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -44,7 +44,7 @@ public:
     QLineEdit *lineEdit_3;
     QLineEdit *lineEdit_4;
     QLineEdit *lineEdit_5;
-    QPushButton *pushButton_2;
+    QPushButton *Btn_confirm;
     QGroupBox *groupBox_2;
     QGroupBox *groupBox_3;
     QPushButton *Btn_Mission0;
@@ -60,10 +60,10 @@ public:
     QPlainTextEdit *plainTextEdit;
     QTabWidget *tabWidget;
     QWidget *tab;
-    QPushButton *pushButton_10;
-    QPushButton *pushButton_11;
-    QPushButton *pushButton_12;
-    QPushButton *pushButton_13;
+    QPushButton *Btn_UpKey;
+    QPushButton *Btn_DownKey;
+    QPushButton *Btn_RightKey;
+    QPushButton *Btn_LeftKey;
     QSlider *verticalSlider;
     QLabel *label_9;
     QLabel *label_10;
@@ -135,9 +135,9 @@ public:
         lineEdit_5 = new QLineEdit(groupBox);
         lineEdit_5->setObjectName(QString::fromUtf8("lineEdit_5"));
         lineEdit_5->setGeometry(QRect(10, 140, 101, 21));
-        pushButton_2 = new QPushButton(groupBox);
-        pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-        pushButton_2->setGeometry(QRect(120, 170, 93, 28));
+        Btn_confirm = new QPushButton(groupBox);
+        Btn_confirm->setObjectName(QString::fromUtf8("Btn_confirm"));
+        Btn_confirm->setGeometry(QRect(120, 170, 93, 28));
         groupBox_2 = new QGroupBox(centralWidget);
         groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
         groupBox_2->setGeometry(QRect(10, 10, 241, 171));
@@ -182,18 +182,18 @@ public:
         tabWidget->setGeometry(QRect(970, 80, 211, 221));
         tab = new QWidget();
         tab->setObjectName(QString::fromUtf8("tab"));
-        pushButton_10 = new QPushButton(tab);
-        pushButton_10->setObjectName(QString::fromUtf8("pushButton_10"));
-        pushButton_10->setGeometry(QRect(80, 10, 51, 51));
-        pushButton_11 = new QPushButton(tab);
-        pushButton_11->setObjectName(QString::fromUtf8("pushButton_11"));
-        pushButton_11->setGeometry(QRect(80, 60, 51, 51));
-        pushButton_12 = new QPushButton(tab);
-        pushButton_12->setObjectName(QString::fromUtf8("pushButton_12"));
-        pushButton_12->setGeometry(QRect(140, 60, 51, 51));
-        pushButton_13 = new QPushButton(tab);
-        pushButton_13->setObjectName(QString::fromUtf8("pushButton_13"));
-        pushButton_13->setGeometry(QRect(20, 60, 51, 51));
+        Btn_UpKey = new QPushButton(tab);
+        Btn_UpKey->setObjectName(QString::fromUtf8("Btn_UpKey"));
+        Btn_UpKey->setGeometry(QRect(80, 10, 51, 51));
+        Btn_DownKey = new QPushButton(tab);
+        Btn_DownKey->setObjectName(QString::fromUtf8("Btn_DownKey"));
+        Btn_DownKey->setGeometry(QRect(80, 60, 51, 51));
+        Btn_RightKey = new QPushButton(tab);
+        Btn_RightKey->setObjectName(QString::fromUtf8("Btn_RightKey"));
+        Btn_RightKey->setGeometry(QRect(140, 60, 51, 51));
+        Btn_LeftKey = new QPushButton(tab);
+        Btn_LeftKey->setObjectName(QString::fromUtf8("Btn_LeftKey"));
+        Btn_LeftKey->setGeometry(QRect(20, 60, 51, 51));
         verticalSlider = new QSlider(tab);
         verticalSlider->setObjectName(QString::fromUtf8("verticalSlider"));
         verticalSlider->setGeometry(QRect(160, 10, 22, 41));
@@ -306,7 +306,7 @@ public:
         lineEdit_3->setText(QApplication::translate("AriadneClass", "Camera2", nullptr));
         lineEdit_4->setText(QApplication::translate("AriadneClass", "LiDAR", nullptr));
         lineEdit_5->setText(QApplication::translate("AriadneClass", "GPS", nullptr));
-        pushButton_2->setText(QApplication::translate("AriadneClass", "\355\231\225\354\235\270", nullptr));
+        Btn_confirm->setText(QApplication::translate("AriadneClass", "\355\231\225\354\235\270", nullptr));
         groupBox_2->setTitle(QApplication::translate("AriadneClass", "GroupBox", nullptr));
         groupBox_3->setTitle(QApplication::translate("AriadneClass", "Mission", nullptr));
         Btn_Mission0->setText(QApplication::translate("AriadneClass", "Mission0", nullptr));
@@ -319,10 +319,10 @@ public:
         Btn_mission4->setText(QApplication::translate("AriadneClass", "Mission4", nullptr));
         Btn_mission9->setText(QApplication::translate("AriadneClass", "Mission9", nullptr));
         Btn_mission5->setText(QApplication::translate("AriadneClass", "Mission5", nullptr));
-        pushButton_10->setText(QApplication::translate("AriadneClass", "\342\226\262", nullptr));
-        pushButton_11->setText(QApplication::translate("AriadneClass", "\342\226\274", nullptr));
-        pushButton_12->setText(QApplication::translate("AriadneClass", "\342\226\266", nullptr));
-        pushButton_13->setText(QApplication::translate("AriadneClass", "\342\227\200", nullptr));
+        Btn_UpKey->setText(QApplication::translate("AriadneClass", "\342\226\262", nullptr));
+        Btn_DownKey->setText(QApplication::translate("AriadneClass", "\342\226\274", nullptr));
+        Btn_RightKey->setText(QApplication::translate("AriadneClass", "\342\226\266", nullptr));
+        Btn_LeftKey->setText(QApplication::translate("AriadneClass", "\342\227\200", nullptr));
         label_9->setText(QApplication::translate("AriadneClass", "GEAR", nullptr));
         label_10->setText(QApplication::translate("AriadneClass", "SPEED", nullptr));
         label_11->setText(QApplication::translate("AriadneClass", "STEER", nullptr));

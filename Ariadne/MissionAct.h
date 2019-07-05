@@ -16,5 +16,5 @@ public:
     int DecideMission();
     void setMission(int k);// k번째 미션으로 넘어감
     void doMission0();
- 
+    void Connect();
 };

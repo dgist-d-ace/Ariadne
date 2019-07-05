@@ -34,11 +34,15 @@ bool Mission::emergencyStop() // Lidar의 dangerous region이 가까우면 E-stop
 	return true;
 }
 
+void Mission::Connect()
+{
+    // UI의 comport를 받아와서 해당 센서와 connect 한 후 thread를 만듦
+    SensorStatus* sensorStatus = new SensorStatus;
+}
+
 void Mission::doMission0() // 가장 기본 상태일때 주행
 {	
 	cout << "기본 주행 모드를 시작합니다." << endl;
-
-	SensorStatus* sensorStatus = new SensorStatus;
 
 	while (!emergencyStop())
 	{

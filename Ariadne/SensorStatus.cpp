@@ -216,7 +216,7 @@ void SensorStatus::updateSensorAutostartup()
 void SensorStatus::showPlatformControlValue() {
     //구현해야함
 }
-void SensorStatus::comPlatform()
+void PlatformComThread::comPlatform(CString)
 {
     //플랫폼 통신 코드입니다.
 
@@ -231,18 +231,10 @@ void SensorStatus::comPlatform()
 
         while (loopStatusPlatform)
         {
-            //			auto start = chrono::high_resolution_clock::now();
-
             _serial.MyCommRead();
             _serial.MyCommWrite();
 
-            //연결 상태 관리용
             dataContainer->updateValue_platform_status();
-            //this_thread::sleep_for(100ms);
-
-            //			auto end = chrono::high_resolution_clock::now();
-            //			chrono::duration<double, std::milli> elapsed = end - start;
-            //			cout << "Waited " << elapsed.count() << " ms\n";
         }
     }
     else
@@ -254,6 +246,15 @@ void SensorStatus::comLidar() {}
 void SensorStatus::comCamera1() {}
 void SensorStatus::comGps() {}
 
+// UI의 QString을 받아 CString으로 변환하는 함수
+CString QStringtoCString(QString qs)
+{
+    // https://stackoverflow.com/questions/4214369/how-to-convert-qstring-to-stdstring
+    std::string utf8_text = qs.toUtf8().constData();
+    CString cs(utf8_text.c_str());
+    return cs;
+}
+
 void MissionThread::run() {
 	//구현 필요
 	cout << "미션 스레드가 생성되었습니다.\n";
@@ -263,6 +264,8 @@ void MissionThread::run() {
 void PlatformComThread::run() {
 	//구현 필요
 	cout << "플랫폼 스레드가 생성되었습니다.\n";
+    /*QString temp = ui.comboBox->currentText();
+    this->comPlatform(QStringtoCString(temp));*/
 	exec();
 }
 

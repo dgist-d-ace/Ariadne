@@ -24,6 +24,5 @@ private:
 
 public slots:
     void clicked_btn_mission0();
-    CString ConvertQstringtoCString(QString);
-
+    void clicked_btn_confirm();
 };

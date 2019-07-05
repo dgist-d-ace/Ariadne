@@ -15,6 +15,7 @@
 
 using namespace std;
 
+CString QStringtoCString(QString);
 
 class PlatformComThread : public QThread
 {
@@ -24,7 +25,7 @@ protected:
 
 public:
 	bool loopStatusPlatform = true;
-	void comPlatform(CString);
+    void comPlatform(CString);
 	PlatformComThread() {
 		dataContainer = DataContainer::getInstance();
 	}
@@ -157,7 +158,7 @@ private:
     void updateSensorAutostartup();
     void showPlatformControlValue();
 
-    void comPlatform();
+
     void comLidar();
     void comCamera1();
     void comGps();

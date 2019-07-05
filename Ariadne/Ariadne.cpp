@@ -18,27 +18,34 @@ Ariadne::Ariadne(QWidget *parent)
         ui.comboBox_2->addItem("COM" + QString::number(i));
         ui.comboBox_3->addItem("COM" + QString::number(i));
         ui.comboBox_4->addItem("COM" + QString::number(i));
+        ui.comboBox_5->addItem("COM" + QString::number(i));
     } // combobox 관련: https://www.bogotobogo.com/Qt/Qt5_QComboBox.php
 
     QObject::connect(ui.Btn_Mission0, SIGNAL(clicked()), this, SLOT(clicked_btn_mission0()));
-
+    QObject::connect(ui.Btn_confirm, SIGNAL(clicked()), this, SLOT(clicked_btn_confirm()));
 }
 
-// comport를 열고 닫을때 CString이 이용되므로 QString을 CString으로 바꿔주는 함수를 만들었다.
-CString Ariadne::ConvertQstringtoCString(QString qs)
+
+void Ariadne::clicked_btn_confirm()
 {
-    // https://stackoverflow.com/questions/4214369/how-to-convert-qstring-to-stdstring
-    std::string utf8_text = qs.toUtf8().constData();
-    std::cout << utf8_text << std::endl;
-    CString cs(utf8_text.c_str());
-    return cs;
+    QString Temp1, Temp2, Temp3, Temp4, Temp5;
+    Temp1 = ui.comboBox->currentText();
+    Temp2 = ui.comboBox_2->currentText();
+    Temp3 = ui.comboBox_3->currentText();
+    Temp4 = ui.comboBox_4->currentText();
+    Temp5 = ui.comboBox_5->currentText();
+
+    //std::wcout << (const wchar_t*)ConvertQstringtoCString(Temp1) << " " << (const wchar_t*)ConvertQstringtoCString(Temp2)
+    //    << " " << (const wchar_t*)ConvertQstringtoCString(Temp3) << " " << (const wchar_t*)ConvertQstringtoCString(Temp4) 
+    //    << " " << (const wchar_t*)ConvertQstringtoCString(Temp5) << std::endl;
+
+    ui.plainTextEdit->setPlainText("I love you");
+    ui.plainTextEdit->appendPlainText("\n I love you very much");
+    // 왜 버튼을 클릭할때마다 실행되는게 아닌거지?
+
+    
 }
 
 void Ariadne::clicked_btn_mission0() {
     mission.doMission0();
-
-    // for test
-    QString Temp;
-    Temp = ui.comboBox->currentText();
-    std::wcout << (const wchar_t*)ConvertQstringtoCString(Temp) << std::endl;
 }

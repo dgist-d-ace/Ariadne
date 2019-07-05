@@ -141,7 +141,7 @@
       <string>GPS</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_2">
+    <widget class="QPushButton" name="Btn_confirm">
      <property name="geometry">
       <rect>
        <x>120</x>
@@ -337,7 +337,7 @@
      <attribute name="title">
       <string>ManualMode</string>
      </attribute>
-     <widget class="QPushButton" name="pushButton_10">
+     <widget class="QPushButton" name="Btn_UpKey">
       <property name="geometry">
        <rect>
         <x>80</x>
@@ -350,7 +350,7 @@
        <string>▲</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_11">
+     <widget class="QPushButton" name="Btn_DownKey">
       <property name="geometry">
        <rect>
         <x>80</x>
@@ -363,7 +363,7 @@
        <string>▼</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_12">
+     <widget class="QPushButton" name="Btn_RightKey">
       <property name="geometry">
        <rect>
         <x>140</x>
@@ -376,7 +376,7 @@
        <string>▶</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_13">
+     <widget class="QPushButton" name="Btn_LeftKey">
       <property name="geometry">
        <rect>
         <x>20</x>
