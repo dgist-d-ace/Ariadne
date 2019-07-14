@@ -1,15 +1,12 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
-#include "ui_Ariadne.h"
 #include <QtWidgets/QPushButton>
 #include <QTimer>
+#include <atlstr.h>
+#include "ui_Ariadne.h"
 #include "DataContainer.h"
-
-// CString 사용하려고 함
-#include "atlstr.h"
-#include <QString>
-
+#include "SensorStatus.h"
 
 class Ariadne : public QMainWindow
 {
@@ -17,12 +14,24 @@ class Ariadne : public QMainWindow
 
 public:
     Ariadne(QWidget *parent = Q_NULLPTR);
+    PlatformComThread *platformComThread;
+    DataContainer *dataContainer;
+    //LidarComThread *lidarComThread;
+    CString QStringtoCString(QString);
 
 private:
     Ui::AriadneClass ui;
-    // BK: DataContainer *dataContainer;
 
 public slots:
+    void onAorMChanged(int);
+    void onEStopChanged(int);
+    void onGearChanged(int);
+    void onSpeedChanged(int);
+    void onBreakChanged(int);
+    void onSteerChanged(int);
+    void onEncChanged(int);
+
+private slots: /// 버튼 클릭 이벤트들
     void clicked_btn_mission0();
     CString ConvertQstringtoCString(QString);
 

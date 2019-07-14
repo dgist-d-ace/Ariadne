@@ -1,4 +1,5 @@
 #include "SensorStatus.h"
+#include "Ariadne.h"
 
 #define UPDATE_PLATFORM_STATUS 100
 #define UPDATE_SENSOR_CONNECTION 101
@@ -40,24 +41,24 @@ void SensorStatus::updateSensorConnection() {
         break;
     case 1:
 		cout << "플랫폼 실행\n";
-		//thread 종료 시 다시 시작하기 위해서 slot에 thread를 다시 시작하는 함수를 구현할 필요가 있음
-		//connect(&platformcom_thread, SIGNAL(finished()), this, SLOT(quit()));
-		platformcom_thread.start();
+		///thread 종료 시 다시 시작하기 위해서 slot에 thread를 다시 시작하는 함수를 구현할 필요가 있음
+		///connect(&platformcom_thread, SIGNAL(finished()), this, SLOT(quit()));
+		//platformcom_thread.start();
         break;
     case 2:
 		cout << "라이다 실행\n";
-		//connect(&lidarcom_thread, SIGNAL(finished()), this, SLOT(quit()));
-		lidarcom_thread.start();
+		///connect(&lidarcom_thread, SIGNAL(finished()), this, SLOT(quit()));
+		//lidarcom_thread.start();
         break;
     case 3:
 		cout << "카메라 실행\n";
-		//connect(&camera1com_thread, SIGNAL(finished()), this, SLOT(quit()));
-		camera1com_thread.start();
+		///connect(&camera1com_thread, SIGNAL(finished()), this, SLOT(quit()));
+		//camera1com_thread.start();
         break;
     case 4:
 		cout << "gps 실행\n";
-		//connect(&gpscom_thread, SIGNAL(finished()), this, SLOT(quit()));
-		gpscom_thread.start();
+		///connect(&gpscom_thread, SIGNAL(finished()), this, SLOT(quit()));
+		//gpscom_thread.start();
         break;
     case 5:
         sensorCount = -1;
@@ -200,16 +201,16 @@ void SensorStatus::updateSensorAutostartup()
     case 19:
         // 오토 모드 실행
             // 오토 모드 스레드 실행
-        if (!mission_thread.isRunning())
-        {
-			//connect(&mission_thread, SIGNAL(finished()), this, SLOT(deleteLater()));
-			mission_thread.start();
-        }
+   //     if (!mission_thread.isRunning())
+   //     {
+			////connect(&mission_thread, SIGNAL(finished()), this, SLOT(deleteLater()));
+			//mission_thread.start();
+   //     }
 
-        sensorAutoCount = -1;
-        //KillTimer(hwnd, UPDATE_SENSOR_AUTOSTARTUP);
-        delete TimerAutostartup;
-        break;
+   //     sensorAutoCount = -1;
+   //     //KillTimer(hwnd, UPDATE_SENSOR_AUTOSTARTUP);
+   //     delete TimerAutostartup;
+   //     break;
     }
     sensorAutoCount++;
 }
@@ -222,7 +223,7 @@ void SensorStatus::comPlatform()
 
     CString comPort;
 
-    if (_serial.OpenPort(comPort))   // 실제 사용될 COM Port 를 넣어야합니다.  
+    if (_serial.OpenPort(L"COM1"))   // 실제 사용될 COM Port 를 넣어야합니다.  
     {
         // BaudRate, ByteSize, fParity, Parity, StopBit 정보를 설정해줍니다.  
         _serial.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
@@ -238,11 +239,23 @@ void SensorStatus::comPlatform()
 
             //연결 상태 관리용
             dataContainer->updateValue_platform_status();
+<<<<<<< Updated upstream
             //this_thread::sleep_for(100ms);
 
             //			auto end = chrono::high_resolution_clock::now();
             //			chrono::duration<double, std::milli> elapsed = end - start;
             //			cout << "Waited " << elapsed.count() << " ms\n";
+=======
+            emit(AorMChanged(dataContainer->getValue_PtoU_AorM()));
+            emit(EStopChanged(dataContainer->getValue_PtoU_E_STOP()));
+            emit(SpeedChanged(dataContainer->getValue_PtoU_SPEED()));
+            emit(SteerChanged(dataContainer->getValue_PtoU_STEER()));
+            emit(GearChanged(dataContainer->getValue_PtoU_GEAR()));
+            emit(BreakChanged(dataContainer->getValue_PtoU_BRAKE()));
+            emit(EncChanged(dataContainer->getValue_PtoU_ENC()));
+
+            this->msleep(100);
+>>>>>>> Stashed changes
         }
     }
     else
@@ -257,12 +270,23 @@ void SensorStatus::comGps() {}
 void MissionThread::run() {
 	//구현 필요
 	cout << "미션 스레드가 생성되었습니다.\n";
+
 	exec();
 }
 
-void PlatformComThread::run() {
+void PlatformComThread::run(CString) {
 	//구현 필요
 	cout << "플랫폼 스레드가 생성되었습니다.\n";
+<<<<<<< Updated upstream
+=======
+    CString temp;
+    comPlatform(temp);
+
+    //QString temp = ui->comboBox->currentText();
+    //string temp2 = temp.toUtf8().constData();
+    //std::cout << temp2 << std::endl;
+    //this->comPlatform(QStringtoCString(temp));
+>>>>>>> Stashed changes
 	exec();
 }
 
@@ -290,6 +314,3 @@ void RTKComThread::run() {
 	exec();
 	
 }
-
-
-

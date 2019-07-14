@@ -1,7 +1,7 @@
 #include "CSerialPort.h"
 #include "ComPlatform.h"
 #include "DataContainer.h"
-//#include "Ariadne.h"
+#include "Ariadne.h"
 
 #include <QObject>
 #include <QThread>
@@ -15,16 +15,26 @@
 
 using namespace std;
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 class PlatformComThread : public QThread
 {
 	Q_OBJECT
+
 protected:
 	ComPlatform _serial;
 
 public:
 	bool loopStatusPlatform = true;
+<<<<<<< Updated upstream
 	void comPlatform(CString);
+=======
+    void comPlatform(CString);
+    void run(CString);
+
+>>>>>>> Stashed changes
 	PlatformComThread() {
 		dataContainer = DataContainer::getInstance();
 	}
@@ -32,8 +42,21 @@ public:
 		cout << "플랫폼 스레드가 종료되었습니다.\n";
 		this->wait();
 	}
+
+signals: /// thread가 보낼 broadcast 함수들
+    void AorMChanged(int);
+    void EStopChanged(int);
+    void GearChanged(int);
+    void SpeedChanged(int);
+    void SteerChanged(int);
+    void BreakChanged(int);
+    void EncChanged(int);
+    void AliveChanged(int);
+
+public slots:
+
 private:
-	DataContainer *dataContainer;
+    DataContainer *dataContainer;
 	void run() Q_DECL_OVERRIDE;//thread 생성 후 자동 실행되는 함수
 };
 
@@ -50,7 +73,6 @@ public:
 		this->wait();
 	}
 private:
-
 	DataContainer *dataContainer;
 	void run() Q_DECL_OVERRIDE;//thread 생성 후 자동 실행되는 함수
 };
@@ -67,8 +89,8 @@ public:
 		cout << "카메라1 스레드가 종료되었습니다.\n";
 		this->wait();
 	}
-private:
 
+private:
 	DataContainer *dataContainer;
 	void run() Q_DECL_OVERRIDE;//thread 생성 후 자동 실행되는 함수
 };
@@ -87,8 +109,6 @@ public:
 		this->wait();
 	}
 private:
-
-
 	DataContainer *dataContainer;
 	void run() Q_DECL_OVERRIDE; //thread 생성 후 자동 실행되는 함수
 };
@@ -105,7 +125,6 @@ public:
 		this->wait();
 	}
 private:
-
 	DataContainer *dataContainer;
 	void run() Q_DECL_OVERRIDE; //thread 생성 후 자동 실행되는 함수
 };
@@ -136,11 +155,11 @@ private:
 	DataContainer *dataContainer;
 
     MissionThread mission_thread;
-	PlatformComThread platformcom_thread;
+    PlatformComThread platformcom_thread;
     LidarComThread lidarcom_thread;
     Camera1ComThread camera1com_thread;
-	Camera2ComThread camera2com_thread;
-	RTKComThread gpscom_thread;
+    Camera2ComThread camera2com_thread;
+    RTKComThread gpscom_thread;
 
     int sensorCount = 0;
     int sensorAutoCount = 0;

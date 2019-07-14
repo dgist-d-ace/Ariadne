@@ -557,14 +557,14 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="text">
-      <string>GPS location</string>
+      <string>ENC</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_5">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>240</y>
+       <y>270</y>
        <width>101</width>
        <height>16</height>
       </rect>
@@ -699,10 +699,33 @@ p, li { white-space: pre-wrap; }
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>240</y>
+       <y>270</y>
        <width>61</width>
        <height>21</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdNumber_8">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>240</y>
+       <width>64</width>
+       <height>23</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_12">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>240</y>
+       <width>101</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>GPS location</string>
      </property>
     </widget>
    </widget>

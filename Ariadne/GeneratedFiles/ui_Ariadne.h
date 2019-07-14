@@ -91,6 +91,8 @@ public:
     QLCDNumber *lcdNumber_6;
     QLCDNumber *lcdNumber_7;
     QTextBrowser *textBrowser_2;
+    QLCDNumber *lcdNumber_8;
+    QLabel *label_12;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -240,7 +242,7 @@ public:
         label_4->setGeometry(QRect(20, 210, 101, 16));
         label_5 = new QLabel(groupBox_4);
         label_5->setObjectName(QString::fromUtf8("label_5"));
-        label_5->setGeometry(QRect(20, 240, 101, 16));
+        label_5->setGeometry(QRect(20, 270, 101, 16));
         label_6 = new QLabel(groupBox_4);
         label_6->setObjectName(QString::fromUtf8("label_6"));
         label_6->setGeometry(QRect(20, 30, 64, 21));
@@ -276,7 +278,13 @@ public:
         lcdNumber_7->setGeometry(QRect(130, 210, 64, 23));
         textBrowser_2 = new QTextBrowser(groupBox_4);
         textBrowser_2->setObjectName(QString::fromUtf8("textBrowser_2"));
-        textBrowser_2->setGeometry(QRect(130, 240, 61, 21));
+        textBrowser_2->setGeometry(QRect(130, 270, 61, 21));
+        lcdNumber_8 = new QLCDNumber(groupBox_4);
+        lcdNumber_8->setObjectName(QString::fromUtf8("lcdNumber_8"));
+        lcdNumber_8->setGeometry(QRect(130, 240, 64, 23));
+        label_12 = new QLabel(groupBox_4);
+        label_12->setObjectName(QString::fromUtf8("label_12"));
+        label_12->setGeometry(QRect(20, 240, 101, 16));
         AriadneClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AriadneClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -338,12 +346,13 @@ public:
         groupBox_4->setTitle(QApplication::translate("AriadneClass", "SensorStatus", nullptr));
         label_2->setText(QApplication::translate("AriadneClass", "STEER", nullptr));
         label_3->setText(QApplication::translate("AriadneClass", "GEAR", nullptr));
-        label_4->setText(QApplication::translate("AriadneClass", "GPS location", nullptr));
+        label_4->setText(QApplication::translate("AriadneClass", "ENC", nullptr));
         label_5->setText(QApplication::translate("AriadneClass", "Geofense", nullptr));
         label_6->setText(QApplication::translate("AriadneClass", "AorM", nullptr));
         label_7->setText(QApplication::translate("AriadneClass", "E-Stop", nullptr));
         label->setText(QApplication::translate("AriadneClass", "BREAK", nullptr));
         label_8->setText(QApplication::translate("AriadneClass", "SPEED", nullptr));
+        label_12->setText(QApplication::translate("AriadneClass", "GPS location", nullptr));
     } // retranslateUi
 
 };
