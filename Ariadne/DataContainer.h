@@ -2,9 +2,7 @@
 #include <mutex>
 #include <vector>
 #include <QThread>
-#include "Ariadne.h"
-
-
+#include <QMutex>
 
 class DataContainer {
 private:
@@ -14,8 +12,6 @@ private:
 	static bool instanceFlag;
 
 	static DataContainer* instance;
-    // BK: static Ariadne* window;
-
 	//
 	// UPPER to PCU (플랫폼에 보내는 값)
 	//
@@ -40,22 +36,22 @@ private:
 	int m_PtoU_ALIVE = 0;
 
 
-	std::mutex mtx_UtoP_AorM;
-	std::mutex mtx_UtoP_E_STOP;
-	std::mutex mtx_UtoP_GEAR;
-	std::mutex mtx_UtoP_SPEED;
-	std::mutex mtx_UtoP_STEER;
-	std::mutex mtx_UtoP_BRAKE;
-	std::mutex mtx_UtoP_ALIVE;
+	QMutex mtx_UtoP_AorM;
+	QMutex mtx_UtoP_E_STOP;
+	QMutex mtx_UtoP_GEAR;
+	QMutex mtx_UtoP_SPEED;
+	QMutex mtx_UtoP_STEER;
+	QMutex mtx_UtoP_BRAKE;
+	QMutex mtx_UtoP_ALIVE;
 
-	std::mutex mtx_PtoU_AorM;
-	std::mutex mtx_PtoU_E_STOP;
-	std::mutex mtx_PtoU_GEAR;
-	std::mutex mtx_PtoU_SPEED;
-	std::mutex mtx_PtoU_STEER;
-	std::mutex mtx_PtoU_BRAKE;
-	std::mutex mtx_PtoU_ENC;
-	std::mutex mtx_PtoU_ALIVE;
+	QMutex mtx_PtoU_AorM;
+	QMutex mtx_PtoU_E_STOP;
+	QMutex mtx_PtoU_GEAR;
+	QMutex mtx_PtoU_SPEED;
+	QMutex mtx_PtoU_STEER;
+	QMutex mtx_PtoU_BRAKE;
+	QMutex mtx_PtoU_ENC;
+	QMutex mtx_PtoU_ALIVE;
 
 	//
 	// 센서 및 플랫폼 연결 상태 정보
@@ -66,11 +62,11 @@ private:
 	int m_camera1_status = 0;
 	int m_gps_status = 0;
 
-	std::mutex mtx_platform_status;
-	std::mutex mtx_lidar_status;
-	std::mutex mtx_camera1_status;
-	std::mutex mtx_camera2_status;
-	std::mutex mtx_gps_status;
+	QMutex mtx_platform_status;
+	QMutex mtx_lidar_status;
+	QMutex mtx_camera1_status;
+	QMutex mtx_camera2_status;
+	QMutex mtx_gps_status;
 	
 	//
 	//라이다
@@ -84,7 +80,7 @@ private:
 	//
 	int m_camera1_steer;
 
-	std::mutex mtx_camera1_steer;
+	QMutex mtx_camera1_steer;
 
 	//
 	//카메라2: 미정 (주차용) 
@@ -96,8 +92,8 @@ private:
 	int m_missiontrigger = 0;
 	int m_gps_geofence = 0;
 
-	std::mutex mtx_missiontrigger;
-	std::mutex mtx_gps_geofence;
+	QMutex mtx_missiontrigger;
+	QMutex mtx_gps_geofence;
 
 public:
 

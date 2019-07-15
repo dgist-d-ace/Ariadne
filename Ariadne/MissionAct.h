@@ -1,4 +1,5 @@
-#pragma once
+
+#include "DataContainer.h"
 
 // TODO: automode thread 생성하기
 
@@ -11,6 +12,7 @@ protected:
     int MissionNumber = 0;
 
 public:
+    DataContainer* dataContainer;
 	Mission();
     bool emergencyStop();
     int DecideMission();

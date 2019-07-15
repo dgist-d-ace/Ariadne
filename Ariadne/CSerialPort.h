@@ -1,4 +1,4 @@
-#pragma once
+
 #include <Windows.h>
 #include <atlstr.h>
 #include <stdlib.h>

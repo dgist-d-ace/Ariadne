@@ -3,8 +3,7 @@
 #include <Windows.h>
 #include <atlstr.h>
 #include <stdlib.h>
-#include "ComPlatform.h"
-#include "DataContainer.h"
+#include "Complatform.h"
 #include <chrono>
 #include <thread>
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "DataContainer.h"
 #include "CSerialPort.h"
+#include <QThread>
 
 class ComPlatform :
 	public CSerialPort

@@ -1,10 +1,59 @@
 #include "SensorStatus.h"
 
+#include <QMutex>
+#include <iostream>
+
+
 #define UPDATE_PLATFORM_STATUS 100
 #define UPDATE_SENSOR_CONNECTION 101
 #define UPDATE_SENSOR_STATUS 102
 #define UPDATE_SENSOR_AUTOSTARTUP 103
 
+void PlatformComThread::comPlatform() // 추후 인자로 CString이 들어갈 것
+{
+    dataContainer = DataContainer::getInstance();
+    //플랫폼 통신 코드입니다.
+    CString comPort;
+    ComPlatform _serial;
+
+    std::cout << "플랫폼 커뮤니케이션 시작" << std::endl;
+
+    if (_serial.OpenPort(L"COM1"))   // 실제 사용될 COM Port 를 넣어야합니다.  
+    {
+        _serial.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
+        _serial.SetCommunicationTimeouts(0, 0, 0, 0, 0);
+
+        while (loopStatusPlatform)
+        {
+            _serial.MyCommRead();
+            _serial.MyCommWrite();
+            dataContainer->updateValue_platform_status();
+
+            emit(AorMChanged(dataContainer->getValue_PtoU_AorM()));
+            emit(EStopChanged(dataContainer->getValue_PtoU_E_STOP()));
+            emit(SpeedChanged(dataContainer->getValue_PtoU_SPEED()));
+            emit(SteerChanged(dataContainer->getValue_PtoU_STEER()));
+            emit(GearChanged(dataContainer->getValue_PtoU_GEAR()));
+            emit(BreakChanged(dataContainer->getValue_PtoU_BRAKE()));
+            emit(EncChanged(dataContainer->getValue_PtoU_ENC()));
+
+            this->msleep(100);
+        }
+    }
+    else
+    {
+        _serial.ClosePort();
+    }
+}
+
+void PlatformComThread::run() {
+    cout << "플랫폼 스레드가 생성되었습니다." << endl;
+    comPlatform();
+}
+
+
+/// SensorStatus class를 사용하지 않아 필요 없게 됨
+/*
 SensorStatus::SensorStatus() {
     dataContainer = DataContainer::getInstance();
 
@@ -68,6 +117,8 @@ void SensorStatus::updateSensorConnection() {
     }
     sensorCount++;
 }
+
+
 void SensorStatus::updateSensorStatus()
 {
     using namespace std;
@@ -136,7 +187,10 @@ void SensorStatus::updateSensorStatus()
     }
     dataContainer->setValue_gps_status(0);
 }
+*/
 
+
+/*
 void SensorStatus::updateSensorAutostartup()
 {
     switch (sensorAutoCount)
@@ -200,6 +254,7 @@ void SensorStatus::updateSensorAutostartup()
     case 19:
         // 오토 모드 실행
             // 오토 모드 스레드 실행
+
         if (!mission_thread.isRunning())
         {
 			//connect(&mission_thread, SIGNAL(finished()), this, SLOT(deleteLater()));
@@ -213,46 +268,20 @@ void SensorStatus::updateSensorAutostartup()
     }
     sensorAutoCount++;
 }
+
+
 void SensorStatus::showPlatformControlValue() {
     //구현해야함
 }
-void SensorStatus::comPlatform()
-{
-    //플랫폼 통신 코드입니다.
+*/
 
-    CString comPort;
 
-    if (_serial.OpenPort(comPort))   // 실제 사용될 COM Port 를 넣어야합니다.  
-    {
-        // BaudRate, ByteSize, fParity, Parity, StopBit 정보를 설정해줍니다.  
-        _serial.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
-        // Timeout 설정입니다. 별다른거 없으면 전부 zero 설정해도 되구요.  
-        _serial.SetCommunicationTimeouts(0, 0, 0, 0, 0);
 
-        while (loopStatusPlatform)
-        {
-            //			auto start = chrono::high_resolution_clock::now();
-
-            _serial.MyCommRead();
-            _serial.MyCommWrite();
-
-            //연결 상태 관리용
-            dataContainer->updateValue_platform_status();
-            //this_thread::sleep_for(100ms);
-
-            //			auto end = chrono::high_resolution_clock::now();
-            //			chrono::duration<double, std::milli> elapsed = end - start;
-            //			cout << "Waited " << elapsed.count() << " ms\n";
-        }
-    }
-    else
-    {
-        _serial.ClosePort();
-    }
-}
+/*
 void SensorStatus::comLidar() {}
 void SensorStatus::comCamera1() {}
 void SensorStatus::comGps() {}
+
 
 void MissionThread::run() {
 	//구현 필요
@@ -260,12 +289,16 @@ void MissionThread::run() {
 	exec();
 }
 
+
 void PlatformComThread::run() {
 	//구현 필요
 	cout << "플랫폼 스레드가 생성되었습니다.\n";
 	exec();
-}
 
+*/
+
+
+/*
 void LidarComThread::run() {
 	//구현 필요
 	cout << "라이다 스레드가 생성되었습니다.\n";
@@ -289,7 +322,6 @@ void RTKComThread::run() {
 	cout << "GPS 스레드가 생성되었습니다.\n";
 	exec();
 	
+
 }
-
-
-
+*/

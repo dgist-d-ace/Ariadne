@@ -1,7 +1,7 @@
-#include "CSerialPort.h"
+#pragma once
+
 #include "ComPlatform.h"
-#include "DataContainer.h"
-//#include "Ariadne.h"
+#include "atlstr.h"
 
 #include <QObject>
 #include <QThread>
@@ -9,34 +9,49 @@
 #include <QString>
 #include <QTimer>
 #include <iostream>
-#include <vector>
 #include <iterator>
-#include <math.h>
+#include <QtCore>
 
 using namespace std;
 
-
 class PlatformComThread : public QThread
 {
-	Q_OBJECT
+    Q_OBJECT
 protected:
-	ComPlatform _serial;
 
 public:
+    DataContainer *dataContainer;
 	bool loopStatusPlatform = true;
-	void comPlatform(CString);
-	PlatformComThread() {
-		dataContainer = DataContainer::getInstance();
-	}
-	~PlatformComThread() {
-		cout << "플랫폼 스레드가 종료되었습니다.\n";
-		this->wait();
-	}
+	void comPlatform();
+    void run();
+
+	//PlatformComThread() {
+	//	//dataContainer = DataContainer::getInstance();
+	//}
+	//~PlatformComThread() {
+	//	cout << "플랫폼 스레드가 종료되었습니다.\n";
+	//	this->wait();
+	//}
+
+
 private:
-	DataContainer *dataContainer;
-	void run() Q_DECL_OVERRIDE;//thread 생성 후 자동 실행되는 함수
+	/// void run() Q_DECL_OVERRIDE; //thread 생성 후 자동 실행되는 함수
+
+signals: /// thread가 보낼 broadcast 함수들
+    void AorMChanged(int);
+    void EStopChanged(int);
+    void GearChanged(int);
+    void SpeedChanged(int);
+    void SteerChanged(int);
+    void BreakChanged(int);
+    void EncChanged(int);
+    void AliveChanged(int);
+
+public slots:
+
 };
 
+/*
 class LidarComThread : public QThread
 {
 	Q_OBJECT
@@ -77,7 +92,6 @@ class Camera2ComThread : public QThread
 {
 	Q_OBJECT
 public:
-
 	void comCamera2();
 	Camera2ComThread() {
 		dataContainer = DataContainer::getInstance();
@@ -125,7 +139,9 @@ private:
 	DataContainer *dataContainer;
 	void run() Q_DECL_OVERRIDE; //thread 생성 후 자동 실행되는 함수
 };
+*/
 
+/*
 class SensorStatus : public QObject
 {
 	Q_OBJECT
@@ -176,3 +192,4 @@ public slots:
 	void SlotUpdateSensorAutostartup();
 
 };
+*/
