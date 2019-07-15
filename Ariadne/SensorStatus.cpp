@@ -16,7 +16,7 @@ void PlatformComThread::comPlatform() // 추후 인자로 CString이 들어갈 것
     CString comPort;
     ComPlatform _serial;
 
-    std::cout << "플랫폼 커뮤니케이션 시작" << std::endl;
+    std::cout << "플랫폼 커뮤니케이션 시작\n";
 
     if (_serial.OpenPort(L"COM1"))   // 실제 사용될 COM Port 를 넣어야합니다.  
     {
@@ -47,8 +47,19 @@ void PlatformComThread::comPlatform() // 추후 인자로 CString이 들어갈 것
 }
 
 void PlatformComThread::run() {
-    cout << "플랫폼 스레드가 생성되었습니다." << endl;
+    cout << "플랫폼 스레드가 생성되었습니다.\n";
     comPlatform();
+}
+
+void LidarComThread::comLidar() {
+
+
+}
+
+void LidarComThread::run() {
+	cout << "라이다 스레드가 생성되었습니다.\n";
+	comLidar();
+
 }
 
 

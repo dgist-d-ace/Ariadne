@@ -54,12 +54,18 @@
     <ClCompile Include="GeneratedFiles\qrc_Ariadne.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="qcustomplot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Ariadne.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="SensorStatus.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="qcustomplot.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

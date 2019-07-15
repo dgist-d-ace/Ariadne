@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'Ariadne.ui'
 **
-** Created by: Qt User Interface Compiler version 5.12.2
+** Created by: Qt User Interface Compiler version 5.12.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -26,6 +26,7 @@
 #include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
+#include "qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -91,6 +92,7 @@ public:
     QLCDNumber *lcdNumber_6;
     QLCDNumber *lcdNumber_7;
     QTextBrowser *textBrowser_2;
+    QCustomPlot *rt_plot;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -99,7 +101,7 @@ public:
     {
         if (AriadneClass->objectName().isEmpty())
             AriadneClass->setObjectName(QString::fromUtf8("AriadneClass"));
-        AriadneClass->resize(1202, 868);
+        AriadneClass->resize(1203, 868);
         centralWidget = new QWidget(AriadneClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         groupBox = new QGroupBox(centralWidget);
@@ -228,7 +230,7 @@ public:
         pushButton->setGeometry(QRect(970, 10, 211, 61));
         groupBox_4 = new QGroupBox(centralWidget);
         groupBox_4->setObjectName(QString::fromUtf8("groupBox_4"));
-        groupBox_4->setGeometry(QRect(970, 310, 211, 311));
+        groupBox_4->setGeometry(QRect(970, 310, 211, 321));
         label_2 = new QLabel(groupBox_4);
         label_2->setObjectName(QString::fromUtf8("label_2"));
         label_2->setGeometry(QRect(20, 150, 64, 15));
@@ -277,10 +279,13 @@ public:
         textBrowser_2 = new QTextBrowser(groupBox_4);
         textBrowser_2->setObjectName(QString::fromUtf8("textBrowser_2"));
         textBrowser_2->setGeometry(QRect(130, 240, 61, 21));
+        rt_plot = new QCustomPlot(centralWidget);
+        rt_plot->setObjectName(QString::fromUtf8("rt_plot"));
+        rt_plot->setGeometry(QRect(269, 19, 691, 611));
         AriadneClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AriadneClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1202, 26));
+        menuBar->setGeometry(QRect(0, 0, 1203, 26));
         AriadneClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(AriadneClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -291,7 +296,7 @@ public:
 
         retranslateUi(AriadneClass);
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(AriadneClass);

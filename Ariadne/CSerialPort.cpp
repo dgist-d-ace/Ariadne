@@ -31,7 +31,6 @@ bool CSerialPort::ConfigurePort(DWORD BaudRate, BYTE ByteSize, DWORD fParity,
 	if ((m_bPortReady = GetCommState(m_hComm, &m_dcb)) == 0)
 	{
 		//MessageBox(L"GetCommState Error",L"Error", MB_OK + MB_ICONERROR);
-		cout << "Erorrororo" << endl;
 		CloseHandle(m_hComm);
 		return false;
 	}

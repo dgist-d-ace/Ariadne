@@ -69,6 +69,9 @@ void ComPlatform::MyCommRead()
 		dataContainer->setValue_PtoU_ALIVE(pByte[indx + 15]);
 
 	}
+	else {
+
+	}
 
 	delete pByte;
 }
