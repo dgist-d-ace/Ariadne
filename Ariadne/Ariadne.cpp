@@ -242,6 +242,7 @@ void RTKComThread::run() {
 
 RTKComThread::RTKComThread() {
 	ui = Ariadne::getUI();
+	dataContainer = DataContainer::getInstance();
 	Paint_base();
 	Paint_school();
 	ui->rt_plot->replot();
