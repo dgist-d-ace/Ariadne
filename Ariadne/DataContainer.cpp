@@ -16,8 +16,6 @@ DataContainer* DataContainer::getInstance() {
 	return instance;
 }
 
-// Ariadne* DataContainer::getWindow() { return window; }
-// void DataContainer::setWindow(Ariadne* w) { window = w; }
 
 //
 // 센서 연결 상태 정보

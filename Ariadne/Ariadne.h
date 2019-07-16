@@ -22,11 +22,34 @@ protected:
 
 public:
 	DataContainer *dataContainer;
+	Ui::AriadneClass * ui;
+
+	RTKComThread();
+
 	bool loopStatusPlatform = true;
 	void comRTK();
 	void run();
 
 private:
+	bool Geofence;
+	QString GF;
+	QVector<double> x, y;
+	double heading;
+	double _lat, _lng;
+	double lat, lng;
+	vector<vector<double>> map_link;
+
+	void Paint_base();
+	void Paint_school();
+	/*
+int f_mode = 1;
+int f_Estop = 0;
+int f_gear = 0;
+int f_speed = 20;
+int f_steer = 0;  //steer 반대로나옴
+int f_brake = 0;
+*/
+	void setWritePram(BYTE* writeBuffer);
 	/// void run() Q_DECL_OVERRIDE; //thread 생성 후 자동 실행되는 함수
 
 signals: /// thread가 보낼 broadcast 함수들
@@ -60,13 +83,11 @@ public:
 
 	QTimer* TimerSensorStatus;
 
-	void Paint_school_rt();
-
-
-
+	static Ui::AriadneClass* getUI();
+	
 
 private:
-    Ui::AriadneClass ui;
+	static Ui::AriadneClass* ui;
     void updateSensorStatus();
 
 public slots:
@@ -82,27 +103,6 @@ public slots:
     void onSteerChanged(int);
     void onEncChanged(int);
 
-
-private:
-	bool Geofence;
-	QString GF;
-	QVector<double> x, y;
-	double heading;
-	double _lat, _lng;
-	double lat, lng;
-	vector<vector<double>> map_link;
-
-	void Paint_base();
-	void Paint_school();
-		/*
-	int f_mode = 1;
-	int f_Estop = 0;
-	int f_gear = 0;
-	int f_speed = 20;
-	int f_steer = 0;  //steer 반대로나옴
-	int f_brake = 0;
-	*/
-	void setWritePram(BYTE* writeBuffer);
 
 };
 

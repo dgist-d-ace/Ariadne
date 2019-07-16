@@ -12,6 +12,7 @@ private:
 	static bool instanceFlag;
 
 	static DataContainer* instance;
+
 	//
 	// UPPER to PCU (ÇÃ·§Æû¿¡ º¸³»´Â °ª)
 	//

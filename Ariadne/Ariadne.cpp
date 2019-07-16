@@ -5,34 +5,32 @@
 // HyeAhn View와 같은 역할을 함
 using namespace std;
 
+Ui::AriadneClass* Ariadne::ui = new Ui::AriadneClass;
+
 Ariadne::Ariadne(QWidget *parent)
     : QMainWindow(parent)
 {
-    ui.setupUi(this);
-    
+    ui->setupUi(this);
+
     dataContainer = DataContainer::getInstance();
     platformComThread = new PlatformComThread;
 	lidarComThread = new LidarComThread;
 	rtkComThread = new RTKComThread;
     ///  -------------------  UI 선택지 넣기 및 꾸미기 ------------------------- ///
 
-	Paint_base();
-	Paint_school();
-	ui.rt_plot->replot();
-
     for (int i = 0; i < 5; i++) // combobox에 선택지 넣기. 해당 선택지들이 이후 통신용 컴포트에 사용됨.
     {
-        ui.comboBox->addItem("COM" + QString::number(i));
-        ui.comboBox_2->addItem("COM" + QString::number(i));
-        ui.comboBox_3->addItem("COM" + QString::number(i));
-        ui.comboBox_4->addItem("COM" + QString::number(i));
-        ui.comboBox_5->addItem("COM" + QString::number(i));
+        ui->comboBox->addItem("COM" + QString::number(i));
+        ui->comboBox_2->addItem("COM" + QString::number(i));
+        ui->comboBox_3->addItem("COM" + QString::number(i));
+        ui->comboBox_4->addItem("COM" + QString::number(i));
+        ui->comboBox_5->addItem("COM" + QString::number(i));
     } // combobox 관련: https://www.bogotobogo.com/Qt/Qt5_QComboBox.php
 
     /// --------------------- Qobject와 버튼 connect ---------------------------------///
 
-    QObject::connect(ui.Btn_Mission0, SIGNAL(clicked()), this, SLOT(clicked_btn_mission0()));
-    QObject::connect(ui.pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_btn_confirm()));
+    QObject::connect(ui->Btn_Mission0, SIGNAL(clicked()), this, SLOT(clicked_btn_mission0()));
+    QObject::connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_btn_confirm()));
 
     /// ------------------- thread and signals for UI update ----------------------///
     connect(platformComThread, SIGNAL(AorMChanged(int)), this, SLOT(onAorMChanged(int)));
@@ -47,7 +45,6 @@ Ariadne::Ariadne(QWidget *parent)
 // comport를 열고 닫을때 CString이 이용되므로 QString을 CString으로 바꿔주는 함수를 만들었다.
 CString Ariadne::ConvertQstringtoCString(QString qs)
 {
-
     /// h ttps://stackoverflow.com/questions/4214369/how-to-convert-qstring-to-stdstring
     std::string utf8_text = qs.toUtf8().constData();
     std::cout << utf8_text << std::endl;
@@ -59,20 +56,19 @@ void Ariadne::clicked_btn_confirm() {
 
     // for test
     QString Temp;
-    Temp = ui.comboBox->currentText();
+    Temp = ui->comboBox->currentText();
     std::wcout << (const wchar_t*)ConvertQstringtoCString(Temp) << std::endl;
 
-
     QString Temp1, Temp2, Temp3, Temp4, Temp5;
-    Temp1 = ui.comboBox->currentText();
-    Temp2 = ui.comboBox_2->currentText();
-    Temp3 = ui.comboBox_3->currentText();
-    Temp4 = ui.comboBox_4->currentText();
-    Temp5 = ui.comboBox_5->currentText();
+    Temp1 = ui->comboBox->currentText();
+    Temp2 = ui->comboBox_2->currentText();
+    Temp3 = ui->comboBox_3->currentText();
+    Temp4 = ui->comboBox_4->currentText();
+    Temp5 = ui->comboBox_5->currentText();
 
-    ui.plainTextEdit->appendPlainText("I love you");
-    ui.plainTextEdit->appendPlainText("I love you very much");
-    ui.plainTextEdit->appendPlainText("will you going to me together?");
+    ui->plainTextEdit->appendPlainText("I love you");
+    ui->plainTextEdit->appendPlainText("I love you very much");
+    ui->plainTextEdit->appendPlainText("will you going to me together?");
 
     /// platformComThread->start();
     /// platformComThread->comPlatform(QStringtoCString(Temp1));*/
@@ -93,7 +89,6 @@ void Ariadne::clicked_btn_mission0() {
     //mission.doMission0();
 }
 
-
 CString Ariadne::QStringtoCString(QString qs)
 {
     /* https:  //stackoverflow.com/questions/4214369/how-to-convert-qstring-to-stdstring */
@@ -105,7 +100,6 @@ CString Ariadne::QStringtoCString(QString qs)
     return cs;
 }
 
-
 ///  _    _ _____    _    _ _____  _____       _______ ______ 
 /// | |  | |_   _|  | |  | |  __ \|  __ \   /\|__   __|  ____|
 /// | |  | | | |    | |  | | |__) | |  | | /  \  | |  | |__   
@@ -116,37 +110,37 @@ CString Ariadne::QStringtoCString(QString qs)
 
 void Ariadne::onAorMChanged(int Number)
 {
-    ui.lcdNumber->display(Number);
+    ui->lcdNumber->display(Number);
 }
 
 void Ariadne::onEStopChanged(int Number)
 {
-    ui.lcdNumber_2->display(Number);
+    ui->lcdNumber_2->display(Number);
 }
 
 void Ariadne::onGearChanged(int Number)
 {
-    ui.lcdNumber_3->display(Number);
+    ui->lcdNumber_3->display(Number);
 }
 
 void Ariadne::onSpeedChanged(int Number)
 {
-    ui.lcdNumber_4->display(Number);
+    ui->lcdNumber_4->display(Number);
 }
 
 void Ariadne::onSteerChanged(int Number)
 {
-    ui.lcdNumber_5->display(Number);
+    ui->lcdNumber_5->display(Number);
 }
 
 void Ariadne::onBreakChanged(int Number)
 {
-    ui.lcdNumber_6->display(Number);
+    ui->lcdNumber_6->display(Number);
 }
 
 void Ariadne::onEncChanged(int Number)
 {
-    ui.lcdNumber_7->display(Number);
+    ui->lcdNumber_7->display(Number);
 } 
 
 /// TODO: GPS location display 추가
@@ -224,6 +218,8 @@ void Ariadne::updateSensorStatus()
 	dataContainer->setValue_gps_status(0);
 }
 
+Ui::AriadneClass* Ariadne::getUI() { return ui;}
+
 #define threshold 0.5
 #define PI 3.14159265358979323846
 #define radiRatio 1 / 298.257223563
@@ -235,18 +231,30 @@ void Ariadne::updateSensorStatus()
 bool sign; // 외적의 부호 , true =양수, false = 음수
 
 CSerialPort _gps;
+void HeroNeverDies();
 vector <double>UTM(double lat, double lng);
 bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double heading);
 
-
-void Ariadne::Paint_base() // 기본 축 설정
-{
-	ui.rt_plot->addGraph();
-	ui.rt_plot->graph(0)->rescaleAxes();
-	ui.rt_plot->axisRect()->setupFullAxesBox();
+void RTKComThread::run() {
+	cout << "RTK 스레드가 생성되었습니다.\n";
+	comRTK();
 }
 
-void Ariadne::Paint_school() {
+RTKComThread::RTKComThread() {
+	ui = Ariadne::getUI();
+	Paint_base();
+	Paint_school();
+	ui->rt_plot->replot();
+}
+
+void RTKComThread::Paint_base() // 기본 축 설정
+{
+	ui->rt_plot->addGraph();
+	ui->rt_plot->graph(0)->rescaleAxes();
+	ui->rt_plot->axisRect()->setupFullAxesBox();
+}
+
+void RTKComThread::Paint_school() {
 	ifstream gpsfile("C:\\Users\\bokyung\\Desktop\\Autonomous\\txtfile\\filteredMapSch.txt");   //littleUTM , largeUTM, 30up, 123123, techALL,filteredMapSch
 
 	char line[200];
@@ -267,22 +275,22 @@ void Ariadne::Paint_school() {
 	}
 	gpsfile.close();
 	
-	ui.rt_plot->xAxis->setRange(450589, 450700);// range min to max // 상하좌우 20
-	ui.rt_plot->yAxis->setRange(3951700, 3951800);
+	ui->rt_plot->xAxis->setRange(450589, 450700);// range min to max // 상하좌우 20
+	ui->rt_plot->yAxis->setRange(3951700, 3951800);
 
 	QCPScatterStyle myScatter2; // 빈 원, 검은색, 사이즈 5
 	myScatter2.setShape(QCPScatterStyle::ssCircle);
 	myScatter2.setPen(QPen(Qt::black));
 	myScatter2.setSize(5);
-	ui.rt_plot->graph(0)->setScatterStyle(myScatter2);
-	ui.rt_plot->addGraph();
+	ui->rt_plot->graph(0)->setScatterStyle(myScatter2);
+	ui->rt_plot->addGraph();
 
-	ui.rt_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
-	ui.rt_plot->graph(0)->setData(x, y);
-	ui.rt_plot->replot();
-	ui.rt_plot->update();
+	ui->rt_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
+	ui->rt_plot->graph(0)->setData(x, y);
+	ui->rt_plot->replot();
+	ui->rt_plot->update();
 
-	ifstream gpsfile1("C:\\Qt\\txtfile\\filteredMapSch_link.csv");
+	ifstream gpsfile1("C:\\Users\\bokyung\\Desktop\\Autonomous\\txtfile\\filteredMapSch_link.csv");
 	char line1[200];
 	string tap1;
 	vector<string> vec1;
@@ -308,21 +316,12 @@ void Ariadne::Paint_school() {
 	gpsfile1.close();
 }
 
-
-void HeroNeverDies() {
-	_gps.ClosePort();
-	if (_gps.OpenPort(L"COM4")) {
-		_gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
-		_gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
-	}
-}
-
-void Ariadne::Paint_school_rt() {
+void RTKComThread::comRTK() {
 	QVector<double> temp1;
 	QVector<double> temp2;
 	QVector<double> store_x;
 	QVector<double> store_y;
-	if (_gps.OpenPort(L"COM4")) {
+	if (_gps.OpenPort(L"COM6")) {
 
 		_gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
 		_gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
@@ -331,10 +330,14 @@ void Ariadne::Paint_school_rt() {
 		string tap2;
 		vector<string> vec;
 
+		cout << "gps 스레드 실행" << endl;
 		while (1) {
 			BYTE * pByte = new BYTE[2028];
 
 			if (_gps.ReadByte(pByte, 2028)) {
+				
+				cout << "readbyte" << endl;
+				dataContainer->updateValue_gps_status();
 				pByte[2027] = '\0';
 
 				const char * p = (const char*)pByte;
@@ -366,19 +369,19 @@ void Ariadne::Paint_school_rt() {
 							temp2.push_back(lng);
 							//store_x.push_back(lat);
 							//store_y.push_back(lng);
-							ui.rt_plot->xAxis->setRange(lat - 10, lat + 10);// range min to max // 상하좌우 20
-							ui.rt_plot->yAxis->setRange(lng - 10, lng + 10);  //
+							ui->rt_plot->xAxis->setRange(lat - 10, lat + 10);// range min to max // 상하좌우 20
+							ui->rt_plot->yAxis->setRange(lng - 10, lng + 10);  //
 
 							QCPScatterStyle myScatter4; //꽉찬 원, 빨간색, 사이즈 10
 							myScatter4.setShape(QCPScatterStyle::ssDisc);
 							myScatter4.setPen(QPen(Qt::red));
 							myScatter4.setSize(5);
-							ui.rt_plot->graph(1)->setScatterStyle(myScatter4);
-							ui.rt_plot->addGraph();
-							ui.rt_plot->graph(1)->setLineStyle(QCPGraph::lsNone);
-							ui.rt_plot->graph(1)->setData(temp1, temp2);
-							ui.rt_plot->replot();
-							ui.rt_plot->update();
+							ui->rt_plot->graph(1)->setScatterStyle(myScatter4);
+							ui->rt_plot->addGraph();
+							ui->rt_plot->graph(1)->setLineStyle(QCPGraph::lsNone);
+							ui->rt_plot->graph(1)->setData(temp1, temp2);
+							ui->rt_plot->replot();
+							ui->rt_plot->update();
 							temp1.clear();
 							temp2.clear();
 
@@ -412,6 +415,27 @@ void Ariadne::Paint_school_rt() {
 			}
 
 		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void HeroNeverDies() {
+	_gps.ClosePort();
+	if (_gps.OpenPort(L"COM6")) {
+		_gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
+		_gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
 	}
 }
 
@@ -594,16 +618,4 @@ bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double headin
 	else {
 		return false;
 	}
-}
-
-
-void RTKComThread::comRTK() {
-	Ariadne ariadne;
-	ariadne.Paint_school_rt();
-}
-
-
-void RTKComThread::run() {
-	cout << "RTK 스레드가 생성되었습니다.\n";
-	comRTK();
 }
