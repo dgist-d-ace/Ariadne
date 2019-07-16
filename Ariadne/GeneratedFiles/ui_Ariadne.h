@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'Ariadne.ui'
 **
-** Created by: Qt User Interface Compiler version 5.12.3
+** Created by: Qt User Interface Compiler version 5.12.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -20,7 +20,6 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QSlider>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTabWidget>
 #include <QtWidgets/QTextBrowser>
@@ -65,13 +64,8 @@ public:
     QPushButton *pushButton_11;
     QPushButton *pushButton_12;
     QPushButton *pushButton_13;
-    QSlider *verticalSlider;
-    QLabel *label_9;
-    QLabel *label_10;
-    QLineEdit *GearInput;
-    QLineEdit *SpeedInput;
-    QLabel *label_11;
-    QLineEdit *lineEdit_8;
+    QComboBox *comboBox_6;
+    QPushButton *Btn_gearInput;
     QWidget *tab_2;
     QTextBrowser *textBrowser;
     QPushButton *pushButton;
@@ -101,7 +95,7 @@ public:
     {
         if (AriadneClass->objectName().isEmpty())
             AriadneClass->setObjectName(QString::fromUtf8("AriadneClass"));
-        AriadneClass->resize(1203, 868);
+        AriadneClass->resize(1198, 859);
         centralWidget = new QWidget(AriadneClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         groupBox = new QGroupBox(centralWidget);
@@ -181,7 +175,7 @@ public:
         plainTextEdit->setGeometry(QRect(10, 640, 1171, 161));
         tabWidget = new QTabWidget(centralWidget);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
-        tabWidget->setGeometry(QRect(970, 80, 211, 221));
+        tabWidget->setGeometry(QRect(970, 80, 211, 191));
         tab = new QWidget();
         tab->setObjectName(QString::fromUtf8("tab"));
         pushButton_10 = new QPushButton(tab);
@@ -196,28 +190,12 @@ public:
         pushButton_13 = new QPushButton(tab);
         pushButton_13->setObjectName(QString::fromUtf8("pushButton_13"));
         pushButton_13->setGeometry(QRect(20, 60, 51, 51));
-        verticalSlider = new QSlider(tab);
-        verticalSlider->setObjectName(QString::fromUtf8("verticalSlider"));
-        verticalSlider->setGeometry(QRect(160, 10, 22, 41));
-        verticalSlider->setOrientation(Qt::Vertical);
-        label_9 = new QLabel(tab);
-        label_9->setObjectName(QString::fromUtf8("label_9"));
-        label_9->setGeometry(QRect(20, 120, 64, 15));
-        label_10 = new QLabel(tab);
-        label_10->setObjectName(QString::fromUtf8("label_10"));
-        label_10->setGeometry(QRect(10, 140, 64, 15));
-        GearInput = new QLineEdit(tab);
-        GearInput->setObjectName(QString::fromUtf8("GearInput"));
-        GearInput->setGeometry(QRect(80, 120, 113, 21));
-        SpeedInput = new QLineEdit(tab);
-        SpeedInput->setObjectName(QString::fromUtf8("SpeedInput"));
-        SpeedInput->setGeometry(QRect(80, 140, 113, 21));
-        label_11 = new QLabel(tab);
-        label_11->setObjectName(QString::fromUtf8("label_11"));
-        label_11->setGeometry(QRect(10, 170, 64, 15));
-        lineEdit_8 = new QLineEdit(tab);
-        lineEdit_8->setObjectName(QString::fromUtf8("lineEdit_8"));
-        lineEdit_8->setGeometry(QRect(80, 170, 113, 21));
+        comboBox_6 = new QComboBox(tab);
+        comboBox_6->setObjectName(QString::fromUtf8("comboBox_6"));
+        comboBox_6->setGeometry(QRect(20, 120, 94, 22));
+        Btn_gearInput = new QPushButton(tab);
+        Btn_gearInput->setObjectName(QString::fromUtf8("Btn_gearInput"));
+        Btn_gearInput->setGeometry(QRect(120, 120, 71, 28));
         tabWidget->addTab(tab, QString());
         tab_2 = new QWidget();
         tab_2->setObjectName(QString::fromUtf8("tab_2"));
@@ -230,7 +208,7 @@ public:
         pushButton->setGeometry(QRect(970, 10, 211, 61));
         groupBox_4 = new QGroupBox(centralWidget);
         groupBox_4->setObjectName(QString::fromUtf8("groupBox_4"));
-        groupBox_4->setGeometry(QRect(970, 310, 211, 321));
+        groupBox_4->setGeometry(QRect(970, 280, 211, 351));
         label_2 = new QLabel(groupBox_4);
         label_2->setObjectName(QString::fromUtf8("label_2"));
         label_2->setGeometry(QRect(20, 150, 64, 15));
@@ -285,7 +263,7 @@ public:
         AriadneClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AriadneClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1203, 26));
+        menuBar->setGeometry(QRect(0, 0, 1198, 26));
         AriadneClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(AriadneClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -296,7 +274,7 @@ public:
 
         retranslateUi(AriadneClass);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(AriadneClass);
@@ -328,9 +306,7 @@ public:
         pushButton_11->setText(QApplication::translate("AriadneClass", "\342\226\274", nullptr));
         pushButton_12->setText(QApplication::translate("AriadneClass", "\342\226\266", nullptr));
         pushButton_13->setText(QApplication::translate("AriadneClass", "\342\227\200", nullptr));
-        label_9->setText(QApplication::translate("AriadneClass", "GEAR", nullptr));
-        label_10->setText(QApplication::translate("AriadneClass", "SPEED", nullptr));
-        label_11->setText(QApplication::translate("AriadneClass", "STEER", nullptr));
+        Btn_gearInput->setText(QApplication::translate("AriadneClass", "gear input", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("AriadneClass", "ManualMode", nullptr));
         textBrowser->setHtml(QApplication::translate("AriadneClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"

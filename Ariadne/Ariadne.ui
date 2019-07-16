@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1203</width>
-    <height>868</height>
+    <width>1198</width>
+    <height>859</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -327,11 +327,11 @@
       <x>970</x>
       <y>80</y>
       <width>211</width>
-      <height>221</height>
+      <height>191</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -389,86 +389,27 @@
        <string>◀</string>
       </property>
      </widget>
-     <widget class="QSlider" name="verticalSlider">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
-        <y>10</y>
-        <width>22</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_9">
+     <widget class="QComboBox" name="comboBox_6">
       <property name="geometry">
        <rect>
         <x>20</x>
         <y>120</y>
-        <width>64</width>
-        <height>15</height>
+        <width>94</width>
+        <height>22</height>
        </rect>
       </property>
-      <property name="text">
-       <string>GEAR</string>
-      </property>
      </widget>
-     <widget class="QLabel" name="label_10">
+     <widget class="QPushButton" name="Btn_gearInput">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>140</y>
-        <width>64</width>
-        <height>15</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>SPEED</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="GearInput">
-      <property name="geometry">
-       <rect>
-        <x>80</x>
+        <x>120</x>
         <y>120</y>
-        <width>113</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="SpeedInput">
-      <property name="geometry">
-       <rect>
-        <x>80</x>
-        <y>140</y>
-        <width>113</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_11">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>170</y>
-        <width>64</width>
-        <height>15</height>
+        <width>71</width>
+        <height>28</height>
        </rect>
       </property>
       <property name="text">
-       <string>STEER</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEdit_8">
-      <property name="geometry">
-       <rect>
-        <x>80</x>
-        <y>170</y>
-        <width>113</width>
-        <height>21</height>
-       </rect>
+       <string>gear input</string>
       </property>
      </widget>
     </widget>
@@ -513,9 +454,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>970</x>
-      <y>310</y>
+      <y>280</y>
       <width>211</width>
-      <height>321</height>
+      <height>351</height>
      </rect>
     </property>
     <property name="title">
@@ -722,7 +663,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1203</width>
+     <width>1198</width>
      <height>26</height>
     </rect>
    </property>
