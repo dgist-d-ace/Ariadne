@@ -1,6 +1,8 @@
 /// This cpp and h file are for Lidar Communcation, vector calculation
 /// made by Junho Jeong, JunK Cho
 /// this LidarFun.cpp & h are combined with ObejectVector & LastofLidar in LOL.sln
+
+
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_NONSTDC_NO_DEPRECATE
 #define _CRT_SECURE_NO_WARNINGS
@@ -10,7 +12,6 @@
 #include <iostream>
 
 using namespace std;
-using namespace cv;
 
 LastOfLiDAR::LastOfLiDAR()
 {
@@ -499,16 +500,16 @@ void LastOfLiDAR::ConvertRawToRTheta()
     }
 }
 
-void LastOfLiDAR::Conversion(vector<pair<int, double> > &vecRTheta, queue<vector<Point2d> > &finQVecXY, int num)
+void LastOfLiDAR::Conversion(vector<pair<int, double> > &vecRTheta, queue<vector<cv::Point2d> > &finQVecXY, int num)
 {
     vector<pair<int, double> > vecRT = vecRTheta;
 
-    vector<Point2d> vecXY;
+    vector<cv::Point2d> vecXY;
 
     for (int i = 0; i < vecRT.size(); ++i) { //R, Theta to X, Y
         double deg = SICK_SCAN_DEG_START + (double)vecRT[i].first * (SICK_SCAN_DEG_RESOLUTION / 1000.0); //0도부터 180도까지 0.25도 간격
 
-        Point2d xyTemp(0, 0);
+        cv::Point2d xyTemp(0, 0);
 
         //radian, degree 확인 필수!!!!!!!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         //r, theta -> x, y
@@ -539,7 +540,7 @@ void LastOfLiDAR::Conversion(vector<pair<int, double> > &vecRTheta, queue<vector
     finQVecXY.push(vecXY);
 }
 
-bool LastOfLiDAR::Average(queue<vector<Point2d> > &finQVecXY, vector<Point2d> &finVecXY, int num)
+bool LastOfLiDAR::Average(queue<vector<cv::Point2d> > &finQVecXY, vector<cv::Point2d> &finVecXY, int num)
 {
     if (finQVecXY.size() < num) {
         finVecXY = finQVecXY.back();
@@ -547,16 +548,16 @@ bool LastOfLiDAR::Average(queue<vector<Point2d> > &finQVecXY, vector<Point2d> &f
         return false;
     }
 
-    queue<vector<Point2d> > qVecXY = finQVecXY;
+    queue<vector<cv::Point2d> > qVecXY = finQVecXY;
 
-    vector<Point2d> finAverVecXY;
+    vector<cv::Point2d> finAverVecXY;
 
     for (int i = 0; i < qVecXY.front().size(); i++) {
-        queue<vector<Point2d> > qVecXYTemp = qVecXY;
-        Point2d averVecXY(0, 0);
+        queue<vector<cv::Point2d> > qVecXYTemp = qVecXY;
+        cv::Point2d averVecXY(0, 0);
 
         for (int j = 0; j < num; j++) {
-            vector<Point2d> vecXY = qVecXYTemp.front();
+            vector<cv::Point2d> vecXY = qVecXYTemp.front();
 
             averVecXY.x += vecXY[i].x;
             averVecXY.y += vecXY[i].y;
@@ -575,12 +576,12 @@ bool LastOfLiDAR::Average(queue<vector<Point2d> > &finQVecXY, vector<Point2d> &f
     return true;
 }
 
-void LastOfLiDAR::Clustering(vector<Point2d> &finVecXY, queue<vector<vector<double> > > &finLiDARData)
+void LastOfLiDAR::Clustering(vector<cv::Point2d> &finVecXY, queue<vector<vector<double> > > &finLiDARData)
 {
-    vector<Point2d> vecXY = finVecXY;
+    vector<cv::Point2d> vecXY = finVecXY;
 
-    vector<Point2d> objPoint;
-    vector<vector<Point2d> > objPointSet;
+    vector<cv::Point2d> objPoint;
+    vector<vector<cv::Point2d> > objPointSet;
 
     //두 점 사이의 거리 및 점 그룹화
     for (int i = 0; i < vecXY.size() - 1; ++i) {
@@ -641,15 +642,15 @@ void LastOfLiDAR::Clustering(vector<Point2d> &finVecXY, queue<vector<vector<doub
     */
     //각 그룹 물체화
     for (int i = 0; i < objPointSet.size(); i++) {
-        vector<Point2d> objPoint = objPointSet[i];
+        vector<cv::Point2d> objPoint = objPointSet[i];
 
         if (objPoint.size() < 3) {
             continue;
         }
 
-        Point2d minPoint = objPoint.front();
-        Point2d rightPoint = objPoint.front();
-        Point2d leftPoint = objPoint.back();
+        cv::Point2d minPoint = objPoint.front();
+        cv::Point2d rightPoint = objPoint.front();
+        cv::Point2d leftPoint = objPoint.back();
 
         double distMin = sqrt(pow(minPoint.x, 2) + pow(minPoint.y, 2));
 
@@ -667,7 +668,7 @@ void LastOfLiDAR::Clustering(vector<Point2d> &finVecXY, queue<vector<vector<doub
 
         //삼각형의 외심 및 원 구하기
         double rightMidX, rightMidY, leftMidX, leftMidY, slopeRight, slopeLeft; //오른쪽, 왼쪽 선분의 중점, 기울기
-        Point2d cirCen; //물체를 말하는 원의 중심
+        cv::Point2d cirCen; //물체를 말하는 원의 중심
 
         if (minIndex == 0 || minIndex == objPoint.size() - 1) { //점 2개의 원
             cirCen.x = (rightPoint.x + leftPoint.x) / 2;
@@ -710,7 +711,7 @@ void LastOfLiDAR::Clustering(vector<Point2d> &finVecXY, queue<vector<vector<doub
     finLiDARData.push(objDataSet);
 }
 
-bool LastOfLiDAR::Vector(queue<vector<vector<double> > > &finLiDARData, vector<Point2d> &finVecData, vector<bool> &finBoolData) //플렛폼 속도, 조향각 참조 추가
+bool LastOfLiDAR::Vector(queue<vector<vector<double> > > &finLiDARData, vector<cv::Point2d> &finVecData, vector<bool> &finBoolData) //플렛폼 속도, 조향각 참조 추가
 {
     if (finLiDARData.size() < 2) {
         return false;
@@ -718,7 +719,7 @@ bool LastOfLiDAR::Vector(queue<vector<vector<double> > > &finLiDARData, vector<P
 
     queue<vector<vector<double> > > LiDARData = finLiDARData;
 
-    vector<Point2d> vecData;
+    vector<cv::Point2d> vecData;
     vector<bool> boolData;
 
     /*
@@ -766,7 +767,7 @@ bool LastOfLiDAR::Vector(queue<vector<vector<double> > > &finLiDARData, vector<P
         }
 
         if (minVecDist < SICK_SCAN_VEC_SAME_OBJECT) { //i와 j는 같은 오브젝트이다 이마리야
-            Point2d minVecDistXY(minVecDistX, minVecDistY);
+            cv::Point2d minVecDistXY(minVecDistX, minVecDistY);
 
             vecData.push_back(minVecDistXY);
 
@@ -785,10 +786,10 @@ bool LastOfLiDAR::Vector(queue<vector<vector<double> > > &finLiDARData, vector<P
     return true;
 }
 
-void LastOfLiDAR::DrawData(vector<Point2d> &finVecXY, queue<vector<vector<double> > > &finLiDARData, vector<Point2d> &finVecData, vector<bool> &finBoolData, Mat &img)
+void LastOfLiDAR::DrawData(vector<cv::Point2d> &finVecXY, queue<vector<vector<double> > > &finLiDARData, vector<cv::Point2d> &finVecData, vector<bool> &finBoolData, cv::Mat &img)
 {
-    vector<Point2d> vecXY = finVecXY;
-    vector<Point2d> vecXYDraw;
+    vector<cv::Point2d> vecXY = finVecXY;
+    vector<cv::Point2d> vecXYDraw;
 
     double cenX = img.cols * 0.5, cenY = img.rows * 0.9;
     double scale = cenY / (SICK_SCAN_ROI_Y + 200); //창 크기를 위한 스케일 조정(준규 노트북 : 0.35)
@@ -796,7 +797,7 @@ void LastOfLiDAR::DrawData(vector<Point2d> &finVecXY, queue<vector<vector<double
     double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
     double rightEndX = cenX + SICK_SCAN_ROI_X * scale;
     double platEndY = cenY - 50;
-    Point2d center(cenX, cenY), leftEnd(leftEndX, cenY), rightEnd(rightEndX, cenY), platEnd(cenX, platEndY);
+    cv::Point2d center(cenX, cenY), leftEnd(leftEndX, cenY), rightEnd(rightEndX, cenY), platEnd(cenX, platEndY);
 
     line(img, leftEnd, rightEnd, CV_RGB(150, 150, 150), 2);
     circle(img, center, 5, CV_RGB(255, 255, 255), -1); //실제 LiDAR 위치
@@ -805,7 +806,7 @@ void LastOfLiDAR::DrawData(vector<Point2d> &finVecXY, queue<vector<vector<double
         double xyDrawX = center.x + vecXY[i].x * scale;
         double xyDrawY = center.y - vecXY[i].y * scale;
 
-        Point2d xyDraw(xyDrawX, xyDrawY);
+        cv::Point2d xyDraw(xyDrawX, xyDrawY);
         vecXYDraw.push_back(xyDraw);
     }
 
@@ -823,14 +824,14 @@ void LastOfLiDAR::DrawData(vector<Point2d> &finVecXY, queue<vector<vector<double
         double cirCenX = center.x + objDataSet[i][0] * scale;
         double cirCenY = center.y - objDataSet[i][1] * scale;
 
-        Point2d cirCen(cirCenX, cirCenY); //물체를 나타내는 원 그리기
+        cv::Point2d cirCen(cirCenX, cirCenY); //물체를 나타내는 원 그리기
 
         circle(img, cirCen, objDataSet[i][2] * scale, CV_RGB(150, 0, 150), 2);
     }
 
     arrowedLine(img, center, platEnd, CV_RGB(0, 150, 150), 2); //라이다 본체 벡터
 
-    vector<Point2d> vecData = finVecData;
+    vector<cv::Point2d> vecData = finVecData;
 
     for (int i = 0; i < vecData.size(); i++) {
         double arrowCenX = center.x + objDataSet[i][0] * scale;
@@ -839,19 +840,91 @@ void LastOfLiDAR::DrawData(vector<Point2d> &finVecXY, queue<vector<vector<double
         double arrowPointX = arrowCenX + vecData[i].x;
         double arrowPointY = arrowCenY - vecData[i].y;
 
-        Point2d arrowCen(arrowCenX, arrowCenY); //화살표 꼬리 좌표
-        Point2d arrowPoint(arrowPointX, arrowPointY); //화살표 머리 좌표
+        cv::Point2d arrowCen(arrowCenX, arrowCenY); //화살표 꼬리 좌표
+        cv::Point2d arrowPoint(arrowPointX, arrowPointY); //화살표 머리 좌표
 
         arrowedLine(img, arrowCen, arrowPoint, CV_RGB(150, 150, 0), 2, 8, 0, 0.3); //물체의 벡터
 
         if (finBoolData[i] == true) {
-            putText(img, "True", arrowCen, FONT_HERSHEY_SIMPLEX, 1, CV_RGB(255, 255, 255));
+            putText(img, "True", arrowCen, cv::FONT_HERSHEY_SIMPLEX, 1, CV_RGB(255, 255, 255));
         }
         else if (finBoolData[i] == false) {
-            putText(img, "False", arrowCen, FONT_HERSHEY_SIMPLEX, 1, CV_RGB(255, 255, 255));
+            putText(img, "False", arrowCen, cv::FONT_HERSHEY_SIMPLEX, 1, CV_RGB(255, 255, 255));
         }
     }
 }
+
+/// ----------------------------- OBJECTVECTOR.cpp ------------------------------------------ ///
+bool ObjectVector::PlatformVector(queue<vector<vector<double> > > &finLiDARData, vector<cv::Point2d> &finVecData, vector<bool> &finBoolData) //플렛폼 속도, 조향각 참조 추가
+{
+    if (finLiDARData.size() < 2) {
+        return false;
+    }
+
+    double ActiveR = 120; //문턱값 = 120mm
+    double PSteer = 0; //-2000~2000, actual steering degree * 71, 오차 4%, negative is left
+    double PSpeed = 0; //0~200 ex) 15km/h시 150이 input
+    double PDist = PSpeed * 1.12; // ***mm*** 25Hz
+    double PDistX = PDist * sin(PSteer);
+    double PDistY = PDist * cos(PSteer); // (PDistX, PDistY) 단위 mm
+
+    queue<vector<vector<double> > > LiDARData = finLiDARData;
+
+    vector<cv::Point2d> vecData;
+    vector<bool> boolData;
+
+    for (int i = 0; i < LiDARData.back().size(); i++) {
+        for (int j = 0; j < LiDARData.front().size(); j++) {
+            double vecDistX = LiDARData.back()[i][0] - LiDARData.front()[j][0];
+            double vecDistY = LiDARData.back()[i][1] - LiDARData.front()[j][1]; //(vecDistX, vecDistY) 단위 mm
+            double vecDist = sqrt(pow(vecDistX, 2) + pow(vecDistY, 2)); //한 물체가 1프레임동안 이동한 거리
+            //double vecSpeed = vecDist / 0.02 / 0.01; // m/s 헿 이거도 필요없네
+
+            if (vecDist < ActiveR) { //i와 j는 같은 오브젝트이다 이마리야
+                cv::Point2d vecDistXY(vecDistX, vecDistY);
+                vecData.push_back(vecDistXY);
+
+                if (abs(PDistX + vecDistX) < 30 && abs(PDistY + vecDistY) < 30) { // 이면 정적이다 2마리야
+                    boolData.push_back(false);
+                }
+                else {
+                    boolData.push_back(true);
+                }
+            }
+        }
+    }
+
+    finVecData = vecData;
+    finBoolData = boolData;
+
+    return true;
+}
+
+void ObjectVector::DrawVector(queue<vector<vector<double> > > &finLiDARData, vector<cv::Point2d> &finVecData, cv::Mat &img)
+{
+    cv::Point2i center(683, 700), center2(683, 600);
+    double scale = 0.35; //창 크기를 위한 스케일 조정(준규 노트북 : 0.35)
+
+    arrowedLine(img, center, center2, CV_RGB(0, 150, 150), 2);
+
+    vector<vector<double> > LiDARData = finLiDARData.back();
+    vector<cv::Point2d> vecData = finVecData;
+
+    for (int i = 0; i < vecData.size(); i++) {
+        double arrowCenX = center.x + LiDARData[i][0] * scale;
+        double arrowCenY = center.y - LiDARData[i][1] * scale;
+
+        double arrowPointX = arrowCenX + vecData[i].x;
+        double arrowPointY = arrowCenY - vecData[i].y;
+
+        cv::Point2d arrowCen(arrowCenX, arrowCenY); //화살표 꼬리 좌표
+        cv::Point2d arrowPoint(arrowPointX, arrowPointY); //화살표 머리 좌표
+
+        arrowedLine(img, arrowCen, arrowPoint, CV_RGB(150, 150, 0), 2, 8, 0, 0.3);
+    }
+}
+
+
 
 /*
 < How to set up OpenCV in VS studio >

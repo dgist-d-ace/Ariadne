@@ -227,6 +227,7 @@ Ui::AriadneClass* Ariadne::getUI() { return ui;}
 #define Eoff 500000
 #define k0 0.9996
 #define radi 6378137
+#define COM L"COM5" // 라이다 comport
 
 bool sign; // 외적의 부호 , true =양수, false = 음수
 
@@ -322,7 +323,7 @@ void RTKComThread::comRTK() {
 	QVector<double> temp2;
 	QVector<double> store_x;
 	QVector<double> store_y;
-	if (_gps.OpenPort(L"COM6")) {
+	if (_gps.OpenPort(COM)) {
 
 		_gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
 		_gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
@@ -419,22 +420,9 @@ void RTKComThread::comRTK() {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 void HeroNeverDies() {
 	_gps.ClosePort();
-	if (_gps.OpenPort(L"COM6")) {
+	if (_gps.OpenPort(COM)) {
 		_gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
 		_gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
 	}

@@ -2,6 +2,7 @@
 
 #include "ComPlatform.h"
 #include "atlstr.h"
+#include "LidarFun.h"
 
 #include <QObject>
 #include <QThread>
@@ -51,8 +52,6 @@ public slots:
 
 };
 
-
-
 class LidarComThread : public QThread
 {
 	Q_OBJECT
@@ -61,24 +60,16 @@ protected:
 public:
 	DataContainer *dataContainer;
 	
-	void comLidar();
+	int comLidar();
 	void run();
 
 private:
 	/// void run() Q_DECL_OVERRIDE; //thread 생성 후 자동 실행되는 함수
 
 signals: /// thread가 보낼 broadcast 함수들
-	//void AorMChanged(int);
-	//void EStopChanged(int);
-	//void GearChanged(int);
-	//void SpeedChanged(int);
-	//void SteerChanged(int);
-	//void BreakChanged(int);
-	//void EncChanged(int);
-	//void AliveChanged(int);
+	
 
 public slots:
-
 };
 
 

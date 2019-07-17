@@ -51,16 +51,55 @@ void PlatformComThread::run() {
     comPlatform();
 }
 
-void LidarComThread::comLidar() {
+int LidarComThread::comLidar() {
+    
+    LastOfLiDAR lol;
+    ObjectVector ov;
 
+    if (!lol.Initialize()) {
+        cout << "Connect ERROR!!!" << endl;
+        return -1;
+    }
 
+    lol.StartCapture();
+
+    while (1) {
+        if (lol.m_bDataAvailable) {
+            lol.imgLiDAR = cv::Mat::zeros(768, 1366, CV_8UC3);
+
+            lol.GetValidDataRTheta(lol.validScans);
+            lol.Conversion(lol.validScans, lol.finQVecXY, 5);
+            lol.Average(lol.finQVecXY, lol.finVecXY, 5);
+            lol.Clustering(lol.finVecXY, lol.finLiDARData);
+            lol.Vector(lol.finLiDARData, lol.finVecData, lol.finBoolData);
+            lol.DrawData(lol.finVecXY, lol.finLiDARData, lol.finVecData, lol.finBoolData, lol.imgLiDAR);
+
+            //ov.PlatformVector(lol.finLiDARData, ov.finVecData, ov.finBoolData);
+            //ov.DrawVector(lol.finLiDARData, ov.finVecData, lol.imgLiDAR);
+
+            cout << "Reset" << endl;
+
+            cv::imshow("DrawLiDARData", lol.imgLiDAR);
+        }
+
+        int key = cv::waitKey(1);
+
+        if (key == 27) {
+            break;
+        }
+    }
+
+    lol.StopCapture();
+    lol.UnInitialize();
+    return 0;
 }
 
 void LidarComThread::run() {
 	cout << "라이다 스레드가 생성되었습니다.\n";
-	comLidar();
+	//comLidar();
 
 }
+
 
 
 /// SensorStatus class를 사용하지 않아 필요 없게 됨
