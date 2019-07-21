@@ -78,7 +78,6 @@ public:
     LidarComThread *lidarComThread;
 	RTKComThread *rtkComThread;
 
-    CString QStringtoCString(QString);
     DataContainer *dataContainer;
 
 	QTimer* TimerSensorStatus;
@@ -95,8 +94,12 @@ public slots:
     void clicked_btn_mission0();
     CString ConvertQstringtoCString(QString);
     void clicked_btn_confirm();
-    void clicked_btn_up();
+    void clicked_speed_up();
+    void clicked_speed_down();
+    void clicked_steer_left();
+    void clicked_steer_right();
     void gear_input();
+    void clicked_E_stop();
 
     void onAorMChanged(int);
     void onEStopChanged(int);

@@ -13,12 +13,11 @@ void PlatformComThread::comPlatform() // 추후 인자로 CString이 들어갈 것
 {
     dataContainer = DataContainer::getInstance();
     //플랫폼 통신 코드입니다.
-    CString comPort;
     ComPlatform _serial;
 
     std::cout << "플랫폼 커뮤니케이션 시작\n";
 
-    if (_serial.OpenPort(L"COM1"))   // 실제 사용될 COM Port 를 넣어야합니다.  
+    if (_serial.OpenPort(L"COM6"))   // 실제 사용될 COM Port 를 넣어야합니다.  
     {
         _serial.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _serial.SetCommunicationTimeouts(0, 0, 0, 0, 0);
@@ -48,6 +47,7 @@ void PlatformComThread::comPlatform() // 추후 인자로 CString이 들어갈 것
 
 void PlatformComThread::run() {
     cout << "플랫폼 스레드가 생성되었습니다.\n";
+    CString temp;
     comPlatform();
 }
 

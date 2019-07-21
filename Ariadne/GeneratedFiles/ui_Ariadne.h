@@ -191,7 +191,7 @@ public:
         Btn_mission5->setGeometry(QRect(130, 40, 101, 31));
         plainTextEdit = new QPlainTextEdit(centralWidget);
         plainTextEdit->setObjectName(QString::fromUtf8("plainTextEdit"));
-        plainTextEdit->setGeometry(QRect(10, 640, 1171, 161));
+        plainTextEdit->setGeometry(QRect(10, 640, 1171, 141));
         tabWidget = new QTabWidget(centralWidget);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
         tabWidget->setGeometry(QRect(970, 80, 211, 191));

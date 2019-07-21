@@ -19,7 +19,7 @@ Ariadne::Ariadne(QWidget *parent)
 	rtkComThread = new RTKComThread;
     ///  -------------------  UI 선택지 넣기 및 꾸미기 ------------------------- ///
 
-    for (int i = 0; i < 5; i++) // combobox에 선택지 넣기. 해당 선택지들이 이후 통신용 컴포트에 사용됨.
+    for (int i = 1; i < 7; i++) // combobox에 선택지 넣기. 해당 선택지들이 이후 통신용 컴포트에 사용됨.
     {
         ui->comboBox->addItem("COM" + QString::number(i));
         ui->comboBox_2->addItem("COM" + QString::number(i));
@@ -35,6 +35,11 @@ Ariadne::Ariadne(QWidget *parent)
     QObject::connect(ui->Btn_Mission0, SIGNAL(clicked()), this, SLOT(clicked_btn_mission0()));
     QObject::connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_btn_confirm()));
     QObject::connect(ui->Btn_gearInput, SIGNAL(clicked()), this, SLOT(gear_input()));
+    QObject::connect(ui->Btn_up, SIGNAL(clicked()), this, SLOT(clicked_speed_up()));
+    QObject::connect(ui->Btn_down, SIGNAL(clicked()), this, SLOT(clicked_speed_down()));
+    QObject::connect(ui->Btn_left, SIGNAL(clicked()), this, SLOT(clicked_steer_left()));
+    QObject::connect(ui->Btn_right, SIGNAL(clicked()), this, SLOT(clicked_steer_right()));
+    QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_E_stop()));
 
     /// ------------------- thread and signals for UI update ----------------------///
     connect(platformComThread, SIGNAL(AorMChanged(int)), this, SLOT(onAorMChanged(int)));
@@ -73,12 +78,10 @@ void Ariadne::clicked_btn_confirm() {
     ui->plainTextEdit->appendPlainText("I love you");
     ui->plainTextEdit->appendPlainText("I love you very much");
     ui->plainTextEdit->appendPlainText("will you going to me together?");
-
-    /// platformComThread->start();
-    /// platformComThread->comPlatform(QStringtoCString(Temp1));*/
     
-    // 쓰레드 생성하기    
     platformComThread->start();
+    //platformComThread->run(ConvertQstringtoCString(Temp1));
+    ui->plainTextEdit->appendPlainText("I thanks you so much How can I appreciate it?");
 
 	lidarComThread->start();
 
@@ -99,31 +102,26 @@ void Ariadne::gear_input() /// gear input 버튼을 누르면 해당 combobox의 내용에 �
     QString qs;
     qs = ui->comboBox_6->currentText();
     if (qs == "front") { dataContainer->setValue_UtoP_GEAR(0); }
-    if (qs == "JoongLib") { dataContainer->setValue_UtoP_GEAR(1); }
+    else if (qs == "JoongLib") { dataContainer->setValue_UtoP_GEAR(1); }
     else { dataContainer->setValue_UtoP_GEAR(2); }
 }
 
-void Ariadne::keyPressEvent(QKeyEvent *event) {
-    if (event->key() == Qt::Key_Left) { dataContainer->setValue_UtoP_STEER(dataContainer->getValue_UtoP_STEER() - 100); }
-    if (event->key() == Qt::Key_Right) { dataContainer->setValue_UtoP_STEER(dataContainer->getValue_UtoP_STEER() + 100); }
-    if (event->key() == Qt::Key_Up) { dataContainer->setValue_UtoP_SPEED(dataContainer->getValue_UtoP_SPEED() + 1); }
-    if (event->key() == Qt::Key_Down) { dataContainer->setValue_UtoP_SPEED(dataContainer->getValue_UtoP_SPEED() - 1); }
-    if (event->key() == Qt::Key_Enter) // enter키를 누르면 Estop이 풀렸다 걸렸다 함
-    {
-        if (dataContainer->getValue_UtoP_E_STOP() == 0) { dataContainer->setValue_UtoP_E_STOP(1); }
-        else { dataContainer->setValue_UtoP_E_STOP(0); }
-    }
+void Ariadne::clicked_speed_up() { dataContainer->setValue_UtoP_SPEED(dataContainer->getValue_UtoP_SPEED() + 1); }
+void Ariadne::clicked_speed_down() { dataContainer->setValue_UtoP_SPEED(dataContainer->getValue_UtoP_SPEED() - 1); }
+void Ariadne::clicked_steer_left() { dataContainer->setValue_UtoP_STEER(dataContainer->getValue_UtoP_STEER() - 100); }
+void Ariadne::clicked_steer_right() { dataContainer->setValue_UtoP_STEER(dataContainer->getValue_UtoP_STEER() + 100); }
+void Ariadne::clicked_E_stop() 
+{
+    if (dataContainer->getValue_UtoP_E_STOP() == 0) { dataContainer->setValue_UtoP_E_STOP(1); }
+    else { dataContainer->setValue_UtoP_E_STOP(0); }
 }
 
-CString Ariadne::QStringtoCString(QString qs)
-{
-    /* https:  //stackoverflow.com/questions/4214369/how-to-convert-qstring-to-stdstring */
-    std::string utf8_text = qs.toUtf8().constData();
-    CString cs(utf8_text.c_str());
-
-    std::cout << utf8_text << std::endl;
-
-    return cs;
+void Ariadne::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_Left) { clicked_steer_left(); }
+    if (event->key() == Qt::Key_Right) { clicked_steer_right(); }
+    if (event->key() == Qt::Key_Up) { clicked_speed_up(); }
+    if (event->key() == Qt::Key_Down) { clicked_speed_down(); }
+    if (event->key() == Qt::Key_Enter) { clicked_E_stop(); }
 }
 
 ///  _    _ _____    _    _ _____  _____       _______ ______ 
