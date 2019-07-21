@@ -29,7 +29,7 @@
     <widget class="QComboBox" name="comboBox">
      <property name="geometry">
       <rect>
-       <x>120</x>
+       <x>80</x>
        <y>20</y>
        <width>94</width>
        <height>21</height>
@@ -39,7 +39,7 @@
     <widget class="QComboBox" name="comboBox_2">
      <property name="geometry">
       <rect>
-       <x>120</x>
+       <x>80</x>
        <y>50</y>
        <width>94</width>
        <height>22</height>
@@ -49,7 +49,7 @@
     <widget class="QComboBox" name="comboBox_3">
      <property name="geometry">
       <rect>
-       <x>120</x>
+       <x>80</x>
        <y>80</y>
        <width>94</width>
        <height>22</height>
@@ -59,92 +59,17 @@
     <widget class="QComboBox" name="comboBox_4">
      <property name="geometry">
       <rect>
-       <x>120</x>
+       <x>80</x>
        <y>110</y>
        <width>94</width>
        <height>22</height>
       </rect>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="comboBox_5">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>140</y>
-       <width>94</width>
-       <height>22</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>20</y>
-       <width>101</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Platform</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>50</y>
-       <width>101</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Camera1</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_3">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>80</y>
-       <width>101</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Camera2</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_4">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>110</y>
-       <width>101</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>LiDAR</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_5">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>140</y>
-       <width>101</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>GPS</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_2">
      <property name="geometry">
       <rect>
-       <x>120</x>
+       <x>130</x>
        <y>170</y>
        <width>93</width>
        <height>28</height>
@@ -152,6 +77,146 @@
      </property>
      <property name="text">
       <string>확인</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_9">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>64</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Platform</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_10">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>50</y>
+       <width>64</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Camera1</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_11">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>80</y>
+       <width>64</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Camera2</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_12">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>64</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>GPS</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_13">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>140</y>
+       <width>64</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>LiDAR</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="status_platform">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>20</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="status_camera1">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>50</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="status_camera2">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>80</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_6">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>110</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_7">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>140</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_5">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>140</y>
+       <width>94</width>
+       <height>22</height>
+      </rect>
      </property>
     </widget>
    </widget>
@@ -317,7 +382,7 @@
       <x>10</x>
       <y>640</y>
       <width>1171</width>
-      <height>161</height>
+      <height>141</height>
      </rect>
     </property>
    </widget>
@@ -337,7 +402,7 @@
      <attribute name="title">
       <string>ManualMode</string>
      </attribute>
-     <widget class="QPushButton" name="pushButton_10">
+     <widget class="QPushButton" name="Btn_up">
       <property name="geometry">
        <rect>
         <x>80</x>
@@ -350,7 +415,7 @@
        <string>▲</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_11">
+     <widget class="QPushButton" name="Btn_down">
       <property name="geometry">
        <rect>
         <x>80</x>
@@ -363,7 +428,7 @@
        <string>▼</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_12">
+     <widget class="QPushButton" name="Btn_right">
       <property name="geometry">
        <rect>
         <x>140</x>
@@ -376,7 +441,7 @@
        <string>▶</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_13">
+     <widget class="QPushButton" name="Btn_left">
       <property name="geometry">
        <rect>
         <x>20</x>

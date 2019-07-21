@@ -1,6 +1,7 @@
 #include "Ariadne.h"
 #include <iostream>
 #include "atlstr.h"
+#include "qevent.h"
 
 // HyeAhn View와 같은 역할을 함
 using namespace std;
@@ -27,10 +28,13 @@ Ariadne::Ariadne(QWidget *parent)
         ui->comboBox_5->addItem("COM" + QString::number(i));
     } // combobox 관련: https://www.bogotobogo.com/Qt/Qt5_QComboBox.php
 
+    ui->comboBox_6->addItems({ "front" , "JoongLib", "HooJin"}); /// gaer 선택지 input
+
     /// --------------------- Qobject와 버튼 connect ---------------------------------///
 
     QObject::connect(ui->Btn_Mission0, SIGNAL(clicked()), this, SLOT(clicked_btn_mission0()));
     QObject::connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_btn_confirm()));
+    QObject::connect(ui->Btn_gearInput, SIGNAL(clicked()), this, SLOT(gear_input()));
 
     /// ------------------- thread and signals for UI update ----------------------///
     connect(platformComThread, SIGNAL(AorMChanged(int)), this, SLOT(onAorMChanged(int)));
@@ -87,6 +91,28 @@ void Ariadne::clicked_btn_confirm() {
 
 void Ariadne::clicked_btn_mission0() {
     //mission.doMission0();
+}
+
+
+void Ariadne::gear_input() /// gear input 버튼을 누르면 해당 combobox의 내용에 맞게 gear value를 수정함
+{
+    QString qs;
+    qs = ui->comboBox_6->currentText();
+    if (qs == "front") { dataContainer->setValue_UtoP_GEAR(0); }
+    if (qs == "JoongLib") { dataContainer->setValue_UtoP_GEAR(1); }
+    else { dataContainer->setValue_UtoP_GEAR(2); }
+}
+
+void Ariadne::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_Left) { dataContainer->setValue_UtoP_STEER(dataContainer->getValue_UtoP_STEER() - 100); }
+    if (event->key() == Qt::Key_Right) { dataContainer->setValue_UtoP_STEER(dataContainer->getValue_UtoP_STEER() + 100); }
+    if (event->key() == Qt::Key_Up) { dataContainer->setValue_UtoP_SPEED(dataContainer->getValue_UtoP_SPEED() + 1); }
+    if (event->key() == Qt::Key_Down) { dataContainer->setValue_UtoP_SPEED(dataContainer->getValue_UtoP_SPEED() - 1); }
+    if (event->key() == Qt::Key_Enter) // enter키를 누르면 Estop이 풀렸다 걸렸다 함
+    {
+        if (dataContainer->getValue_UtoP_E_STOP() == 0) { dataContainer->setValue_UtoP_E_STOP(1); }
+        else { dataContainer->setValue_UtoP_E_STOP(0); }
+    }
 }
 
 CString Ariadne::QStringtoCString(QString qs)
@@ -227,7 +253,7 @@ Ui::AriadneClass* Ariadne::getUI() { return ui;}
 #define Eoff 500000
 #define k0 0.9996
 #define radi 6378137
-#define COM L"COM5" // 라이다 comport
+#define COM L"COM5" // GPS comport
 
 bool sign; // 외적의 부호 , true =양수, false = 음수
 

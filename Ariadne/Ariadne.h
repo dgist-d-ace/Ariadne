@@ -89,11 +89,14 @@ public:
 private:
 	static Ui::AriadneClass* ui;
     void updateSensorStatus();
+    void keyPressEvent(QKeyEvent *);
 
 public slots:
     void clicked_btn_mission0();
     CString ConvertQstringtoCString(QString);
     void clicked_btn_confirm();
+    void clicked_btn_up();
+    void gear_input();
 
     void onAorMChanged(int);
     void onEStopChanged(int);

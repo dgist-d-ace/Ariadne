@@ -64,7 +64,6 @@ public:
 	void run();
 
 private:
-	/// void run() Q_DECL_OVERRIDE; //thread 생성 후 자동 실행되는 함수
 
 signals: /// thread가 보낼 broadcast 함수들
 	
@@ -74,3 +73,4 @@ public slots:
 
 
 
+   

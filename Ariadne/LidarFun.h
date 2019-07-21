@@ -2,10 +2,10 @@
 
 /// LastofLidar.h ¿ë
 
-#define _WINSOCK2API_
-#define WIN32_LEAN_AND_MEAN
-#define WINSOCK_API_LINKAGE
-#define _WINSOCK_DEPRECATED
+//#define _WINSOCK2API_
+//#define WIN32_LEAN_AND_MEAN
+// #define WINSOCK_API_LINKAGE
+//#define _WINSOCK_DEPRECATED
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
@@ -16,6 +16,7 @@
 #include <WinSock2.h>   					    // <----- stdafx.h
 #pragma comment(lib,"ws2_32.lib")				// <----- stdafx.h
 #include <Windows.h>
+
 
 #ifdef _DEBUG
 #define LOG_OUT(fmt) printf( "[%s:%d] %s\n",__FUNCTION__,__LINE__,fmt);

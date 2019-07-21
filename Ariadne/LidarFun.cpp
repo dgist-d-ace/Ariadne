@@ -8,7 +8,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "LidarFun.h"
-#include <Ws2tcpip.h>
 #include <iostream>
 
 using namespace std;
