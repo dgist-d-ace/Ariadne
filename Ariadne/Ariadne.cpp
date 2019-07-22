@@ -83,7 +83,6 @@ void Ariadne::clicked_btn_confirm() {
     ui->plainTextEdit->appendPlainText("I love you very much");
     ui->plainTextEdit->appendPlainText("will you going on a date with me?");
 
-    platformComThread->start();
     //platformComThread->run(ConvertQstringtoCString(Temp1));
     ui->plainTextEdit->appendPlainText("I thanks you so much How can I appreciate it?");
 
@@ -93,7 +92,7 @@ void Ariadne::clicked_btn_confirm() {
 	if(!lidarComThread->isRunning())
 		lidarComThread->start();
 
-	if(rtkComThread->isRunning())
+	if(!rtkComThread->isRunning())
 		rtkComThread->start();
 
     //scnnThread->start();
@@ -209,30 +208,30 @@ void Ariadne::updateSensorStatus()
 
     if (dataContainer->getValue_platform_status() > 5)
     {
-		cout << "�÷����� �����Ǿ����ϴ�.\n";
+		//cout << "�÷����� �����Ǿ����ϴ�.\n";
     }
     else if (dataContainer->getValue_platform_status() > 0)
     {
-        cout << "�÷����� ������ �����ǰ� �ֽ��ϴ�.\n";
+        //cout << "�÷����� ������ �����ǰ� �ֽ��ϴ�.\n";
     }
     else if (dataContainer->getValue_platform_status() == 0)
     {
-        cout << "�÷����� ������ �����Ͽ����ϴ�.\n";
+        //cout << "�÷����� ������ �����Ͽ����ϴ�.\n";
     }
 	dataContainer->setValue_platform_status(0);
 
     // LiDAR ���� ����
     if (dataContainer->getValue_lidar_status() > 5)
     {
-        cout << "���̴ٿ� �����Ǿ����ϴ�.\n";
+        //cout << "���̴ٿ� �����Ǿ����ϴ�.\n";
     }
     else if (dataContainer->getValue_lidar_status() > 0)
     {
-        cout << "���̴ٿ� ������ �����ǰ� �ֽ��ϴ�.\n";
+        //cout << "���̴ٿ� ������ �����ǰ� �ֽ��ϴ�.\n";
     }
     else if (dataContainer->getValue_lidar_status() == 0)
     {
-        cout << "���̴ٿ� ������ �����Ͽ����ϴ�.\n";
+        //cout << "���̴ٿ� ������ �����Ͽ����ϴ�.\n";
     }
 
     dataContainer->setValue_lidar_status(0);
@@ -257,15 +256,15 @@ void Ariadne::updateSensorStatus()
     // GPS ��������
     if (dataContainer->getValue_gps_status() > 5)
     {
-        cout << "GPS�� �����Ǿ����ϴ�.\n";
+        //cout << "GPS�� �����Ǿ����ϴ�.\n";
     }
     else if (dataContainer->getValue_gps_status() > 0)
     {
-        cout << "GPS�� ������ �����ǰ� �ֽ��ϴ�.\n";
+        //cout << "GPS�� ������ �����ǰ� �ֽ��ϴ�.\n";
     }
     else if (dataContainer->getValue_gps_status() == 0)
     {
-        cout << "GPS�� ������ �����Ͽ����ϴ�.\n";
+        //cout << "GPS�� ������ �����Ͽ����ϴ�.\n";
     }
 	dataContainer->setValue_gps_status(0);
 }
@@ -289,16 +288,17 @@ vector <double>UTM(double lat, double lng);
 bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double heading);
 
 void RTKComThread::run() {
-	cout << "RTK �����尡 �����Ǿ����ϴ�.\n";
+	cout << "RTK run.\n";
 	comRTK();
 }
 
 RTKComThread::RTKComThread() {
 	ui = Ariadne::getUI();
 	dataContainer = DataContainer::getInstance();
-	Paint_base();
-	Paint_school();
-	ui->rt_plot->replot();
+    cout << "rtk creating\n";
+	//Paint_base();
+	//Paint_school();
+	//ui->rt_plot->replot();
 }
 
 void RTKComThread::Paint_base() // �⺻ �� ����
@@ -371,12 +371,13 @@ void RTKComThread::Paint_school() {
 }
 
  void RTKComThread::comRTK() {
-	if (_gps.OpenPort(L"COM6")) {
+	if (_gps.OpenPort(L"COM5")) {
 
 		_gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
 		_gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
 
 		while (1) {
+            cout << "in RTK" << endl;
 			BYTE*pByte = new BYTE[128];
 
 			if (_gps.ReadByte(pByte, 128)) {

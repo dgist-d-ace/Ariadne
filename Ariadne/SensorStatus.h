@@ -13,10 +13,7 @@
 #include <iterator>
 #include <QtCore>
 #include <Thread>
-#include <torch/script.h>
-#include <torch/torch.h>
-#include <torch/data/transforms/tensor.h>
-#include <opencv2/imgproc/imgproc.hpp>
+
 
 
 using namespace std;
@@ -88,18 +85,6 @@ public:
     DataContainer *dataContainer;
     void run();
     //int mainfun();
-};
-
-
-class ScnnThread : public QThread
-{
-    Q_OBJECT
-protected:
-
-public:
-    DataContainer *dataContainer;
-    void run();
-    int mainfun();
 
 private:
 
