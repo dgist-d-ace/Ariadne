@@ -17,6 +17,7 @@ Ariadne::Ariadne(QWidget *parent)
     platformComThread = new PlatformComThread;
 	lidarComThread = new LidarComThread;
 	rtkComThread = new RTKComThread;
+    scnnThread = new ScnnThread;
     ///  -------------------  UI ������ �ֱ� �� �ٹ̱� ------------------------- ///
 
     for (int i = 1; i < 7; i++) // combobox�� ������ �ֱ�. �ش� ���������� ���� ���ſ� ����Ʈ�� ������.
@@ -95,7 +96,7 @@ void Ariadne::clicked_btn_confirm() {
 	if(!rtkComThread->isRunning())
 		rtkComThread->start();
 
-    //scnnThread->start();
+    scnnThread->start();
     //mainfun();
 
 	TimerSensorStatus = new QTimer(this);

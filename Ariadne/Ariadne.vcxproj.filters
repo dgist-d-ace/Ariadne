@@ -60,6 +60,9 @@
     <ClCompile Include="LidarFun.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scnn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Ariadne.h">
@@ -99,6 +102,9 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="LidarFun.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scnn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

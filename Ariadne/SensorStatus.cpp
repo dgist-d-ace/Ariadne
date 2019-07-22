@@ -102,7 +102,7 @@ void LidarComThread::run() {
 
 void ScnnThread::run() { 
 	cout << "scnn thread run\n";
-    //mainfun();
+    mainfun();
 }
 
 

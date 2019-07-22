@@ -14,6 +14,8 @@
 #include <QtCore>
 #include <Thread>
 
+#include "scnn.h"
+
 
 
 using namespace std;
@@ -84,7 +86,6 @@ protected:
 public:
     DataContainer *dataContainer;
     void run();
-    //int mainfun();
 
 private:
 
