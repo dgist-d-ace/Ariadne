@@ -88,7 +88,7 @@
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_WIDGETS_LIB;QT_PRINTSUPPORT_LIB;_WINSOCK2API_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\DY\Downloads\libtorch-win-shared-with-deps-latest\libtorch\include;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include;.\GeneratedFiles;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtPrintSupport;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include\opencv2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\opencv-3.4.5\opencv-3.4.5\build\include\opencv2;C:\opencv-3.4.5\opencv-3.4.5\build\include;C:\Users\DY\Downloads\libtorch-win-shared-with-deps-latest\libtorch\include;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include;.\GeneratedFiles;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtPrintSupport;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include\opencv2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat />
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -96,14 +96,14 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>C:\Users\DY\Downloads\libtorch-win-shared-with-deps-latest\libtorch\lib;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\x64\vc15\lib;$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\opencv-3.4.5\opencv-3.4.5\build\x64\vc15\lib;C:\Users\DY\Downloads\libtorch-win-shared-with-deps-latest\libtorch\lib;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\x64\vc15\lib;$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;Qt5PrintSupport.lib;opencv_world345.lib;opencv_img_hash345.lib;torch.lib;caffe2_module_test_dynamic.lib;caffe2.lib;onnx.lib;onnx_proto.lib;libprotoc.lib;libprotobuf.lib;cpuinfo.lib;clog.lib;libprotobuf-lite.lib;c10.lib;foxi_loader.lib;foxi_dummy.lib;onnxifi_dummy.lib;onnxifi_loader.lib;qtmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <QtMoc>
       <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
       <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
-      <IncludePath>C:\Users\DY\Downloads\libtorch-win-shared-with-deps-latest\libtorch\include;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include;.\GeneratedFiles;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtPrintSupport;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include\opencv2;%(AdditionalIncludeDirectories)</IncludePath>
+      <IncludePath>C:\opencv-3.4.5\opencv-3.4.5\build\include\opencv2;C:\opencv-3.4.5\opencv-3.4.5\build\include;C:\Users\DY\Downloads\libtorch-win-shared-with-deps-latest\libtorch\include;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include;.\GeneratedFiles;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtPrintSupport;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include\opencv2;%(AdditionalIncludeDirectories)</IncludePath>
       <Define>UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_WIDGETS_LIB;QT_PRINTSUPPORT_LIB;_WINSOCK2API_;%(PreprocessorDefinitions)</Define>
     </QtMoc>
     <QtUic>

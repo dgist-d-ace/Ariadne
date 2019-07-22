@@ -14,8 +14,6 @@ void PlatformComThread::comPlatform() // 추후 인자로 CString이 들어갈 것
     //플랫폼 통신 코드입니다.
     ComPlatform _serial;
 
-    std::cout << "플랫폼 커뮤니케이션 시작\n";
-
     if (_serial.OpenPort(L"COM6"))   // 실제 사용될 COM Port 를 넣어야합니다.  
     {
         _serial.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
@@ -45,7 +43,7 @@ void PlatformComThread::comPlatform() // 추후 인자로 CString이 들어갈 것
 }
 
 void PlatformComThread::run() {
-    cout << "플랫폼 스레드가 생성되었습니다.\n";
+    cout << "Platform Thread run\n";
     CString temp;
     comPlatform();
 	emit(PlatformExit());
@@ -65,6 +63,9 @@ int LidarComThread::comLidar() {
 
     while (1) {
         if (lol.m_bDataAvailable) {
+
+			dataContainer->updateValue_lidar_status();
+
             lol.imgLiDAR = cv::Mat::zeros(768, 1366, CV_8UC3);
 
             lol.GetValidDataRTheta(lol.validScans);
@@ -95,12 +96,12 @@ int LidarComThread::comLidar() {
 }
 
 void LidarComThread::run() {
-	cout << "라이다 스레드가 생성되었습니다.\n";
+	cout << "Lidar Thread run\n";
 	comLidar();
 }
 
 void ScnnThread::run() { 
-    cout << "scnn thread" << endl;
+	cout << "scnn thread run\n";
     //mainfun();
 }
 

@@ -382,6 +382,8 @@ void RTKComThread::Paint_school() {
 
 			if (_gps.ReadByte(pByte, 128)) {
 
+				dataContainer->updateValue_gps_status();
+
 				pByte[127] = '\0';
 				char*p = (char*)pByte;
 
