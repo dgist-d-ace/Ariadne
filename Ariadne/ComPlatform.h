@@ -24,7 +24,7 @@ private:
 public:
 	ComPlatform();
 	~ComPlatform();
-	void MyCommRead();
+	bool MyCommRead();
 	void MyCommWrite();
 };
 

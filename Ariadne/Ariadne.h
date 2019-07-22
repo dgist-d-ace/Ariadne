@@ -22,7 +22,7 @@ protected:
 
 public:
 	DataContainer *dataContainer;
-	Ui::AriadneClass * ui;
+	Ui::AriadneClass *ui;
 
 	RTKComThread();
 
@@ -53,14 +53,8 @@ int f_brake = 0;
 	/// void run() Q_DECL_OVERRIDE; //thread 생성 후 자동 실행되는 함수
 
 signals: /// thread가 보낼 broadcast 함수들
-	//void AorMChanged(int);
-	//void EStopChanged(int);
-	//void GearChanged(int);
-	//void SpeedChanged(int);
-	//void SteerChanged(int);
-	//void BreakChanged(int);
-	//void EncChanged(int);
-	//void AliveChanged(int);
+	void RTKExit();
+
 
 public slots:
 
@@ -102,7 +96,9 @@ public slots:
     void onBreakChanged(int);
     void onSteerChanged(int);
     void onEncChanged(int);
-
+	void onRTKExit();
+	void onLidarExit();
+	void onPlatformExit();
 
 };
 

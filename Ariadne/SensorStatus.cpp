@@ -25,7 +25,8 @@ void PlatformComThread::comPlatform() // 추후 인자로 CString이 들어갈 것
 
         while (loopStatusPlatform)
         {
-            _serial.MyCommRead();
+			if (_serial.MyCommRead()) {}
+			else { break; }
             _serial.MyCommWrite();
             dataContainer->updateValue_platform_status();
 
@@ -49,6 +50,7 @@ void PlatformComThread::comPlatform() // 추후 인자로 CString이 들어갈 것
 void PlatformComThread::run() {
     cout << "플랫폼 스레드가 생성되었습니다.\n";
     comPlatform();
+	emit(PlatformExit());
 }
 
 void LidarComThread::comLidar() {
@@ -59,7 +61,6 @@ void LidarComThread::comLidar() {
 void LidarComThread::run() {
 	cout << "라이다 스레드가 생성되었습니다.\n";
 	comLidar();
-
 }
 
 <<<<<<< Updated upstream

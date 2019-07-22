@@ -90,11 +90,42 @@ private:
 	//
 	//gps:
 	//
-	int m_missiontrigger = 0;
-	int m_gps_geofence = 0;
+	double m_gps_roll = 0;
+	double m_gps_pitch = 0;
+	double m_gps_yaw = 0;
+	double m_gps_accelX = 0;
+	double m_gps_accelY = 0;
+	double m_gps_accelZ = 0;
 
-	QMutex mtx_missiontrigger;
-	QMutex mtx_gps_geofence;
+	int m_gps_Valid = 0;
+	double m_gps_latitude = 0;
+	double m_gps_longitude = 0;
+	double m_gps_velocity = 0;
+	double m_gps_heading = 0;
+
+	double m_gps_flted_x = 0;
+	double m_gps_flted_y = 0;
+	double m_gps_flted_Vx = 0;
+	double m_gps_flted_Vy = 0;
+
+	QMutex mtx_imu_roll;
+	QMutex mtx_imu_pitch;
+	QMutex mtx_imu_yaw;
+	QMutex mtx_imu_accelX;
+	QMutex mtx_imu_accelY;
+	QMutex mtx_imu_accelZ;
+
+	QMutex mtx_gps_valid;
+	QMutex mtx_gps_latitude;
+	QMutex mtx_gps_longitude;
+	QMutex mtx_gps_velocity;
+	QMutex mtx_gps_heading;
+
+	QMutex mtx_gps_flted_x;
+	QMutex mtx_gps_flted_y;
+	QMutex mtx_gps_flted_vx;
+	QMutex mtx_gps_flted_vy;
+
 
 public:
 
@@ -198,11 +229,43 @@ public:
 	//
 	//	GPS
 	//
+	double getValue_imu_roll();
+	double getValue_imu_pitch();
+	double getValue_imu_yaw();
+	double getValue_imu_accelX();
+	double getValue_imu_accelY();
+	double getValue_imu_accelZ();
 
-	int get_missiontrigger();
-	void set_missiontrigger(int value);
+	int getValue_gps_valid();
+	double getValue_gps_latitude();
+	double getValue_gps_longitude();
+	double getValue_gps_velocity();
+	double getValue_gps_heading();
 
-	int get_gps_geofence();
-	void set_gps_geofence(int value);
+	double getValue_flted_x();
+	double getValue_flted_y();
+	double getValue_flted_Vx();
+	double getValue_flted_Vy();
 
+	void setValue_imu_roll(double value);
+	void setValue_imu_pitch(double value);
+	void setValue_imu_yaw(double value);
+	void setValue_imu_accelX(double value);
+	void setValue_imu_accelY(double value);
+	void setValue_imu_accelZ(double value);
+
+	void resetValue_gps_valid();
+	void count_gps_valid();
+	void setValue_gps_latitude(double value);
+	void setValue_gps_longitude(double value);
+	void setValue_gps_velocity(double value);
+	void setValue_gps_heading(double value);
+
+	void setValue_flted_x(double value);
+	void setValue_flted_y(double value);
+	void setValue_flted_Vx(double value);
+	void setValue_flted_Vy(double value);
+
+	void show_imu();
+	void show_gps();
 };

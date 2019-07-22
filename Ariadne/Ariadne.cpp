@@ -40,6 +40,10 @@ Ariadne::Ariadne(QWidget *parent)
     connect(platformComThread, SIGNAL(SteerChanged(int)), this, SLOT(onSteerChanged(int)));
     connect(platformComThread, SIGNAL(BreakChanged(int)), this, SLOT(onBreakChanged(int)));
     connect(platformComThread, SIGNAL(EncChanged(int)), this, SLOT(onEncChanged(int)));
+
+	connect(platformComThread, SIGNAL(PlatformExit()), this, SLOT(onPlatformExit()));
+	connect(lidarComThread, SIGNAL(LidarExit()), this, SLOT(onLidarExit()));
+	connect(rtkComThread, SIGNAL(RTKExit()), this, SLOT(onRTKExit()));
 }
 
 // comport를 열고 닫을때 CString이 이용되므로 QString을 CString으로 바꿔주는 함수를 만들었다.
@@ -73,12 +77,16 @@ void Ariadne::clicked_btn_confirm() {
     /// platformComThread->start();
     /// platformComThread->comPlatform(QStringtoCString(Temp1));*/
     
-    // 쓰레드 생성하기    
-    platformComThread->start();
+    // 쓰레드 생성하기
 
-	lidarComThread->start();
+	if(!platformComThread->isRunning())
+		platformComThread->start();
 
-	rtkComThread->start();
+	if(!lidarComThread->isRunning())
+		lidarComThread->start();
+
+	if(rtkComThread->isRunning())
+		rtkComThread->start();
 
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
@@ -142,6 +150,21 @@ void Ariadne::onEncChanged(int Number)
 {
     ui->lcdNumber_7->display(Number);
 } 
+
+void Ariadne::onLidarExit()
+{
+	lidarComThread->start();
+}
+
+void Ariadne::onPlatformExit()
+{
+	platformComThread->start();
+}
+
+void Ariadne::onRTKExit() 
+{
+	rtkComThread->start();
+}
 
 /// TODO: GPS location display 추가
 
@@ -317,121 +340,61 @@ void RTKComThread::Paint_school() {
 	gpsfile1.close();
 }
 
-void RTKComThread::comRTK() {
-	QVector<double> temp1;
-	QVector<double> temp2;
-	QVector<double> store_x;
-	QVector<double> store_y;
+ void RTKComThread::comRTK() {
 	if (_gps.OpenPort(L"COM6")) {
 
 		_gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
 		_gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
 
-		string tap;
-		string tap2;
-		vector<string> vec;
-
-		cout << "gps 스레드 실행" << endl;
 		while (1) {
-			BYTE * pByte = new BYTE[2028];
+			BYTE*pByte = new BYTE[128];
 
-			if (_gps.ReadByte(pByte, 2028)) {
-				
-				cout << "readbyte" << endl;
-				dataContainer->updateValue_gps_status();
-				pByte[2027] = '\0';
+			if (_gps.ReadByte(pByte, 128)) {
 
-				const char * p = (const char*)pByte;
-				//cout << p;
+				pByte[127] = '\0';
+				char*p = (char*)pByte;
 
-				stringstream str(p);
+				char* context = NULL;
+				char* tok = strtok_s(p, "$", &context);
+				tok = strtok_s(NULL, "$", &context);
 
-				while (getline(str, tap, '\n')) {
-					//cout << tap;
-					stringstream qwe(tap);
+				char* tok2 = strtok_s(tok, ",", &context);
+				if (tok2[2] == 'R' && tok2[3] == 'M' && tok2[4] == 'C') {
+					string temp;
+					vector<string> list;
 
-					while (getline(qwe, tap2, ',')) {
-						vec.push_back(tap2);
-					}
-					//cout << vec[0] << endl;
-
-					if (vec.size() > 8) {
-						if (vec[0] == "$GNRMC" && vec[2] == "A") {
-							//ofile << vec[0] << ',' << vec[3] << ',' << vec[5]  << endl;
-							_lat = ((atof(vec[3].c_str()) - 3500) / 60) + 35; // 35랑 128은 상황에 따라 바꿔줘야함
-							_lng = ((atof(vec[5].c_str()) - 12800) / 60) + 128;
-							heading = atof(vec[8].c_str());
-
-							vector<double >utm = UTM(_lat, _lng);
-							lat = utm[0];
-							lng = utm[1];
-
-							temp1.push_back(lat);
-							temp2.push_back(lng);
-							//store_x.push_back(lat);
-							//store_y.push_back(lng);
-							ui->rt_plot->xAxis->setRange(lat - 10, lat + 10);// range min to max // 상하좌우 20
-							ui->rt_plot->yAxis->setRange(lng - 10, lng + 10);  //
-
-							QCPScatterStyle myScatter4; //꽉찬 원, 빨간색, 사이즈 10
-							myScatter4.setShape(QCPScatterStyle::ssDisc);
-							myScatter4.setPen(QPen(Qt::red));
-							myScatter4.setSize(5);
-							ui->rt_plot->graph(1)->setScatterStyle(myScatter4);
-							ui->rt_plot->addGraph();
-							ui->rt_plot->graph(1)->setLineStyle(QCPGraph::lsNone);
-							ui->rt_plot->graph(1)->setData(temp1, temp2);
-							ui->rt_plot->replot();
-							ui->rt_plot->update();
-							temp1.clear();
-							temp2.clear();
-
-							//QCPScatterStyle myScatter5; //엑스표시, 빨간색, 사이즈 10
-							//myScatter5.setShape(QCPScatterStyle::ssCross);
-							//myScatter5.setPen(QPen(Qt::red));
-							//myScatter5.setSize(5);
-							//ui->rt_plot->graph(2)->setScatterStyle(myScatter5);
-							//ui->rt_plot->addGraph();
-							//ui->rt_plot->graph(2)->setLineStyle(QCPGraph::lsNone);
-							//ui->rt_plot->graph(2)->setData(store_x, store_y);
-							//ui->rt_plot->replot();
-							//ui->rt_plot->update();
-
-							//Geofence = GEOFENCE(lat,lng,map_link,heading);
-							//if (Geofence ==false){
-							//    GF = "safe" ;
-							//}
-							//else{
-							//    GF = "danger";
-							//}
-
-							//ui->label->setText(GF);
+					for (int i = 0; i < strlen(context); i++) {
+						if (context[i] != ',') {
+							temp += context[i];
+						}
+						else {
+							list.push_back(temp);
+							temp.clear();
 						}
 					}
-					vec.clear();
+
+					if (list.at(1) == "V") {
+						dataContainer->count_gps_valid();
+					}
+					else if (list.at(1) == "A") {
+						dataContainer->resetValue_gps_valid();
+						dataContainer->setValue_gps_latitude(atof(list.at(2).c_str()));
+						dataContainer->setValue_gps_longitude(atof(list.at(4).c_str()));
+						dataContainer->setValue_gps_velocity(atof(list.at(6).c_str()));
+						dataContainer->setValue_gps_heading(atof(list.at(7).c_str()));
+					}
 				}
 			}
 			else {
-				HeroNeverDies();
+				_gps.ClosePort();
+				break;
 			}
-
 		}
 	}
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+/*
 void HeroNeverDies() {
 	_gps.ClosePort();
 	if (_gps.OpenPort(L"COM6")) {
@@ -439,6 +402,7 @@ void HeroNeverDies() {
 		_gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
 	}
 }
+*/
 
 vector <double>UTM(double lat, double lng) {
 	double lat_rad = lat * PI / 180.0;
