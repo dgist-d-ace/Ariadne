@@ -19,7 +19,7 @@ ComPlatform::~ComPlatform()
 	ClosePort();
 }
 
-void ComPlatform::MyCommRead()
+bool ComPlatform::MyCommRead()
 {
 	BYTE* pByte = new BYTE[36];
 	// 읽는데 성공하면 처리하고  
@@ -70,10 +70,11 @@ void ComPlatform::MyCommRead()
 
 	}
 	else {
-
+		return false;
 	}
 
 	delete pByte;
+	return true;
 }
 
 void ComPlatform::MyCommWrite()

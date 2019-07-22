@@ -167,9 +167,51 @@ void DataContainer::setValue_camera1_steer(int value) { mtx_camera1_steer.lock()
 //
 //	GPS
 //
+double DataContainer::getValue_imu_roll() { mtx_imu_roll.lock(); double temp = m_gps_roll; mtx_imu_roll.unlock(); return temp; }
+double DataContainer::getValue_imu_pitch() { mtx_imu_pitch.lock(); double temp = m_gps_pitch; mtx_imu_pitch.unlock(); return temp; }
+double DataContainer::getValue_imu_yaw() { mtx_imu_yaw.lock(); double temp = m_gps_yaw; mtx_imu_yaw.unlock(); return temp; }
+double DataContainer::getValue_imu_accelX() { mtx_imu_accelX.lock(); double temp = m_gps_accelX; mtx_imu_accelX.unlock(); return temp; }
+double DataContainer::getValue_imu_accelY() { mtx_imu_accelY.lock(); double temp = m_gps_accelY; mtx_imu_accelY.unlock(); return temp; }
+double DataContainer::getValue_imu_accelZ() { mtx_imu_accelZ.lock(); double temp = m_gps_accelZ; mtx_imu_accelZ.unlock(); return temp; }
 
-int DataContainer::get_missiontrigger() { mtx_missiontrigger.lock(); int temp = m_missiontrigger; mtx_missiontrigger.unlock(); return temp; }
-void DataContainer::set_missiontrigger(int value) { mtx_missiontrigger.lock(); m_missiontrigger = value; mtx_missiontrigger.unlock();}
+int DataContainer::getValue_gps_valid() { mtx_gps_valid.lock();	int temp = m_gps_Valid;	mtx_gps_valid.unlock(); return temp; }
+double DataContainer::getValue_gps_latitude() { mtx_gps_latitude.lock(); double temp = m_gps_latitude; mtx_gps_latitude.unlock(); return temp; }
+double DataContainer::getValue_gps_longitude() { mtx_gps_longitude.lock(); double temp = m_gps_longitude; mtx_gps_longitude.unlock(); return temp; }
+double DataContainer::getValue_gps_velocity() { mtx_gps_velocity.lock(); double temp = m_gps_velocity; mtx_gps_velocity.unlock(); return temp; }
+double DataContainer::getValue_gps_heading() { mtx_gps_heading.lock(); double temp = m_gps_heading; mtx_gps_heading.unlock(); return temp; }
 
-int DataContainer::get_gps_geofence() { mtx_gps_geofence.lock(); int temp = m_missiontrigger; mtx_gps_geofence.unlock(); return temp; }
-void DataContainer::set_gps_geofence(int value) { mtx_gps_geofence.lock(); m_gps_geofence = value; mtx_gps_geofence.unlock();}
+double DataContainer::getValue_flted_x() { mtx_gps_flted_x.lock(); double temp = m_gps_flted_x; mtx_gps_flted_x.unlock(); return temp; }
+double DataContainer::getValue_flted_y() { mtx_gps_flted_y.lock(); double temp = m_gps_flted_y; mtx_gps_flted_y.unlock(); return temp; }
+double DataContainer::getValue_flted_Vx() { mtx_gps_flted_vx.lock(); double temp = m_gps_flted_Vx; mtx_gps_flted_vx.unlock(); return temp; }
+double DataContainer::getValue_flted_Vy() { mtx_gps_flted_vy.lock(); double temp = m_gps_flted_Vy; mtx_gps_flted_vy.unlock(); return temp; }
+
+void DataContainer::setValue_imu_roll(double value) { mtx_imu_roll.lock(); m_gps_roll = value; mtx_imu_roll.unlock(); }
+void DataContainer::setValue_imu_pitch(double value) { mtx_imu_pitch.lock(); m_gps_pitch = value; mtx_imu_pitch.unlock(); }
+void DataContainer::setValue_imu_yaw(double value) { mtx_imu_yaw.lock(); m_gps_yaw = value; mtx_imu_yaw.unlock(); }
+void DataContainer::setValue_imu_accelX(double value) { mtx_imu_accelX.lock(); m_gps_accelX = value; mtx_imu_accelX.unlock(); }
+void DataContainer::setValue_imu_accelY(double value) { mtx_imu_accelY.lock(); m_gps_accelY = value; mtx_imu_accelY.unlock(); }
+void DataContainer::setValue_imu_accelZ(double value) { mtx_imu_accelZ.lock(); m_gps_accelZ = value; mtx_imu_accelZ.unlock(); }
+
+void DataContainer::resetValue_gps_valid() { mtx_gps_valid.lock(); m_gps_Valid = 0;mtx_gps_valid.unlock(); }
+void DataContainer::count_gps_valid() { mtx_gps_valid.lock(); m_gps_Valid++; mtx_gps_valid.unlock(); }
+void DataContainer::setValue_gps_latitude(double value) { mtx_gps_latitude.lock(); m_gps_latitude = value; mtx_gps_latitude.unlock(); }
+void DataContainer::setValue_gps_longitude(double value) { mtx_gps_longitude.lock(); m_gps_longitude = value; mtx_gps_longitude.unlock(); }
+void DataContainer::setValue_gps_velocity(double value) { mtx_gps_velocity.lock(); m_gps_velocity = value; mtx_gps_velocity.unlock(); }
+void DataContainer::setValue_gps_heading(double value) { mtx_gps_heading.lock(); m_gps_heading = value; mtx_gps_heading.unlock(); }
+
+void DataContainer::setValue_flted_x(double value) { mtx_gps_flted_x.lock(); m_gps_flted_x = value; mtx_gps_flted_x.unlock(); }
+void DataContainer::setValue_flted_y(double value) { mtx_gps_flted_y.lock(); m_gps_flted_y = value; mtx_gps_flted_y.unlock(); }
+void DataContainer::setValue_flted_Vx(double value) { mtx_gps_flted_vx.lock(); m_gps_flted_Vx = value; mtx_gps_flted_vx.unlock(); }
+void DataContainer::setValue_flted_Vy(double value) { mtx_gps_flted_vy.lock(); m_gps_flted_Vy = value; mtx_gps_flted_vy.unlock(); }
+
+void DataContainer::show_imu()
+{
+	printf("[ imu data | roll : %6.2f pitch : %6.2f yaw : %6.2f accel X : %6.3f accel Y : %6.3f accel Z : %6.3f ]\n",
+		m_gps_roll, m_gps_pitch, m_gps_yaw, m_gps_accelX, m_gps_accelY, m_gps_accelZ);
+}
+
+void DataContainer::show_gps()
+{
+	printf("[ gps data | valid : %u latitude : %6.2f longitude : %6.2f velocity : %6.2f heading : %6.3f ]\n",
+		m_gps_Valid, m_gps_latitude, m_gps_longitude, m_gps_velocity, m_gps_heading);
+}

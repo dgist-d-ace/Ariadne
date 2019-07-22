@@ -46,6 +46,7 @@ signals: /// thread가 보낼 broadcast 함수들
     void BreakChanged(int);
     void EncChanged(int);
     void AliveChanged(int);
+	void PlatformExit();
 
 public slots:
 
@@ -68,14 +69,7 @@ private:
 	/// void run() Q_DECL_OVERRIDE; //thread 생성 후 자동 실행되는 함수
 
 signals: /// thread가 보낼 broadcast 함수들
-	//void AorMChanged(int);
-	//void EStopChanged(int);
-	//void GearChanged(int);
-	//void SpeedChanged(int);
-	//void SteerChanged(int);
-	//void BreakChanged(int);
-	//void EncChanged(int);
-	//void AliveChanged(int);
+	void LidarExit();
 
 public slots:
 
