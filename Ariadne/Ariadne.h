@@ -77,6 +77,7 @@ public:
     PlatformComThread *platformComThread;
     LidarComThread *lidarComThread;
 	RTKComThread *rtkComThread;
+    ScnnThread *scnnThread;
 
     DataContainer *dataContainer;
 
@@ -108,7 +109,5 @@ public slots:
     void onBreakChanged(int);
     void onSteerChanged(int);
     void onEncChanged(int);
-
-
 };
 

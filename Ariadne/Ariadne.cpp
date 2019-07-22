@@ -77,7 +77,7 @@ void Ariadne::clicked_btn_confirm() {
 
     ui->plainTextEdit->appendPlainText("I love you");
     ui->plainTextEdit->appendPlainText("I love you very much");
-    ui->plainTextEdit->appendPlainText("will you going to me together?");
+    ui->plainTextEdit->appendPlainText("will you going on a date with me?");
     
     platformComThread->start();
     //platformComThread->run(ConvertQstringtoCString(Temp1));
@@ -87,9 +87,13 @@ void Ariadne::clicked_btn_confirm() {
 
 	rtkComThread->start();
 
+    //scnnThread->start();
+    //mainfun();
+
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
 	TimerSensorStatus->start(1000);
+
 }
 
 void Ariadne::clicked_btn_mission0() {
