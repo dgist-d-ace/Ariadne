@@ -26,7 +26,10 @@ void PlatformComThread::comPlatform() // 추후 인자로 CString이 들어갈 것
         while (loopStatusPlatform)
         {
 			if (_serial.MyCommRead()) {}
-			else { break; }
+			else { 
+                _serial.ClosePort(); 
+                break;
+            }
             _serial.MyCommWrite();
             dataContainer->updateValue_platform_status();
 
@@ -41,10 +44,8 @@ void PlatformComThread::comPlatform() // 추후 인자로 CString이 들어갈 것
             this->msleep(100);
         }
     }
-    else
-    {
         _serial.ClosePort();
-    }
+
 }
 
 void PlatformComThread::run() {
@@ -63,8 +64,6 @@ void LidarComThread::run() {
 	comLidar();
 }
 
-<<<<<<< Updated upstream
-=======
 void ScnnThread::run() { 
     cout << "scnn thread" << endl;
     //mainfun();
@@ -163,8 +162,6 @@ void ScnnThread::run() {
 //    return 0;
 //}
 
-
->>>>>>> Stashed changes
 
 /// SensorStatus class를 사용하지 않아 필요 없게 됨
 /*
