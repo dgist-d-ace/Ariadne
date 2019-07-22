@@ -11,6 +11,10 @@
 #include <iostream>
 #include <iterator>
 #include <QtCore>
+<<<<<<< Updated upstream
+=======
+#include <Thread>
+>>>>>>> Stashed changes
 
 using namespace std;
 
@@ -78,6 +82,21 @@ signals: /// thread가 보낼 broadcast 함수들
 	//void AliveChanged(int);
 
 public slots:
+<<<<<<< Updated upstream
+=======
+};
+
+
+class ScnnThread : public QThread
+{
+    Q_OBJECT
+protected:
+
+public:
+    DataContainer *dataContainer;
+    void run();
+    //int mainfun();
+>>>>>>> Stashed changes
 
 };
 
