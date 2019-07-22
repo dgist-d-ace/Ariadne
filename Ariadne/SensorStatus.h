@@ -2,6 +2,7 @@
 
 #include "ComPlatform.h"
 #include "atlstr.h"
+#include "LidarFun.h"
 
 #include <QObject>
 #include <QThread>
@@ -11,6 +12,11 @@
 #include <iostream>
 #include <iterator>
 #include <QtCore>
+#include <Thread>
+#include <torch/script.h>
+#include <torch/torch.h>
+#include <torch/data/transforms/tensor.h>
+#include <opencv2/imgproc/imgproc.hpp>
 
 
 using namespace std;
@@ -30,15 +36,15 @@ public:
 	//	//dataContainer = DataContainer::getInstance();
 	//}
 	//~PlatformComThread() {
-	//	cout << "ÇÃ·§Æû ½º·¹µå°¡ Á¾·áµÇ¾ú½À´Ï´Ù.\n";
+	//	cout << "ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½å°¡ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.\n";
 	//	this->wait();
 	//}
 
 
 private:
-	/// void run() Q_DECL_OVERRIDE; //thread »ý¼º ÈÄ ÀÚµ¿ ½ÇÇàµÇ´Â ÇÔ¼ö
+	/// void run() Q_DECL_OVERRIDE; //thread ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½Ô¼ï¿½
 
-signals: /// thread°¡ º¸³¾ broadcast ÇÔ¼öµé
+signals: /// threadï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ broadcast ï¿½Ô¼ï¿½ï¿½ï¿½
     void AorMChanged(int);
     void EStopChanged(int);
     void GearChanged(int);
@@ -53,8 +59,6 @@ public slots:
 
 };
 
-
-
 class LidarComThread : public QThread
 {
 	Q_OBJECT
@@ -62,14 +66,13 @@ protected:
 
 public:
 	DataContainer *dataContainer;
-	
-	void comLidar();
+
+	int comLidar();
 	void run();
 
 private:
-	/// void run() Q_DECL_OVERRIDE; //thread »ý¼º ÈÄ ÀÚµ¿ ½ÇÇàµÇ´Â ÇÔ¼ö
 
-signals: /// thread°¡ º¸³¾ broadcast ÇÔ¼öµé
+signals: /// threadï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ broadcast ï¿½Ô¼ï¿½ï¿½ï¿½
 	void LidarExit();
 
 public slots:
@@ -88,4 +91,20 @@ public:
 };
 
 
+class ScnnThread : public QThread
+{
+    Q_OBJECT
+protected:
 
+public:
+    DataContainer *dataContainer;
+    void run();
+    int mainfun();
+
+private:
+
+signals: /// threadï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ broadcast ï¿½Ô¼ï¿½ï¿½ï¿½
+
+
+public slots:
+};

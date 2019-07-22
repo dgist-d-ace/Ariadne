@@ -9,7 +9,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
-// CString »ç¿ëÇÏ·Á°í ÇÔ
+// CString ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ ï¿½ï¿½
 #include "atlstr.h"
 #include <QString>
 #include <QTimer>
@@ -46,13 +46,13 @@ int f_mode = 1;
 int f_Estop = 0;
 int f_gear = 0;
 int f_speed = 20;
-int f_steer = 0;  //steer ¹Ý´ë·Î³ª¿È
+int f_steer = 0;  //steer ï¿½Ý´ï¿½ï¿½Î³ï¿½ï¿½ï¿½
 int f_brake = 0;
 */
 	void setWritePram(BYTE* writeBuffer);
-	/// void run() Q_DECL_OVERRIDE; //thread »ý¼º ÈÄ ÀÚµ¿ ½ÇÇàµÇ´Â ÇÔ¼ö
+	/// void run() Q_DECL_OVERRIDE; //thread ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½Ô¼ï¿½
 
-signals: /// thread°¡ º¸³¾ broadcast ÇÔ¼öµé
+signals: /// threadï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ broadcast ï¿½Ô¼ï¿½ï¿½ï¿½
 	void RTKExit();
 
 
@@ -71,23 +71,30 @@ public:
     PlatformComThread *platformComThread;
     LidarComThread *lidarComThread;
 	RTKComThread *rtkComThread;
+    ScnnThread *scnnThread;
 
-    CString QStringtoCString(QString);
     DataContainer *dataContainer;
 
 	QTimer* TimerSensorStatus;
 
 	static Ui::AriadneClass* getUI();
-	
+
 
 private:
 	static Ui::AriadneClass* ui;
     void updateSensorStatus();
+    void keyPressEvent(QKeyEvent *);
 
 public slots:
     void clicked_btn_mission0();
     CString ConvertQstringtoCString(QString);
     void clicked_btn_confirm();
+    void clicked_speed_up();
+    void clicked_speed_down();
+    void clicked_steer_left();
+    void clicked_steer_right();
+    void gear_input();
+    void clicked_E_stop();
 
     void onAorMChanged(int);
     void onEStopChanged(int);
@@ -101,4 +108,3 @@ public slots:
 	void onPlatformExit();
 
 };
-

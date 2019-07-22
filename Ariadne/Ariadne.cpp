@@ -1,8 +1,9 @@
 #include "Ariadne.h"
 #include <iostream>
 #include "atlstr.h"
+#include "qevent.h"
 
-// HyeAhn View¿Í °°Àº ¿ªÇÒÀ» ÇÔ
+// HyeAhn Viewï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 using namespace std;
 
 Ui::AriadneClass* Ariadne::ui = new Ui::AriadneClass;
@@ -16,21 +17,29 @@ Ariadne::Ariadne(QWidget *parent)
     platformComThread = new PlatformComThread;
 	lidarComThread = new LidarComThread;
 	rtkComThread = new RTKComThread;
-    ///  -------------------  UI ¼±ÅÃÁö ³Ö±â ¹× ²Ù¹Ì±â ------------------------- ///
+    ///  -------------------  UI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö±ï¿½ ï¿½ï¿½ ï¿½Ù¹Ì±ï¿½ ------------------------- ///
 
-    for (int i = 0; i < 5; i++) // combobox¿¡ ¼±ÅÃÁö ³Ö±â. ÇØ´ç ¼±ÅÃÁöµéÀÌ ÀÌÈÄ Åë½Å¿ë ÄÄÆ÷Æ®¿¡ »ç¿ëµÊ.
+    for (int i = 1; i < 7; i++) // comboboxï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö±ï¿½. ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å¿ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
     {
         ui->comboBox->addItem("COM" + QString::number(i));
         ui->comboBox_2->addItem("COM" + QString::number(i));
         ui->comboBox_3->addItem("COM" + QString::number(i));
         ui->comboBox_4->addItem("COM" + QString::number(i));
         ui->comboBox_5->addItem("COM" + QString::number(i));
-    } // combobox °ü·Ã: https://www.bogotobogo.com/Qt/Qt5_QComboBox.php
+    } // combobox ï¿½ï¿½ï¿½ï¿½: https://www.bogotobogo.com/Qt/Qt5_QComboBox.php
 
-    /// --------------------- Qobject¿Í ¹öÆ° connect ---------------------------------///
+    ui->comboBox_6->addItems({ "front" , "JoongLib", "HooJin"}); /// gaer ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ input
+
+    /// --------------------- Qobjectï¿½ï¿½ ï¿½ï¿½Æ° connect ---------------------------------///
 
     QObject::connect(ui->Btn_Mission0, SIGNAL(clicked()), this, SLOT(clicked_btn_mission0()));
     QObject::connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_btn_confirm()));
+    QObject::connect(ui->Btn_gearInput, SIGNAL(clicked()), this, SLOT(gear_input()));
+    QObject::connect(ui->Btn_up, SIGNAL(clicked()), this, SLOT(clicked_speed_up()));
+    QObject::connect(ui->Btn_down, SIGNAL(clicked()), this, SLOT(clicked_speed_down()));
+    QObject::connect(ui->Btn_left, SIGNAL(clicked()), this, SLOT(clicked_steer_left()));
+    QObject::connect(ui->Btn_right, SIGNAL(clicked()), this, SLOT(clicked_steer_right()));
+    QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_E_stop()));
 
     /// ------------------- thread and signals for UI update ----------------------///
     connect(platformComThread, SIGNAL(AorMChanged(int)), this, SLOT(onAorMChanged(int)));
@@ -46,7 +55,7 @@ Ariadne::Ariadne(QWidget *parent)
 	connect(rtkComThread, SIGNAL(RTKExit()), this, SLOT(onRTKExit()));
 }
 
-// comport¸¦ ¿­°í ´ÝÀ»¶§ CStringÀÌ ÀÌ¿ëµÇ¹Ç·Î QStringÀ» CStringÀ¸·Î ¹Ù²ãÁÖ´Â ÇÔ¼ö¸¦ ¸¸µé¾ú´Ù.
+// comportï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CStringï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½Ç¹Ç·ï¿½ QStringï¿½ï¿½ CStringï¿½ï¿½ï¿½ï¿½ ï¿½Ù²ï¿½ï¿½Ö´ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 CString Ariadne::ConvertQstringtoCString(QString qs)
 {
     /// h ttps://stackoverflow.com/questions/4214369/how-to-convert-qstring-to-stdstring
@@ -72,12 +81,11 @@ void Ariadne::clicked_btn_confirm() {
 
     ui->plainTextEdit->appendPlainText("I love you");
     ui->plainTextEdit->appendPlainText("I love you very much");
-    ui->plainTextEdit->appendPlainText("will you going to me together?");
+    ui->plainTextEdit->appendPlainText("will you going on a date with me?");
 
-    /// platformComThread->start();
-    /// platformComThread->comPlatform(QStringtoCString(Temp1));*/
-    
-    // ¾²·¹µå »ý¼ºÇÏ±â
+    platformComThread->start();
+    //platformComThread->run(ConvertQstringtoCString(Temp1));
+    ui->plainTextEdit->appendPlainText("I thanks you so much How can I appreciate it?");
 
 	if(!platformComThread->isRunning())
 		platformComThread->start();
@@ -88,31 +96,52 @@ void Ariadne::clicked_btn_confirm() {
 	if(rtkComThread->isRunning())
 		rtkComThread->start();
 
+    //scnnThread->start();
+    //mainfun();
+
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
 	TimerSensorStatus->start(1000);
+
 }
 
 void Ariadne::clicked_btn_mission0() {
     //mission.doMission0();
 }
 
-CString Ariadne::QStringtoCString(QString qs)
+
+void Ariadne::gear_input() /// gear input ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ comboboxï¿½ï¿½ ï¿½ï¿½ï¿½ë¿¡ ï¿½Â°ï¿½ gear valueï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
-    /* https:  //stackoverflow.com/questions/4214369/how-to-convert-qstring-to-stdstring */
-    std::string utf8_text = qs.toUtf8().constData();
-    CString cs(utf8_text.c_str());
-
-    std::cout << utf8_text << std::endl;
-
-    return cs;
+    QString qs;
+    qs = ui->comboBox_6->currentText();
+    if (qs == "front") { dataContainer->setValue_UtoP_GEAR(0); }
+    else if (qs == "JoongLib") { dataContainer->setValue_UtoP_GEAR(1); }
+    else { dataContainer->setValue_UtoP_GEAR(2); }
 }
 
-///  _    _ _____    _    _ _____  _____       _______ ______ 
+void Ariadne::clicked_speed_up() { dataContainer->setValue_UtoP_SPEED(dataContainer->getValue_UtoP_SPEED() + 1); }
+void Ariadne::clicked_speed_down() { dataContainer->setValue_UtoP_SPEED(dataContainer->getValue_UtoP_SPEED() - 1); }
+void Ariadne::clicked_steer_left() { dataContainer->setValue_UtoP_STEER(dataContainer->getValue_UtoP_STEER() - 100); }
+void Ariadne::clicked_steer_right() { dataContainer->setValue_UtoP_STEER(dataContainer->getValue_UtoP_STEER() + 100); }
+void Ariadne::clicked_E_stop()
+{
+    if (dataContainer->getValue_UtoP_E_STOP() == 0) { dataContainer->setValue_UtoP_E_STOP(1); }
+    else { dataContainer->setValue_UtoP_E_STOP(0); }
+}
+
+void Ariadne::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_Left) { clicked_steer_left(); }
+    if (event->key() == Qt::Key_Right) { clicked_steer_right(); }
+    if (event->key() == Qt::Key_Up) { clicked_speed_up(); }
+    if (event->key() == Qt::Key_Down) { clicked_speed_down(); }
+    if (event->key() == Qt::Key_Enter) { clicked_E_stop(); }
+}
+
+///  _    _ _____    _    _ _____  _____       _______ ______
 /// | |  | |_   _|  | |  | |  __ \|  __ \   /\|__   __|  ____|
-/// | |  | | | |    | |  | | |__) | |  | | /  \  | |  | |__   
-/// | |  | | | |    | |  | |  ___/| |  | |/ /\ \ | |  |  __|  
-/// | |__| |_| |_   | |__| | |    | |__| / ____ \| |  | |____ 
+/// | |  | | | |    | |  | | |__) | |  | | /  \  | |  | |__
+/// | |  | | | |    | |  | |  ___/| |  | |/ /\ \ | |  |  __|
+/// | |__| |_| |_   | |__| | |    | |__| / ____ \| |  | |____
 ///  \____/|_____|   \____/|_|    |_____/_/    \_\_|  |______|
 // this part is for UI updating functions; display, slots... etc
 
@@ -149,7 +178,7 @@ void Ariadne::onBreakChanged(int Number)
 void Ariadne::onEncChanged(int Number)
 {
     ui->lcdNumber_7->display(Number);
-} 
+}
 
 void Ariadne::onLidarExit()
 {
@@ -161,82 +190,82 @@ void Ariadne::onPlatformExit()
 	platformComThread->start();
 }
 
-void Ariadne::onRTKExit() 
+void Ariadne::onRTKExit()
 {
 	rtkComThread->start();
 }
 
-/// TODO: GPS location display Ãß°¡
+/// TODO: GPS location display ï¿½ß°ï¿½
 
 void Ariadne::updateSensorStatus()
 {
     using namespace std;
-    // TODO: ÄÜ¼ÖÃ¢ ¸»°í ui¿¡ Ãâ·ÂÇÏ±â
-    //¼¾¼­ Á¤º¸
-    // ÇÃ·§Æû ¿¬°á »óÅÂ
+    // TODO: ï¿½Ü¼ï¿½Ã¢ ï¿½ï¿½ï¿½ï¿½ uiï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    // ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     DataContainer *dataContainer;
     dataContainer = DataContainer::getInstance();
 
     if (dataContainer->getValue_platform_status() > 5)
     {
-		cout << "ÇÃ·§Æû°ú ¿¬°áµÇ¾ú½À´Ï´Ù.\n";
+		cout << "ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.\n";
     }
     else if (dataContainer->getValue_platform_status() > 0)
     {
-        cout << "ÇÃ·§Æû°ú Åë½ÅÀÌ Áö¿¬µÇ°í ÀÖ½À´Ï´Ù.\n";
+        cout << "ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.\n";
     }
     else if (dataContainer->getValue_platform_status() == 0)
     {
-        cout << "ÇÃ·§Æû°ú Åë½ÅÀÌ ½ÇÆÐÇÏ¿´½À´Ï´Ù.\n";
+        cout << "ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.\n";
     }
 	dataContainer->setValue_platform_status(0);
 
-    // LiDAR ¿¬°á »óÅÂ
+    // LiDAR ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if (dataContainer->getValue_lidar_status() > 5)
     {
-        cout << "¶óÀÌ´Ù¿Í ¿¬°áµÇ¾ú½À´Ï´Ù.\n";
+        cout << "ï¿½ï¿½ï¿½Ì´Ù¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.\n";
     }
     else if (dataContainer->getValue_lidar_status() > 0)
     {
-        cout << "¶óÀÌ´Ù¿Í Åë½ÅÀÌ Áö¿¬µÇ°í ÀÖ½À´Ï´Ù.\n";
+        cout << "ï¿½ï¿½ï¿½Ì´Ù¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.\n";
     }
     else if (dataContainer->getValue_lidar_status() == 0)
     {
-        cout << "¶óÀÌ´Ù¿Í Åë½ÅÀÌ ½ÇÆÐÇÏ¿´½À´Ï´Ù.\n";
+        cout << "ï¿½ï¿½ï¿½Ì´Ù¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.\n";
     }
 
     dataContainer->setValue_lidar_status(0);
 
 	/*
-    // CAMERA1 ¿¬°á »óÅÂ
+    // CAMERA1 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if (dataContainer->getValue_camera1_status() > 5)
     {
-        cout << "Ä«¸Þ¶ó1°ú ¿¬°áµÇ¾ú½À´Ï´Ù." << endl;
+        cout << "Ä«ï¿½Þ¶ï¿½1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½." << endl;
     }
     else if (dataContainer->getValue_camera1_status() > 0)
     {
-        cout << "Ä«¸Þ¶ó1°ú Åë½ÅÀÌ Áö¿¬µÇ°í ÀÖ½À´Ï´Ù." << endl;
+        cout << "Ä«ï¿½Þ¶ï¿½1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½." << endl;
     }
     else if (dataContainer->getValue_camera1_status() == 0)
     {
-        cout << "Ä«¸Þ¶ó1°ú Åë½ÅÀÌ ½ÇÆÐÇÏ¿´½À´Ï´Ù." << endl;
+        cout << "Ä«ï¿½Þ¶ï¿½1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½Ï´ï¿½." << endl;
     }
 	dataContainer->setValue_camera1_status(0);
 	*/
 
-    // GPS ¿¬°á»óÅÂ
+    // GPS ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if (dataContainer->getValue_gps_status() > 5)
     {
-        cout << "GPS¿Í ¿¬°áµÇ¾ú½À´Ï´Ù.\n";
+        cout << "GPSï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.\n";
     }
     else if (dataContainer->getValue_gps_status() > 0)
     {
-        cout << "GPS¿Í Åë½ÅÀÌ Áö¿¬µÇ°í ÀÖ½À´Ï´Ù.\n";
+        cout << "GPSï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.\n";
     }
     else if (dataContainer->getValue_gps_status() == 0)
     {
-        cout << "GPS¿Í Åë½ÅÀÌ ½ÇÆÐÇÏ¿´½À´Ï´Ù.\n";
+        cout << "GPSï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.\n";
     }
 	dataContainer->setValue_gps_status(0);
 }
@@ -250,8 +279,9 @@ Ui::AriadneClass* Ariadne::getUI() { return ui;}
 #define Eoff 500000
 #define k0 0.9996
 #define radi 6378137
+#define COM L"COM5" // GPS comport
 
-bool sign; // ¿ÜÀûÀÇ ºÎÈ£ , true =¾ç¼ö, false = À½¼ö
+bool sign; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ , true =ï¿½ï¿½ï¿½ï¿½, false = ï¿½ï¿½ï¿½ï¿½
 
 CSerialPort _gps;
 void HeroNeverDies();
@@ -259,7 +289,7 @@ vector <double>UTM(double lat, double lng);
 bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double heading);
 
 void RTKComThread::run() {
-	cout << "RTK ½º·¹µå°¡ »ý¼ºµÇ¾ú½À´Ï´Ù.\n";
+	cout << "RTK ï¿½ï¿½ï¿½ï¿½ï¿½å°¡ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.\n";
 	comRTK();
 }
 
@@ -271,7 +301,7 @@ RTKComThread::RTKComThread() {
 	ui->rt_plot->replot();
 }
 
-void RTKComThread::Paint_base() // ±âº» Ãà ¼³Á¤
+void RTKComThread::Paint_base() // ï¿½âº» ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 {
 	ui->rt_plot->addGraph();
 	ui->rt_plot->graph(0)->rescaleAxes();
@@ -298,11 +328,11 @@ void RTKComThread::Paint_school() {
 		}
 	}
 	gpsfile.close();
-	
-	ui->rt_plot->xAxis->setRange(450589, 450700);// range min to max // »óÇÏÁÂ¿ì 20
+
+	ui->rt_plot->xAxis->setRange(450589, 450700);// range min to max // ï¿½ï¿½ï¿½ï¿½ï¿½Â¿ï¿½ 20
 	ui->rt_plot->yAxis->setRange(3951700, 3951800);
 
-	QCPScatterStyle myScatter2; // ºó ¿ø, °ËÀº»ö, »çÀÌÁî 5
+	QCPScatterStyle myScatter2; // ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 5
 	myScatter2.setShape(QCPScatterStyle::ssCircle);
 	myScatter2.setPen(QPen(Qt::black));
 	myScatter2.setSize(5);
@@ -397,7 +427,7 @@ void RTKComThread::Paint_school() {
 /*
 void HeroNeverDies() {
 	_gps.ClosePort();
-	if (_gps.OpenPort(L"COM6")) {
+	if (_gps.OpenPort(COM)) {
 		_gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
 		_gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
 	}
@@ -444,16 +474,16 @@ vector <double>UTM(double lat, double lng) {
 	return utm;
 }
 
-// L1¹æ½ÄÀÇ °Å¸®ÀÔ´Ï´Ù. (L1 = |x1-x2| + |y1-y2|) ¿ì¸®°¡ ÀÏ¹ÝÀûÀ¸·Î ¾Ë°íÀÖ´Â °Å¸®±¸ÇÏ´Â °ø½ÄÀº L2ÀÔ´Ï´Ù.
-// L1¹æ½ÄÀ¸·Î °Å¸®¸¦ ±¸ÇÏ´Â ÀÌÀ¯´Â ¿¬»ê·®ÀÌ ¸Å¿ì Àû±â ¶§¹®¿¡ ÀÌ¿ëÇß½À´Ï´Ù.
-double L1Distance(vector<double> coor1, vector<double> coor2) { // °¡±î¿î ¼¼Á¡ Ã£À» ¶§ ÀÌ¿ëÇÏ´Â °Å¸®
+// L1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½Ô´Ï´ï¿½. (L1 = |x1-x2| + |y1-y2|) ï¿½ì¸®ï¿½ï¿½ ï¿½Ï¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë°ï¿½ï¿½Ö´ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ L2ï¿½Ô´Ï´ï¿½.
+// L1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ê·®ï¿½ï¿½ ï¿½Å¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.
+double L1Distance(vector<double> coor1, vector<double> coor2) { // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½Ï´ï¿½ ï¿½Å¸ï¿½
 	double L1 = 0;
 	L1 = abs(coor1[0] - coor2[0]) + abs(coor1[1] - coor2[1]);
 
 	return L1;
 }
 
-double L2Distance(double x2, double y2, double x1 = 0, double y1 = 0) { // Çìµù ¿¬Àå¼±°ú °¡±î¿î Á¡(3°³)»çÀÌÀÇ °Å¸® ±¸ÇÒ ‹š
+double L2Distance(double x2, double y2, double x1 = 0, double y1 = 0) { // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½å¼±ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½(3ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 	double L2 = 0;
 	L2 = pow(pow(x2 - x1, 2) + pow(y2 - y1, 2), 0.5);
 
@@ -461,10 +491,10 @@ double L2Distance(double x2, double y2, double x1 = 0, double y1 = 0) { // Çìµù 
 }
 
 
-// °¡Àå °¡±î¿î ¼¼Á¡ Ã£´Â ÇÔ¼ö (¹«Á¶°Ç ÇöÀçÁÂÇ¥¿¡¼­ ¾Õ¿¡ 2°³ÀÇ Á¡, µÚ¿¡ 1°³ÀÇ Á¡ÀÌÀÖ¾î¾ßÇÔ ¿Ö³ÄÇÏ¸é GEOFENCE¸¦ ¿Ïº®ÇÏ°Ô ±¸ÇöÇÏ±âÀ§ÇØ)
+// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½Ô¼ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½Õ¿ï¿½ 2ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½Ú¿ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö³ï¿½ï¿½Ï¸ï¿½ GEOFENCEï¿½ï¿½ ï¿½Ïºï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½)
 vector<int> mins(double x, double y, vector<vector<double>> map_link_cut, vector<double> unitHeading) {
 
-	//min, smin ...Àº °¡Àå °¡±î¿î Á¡ÀÇ ÀÎµ¦½º ³Ñ¹öÀÓ
+	//min, smin ...ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½
 	int min = 0;
 	int smin = 0;
 	int ssmin = 0;
@@ -473,8 +503,8 @@ vector<int> mins(double x, double y, vector<vector<double>> map_link_cut, vector
 	double temp = 1000000000;
 
 
-	//°¡Àå °¡±î¿î 4°³ÀÇ Á¡À» Ã£Àº ÈÄ Á¦ÀÏ °¡±î¿î 2Á¡Àº ¸ÕÀú ÀúÀåÇÏ°í
-	//3,4¹øÂ°¿¡ ÇØ´çÇÏ´Â Á¡µéÀº ÇØµùº¤ÅÍ¿Í ³»ÀûÇØ¼­ ¾ç¼öÀÇ °ªÀ» ÀÌ¿ëÇÔ
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 4ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 2ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½
+	//3,4ï¿½ï¿½Â°ï¿½ï¿½ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Øµï¿½ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½
 	for (int i = 0; i < map_link_cut.size(); i++) {
 		double ref = L1Distance(rt_postion, map_link_cut[i]);
 		if (ref <= temp) {
@@ -485,9 +515,9 @@ vector<int> mins(double x, double y, vector<vector<double>> map_link_cut, vector
 			temp = ref;
 		}
 	}
-	int lastPoint = 0; // 3,4¹øÂ° Á¡¿¡¼­ º¤ÅÍ ³»ÀûÀÌ ¾ç¼öÀÎ °ª
+	int lastPoint = 0; // 3,4ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 
-	//3,4¹øÂ° Á¡¿¡¼­ º¤ÅÍ ³»ÀûÀ» ±¸ÇØ ¾ç¼öÀÎ °ª ÆÇº° ÈÄ ÀúÀå
+	//3,4ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Çºï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if ((unitHeading[0] * (map_link_cut[ssmin][0] - x) + unitHeading[1] * (map_link_cut[ssmin][1]) - y) >= 0) {
 		lastPoint = ssmin;
 	}
@@ -505,7 +535,7 @@ vector<int> mins(double x, double y, vector<vector<double>> map_link_cut, vector
 }
 
 
-//µÎÁ¡À¸·Î º¤ÅÍ¸¦ ¸¸µê
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 vector<double> makeVector(double x1, double y1, double x2, double y2) {
 	double _x = x1 - x2;
 	double _y = y1 - y2;
@@ -514,15 +544,15 @@ vector<double> makeVector(double x1, double y1, double x2, double y2) {
 	return temp;
 }
 
-//¿ÜÀû °ø½Ä
+//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 double outerProduct(double x1, double y1, double x2, double y2) {
-	double temp = x1 * y2 - y1 * x2; // 2Â÷¿ø ¿ÜÀû°ø½Ä
+	double temp = x1 * y2 - y1 * x2; // 2ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	// ¾ç¼öÀÌ¸é Â÷¼±ÀÇ Áß¾ÓÀÇ ¿À¸¥ÂÊ¹æÇâ, À½¼öÀÌ¸é ¿ÞÂÊ¹æÇâ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½
 	return temp;
 }
 
-//¿ÜÀûÀ» ÀÌ¿ëÇØ¼­ °Å¸®±¸ÇÏ´Â ¾Ë°í¸®ÁòÀû¿ë
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½Ø¼ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ë°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 double getDistance(vector<double> a, vector<double> h) {
 	vector<double> _d;
 
@@ -537,22 +567,22 @@ double getError(double x, double y, vector<vector<double>> map_link, vector<doub
 
 	vector<vector<double>> map_link_cut;
 
-	//map_link¿¡¼­ ÇöÀçÁÂÇ¥ÀÇ ÀÏÁ¤¹üÀ§ ¾È¿¡ µé¾îÀÖ´Â ÁÂÇ¥µéÀ» ¸ÕÀú ±¸ÇÔ
-	//Áï, ÇöÀçÀ§Ä¡¿¡ ´ëÇØ ÀÏÁ¤¹üÀ§¸¸Å­ ÀÚ¸£´Â ÇàÀ§
+	//map_linkï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å­ ï¿½Ú¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	for (int i = 0; i < map_link.size(); i++) {
 		if ((map_link[i][0] >= x - 50 && map_link[i][0] <= x + 50) && (map_link[i][1] >= y - 50 && map_link[i][1] <= y + 50)) {
 			map_link_cut.push_back(map_link[i]);
 		}
 	}
 
-	vector<int> _mins = mins(x, y, map_link_cut, unitHeading); // return {min , smin, ssmin} ÀÎµ¦½º ³Ñ¹ö
+	vector<int> _mins = mins(x, y, map_link_cut, unitHeading); // return {min , smin, ssmin} ï¿½Îµï¿½ï¿½ï¿½ ï¿½Ñ¹ï¿½
 
-	//°¡±î¿î Á¡µé °¢°¢¿¡ ´ëÇØ º¤ÅÍ»ý¼º
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½
 	vector<double> vec1 = makeVector(map_link_cut[_mins[0]][0], map_link_cut[_mins[0]][1], x, y);
 	vector<double> vec2 = makeVector(map_link_cut[_mins[1]][0], map_link_cut[_mins[1]][1], x, y);
 	vector<double> vec3 = makeVector(map_link_cut[_mins[2]][0], map_link_cut[_mins[2]][1], x, y);
 
-	//°¡±î¿î Á¡µé¿¡ ´ëÇÑ °Å¸®
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½é¿¡ ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½
 	double d1 = getDistance(vec1, unitHeading);
 	double d2 = getDistance(vec2, unitHeading);
 	double d3 = getDistance(vec3, unitHeading);
@@ -562,13 +592,13 @@ double getError(double x, double y, vector<vector<double>> map_link, vector<doub
 	return Error;
 }
 
-// threshole°¡ 0.9¶ó°í ÀÓÀÇ·Î ¼³Á¤, ½ÃÇàÂø¿À·Î ÀÏ´Ü 0.9¶ó°í ÁöÁ¤ÇÔ(ÇÊ¿ä¿¡ ÀÇÇØ ¹Ù²Ü ¼ö ÀÖÀ½)
+// thresholeï¿½ï¿½ 0.9ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ç·ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ 0.9ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½Ê¿ä¿¡ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù²ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 // threshold = 0.9
 // if Error > threshold , GEOFENCE = True
 // else GEOFENCE = FALUSE
 bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double heading) {
 
-	vector<double> unitHeading{ sin(heading*(PI / 180)),cos(heading*(PI / 180)) }; // ÇìµùÀÇ À¯´Öº¤ÅÍ ¸¸µê
+	vector<double> unitHeading{ sin(heading*(PI / 180)),cos(heading*(PI / 180)) }; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Öºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	double Error = getError(x, y, map_link, unitHeading);
 	if (Error > 0) {
