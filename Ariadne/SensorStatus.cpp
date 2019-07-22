@@ -61,7 +61,6 @@ void LidarComThread::comLidar() {
 void LidarComThread::run() {
 	cout << "라이다 스레드가 생성되었습니다.\n";
 	comLidar();
-
 }
 
 
