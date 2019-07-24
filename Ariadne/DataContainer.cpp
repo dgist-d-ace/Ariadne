@@ -213,5 +213,5 @@ void DataContainer::show_imu()
 void DataContainer::show_gps()
 {
 	printf("[ gps data | valid : %u latitude : %6.2f longitude : %6.2f velocity : %6.2f heading : %6.3f ]\n",
-		m_gps_Valid, m_gps_latitude, m_gps_longitude, m_gps_velocity, m_gps_heading);
+	m_gps_Valid, m_gps_latitude, m_gps_longitude, m_gps_velocity, m_gps_heading);
 }
