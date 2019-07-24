@@ -9,13 +9,13 @@
 #include <string>
 #include <sstream>
 #include <vector>
-// CString �����Ϸ��� ��
+
 #include "atlstr.h"
 #include <QString>
 #include <QTimer>
 
 
-class RTKComThread : public QThread
+class RTKCom : public QObject
 {
 	Q_OBJECT
 protected:
@@ -24,11 +24,9 @@ public:
 	DataContainer *dataContainer;
 	Ui::AriadneClass *ui;
 
-	RTKComThread();
+	RTKCom();
 
 	bool loopStatusPlatform = true;
-	void comRTK();
-	void run();
 
 private:
 	bool Geofence;
@@ -41,6 +39,7 @@ private:
 
 	void Paint_base();
 	void Paint_school();
+
 	/*
 int f_mode = 1;
 int f_Estop = 0;
@@ -49,17 +48,17 @@ int f_speed = 20;
 int f_steer = 0;  //steer �ݴ��γ���
 int f_brake = 0;
 */
+
 	void setWritePram(BYTE* writeBuffer);
 	/// void run() Q_DECL_OVERRIDE; //thread ���� �� �ڵ� �����Ǵ� �Լ�
 
 signals: /// thread�� ���� broadcast �Լ���
 	void RTKExit();
 
-
 public slots:
+	void comRTK();
 
 };
-
 
 class Ariadne : public QMainWindow
 {
@@ -68,10 +67,15 @@ class Ariadne : public QMainWindow
 public:
     Ariadne(QWidget *parent = Q_NULLPTR);
 
-    PlatformComThread *platformComThread;
-    LidarComThread *lidarComThread;
-	RTKComThread *rtkComThread;
-    ScnnThread *scnnThread;
+    PlatformCom *platformCom;
+    LidarCom *lidarCom;
+	RTKCom *rtkCom;
+    Scnn *scnn;
+
+	QThread* platformThread;
+	QThread* lidarThread;
+	QThread* rtkThread;
+	QThread* scnnThread;
 
     DataContainer *dataContainer;
 
@@ -103,8 +107,5 @@ public slots:
     void onBreakChanged(int);
     void onSteerChanged(int);
     void onEncChanged(int);
-	void onRTKExit();
-	void onLidarExit();
-	void onPlatformExit();
 
 };

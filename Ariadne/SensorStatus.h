@@ -12,15 +12,10 @@
 #include <iostream>
 #include <iterator>
 #include <QtCore>
-#include <Thread>
-
-#include "scnn.h"
-
-
 
 using namespace std;
 
-class PlatformComThread : public QThread
+class PlatformCom : public QObject
 {
     Q_OBJECT
 protected:
@@ -28,7 +23,7 @@ protected:
 public:
     DataContainer *dataContainer;
 	bool loopStatusPlatform = true;
-	void comPlatform();
+	PlatformCom();
     void run();
 
 	//PlatformComThread() {
@@ -39,8 +34,9 @@ public:
 	//	this->wait();
 	//}
 
-
 private:
+
+	ComPlatform _platform;
 	/// void run() Q_DECL_OVERRIDE; //thread ���� �� �ڵ� �����Ǵ� �Լ�
 
 signals: /// thread�� ���� broadcast �Լ���
@@ -55,10 +51,11 @@ signals: /// thread�� ���� broadcast �Լ���
 	void PlatformExit();
 
 public slots:
+	void comPlatform();
 
 };
 
-class LidarComThread : public QThread
+class LidarCom : public QObject
 {
 	Q_OBJECT
 protected:
@@ -66,8 +63,8 @@ protected:
 public:
 	DataContainer *dataContainer;
 
-	int comLidar();
-	void run();
+	LidarCom();
+	
 
 private:
 
@@ -75,17 +72,19 @@ signals: /// thread�� ���� broadcast �Լ���
 	void LidarExit();
 
 public slots:
+	void comLidar();
 };
 
 
-class ScnnThread : public QThread
+class Scnn : public QObject
 {
     Q_OBJECT
 protected:
 
 public:
     DataContainer *dataContainer;
-    void run();
+
+	Scnn();
 
 private:
 
@@ -93,4 +92,5 @@ signals: /// thread�� ���� broadcast �Լ���
 
 
 public slots:
+	void comScnn();
 };
