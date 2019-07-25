@@ -14,10 +14,30 @@ Ariadne::Ariadne(QWidget *parent)
     ui->setupUi(this);
 
     dataContainer = DataContainer::getInstance();
-    platformComThread = new PlatformComThread;
-	lidarComThread = new LidarComThread;
-	rtkComThread = new RTKComThread;
-    scnnThread = new ScnnThread;
+
+    platformCom = new PlatformCom;
+	platformThread = new QThread;
+	platformCom->moveToThread(platformThread);
+	connect(platformThread, SIGNAL(started()), platformCom, SLOT(comPlatform()));
+	connect(platformCom, SIGNAL(PlatformExit()), platformCom, SLOT(comPlatform()));
+
+	lidarCom = new LidarCom;
+	lidarThread = new QThread;
+	lidarCom->moveToThread(lidarThread);
+	connect(lidarThread, SIGNAL(started()), lidarCom, SLOT(comLidar()));
+	connect(lidarCom, SIGNAL(LidarExit()), lidarCom, SLOT(comLidar()));
+
+	rtkCom = new RTKCom;
+	rtkThread = new QThread;
+	rtkCom->moveToThread(rtkThread);
+	connect(rtkThread, SIGNAL(started()), rtkCom, SLOT(comRTK()));
+	connect(rtkCom, SIGNAL(RTKExit()), rtkCom, SLOT(comRTK()));
+
+	scnn = new Scnn;
+	scnnThread = new QThread;
+	scnn->moveToThread(scnnThread);
+	connect(scnnThread, SIGNAL(started()), scnn, SLOT(comScnn()));
+
     ///  -------------------  UI ������ �ֱ� �� �ٹ̱� ------------------------- ///
 
     for (int i = 1; i < 7; i++) // added items on comboboxes.
@@ -43,17 +63,17 @@ Ariadne::Ariadne(QWidget *parent)
     QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_E_stop()));
 
     /// ------------------- thread and signals for UI update ----------------------///
-    connect(platformComThread, SIGNAL(AorMChanged(int)), this, SLOT(onAorMChanged(int)));
-    connect(platformComThread, SIGNAL(EStopChanged(int)), this, SLOT(onEStopChanged(int)));
-    connect(platformComThread, SIGNAL(GearChanged(int)), this, SLOT(onGearChanged(int)));
-    connect(platformComThread, SIGNAL(SpeedChanged(int)), this, SLOT(onSpeedChanged(int)));
-    connect(platformComThread, SIGNAL(SteerChanged(int)), this, SLOT(onSteerChanged(int)));
-    connect(platformComThread, SIGNAL(BreakChanged(int)), this, SLOT(onBreakChanged(int)));
-    connect(platformComThread, SIGNAL(EncChanged(int)), this, SLOT(onEncChanged(int)));
+    connect(platformCom, SIGNAL(AorMChanged(int)), this, SLOT(onAorMChanged(int)));
+    connect(platformCom, SIGNAL(EStopChanged(int)), this, SLOT(onEStopChanged(int)));
+    connect(platformCom, SIGNAL(GearChanged(int)), this, SLOT(onGearChanged(int)));
+    connect(platformCom, SIGNAL(SpeedChanged(int)), this, SLOT(onSpeedChanged(int)));
+    connect(platformCom, SIGNAL(SteerChanged(int)), this, SLOT(onSteerChanged(int)));
+    connect(platformCom, SIGNAL(BreakChanged(int)), this, SLOT(onBreakChanged(int)));
+    connect(platformCom, SIGNAL(EncChanged(int)), this, SLOT(onEncChanged(int)));
 
-	connect(platformComThread, SIGNAL(PlatformExit()), this, SLOT(onPlatformExit()));
-	connect(lidarComThread, SIGNAL(LidarExit()), this, SLOT(onLidarExit()));
-	connect(rtkComThread, SIGNAL(RTKExit()), this, SLOT(onRTKExit()));
+	//connect(platformCom, SIGNAL(PlatformExit()), this, SLOT(onPlatformExit()));
+	//connect(lidarCom, SIGNAL(LidarExit()), this, SLOT(onLidarExit()));
+	//connect(rtkCom, SIGNAL(RTKExit()), this, SLOT(onRTKExit()));
 }
 
 // comport�� ���� ������ CString�� �̿��ǹǷ� QString�� CString���� �ٲ��ִ� �Լ��� ��������.
@@ -87,17 +107,17 @@ void Ariadne::clicked_btn_confirm() {
     //platformComThread->run(ConvertQstringtoCString(Temp1));
     ui->plainTextEdit->appendPlainText("I thanks you so much How can I appreciate it?");
 
-	if(!platformComThread->isRunning())
-		platformComThread->start();
+	if (!scnnThread->isRunning())
+		scnnThread->start();
 
-	if(!lidarComThread->isRunning())
-		lidarComThread->start();
+	if(!platformThread->isRunning())
+		platformThread->start();
 
-	if(!rtkComThread->isRunning())
-		rtkComThread->start();
+	if(!lidarThread->isRunning())
+		lidarThread->start();
 
-    scnnThread->start();
-    //mainfun();
+	if(!rtkThread->isRunning())
+		rtkThread->start();
 
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
@@ -176,14 +196,11 @@ void Ariadne::onRTKExit()
 void Ariadne::updateSensorStatus()
 {
     using namespace std;
-    // TODO: �ܼ�â ���� ui�� �����ϱ�
-    //���� ����
-    // �÷��� ���� ����
 
     DataContainer *dataContainer;
     dataContainer = DataContainer::getInstance();
 
-    if (dataContainer->getValue_platform_status() > 5) 
+    if (dataContainer->getValue_platform_status() > 5)
     { ui->comboBox->setStyleSheet("background-color: rgb(255, 82, 66)"); }
     else if (dataContainer->getValue_platform_status() > 0)
     { ui->comboBox->setStyleSheet("background-color: rgb(250, 255, 107)"); }
@@ -258,28 +275,22 @@ void HeroNeverDies();
 vector <double>UTM(double lat, double lng);
 bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double heading);
 
-void RTKComThread::run() {
-	cout << "RTK run.\n";
-	comRTK();
-}
-
-RTKComThread::RTKComThread() {
+RTKCom::RTKCom() {
 	ui = Ariadne::getUI();
 	dataContainer = DataContainer::getInstance();
-    cout << "rtk creating\n";
 	//Paint_base();
 	//Paint_school();
 	//ui->rt_plot->replot();
 }
 
-void RTKComThread::Paint_base() // �⺻ �� ����
+void RTKCom::Paint_base() // �⺻ �� ����
 {
 	ui->rt_plot->addGraph();
 	ui->rt_plot->graph(0)->rescaleAxes();
 	ui->rt_plot->axisRect()->setupFullAxesBox();
 }
 
-void RTKComThread::Paint_school() {
+void RTKCom::Paint_school() {
 	ifstream gpsfile("C:\\Users\\bokyung\\Desktop\\Autonomous\\txtfile\\filteredMapSch.txt");   //littleUTM , largeUTM, 30up, 123123, techALL,filteredMapSch
 
 	char line[200];
@@ -341,8 +352,10 @@ void RTKComThread::Paint_school() {
 	gpsfile1.close();
 }
 
- void RTKComThread::comRTK() {
-	if (_gps.OpenPort(L"COM5")) {
+ void RTKCom::comRTK() {
+	 cout << "rtk start\n";
+
+	 if (_gps.OpenPort(L"COM5")) {
 
 		_gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
 		_gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
@@ -391,10 +404,16 @@ void RTKComThread::Paint_school() {
 			}
 			else {
 				_gps.ClosePort();
-				break;
+				emit(RTKExit());
+				return;
 			}
 		}
-	}
+	 }
+	 else {
+		 cout << "rtk not connect\n";
+		 emit(RTKExit());
+		 return;
+	 }
 }
 
 

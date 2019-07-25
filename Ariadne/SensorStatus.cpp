@@ -1,6 +1,8 @@
 #include "SensorStatus.h"
+#include "scnn.h"
 
 #include <iostream>
+
 
 
 #define UPDATE_PLATFORM_STATUS 100
@@ -8,13 +10,13 @@
 #define UPDATE_SENSOR_STATUS 102
 #define UPDATE_SENSOR_AUTOSTARTUP 103
 
-void PlatformComThread::comPlatform() // ÃßÈÄ ÀÎÀÚ·Î CStringÀÌ µé¾î°¥ °Í
+PlatformCom::PlatformCom() // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú·ï¿½ CStringï¿½ï¿½ ï¿½ï¿½ï¿½î°¥ ï¿½ï¿½
 {
     dataContainer = DataContainer::getInstance();
-    //ÇÃ·§Æû Åë½Å ÄÚµåÀÔ´Ï´Ù.
+    //ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ï¿½Ô´Ï´ï¿½.
     ComPlatform _serial;
 
-    if (_serial.OpenPort(L"COM6"))   // ½ÇÁ¦ »ç¿ëµÉ COM Port ¸¦ ³Ö¾î¾ßÇÕ´Ï´Ù.  
+    if (_serial.OpenPort(L"COM6"))   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ COM Port ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
     {
         _serial.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _serial.SetCommunicationTimeouts(0, 0, 0, 0, 0);
@@ -22,8 +24,8 @@ void PlatformComThread::comPlatform() // ÃßÈÄ ÀÎÀÚ·Î CStringÀÌ µé¾î°¥ °Í
         while (loopStatusPlatform)
         {
 			if (_serial.MyCommRead()) {}
-			else { 
-                _serial.ClosePort(); 
+			else {
+                _serial.ClosePort();
                 break;
             }
             _serial.MyCommWrite();
@@ -54,7 +56,7 @@ LidarComThread::LidarComThread() {
 }
 
 int LidarComThread::comLidar() {
-    
+
     LastOfLiDAR lol;
     ObjectVector ov;
 
@@ -105,7 +107,7 @@ void LidarComThread::run() {
 	comLidar();
 }
 
-void ScnnThread::run() { 
+void ScnnThread::run() {
 	cout << "scnn thread run\n";
     while (1) {
         mainfun();
@@ -114,370 +116,106 @@ void ScnnThread::run() {
 
 
 
+	if (_platform.OpenPort(L"COM6"))   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ COM Port ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+	{
+		_platform.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
+		_platform.SetCommunicationTimeouts(0, 0, 0, 0, 0);
 
-//int ScnnThread::mainfun()
-//{
-//    std::shared_ptr<torch::jit::script::Module> module = torch::jit::load("model.pt");
-//    assert(module != nullptr);
-//    std::cout << "load model ok\n";
-//
-//    // Create a vector of inputs.
-//    std::vector<torch::jit::IValue> inputs;
-//    inputs.push_back(torch::rand({ 64, 3, 224, 224 }));
-//
-//    // evalute time
-//    double t = (double)cv::getTickCount();
-//    module->forward(inputs).toTensor();
-//    t = (double)cv::getTickCount() - t;
-//    printf("execution time = %gs\n", t / cv::getTickFrequency());
-//    inputs.pop_back();
-//
-//
-//    std::cout << "test11" << std::endl;
-//
-//    // load image with opencv and transform
-//    cv::Mat image;
-//    image = cv::imread("dog.png", 1);
-//    cv::cvtColor(image, image, CV_BGR2RGB);
-//    cv::Mat img_float;
-//    image.convertTo(img_float, CV_32F, 1.0 / 255);
-//    cv::resize(img_float, img_float, cv::Size(224, 224));
-//
-//    std::cout << "test12" << std::endl;
-//
-//    //std::cout << img_float.at<cv::Vec3f>(56,34)[1] << std::endl;
-//    //auto img_tensor = torch::CPU(torch::kFloat32).tensorFromBlob(img_float.data, { 1, 224, 224, 3 });
-//    //auto img_tensor = torch::from_blob(img_float.data, { 1, 224, 224, 3 }).to(torch::kCUDA);
-//    auto img_tensor = torch::from_blob(img_float.data, { 1, 224, 224, 3 });
-//    img_tensor = img_tensor.permute({ 0,3,1,2 });
-//    img_tensor[0][0] = img_tensor[0][0].sub_(0.485).div_(0.229);
-//    img_tensor[0][1] = img_tensor[0][1].sub_(0.456).div_(0.224);
-//    img_tensor[0][2] = img_tensor[0][2].sub_(0.406).div_(0.225);
-//
-//    std::cout << "test13" << std::endl;
-//
-//    //auto img_var = torch::autograd::make_variable(img_tensor, false);
-////	auto img_var = torch::autograd::make_variable(img_tensor, false);
-//    //auto img_var = torch::autograd::make_variable(img_tensor, false).data();
-//
-////	inputs.push_back(img_var);
-//    inputs.push_back(img_tensor);
-//
-//    std::cout << "test14" << std::endl;
-//
-//    // Execute the model and turn its output into a tensor.
-//    torch::Tensor out_tensor = module->forward(inputs).toTensor();
-//
-//    std::cout << "test15" << std::endl;
-//
-//    std::cout << out_tensor.slice(/*dim=*/1, /*start=*/0, /*end=*/10) << '\n';
-//
-//
-//    std::cout << "test" << std::endl;
-//
-//    // Load labels
-//    std::string label_file = "synset_words.txt";
-//    std::ifstream rf(label_file.c_str());
-//    CHECK(rf) << "Unable to open labels file " << label_file;
-//    std::string line;
-//    std::vector<std::string> labels;
-//    while (std::getline(rf, line))
-//        labels.push_back(line);
-//
-//    std::cout << "test" << std::endl;
-//
-//    // print predicted top-5 labels
-//    std::tuple<torch::Tensor, torch::Tensor> result = out_tensor.sort(-1, true);
-//    torch::Tensor top_scores = std::get<0>(result)[0];
-//    torch::Tensor top_idxs = std::get<1>(result)[0].toType(torch::kInt32);
-//
-//    std::cout << "test" << std::endl;
-//    auto top_scores_a = top_scores.accessor<float, 1>();
-//    std::cout << "test" << std::endl;
-//    auto top_idxs_a = top_idxs.accessor<int, 1>();
-//
-//    std::cout << top_idxs_a[0] << std::endl;
-//
-//    for (int i = 0; i < 5; ++i) {
-//        int idx = top_idxs_a[i];
-//        std::cout << "top-" << i + 1 << " label: ";
-//        std::cout << labels[idx] << ", score: " << top_scores_a[i] << std::endl;
-//    }
-//
-//    return 0;
-//}
+		while (loopStatusPlatform)
+		{
+			if (_platform.MyCommRead()) {}
+			else {
+				_platform.ClosePort();
+				emit(PlatformExit());
+				return;
+			}
+			_platform.MyCommWrite();
+			dataContainer->updateValue_platform_status();
 
+			emit(AorMChanged(dataContainer->getValue_PtoU_AorM()));
+			emit(EStopChanged(dataContainer->getValue_PtoU_E_STOP()));
+			emit(SpeedChanged(dataContainer->getValue_PtoU_SPEED()));
+			emit(SteerChanged(dataContainer->getValue_PtoU_STEER()));
+			emit(GearChanged(dataContainer->getValue_PtoU_GEAR()));
+			emit(BreakChanged(dataContainer->getValue_PtoU_BRAKE()));
+			emit(EncChanged(dataContainer->getValue_PtoU_ENC()));
 
-/// SensorStatus class¸¦ »ç¿ëÇÏÁö ¾Ê¾Æ ÇÊ¿ä ¾ø°Ô µÊ
-/*
-SensorStatus::SensorStatus() {
-    dataContainer = DataContainer::getInstance();
-
-    dataContainer->setValue_UtoP_AorM(1);
-
-    //SetTimer(hwnd, UPDATE_SENSOR_AUTOSTARTUP, 1000, TimerProc);
-
-    TimerAutostartup = new QTimer(this);
-    QTimer::connect(TimerAutostartup, &QTimer::timeout, this, &SensorStatus::SlotUpdateSensorAutostartup);
-    TimerAutostartup->start(1000);
-}
-
-void SensorStatus::SlotUpdatePlatformStatus() {
-	showPlatformControlValue();
-}
-
-void SensorStatus::SlotUpdateSensorConnection() {
-	updateSensorConnection();
-}
-
-void SensorStatus::SlotUpdateSensorStatus() {
-	updateSensorStatus();
-}
-
-void SensorStatus::SlotUpdateSensorAutostartup() {
-	updateSensorAutostartup();
-}
-
-void SensorStatus::updateSensorConnection() {
-
-    switch (sensorCount) {
-    case 0:
-        break;
-    case 1:
-		cout << "ÇÃ·§Æû ½ÇÇà\n";
-		//thread Á¾·á ½Ã ´Ù½Ã ½ÃÀÛÇÏ±â À§ÇØ¼­ slot¿¡ thread¸¦ ´Ù½Ã ½ÃÀÛÇÏ´Â ÇÔ¼ö¸¦ ±¸ÇöÇÒ ÇÊ¿ä°¡ ÀÖÀ½
-		//connect(&platformcom_thread, SIGNAL(finished()), this, SLOT(quit()));
-		platformcom_thread.start();
-        break;
-    case 2:
-		cout << "¶óÀÌ´Ù ½ÇÇà\n";
-		//connect(&lidarcom_thread, SIGNAL(finished()), this, SLOT(quit()));
-		lidarcom_thread.start();
-        break;
-    case 3:
-		cout << "Ä«¸Þ¶ó ½ÇÇà\n";
-		//connect(&camera1com_thread, SIGNAL(finished()), this, SLOT(quit()));
-		camera1com_thread.start();
-        break;
-    case 4:
-		cout << "gps ½ÇÇà\n";
-		//connect(&gpscom_thread, SIGNAL(finished()), this, SLOT(quit()));
-		gpscom_thread.start();
-        break;
-    case 5:
-        sensorCount = -1;
-        delete TimerSensorConnection;
-        TimerSensorStatus = new QTimer(this);
-        QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &SensorStatus::SlotUpdateSensorStatus);
-        TimerSensorStatus->start(1000);
-    }
-    sensorCount++;
+			Sleep(100);
+		}
+	}
+	else {
+		cout << "platform not connect\n";
+		emit(PlatformExit());
+		return;
+	}
 }
 
 
-void SensorStatus::updateSensorStatus()
-{
-    using namespace std;
+LidarCom::LidarCom() {
 
-    //¼¾¼­ Á¤º¸
-    // ÇÃ·§Æû ¿¬°á »óÅÂ
-    if (dataContainer->getValue_platform_status() > 5)
-    {
-        cout << "ÇÃ·§Æû°ú ¿¬°áµÇ¾ú½À´Ï´Ù." << endl;
-    }
-    else if (dataContainer->getValue_platform_status() > 0)
-    {
-        cout << "ÇÃ·§Æû°ú Åë½ÅÀÌ Áö¿¬µÇ°í ÀÖ½À´Ï´Ù." << endl;
-    }
-    else if (dataContainer->getValue_platform_status() == 0)
-    {
-        cout << "ÇÃ·§Æû°ú Åë½ÅÀÌ ½ÇÆÐÇÏ¿´½À´Ï´Ù." << endl;
-    }
-    dataContainer->setValue_platform_status(0);
-
-    // LiDAR ¿¬°á »óÅÂ
-    if (dataContainer->getValue_lidar_status() > 5)
-    {
-        cout << "¶óÀÌ´Ù¿Í ¿¬°áµÇ¾ú½À´Ï´Ù." << endl;
-    }
-
-    else if (dataContainer->getValue_lidar_status() == 0)
-    {
-        cout << "¶óÀÌ´Ù¿Í Åë½ÅÀÌ Áö¿¬µÇ°í ÀÖ½À´Ï´Ù." << endl;
-    }
-    else if (dataContainer->getValue_lidar_status() < 0)
-    {
-        cout << "¶óÀÌ´Ù¿Í Åë½ÅÀÌ ½ÇÆÐÇÏ¿´½À´Ï´Ù." << endl;
-    }
-
-    dataContainer->setValue_lidar_status(dataContainer->getValue_lidar_status() - 1);
-
-    // CAMERA1 ¿¬°á »óÅÂ
-    if (dataContainer->getValue_camera1_status() > 5)
-    {
-        cout << "Ä«¸Þ¶ó1°ú ¿¬°áµÇ¾ú½À´Ï´Ù." << endl;
-    }
-    else if (dataContainer->getValue_camera1_status() > 0)
-    {
-        cout << "Ä«¸Þ¶ó1°ú Åë½ÅÀÌ Áö¿¬µÇ°í ÀÖ½À´Ï´Ù." << endl;
-    }
-    else if (dataContainer->getValue_camera1_status() == 0)
-    {
-        cout << "Ä«¸Þ¶ó1°ú Åë½ÅÀÌ ½ÇÆÐÇÏ¿´½À´Ï´Ù." << endl;
-    }
-    dataContainer->setValue_camera1_status(0);
-
-
-    // GPS ¿¬°á»óÅÂ
-    if (dataContainer->getValue_gps_status() > 5)
-    {
-        cout << "GPS¿Í ¿¬°áµÇ¾ú½À´Ï´Ù." << endl;
-    }
-    else if (dataContainer->getValue_gps_status() > 0)
-    {
-        cout << "GPS¿Í Åë½ÅÀÌ Áö¿¬µÇ°í ÀÖ½À´Ï´Ù." << endl;
-    }
-    else if (dataContainer->getValue_gps_status() == 0)
-    {
-        cout << "GPS¿Í Åë½ÅÀÌ ½ÇÆÐÇÏ¿´½À´Ï´Ù." << endl;
-    }
-    dataContainer->setValue_gps_status(0);
 }
-*/
 
+void LidarCom::comLidar() {
+	cout << "lidar start\n";
 
-/*
-void SensorStatus::updateSensorAutostartup()
-{
-    switch (sensorAutoCount)
-    {
-    case 0:
-        sensorAutoCount += 2;
-        break;
+	LastOfLiDAR lol;
+	ObjectVector ov;
 
-    case 1:
-        break;
+	if (!lol.Initialize()) {
+		cout << "lidar not connect\n";
+		emit(LidarExit());
+		return;
+	}
+	else {
+		cout << "lidar else\n";
+		return;
+	}
 
-    case 2:
-        break;
+	lol.StartCapture();
 
-    case 3:
-        break;
+	while (1) {
+		if (lol.m_bDataAvailable) {
 
-    case 4:
-        break;
+			dataContainer->updateValue_lidar_status();
 
-    case 5:
-        break;
+			lol.imgLiDAR = cv::Mat::zeros(768, 1366, CV_8UC3);
 
-    case 6:
-        break;
+			lol.GetValidDataRTheta(lol.validScans);
+			lol.Conversion(lol.validScans, lol.finQVecXY, 5);
+			lol.Average(lol.finQVecXY, lol.finVecXY, 5);
+			lol.Clustering(lol.finVecXY, lol.finLiDARData);
+			lol.Vector(lol.finLiDARData, lol.finVecData, lol.finBoolData);
+			lol.DrawData(lol.finVecXY, lol.finLiDARData, lol.finVecData, lol.finBoolData, lol.imgLiDAR);
 
-    case 7:
-        break;
+			//ov.PlatformVector(lol.finLiDARData, ov.finVecData, ov.finBoolData);
+			//ov.DrawVector(lol.finLiDARData, ov.finVecData, lol.imgLiDAR);
 
-    case 8:
-        break;
+			cout << "Reset" << endl;
 
-    case 9:
-        break;
+			cv::imshow("DrawLiDARData", lol.imgLiDAR);
+		}
+		else {
+			emit(LidarExit());
+			return;
+		}
 
-    case 10:
-        // ¼¾¼­ ¿¬°á Å¸ÀÌ¸Ó ½ÇÇà
-        //SetTimer(hwnd, UPDATE_SENSOR_CONNECTION, 1000, NULL);
-        TimerSensorConnection = new QTimer(this);
-        QTimer::connect(TimerSensorConnection, &QTimer::timeout, this, &SensorStatus::SlotUpdateSensorConnection);
-        TimerSensorConnection->start(1000);
-        break;
+		int key = cv::waitKey(1);
 
-    case 11:
-        break;
-    case 12:
-        break;
-    case 13:
-        break;
-    case 14:
-        break;
-    case 15:
-        break;
-    case 16:
-        break;
-    case 17:
-        break;
-    case 18:
-        break;
-
-    case 19:
-        // ¿ÀÅä ¸ðµå ½ÇÇà
-            // ¿ÀÅä ¸ðµå ½º·¹µå ½ÇÇà
-
-        if (!mission_thread.isRunning())
-        {
-			//connect(&mission_thread, SIGNAL(finished()), this, SLOT(deleteLater()));
-			mission_thread.start();
-        }
-
-        sensorAutoCount = -1;
-        //KillTimer(hwnd, UPDATE_SENSOR_AUTOSTARTUP);
-        delete TimerAutostartup;
-        break;
-    }
-    sensorAutoCount++;
+		if (key == 27) {
+			break;
+		}
+	}
+	lol.StopCapture();
+	lol.UnInitialize();
 }
 
 
-void SensorStatus::showPlatformControlValue() {
-    //±¸ÇöÇØ¾ßÇÔ
-}
-*/
 
-
-
-/*
-void SensorStatus::comLidar() {}
-void SensorStatus::comCamera1() {}
-void SensorStatus::comGps() {}
-
-
-void MissionThread::run() {
-	//±¸Çö ÇÊ¿ä
-	cout << "¹Ì¼Ç ½º·¹µå°¡ »ý¼ºµÇ¾ú½À´Ï´Ù.\n";
-	exec();
+Scnn::Scnn() {
 }
 
-
-void PlatformComThread::run() {
-	//±¸Çö ÇÊ¿ä
-	cout << "ÇÃ·§Æû ½º·¹µå°¡ »ý¼ºµÇ¾ú½À´Ï´Ù.\n";
-	exec();
-
-*/
-
-
-/*
-void LidarComThread::run() {
-	//±¸Çö ÇÊ¿ä
-	cout << "¶óÀÌ´Ù ½º·¹µå°¡ »ý¼ºµÇ¾ú½À´Ï´Ù.\n";
-	exec();
+void Scnn::comScnn() {
+	cout << "scnn start\n";
+	while(1)
+		mainfun();
 }
-
-void Camera1ComThread::run() {
-	//±¸Çö ÇÊ¿ä
-	cout << "Ä«¸Þ¶ó1 ½º·¹µå°¡ »ý¼ºµÇ¾ú½À´Ï´Ù.\n";
-	exec();
-}
-
-void Camera2ComThread::run() {
-	//±¸Çö ÇÊ¿ä
-	cout << "Ä«¸Þ¶ó2 ½º·¹µå°¡ »ý¼ºµÇ¾ú½À´Ï´Ù.\n";
-	exec();
-}
-
-void RTKComThread::run() {
-	//±¸Çö ÇÊ¿ä
-	cout << "GPS ½º·¹µå°¡ »ý¼ºµÇ¾ú½À´Ï´Ù.\n";
-	exec();
-	
-
-}
-*/
