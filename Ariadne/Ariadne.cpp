@@ -20,16 +20,16 @@ Ariadne::Ariadne(QWidget *parent)
     scnnThread = new ScnnThread;
     ///  -------------------  UI ������ �ֱ� �� �ٹ̱� ------------------------- ///
 
-    for (int i = 1; i < 7; i++) // combobox�� ������ �ֱ�. �ش� ���������� ���� ���ſ� ����Ʈ�� ������.
+    for (int i = 1; i < 7; i++) // added items on comboboxes.
     {
         ui->comboBox->addItem("COM" + QString::number(i));
         ui->comboBox_2->addItem("COM" + QString::number(i));
         ui->comboBox_3->addItem("COM" + QString::number(i));
         ui->comboBox_4->addItem("COM" + QString::number(i));
         ui->comboBox_5->addItem("COM" + QString::number(i));
-    } // combobox ����: https://www.bogotobogo.com/Qt/Qt5_QComboBox.php
+    } // combobox references : https://www.bogotobogo.com/Qt/Qt5_QComboBox.php
 
-    ui->comboBox_6->addItems({ "front" , "JoongLib", "HooJin"}); /// gaer ������ input
+    ui->comboBox_6->addItems({ "front" , "JoongLib", "HooJin"}); /// gaer items input
 
     /// --------------------- Qobject�� ��ư connect ---------------------------------///
 
@@ -145,57 +145,33 @@ void Ariadne::keyPressEvent(QKeyEvent *event) {
 ///  \____/|_____|   \____/|_|    |_____/_/    \_\_|  |______|
 // this part is for UI updating functions; display, slots... etc
 
-void Ariadne::onAorMChanged(int Number)
-{
-    ui->lcdNumber->display(Number);
-}
-
-void Ariadne::onEStopChanged(int Number)
-{
-    ui->lcdNumber_2->display(Number);
-}
-
-void Ariadne::onGearChanged(int Number)
-{
-    ui->lcdNumber_3->display(Number);
-}
-
-void Ariadne::onSpeedChanged(int Number)
-{
-    ui->lcdNumber_4->display(Number);
-}
-
-void Ariadne::onSteerChanged(int Number)
-{
-    ui->lcdNumber_5->display(Number);
-}
-
-void Ariadne::onBreakChanged(int Number)
-{
-    ui->lcdNumber_6->display(Number);
-}
-
-void Ariadne::onEncChanged(int Number)
-{
-    ui->lcdNumber_7->display(Number);
-}
+void Ariadne::onAorMChanged(int Number) { ui->lcdNumber->display(Number); }
+void Ariadne::onEStopChanged(int Number) { ui->lcdNumber_2->display(Number); }
+void Ariadne::onGearChanged(int Number) { ui->lcdNumber_3->display(Number); }
+void Ariadne::onSpeedChanged(int Number) { ui->lcdNumber_4->display(Number); }
+void Ariadne::onSteerChanged(int Number) { ui->lcdNumber_5->display(Number); }
+void Ariadne::onBreakChanged(int Number) { ui->lcdNumber_6->display(Number); }
+void Ariadne::onEncChanged(int Number) { ui->lcdNumber_7->display(Number); }
 
 void Ariadne::onLidarExit()
 {
-	lidarComThread->start();
+    cout << "Lidar exit\n";
+    lidarComThread->start();
 }
 
 void Ariadne::onPlatformExit()
 {
+    cout << "platform exit\n";
 	platformComThread->start();
 }
 
 void Ariadne::onRTKExit()
 {
+    cout << "rtk exit\n";
 	rtkComThread->start();
 }
 
-/// TODO: GPS location display �߰�
+/// TODO: connecting with GPS location display
 
 void Ariadne::updateSensorStatus()
 {
@@ -207,32 +183,26 @@ void Ariadne::updateSensorStatus()
     DataContainer *dataContainer;
     dataContainer = DataContainer::getInstance();
 
-    if (dataContainer->getValue_platform_status() > 5)
-    {
-		//cout << "�÷����� �����Ǿ����ϴ�.\n";
-    }
+    if (dataContainer->getValue_platform_status() > 5) 
+    { ui->comboBox->setStyleSheet("background-color: rgb(255, 82, 66)"); }
     else if (dataContainer->getValue_platform_status() > 0)
-    {
-        //cout << "�÷����� ������ �����ǰ� �ֽ��ϴ�.\n";
-    }
+    { ui->comboBox->setStyleSheet("background-color: rgb(250, 255, 107)"); }
     else if (dataContainer->getValue_platform_status() == 0)
-    {
-        //cout << "�÷����� ������ �����Ͽ����ϴ�.\n";
-    }
+    { ui->comboBox->setStyleSheet("background-color: rgb(181, 206, 212)"); }
 	dataContainer->setValue_platform_status(0);
 
     // LiDAR ���� ����
     if (dataContainer->getValue_lidar_status() > 5)
     {
-        //cout << "���̴ٿ� �����Ǿ����ϴ�.\n";
+        ui->comboBox->setStyleSheet("background-color: rgb(255, 82, 66)");
     }
     else if (dataContainer->getValue_lidar_status() > 0)
     {
-        //cout << "���̴ٿ� ������ �����ǰ� �ֽ��ϴ�.\n";
+        ui->comboBox->setStyleSheet("background-color: rgb(250, 255, 107)");
     }
     else if (dataContainer->getValue_lidar_status() == 0)
     {
-        //cout << "���̴ٿ� ������ �����Ͽ����ϴ�.\n";
+        ui->comboBox->setStyleSheet("background-color: rgb(181, 206, 212)");
     }
 
     dataContainer->setValue_lidar_status(0);
@@ -257,15 +227,15 @@ void Ariadne::updateSensorStatus()
     // GPS ��������
     if (dataContainer->getValue_gps_status() > 5)
     {
-        //cout << "GPS�� �����Ǿ����ϴ�.\n";
+        ui->comboBox->setStyleSheet("background-color: rgb(255, 82, 66)");
     }
     else if (dataContainer->getValue_gps_status() > 0)
     {
-        //cout << "GPS�� ������ �����ǰ� �ֽ��ϴ�.\n";
+        ui->comboBox->setStyleSheet("background-color: rgb(250, 255, 107)");
     }
     else if (dataContainer->getValue_gps_status() == 0)
     {
-        //cout << "GPS�� ������ �����Ͽ����ϴ�.\n";
+        ui->comboBox->setStyleSheet("background-color: rgb(181, 206, 212)");
     }
 	dataContainer->setValue_gps_status(0);
 }

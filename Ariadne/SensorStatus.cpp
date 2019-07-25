@@ -49,6 +49,10 @@ void PlatformComThread::run() {
 	emit(PlatformExit());
 }
 
+LidarComThread::LidarComThread() {
+    LidarComThread::dataContainer = DataContainer::getInstance();
+}
+
 int LidarComThread::comLidar() {
     
     LastOfLiDAR lol;
@@ -62,6 +66,7 @@ int LidarComThread::comLidar() {
     lol.StartCapture();
 
     while (1) {
+        cout << "lidar working\n";
         if (lol.m_bDataAvailable) {
 
 			dataContainer->updateValue_lidar_status();
@@ -102,7 +107,9 @@ void LidarComThread::run() {
 
 void ScnnThread::run() { 
 	cout << "scnn thread run\n";
-    mainfun();
+    while (1) {
+        mainfun();
+    }
 }
 
 

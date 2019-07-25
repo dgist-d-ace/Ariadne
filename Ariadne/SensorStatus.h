@@ -65,7 +65,7 @@ protected:
 
 public:
 	DataContainer *dataContainer;
-
+    LidarComThread();
 	int comLidar();
 	void run();
 
