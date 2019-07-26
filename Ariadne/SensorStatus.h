@@ -15,64 +15,65 @@
 
 using namespace std;
 
-class PlatformCom : public QObject
+//class PlatformCom : public QObject
+//{
+//    Q_OBJECT
+//protected:
+//
+//public:
+//    DataContainer *dataContainer;
+//    bool loopStatusPlatform = true;
+//    PlatformCom();
+//    ///void run();
+//
+//    //PlatformComThread() {
+//    //	//dataContainer = DataContainer::getInstance();
+//    //}
+//    //~PlatformComThread() {
+//    //	cout << "�÷��� �����尡 �����Ǿ����ϴ�.\n";
+//    //	this->wait();
+//    //
+//    //
+//
+//private:
+//
+//    ComPlatform _platform;
+//    /// void run() Q_DECL_OVERRIDE; //thread ���� �� �ڵ� �����Ǵ� �Լ�
+//
+//signals: /// thread�� ���� broadcast �Լ���
+//    void AorMChanged(int);
+//    void EStopChanged(int);
+//    void GearChanged(int);
+//    void SpeedChanged(int);
+//    void SteerChanged(int);
+//    void BreakChanged(int);
+//    void EncChanged(int);
+//    void AliveChanged(int);
+//    void PlatformExit();
+//
+//public slots:
+//    void comPlatform();
+//
+//};
+
+class LidarCom : public QObject
 {
     Q_OBJECT
 protected:
 
 public:
     DataContainer *dataContainer;
-	bool loopStatusPlatform = true;
-	PlatformCom();
-    void run();
 
-	//PlatformComThread() {
-	//	//dataContainer = DataContainer::getInstance();
-	//}
-	//~PlatformComThread() {
-	//	cout << "�÷��� �����尡 �����Ǿ����ϴ�.\n";
-	//	this->wait();
-	//}
+    LidarCom();
 
-private:
-
-	ComPlatform _platform;
-	/// void run() Q_DECL_OVERRIDE; //thread ���� �� �ڵ� �����Ǵ� �Լ�
-
-signals: /// thread�� ���� broadcast �Լ���
-    void AorMChanged(int);
-    void EStopChanged(int);
-    void GearChanged(int);
-    void SpeedChanged(int);
-    void SteerChanged(int);
-    void BreakChanged(int);
-    void EncChanged(int);
-    void AliveChanged(int);
-	void PlatformExit();
-
-public slots:
-	void comPlatform();
-
-};
-
-class LidarCom : public QObject
-{
-	Q_OBJECT
-protected:
-
-public:
-	DataContainer *dataContainer;
-    LidarComThread();
-	int comLidar();
-	void run();
 
 private:
 
 signals: /// thread�� ���� broadcast �Լ���
-	void LidarExit();
+    void LidarExit();
 
 public slots:
-	void comLidar();
+    void comLidar();
 };
 
 
@@ -84,7 +85,7 @@ protected:
 public:
     DataContainer *dataContainer;
 
-	Scnn();
+    Scnn();
 
 private:
 
@@ -92,5 +93,5 @@ signals: /// thread�� ���� broadcast �Լ���
 
 
 public slots:
-	void comScnn();
+    void comScnn();
 };

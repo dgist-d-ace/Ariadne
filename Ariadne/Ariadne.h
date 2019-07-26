@@ -17,30 +17,30 @@
 
 class RTKCom : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 protected:
 
 public:
-	DataContainer *dataContainer;
-	Ui::AriadneClass *ui;
+    DataContainer *dataContainer;
+    Ui::AriadneClass *ui;
 
-	RTKCom();
+    RTKCom();
 
-	bool loopStatusPlatform = true;
+    bool loopStatusPlatform = true;
 
 private:
-	bool Geofence;
-	QString GF;
-	QVector<double> x, y;
-	double heading;
-	double _lat, _lng;
-	double lat, lng;
-	vector<vector<double>> map_link;
+    bool Geofence;
+    QString GF;
+    QVector<double> x, y;
+    double heading;
+    double _lat, _lng;
+    double lat, lng;
+    vector<vector<double>> map_link;
 
-	void Paint_base();
-	void Paint_school();
+    void Paint_base();
+    void Paint_school();
 
-	/*
+    /*
 int f_mode = 1;
 int f_Estop = 0;
 int f_gear = 0;
@@ -49,14 +49,56 @@ int f_steer = 0;  //steer �ݴ��γ���
 int f_brake = 0;
 */
 
-	void setWritePram(BYTE* writeBuffer);
-	/// void run() Q_DECL_OVERRIDE; //thread ���� �� �ڵ� �����Ǵ� �Լ�
+    // void setWritePram(BYTE* writeBuffer);
+    /// void run() Q_DECL_OVERRIDE; //thread ���� �� �ڵ� �����Ǵ� �Լ�
 
 signals: /// thread�� ���� broadcast �Լ���
-	void RTKExit();
+    void RTKExit();
 
 public slots:
-	void comRTK();
+    void comRTK();
+
+};
+
+class PlatformCom : public QObject
+{
+    Q_OBJECT
+protected:
+    Ui::AriadneClass *ui;
+
+public:
+    DataContainer *dataContainer;
+    bool loopStatusPlatform = true;
+    PlatformCom();
+    ///void run();
+
+    //PlatformComThread() {
+    //	//dataContainer = DataContainer::getInstance();
+    //}
+    //~PlatformComThread() {
+    //	cout << "�÷��� �����尡 �����Ǿ����ϴ�.\n";
+    //	this->wait();
+    //
+    //
+
+private:
+
+    ComPlatform _platform;
+    /// void run() Q_DECL_OVERRIDE; //thread ���� �� �ڵ� �����Ǵ� �Լ�
+
+signals: /// thread�� ���� broadcast �Լ���
+    void AorMChanged(int);
+    void EStopChanged(int);
+    void GearChanged(int);
+    void SpeedChanged(int);
+    void SteerChanged(int);
+    void BreakChanged(int);
+    void EncChanged(int);
+    void AliveChanged(int);
+    void PlatformExit();
+
+public slots:
+    void comPlatform();
 
 };
 
@@ -68,30 +110,29 @@ public:
     Ariadne(QWidget *parent = Q_NULLPTR);
 
     PlatformCom *platformCom;
-    LidarCom *lidarCom;
-	RTKCom *rtkCom;
-    Scnn *scnn;
+    //LidarCom *lidarCom;
+    //RTKCom *rtkCom;
+    //Scnn *scnn;
 
-	QThread* platformThread;
-	QThread* lidarThread;
-	QThread* rtkThread;
-	QThread* scnnThread;
+    QThread* platformThread;
+    /*QThread* lidarThread;
+    QThread* rtkThread;
+    QThread* scnnThread;*/
 
     DataContainer *dataContainer;
 
-	QTimer* TimerSensorStatus;
+    QTimer* TimerSensorStatus;
 
-	static Ui::AriadneClass* getUI();
-
+    static Ui::AriadneClass* getUI();
 
 private:
-	static Ui::AriadneClass* ui;
+    static Ui::AriadneClass* ui;
     void updateSensorStatus();
     void keyPressEvent(QKeyEvent *);
 
 public slots:
     void clicked_btn_mission0();
-    CString ConvertQstringtoCString(QString);
+    
     void clicked_btn_confirm();
     void clicked_speed_up();
     void clicked_speed_down();
@@ -109,3 +150,6 @@ public slots:
     void onEncChanged(int);
 
 };
+
+CString ConvertQstringtoCString(QString); 
+/// this function is used in RTKCom Class and PlatformCom Class
