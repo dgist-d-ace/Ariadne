@@ -1,13 +1,13 @@
 /// This cpp and h file are for Lidar Communcation, vector calculation
 /// made by Junho Jeong, JunK Cho
-/// this LidarFun.cpp & h are combined with ObejectVector & LastofLidar in LOL.sln
+/// this LidarFunc.cpp & h are combined with ObejectVector & LastofLidar in LOL.sln
 
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_NONSTDC_NO_DEPRECATE
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "LidarFun.h"
+#include "LidarFunc.h"
 #include <iostream>
 
 using namespace std;
@@ -120,7 +120,7 @@ bool LastOfLiDAR::GetValidDataRTheta(vector<pair<int, double> > &vecRTheta)
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 
 bool LastOfLiDAR::ConnectToDevice(std::string host, int port)
 {

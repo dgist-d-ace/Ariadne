@@ -15,30 +15,44 @@ Ariadne::Ariadne(QWidget *parent)
 
     dataContainer = DataContainer::getInstance();
 
+	//  -------------------  Sensor Thread control ------------------------- //
+
     platformCom = new PlatformCom;
 	platformThread = new QThread;
 	platformCom->moveToThread(platformThread);
 	connect(platformThread, SIGNAL(started()), platformCom, SLOT(comPlatform()));
 	connect(platformCom, SIGNAL(PlatformExit()), platformCom, SLOT(comPlatform()));
 
-	/*lidarCom = new LidarCom;
+	lidarCom = new LidarCom;
 	lidarThread = new QThread;
 	lidarCom->moveToThread(lidarThread);
 	connect(lidarThread, SIGNAL(started()), lidarCom, SLOT(comLidar()));
 	connect(lidarCom, SIGNAL(LidarExit()), lidarCom, SLOT(comLidar()));
 
-	rtkCom = new RTKCom;
-	rtkThread = new QThread;
-	rtkCom->moveToThread(rtkThread);
-	connect(rtkThread, SIGNAL(started()), rtkCom, SLOT(comRTK()));
-	connect(rtkCom, SIGNAL(RTKExit()), rtkCom, SLOT(comRTK()));
+	gpsCom = new GPSCom;
+	gpsThread = new QThread;
+	gpsCom->moveToThread(gpsThread);
+	connect(gpsThread, SIGNAL(started()), gpsCom, SLOT(comGPS()));
+	connect(gpsCom, SIGNAL(GPSExit()), gpsCom, SLOT(comGPS()));
 
 	scnn = new Scnn;
 	scnnThread = new QThread;
 	scnn->moveToThread(scnnThread);
-	connect(scnnThread, SIGNAL(started()), scnn, SLOT(comScnn()));*/
+	connect(scnnThread, SIGNAL(started()), scnn, SLOT(comScnn()));
 
-    ///  -------------------  UI ������ �ֱ� �� �ٹ̱� ------------------------- ///
+	yolo = new Yolo;
+	yoloThread = new QThread;
+	yolo->moveToThread(yoloThread);
+	connect(scnnThread, SIGNAL(started()), yolo, SLOT(comYolo()));
+
+	//  -------------------  Driving control ------------------------- //
+
+	driving = new Driving;
+	drivingThread = new QThread;
+	driving->moveToThread(drivingThread);
+	connect(drivingThread, SIGNAL(started()), driving, SLOT(Basic()));
+
+    //  -------------------  UI control ------------------------- //
 
     for (int i = 1; i < 8; i++) // added items on comboboxes.
     {
@@ -49,9 +63,9 @@ Ariadne::Ariadne(QWidget *parent)
         ui->comboBox_5->addItem("COM" + QString::number(i));
     } // combobox references : https://www.bogotobogo.com/Qt/Qt5_QComboBox.php
 
-    ui->comboBox_6->addItems({ "front" , "JoongLib", "HooJin"}); /// gaer items input
+    ui->comboBox_6->addItems({ "Drive" , "Neutral", "Reverse"}); // gaer items input
 
-    /// --------------------- Qobject�� ��ư connect ---------------------------------///
+    // --------------------- Platform control Using UI ---------------------------------//
 
     QObject::connect(ui->Btn_Mission0, SIGNAL(clicked()), this, SLOT(clicked_btn_mission0()));
     QObject::connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_btn_confirm()));
@@ -62,7 +76,8 @@ Ariadne::Ariadne(QWidget *parent)
     QObject::connect(ui->Btn_right, SIGNAL(clicked()), this, SLOT(clicked_steer_right()));
     QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_E_stop()));
 
-    /// ------------------- thread and signals for UI update ----------------------///
+    // ------------------- UI update for Platform status ----------------------//
+
     connect(platformCom, SIGNAL(AorMChanged(int)), this, SLOT(onAorMChanged(int)));
     connect(platformCom, SIGNAL(EStopChanged(int)), this, SLOT(onEStopChanged(int)));
     connect(platformCom, SIGNAL(GearChanged(int)), this, SLOT(onGearChanged(int)));
@@ -71,12 +86,12 @@ Ariadne::Ariadne(QWidget *parent)
     connect(platformCom, SIGNAL(BreakChanged(int)), this, SLOT(onBreakChanged(int)));
     connect(platformCom, SIGNAL(EncChanged(int)), this, SLOT(onEncChanged(int)));
 
-	//connect(platformCom, SIGNAL(PlatformExit()), this, SLOT(onPlatformExit()));
-	//connect(lidarCom, SIGNAL(LidarExit()), this, SLOT(onLidarExit()));
-	//connect(rtkCom, SIGNAL(RTKExit()), this, SLOT(onRTKExit()));
+	connect(platformCom, SIGNAL(PlatformExit()), this, SLOT(onPlatformExit()));
+	connect(lidarCom, SIGNAL(LidarExit()), this, SLOT(onLidarExit()));
+	connect(gpsCom, SIGNAL(GPSExit()), this, SLOT(onGPSExit()));
 }
 
-/// This function is to change comport numbers from CString to QString.
+// This function is to change comport numbers from CString to QString.
 CString ConvertQstringtoCString(QString qs)
 {
     std::string utf8_text = qs.toUtf8().constData();
@@ -84,38 +99,39 @@ CString ConvertQstringtoCString(QString qs)
     return cs;
 }
 
+// This function is to start communication with sensor.
 void Ariadne::clicked_btn_confirm() {
-    ui->plainTextEdit->appendPlainText("I love you");
-    ui->plainTextEdit->appendPlainText("I love you very much");
 
-	/*if (!scnnThread->isRunning())
-		scnnThread->start();*/
+	if (!scnnThread->isRunning())
+		scnnThread->start();
 
 	if(!platformThread->isRunning())
 		platformThread->start();
 
-	/*if(!lidarThread->isRunning())
+	if(!lidarThread->isRunning())
 		lidarThread->start();
 
-	if(!rtkThread->isRunning())
-		rtkThread->start();*/
+	if(!gpsThread->isRunning())
+		gpsThread->start();
 
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
 	TimerSensorStatus->start(1000);
 }
 
+// This function is to start communication with sensor
 void Ariadne::clicked_btn_mission0() {
-    //mission.doMission0();
+	if (!drivingThread->isRunning())
+		drivingThread->start();
 }
 
-
-void Ariadne::gear_input() /// gear input ��ư�� ������ �ش� combobox�� ���뿡 �°� gear value�� ������
+// These functions is to control gplatform
+void Ariadne::gear_input()
 {
     QString qs;
     qs = ui->comboBox_6->currentText();
-    if (qs == "front") { dataContainer->setValue_UtoP_GEAR(0); }
-    else if (qs == "JoongLib") { dataContainer->setValue_UtoP_GEAR(1); }
+    if (qs == "Drive") { dataContainer->setValue_UtoP_GEAR(0); }
+    else if (qs == "Neutral") { dataContainer->setValue_UtoP_GEAR(1); }
     else { dataContainer->setValue_UtoP_GEAR(2); }
 }
 
@@ -137,12 +153,12 @@ void Ariadne::keyPressEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Enter) { clicked_E_stop(); }
 }
 
-///  _    _ _____    _    _ _____  _____       _______ ______
-/// | |  | |_   _|  | |  | |  __ \|  __ \   /\|__   __|  ____|
-/// | |  | | | |    | |  | | |__) | |  | | /  \  | |  | |__
-/// | |  | | | |    | |  | |  ___/| |  | |/ /\ \ | |  |  __|
-/// | |__| |_| |_   | |__| | |    | |__| / ____ \| |  | |____
-///  \____/|_____|   \____/|_|    |_____/_/    \_\_|  |______|
+//  _    _ _____    _    _ _____  _____       _______ ______
+// | |  | |_   _|  | |  | |  __ \|  __ \   /\|__   __|  ____|
+// | |  | | | |    | |  | | |__) | |  | | /  \  | |  | |__
+// | |  | | | |    | |  | |  ___/| |  | |/ /\ \ | |  |  __|
+// | |__| |_| |_   | |__| | |    | |__| / ____ \| |  | |____
+//  \____/|_____|   \____/|_|    |_____/_/    \_\_|  |______|
 // this part is for UI updating functions; display, slots... etc
 
 void Ariadne::onAorMChanged(int Number) { ui->lcdNumber->display(Number); }
@@ -153,9 +169,7 @@ void Ariadne::onSteerChanged(int Number) { ui->lcdNumber_5->display(Number); }
 void Ariadne::onBreakChanged(int Number) { ui->lcdNumber_6->display(Number); }
 void Ariadne::onEncChanged(int Number) { ui->lcdNumber_7->display(Number); }
 
-
-/// TODO: connecting with GPS location display
-
+// This function is to change UI according to Sensor communication status
 void Ariadne::updateSensorStatus()
 {
     using namespace std;
@@ -163,6 +177,7 @@ void Ariadne::updateSensorStatus()
     DataContainer *dataContainer;
     dataContainer = DataContainer::getInstance();
 
+	// Platform communication
     if (dataContainer->getValue_platform_status() > 5)
     { ui->comboBox->setStyleSheet("background-color: rgb(255, 82, 66)"); }
     else if (dataContainer->getValue_platform_status() > 0)
@@ -216,7 +231,28 @@ void Ariadne::updateSensorStatus()
 
 Ui::AriadneClass* Ariadne::getUI() { return ui; }
 
-/// ----------------- Platform Communication Function -------------///
+Driving::Driving() {
+	dataContainer = DataContainer::getInstance();
+}
+
+
+void Driving::Basic() {
+
+//
+// To do : Implement Basic Driving Algorithm
+//
+
+}
+
+void Driving::Mission1() {
+//
+// To do : Implement Basic Driving Algorithm
+//
+
+}
+
+
+// ----------------- Platform Communication Function -------------//
 
 PlatformCom::PlatformCom()
 {
@@ -264,7 +300,7 @@ void PlatformCom::comPlatform() {
 }
 
 
-/// ------------------ RTK Communication Function -----------------///
+// ------------------ GPS Communication Function -----------------//
 
 #define threshold 0.5
 #define PI 3.14159265358979323846
@@ -273,16 +309,15 @@ void PlatformCom::comPlatform() {
 #define Eoff 500000
 #define k0 0.9996
 #define radi 6378137
-#define COM L"COM5" // GPS comport
 
-bool sign; // ������ ��ȣ , true =����, false = ����
+bool sign;
 
 CSerialPort _gps;
 void HeroNeverDies();
 vector <double>UTM(double lat, double lng);
 bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double heading);
 
-RTKCom::RTKCom() {
+GPSCom::GPSCom() {
     ui = Ariadne::getUI();
     dataContainer = DataContainer::getInstance();
     //Paint_base();
@@ -290,14 +325,14 @@ RTKCom::RTKCom() {
     //ui->rt_plot->replot();
 }
 
-void RTKCom::Paint_base() // �⺻ �� ����
+void GPSCom::Paint_base() // �⺻ �� ����
 {
     ui->rt_plot->addGraph();
     ui->rt_plot->graph(0)->rescaleAxes();
     ui->rt_plot->axisRect()->setupFullAxesBox();
 }
 
-void RTKCom::Paint_school() {
+void GPSCom::Paint_school() {
     ifstream gpsfile("C:\\Users\\bokyung\\Desktop\\Autonomous\\txtfile\\filteredMapSch.txt");   //littleUTM , largeUTM, 30up, 123123, techALL,filteredMapSch
 
     char line[200];
@@ -359,8 +394,8 @@ void RTKCom::Paint_school() {
     gpsfile1.close();
 }
 
-void RTKCom::comRTK() {
-    cout << "rtk start\n";
+void GPSCom::comGPS() {
+    cout << "gps start\n";
 
     if (_gps.OpenPort(L"COM5")) {
 
@@ -368,7 +403,6 @@ void RTKCom::comRTK() {
         _gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
 
         while (1) {
-            cout << "in RTK" << endl;
             BYTE*pByte = new BYTE[128];
 
             if (_gps.ReadByte(pByte, 128)) {
@@ -411,28 +445,17 @@ void RTKCom::comRTK() {
             }
             else {
                 _gps.ClosePort();
-                emit(RTKExit());
+                emit(GPSExit());
                 return;
             }
         }
     }
     else {
-        cout << "rtk not connect\n";
-        emit(RTKExit());
+        cout << "gps not connect\n";
+        emit(GPSExit());
         return;
     }
 }
-
-
-/*
-void HeroNeverDies() {
-    _gps.ClosePort();
-    if (_gps.OpenPort(COM)) {
-        _gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
-        _gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
-    }
-}
-*/
 
 vector <double>UTM(double lat, double lng) {
     double lat_rad = lat * PI / 180.0;
@@ -464,7 +487,7 @@ vector <double>UTM(double lat, double lng) {
 
     double dellng = lng_rad - lamda;
 
-    //fuck offset
+    //offset
     double N = T1 + pow(dellng, 2)*T2 + pow(dellng, 4)*T3 + pow(dellng, 6)*T4 + pow(dellng, 8)*T5 + 1.32;
     double E = Eoff + dellng * T6 + pow(dellng, 3)*T7 + pow(dellng, 5)*T8 + pow(dellng, 7)*T9;
 
@@ -474,27 +497,22 @@ vector <double>UTM(double lat, double lng) {
     return utm;
 }
 
-// L1������ �Ÿ��Դϴ�. (L1 = |x1-x2| + |y1-y2|) �츮�� �Ϲ������� �˰��ִ� �Ÿ����ϴ� ������ L2�Դϴ�.
-// L1�������� �Ÿ��� ���ϴ� ������ ���귮�� �ſ� ���� ������ �̿��߽��ϴ�.
-double L1Distance(vector<double> coor1, vector<double> coor2) { // ������ ���� ã�� �� �̿��ϴ� �Ÿ�
+double L1Distance(vector<double> coor1, vector<double> coor2) {
     double L1 = 0;
     L1 = abs(coor1[0] - coor2[0]) + abs(coor1[1] - coor2[1]);
 
     return L1;
 }
 
-double L2Distance(double x2, double y2, double x1 = 0, double y1 = 0) { // ���� ���弱�� ������ ��(3��)������ �Ÿ� ���� ��
+double L2Distance(double x2, double y2, double x1 = 0, double y1 = 0) { 
     double L2 = 0;
     L2 = pow(pow(x2 - x1, 2) + pow(y2 - y1, 2), 0.5);
 
     return L2;
 }
 
-
-// ���� ������ ���� ã�� �Լ� (������ ������ǥ���� �տ� 2���� ��, �ڿ� 1���� �����־����� �ֳ��ϸ� GEOFENCE�� �Ϻ��ϰ� �����ϱ�����)
 vector<int> mins(double x, double y, vector<vector<double>> map_link_cut, vector<double> unitHeading) {
 
-    //min, smin ...�� ���� ������ ���� �ε��� �ѹ���
     int min = 0;
     int smin = 0;
     int ssmin = 0;
@@ -502,9 +520,6 @@ vector<int> mins(double x, double y, vector<vector<double>> map_link_cut, vector
     vector <double> rt_postion{ x,y };
     double temp = 1000000000;
 
-
-    //���� ������ 4���� ���� ã�� �� ���� ������ 2���� ���� �����ϰ�
-    //3,4��°�� �ش��ϴ� ������ �ص����Ϳ� �����ؼ� ������ ���� �̿���
     for (int i = 0; i < map_link_cut.size(); i++) {
         double ref = L1Distance(rt_postion, map_link_cut[i]);
         if (ref <= temp) {
@@ -515,9 +530,8 @@ vector<int> mins(double x, double y, vector<vector<double>> map_link_cut, vector
             temp = ref;
         }
     }
-    int lastPoint = 0; // 3,4��° ������ ���� ������ ������ ��
+    int lastPoint = 0;
 
-    //3,4��° ������ ���� ������ ���� ������ �� �Ǻ� �� ����
     if ((unitHeading[0] * (map_link_cut[ssmin][0] - x) + unitHeading[1] * (map_link_cut[ssmin][1]) - y) >= 0) {
         lastPoint = ssmin;
     }

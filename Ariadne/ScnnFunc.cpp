@@ -3,7 +3,7 @@
 #include <torch/data/transforms/tensor.h> 
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#include "scnn.h"
+#include "ScnnFunc.h"
 
 int mainfun()
 {

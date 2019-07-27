@@ -2,7 +2,7 @@
 
 #include "ComPlatform.h"
 #include "atlstr.h"
-#include "LidarFun.h"
+#include "LidarFunc.h"
 
 #include <QObject>
 #include <QThread>
@@ -15,46 +15,6 @@
 
 using namespace std;
 
-//class PlatformCom : public QObject
-//{
-//    Q_OBJECT
-//protected:
-//
-//public:
-//    DataContainer *dataContainer;
-//    bool loopStatusPlatform = true;
-//    PlatformCom();
-//    ///void run();
-//
-//    //PlatformComThread() {
-//    //	//dataContainer = DataContainer::getInstance();
-//    //}
-//    //~PlatformComThread() {
-//    //	cout << "�÷��� �����尡 �����Ǿ����ϴ�.\n";
-//    //	this->wait();
-//    //
-//    //
-//
-//private:
-//
-//    ComPlatform _platform;
-//    /// void run() Q_DECL_OVERRIDE; //thread ���� �� �ڵ� �����Ǵ� �Լ�
-//
-//signals: /// thread�� ���� broadcast �Լ���
-//    void AorMChanged(int);
-//    void EStopChanged(int);
-//    void GearChanged(int);
-//    void SpeedChanged(int);
-//    void SteerChanged(int);
-//    void BreakChanged(int);
-//    void EncChanged(int);
-//    void AliveChanged(int);
-//    void PlatformExit();
-//
-//public slots:
-//    void comPlatform();
-//
-//};
 
 class LidarCom : public QObject
 {
@@ -94,4 +54,17 @@ signals: /// thread�� ���� broadcast �Լ���
 
 public slots:
     void comScnn();
+};
+
+class Yolo : public QObject
+{
+	Q_OBJECT
+protected:
+
+public:
+	DataContainer *dataContainer;
+
+private:
+	Yolo();
+	void comYolo();
 };

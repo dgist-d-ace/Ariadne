@@ -14,8 +14,23 @@
 #include <QString>
 #include <QTimer>
 
+class Driving : public QObject 
+{
+	Q_OBJECT
+protected:
 
-class RTKCom : public QObject
+public:
+	DataContainer *dataContainer;
+	Driving();
+
+public slots:
+	void Basic();
+
+	void Mission1();
+
+};
+
+class GPSCom : public QObject
 {
     Q_OBJECT
 protected:
@@ -24,7 +39,7 @@ public:
     DataContainer *dataContainer;
     Ui::AriadneClass *ui;
 
-    RTKCom();
+    GPSCom();
 
     bool loopStatusPlatform = true;
 
@@ -38,25 +53,13 @@ private:
     vector<vector<double>> map_link;
 
     void Paint_base();
-    void Paint_school();
+    void Paint_school(); 
 
-    /*
-int f_mode = 1;
-int f_Estop = 0;
-int f_gear = 0;
-int f_speed = 20;
-int f_steer = 0;  //steer �ݴ��γ���
-int f_brake = 0;
-*/
-
-    // void setWritePram(BYTE* writeBuffer);
-    /// void run() Q_DECL_OVERRIDE; //thread ���� �� �ڵ� �����Ǵ� �Լ�
-
-signals: /// thread�� ���� broadcast �Լ���
-    void RTKExit();
+signals:
+    void GPSExit();
 
 public slots:
-    void comRTK();
+    void comGPS();
 
 };
 
@@ -70,23 +73,14 @@ public:
     DataContainer *dataContainer;
     bool loopStatusPlatform = true;
     PlatformCom();
-    ///void run();
+    //void run();
 
-    //PlatformComThread() {
-    //	//dataContainer = DataContainer::getInstance();
-    //}
-    //~PlatformComThread() {
-    //	cout << "�÷��� �����尡 �����Ǿ����ϴ�.\n";
-    //	this->wait();
-    //
-    //
 
 private:
 
     ComPlatform _platform;
-    /// void run() Q_DECL_OVERRIDE; //thread ���� �� �ڵ� �����Ǵ� �Լ�
-
-signals: /// thread�� ���� broadcast �Լ���
+   
+signals: 
     void AorMChanged(int);
     void EStopChanged(int);
     void GearChanged(int);
@@ -109,17 +103,22 @@ class Ariadne : public QMainWindow
 public:
     Ariadne(QWidget *parent = Q_NULLPTR);
 
-    PlatformCom *platformCom;
-    //LidarCom *lidarCom;
-    //RTKCom *rtkCom;
-    //Scnn *scnn;
+    PlatformCom* platformCom;
+    LidarCom*lidarCom;
+    GPSCom* gpsCom;
+    Scnn* scnn;
+	Yolo* yolo;
 
     QThread* platformThread;
-    /*QThread* lidarThread;
-    QThread* rtkThread;
-    QThread* scnnThread;*/
+    QThread* lidarThread;
+    QThread* gpsThread;
+    QThread* scnnThread;
+	QThread* yoloThread;
 
-    DataContainer *dataContainer;
+	Driving* driving;
+	QThread* drivingThread;
+
+    DataContainer* dataContainer;
 
     QTimer* TimerSensorStatus;
 
@@ -152,4 +151,4 @@ public slots:
 };
 
 CString ConvertQstringtoCString(QString); 
-/// this function is used in RTKCom Class and PlatformCom Class
+// this function is used in GPSCom Class and PlatformCom Class
