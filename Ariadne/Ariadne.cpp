@@ -17,18 +17,18 @@ Ariadne::Ariadne(QWidget *parent)
 
 	//  -------------------  Sensor Thread control ------------------------- //
 
-    
+    /*
     platformCom = new PlatformCom;
 	platformThread = new QThread;
 	platformCom->moveToThread(platformThread);
 	connect(platformThread, SIGNAL(started()), platformCom, SLOT(comPlatform()));
-	connect(platformCom, SIGNAL(PlatformExit()), platformCom, SLOT(comPlatform()));
+	connect(platformCom, SIGNAL(PlatformExit()), platformCom, SLOT(comPlatform()));*/
 
 	gpsCom = new GPSCom;
 	gpsThread = new QThread;
 	gpsCom->moveToThread(gpsThread);
 	connect(gpsThread, SIGNAL(started()), gpsCom, SLOT(comGPS()));
-	connect(gpsCom, SIGNAL(GPSExit()), gpsCom, SLOT(comGPS()));
+	connect(gpsThread, SIGNAL(GPSExit()), gpsCom, SLOT(comGPS()));
 
     /*
 	lidarCom = new LidarCom;
@@ -80,6 +80,7 @@ Ariadne::Ariadne(QWidget *parent)
 
     // ------------------- UI update for Platform status ----------------------//
 
+    /*
     connect(platformCom, SIGNAL(AorMChanged(int)), this, SLOT(onAorMChanged(int)));
     connect(platformCom, SIGNAL(EStopChanged(int)), this, SLOT(onEStopChanged(int)));
     connect(platformCom, SIGNAL(GearChanged(int)), this, SLOT(onGearChanged(int)));
@@ -89,7 +90,8 @@ Ariadne::Ariadne(QWidget *parent)
     connect(platformCom, SIGNAL(EncChanged(int)), this, SLOT(onEncChanged(int)));
 
 	connect(platformCom, SIGNAL(PlatformExit()), this, SLOT(onPlatformExit()));
-	//connect(lidarCom, SIGNAL(LidarExit()), this, SLOT(onLidarExit()));
+	connect(lidarCom, SIGNAL(LidarExit()), this, SLOT(onLidarExit()));
+    */
 	connect(gpsCom, SIGNAL(GPSExit()), this, SLOT(onGPSExit()));
 }
 
@@ -113,8 +115,8 @@ void Ariadne::clicked_btn_confirm() {
 	//if(!lidarThread->isRunning())
 	//	lidarThread->start();
 
-	if(!gpsThread->isRunning())
-		gpsThread->start();
+    if (!gpsThread->isRunning()) 
+        gpsThread->start(); 
 
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
@@ -399,6 +401,103 @@ void GPSCom::Paint_school() {
     gpsfile1.close();
 }
 
+//통신 끊겼을 때 다시 끊었다가 다시 여는 놈임
+void HeroNeverDies() {
+    _gps.ClosePort();
+    if (_gps.OpenPort(L"COM5")) {
+        _gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
+        _gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
+    }
+}
+
+//얘가 실시간 좌표찍는 애임 , 클릭버튼했을 대 이 함수호출되도록했음
+void GPSCom::comGPS() { // rt ; Real Time
+    QVector<double> temp1;
+    QVector<double> temp2;
+    QVector<double> store_x;
+    QVector<double> store_y;
+
+    cout << "RTK communication now" << endl;
+
+    if (_gps.OpenPort(L"COM5")) {
+
+        _gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
+        _gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
+
+        string tap;
+        string tap2;
+        vector<string> vec;
+
+        cout << "hihi" << endl;
+
+        while (1) {
+            BYTE * pByte = new BYTE[128]; // 2028
+
+            if (_gps.ReadByte(pByte, 128)) {
+                pByte[127] = '\0'; // 2027
+
+                const char * p = (const char*)pByte;
+                //cout << p;
+
+                stringstream str(p);
+
+                while (getline(str, tap, '\n')) {
+                    //cout << tap;
+                    stringstream qwe(tap);
+
+                    while (getline(qwe, tap2, ',')) {
+                        vec.push_back(tap2);
+                    }
+                    //cout << vec[0] << endl;
+
+                    if (vec.size() > 8) {
+                        if (vec[0] == "$GNRMC" && vec[2] == "A") {
+                            //ofile << vec[0] << ',' << vec[3] << ',' << vec[5]  << endl;
+                            _lat = ((atof(vec[3].c_str()) - 3500) / 60) + 35; // 35랑 128은 상황에 따라 바꿔줘야함
+                            _lng = ((atof(vec[5].c_str()) - 12800) / 60) + 128;
+                            heading = atof(vec[8].c_str());
+
+                            vector<double >utm = UTM(_lat, _lng);
+                            lat = utm[0];
+                            lng = utm[1];
+
+                            temp1.push_back(lat);
+                            temp2.push_back(lng);
+                            //store_x.push_back(lat);
+                            //store_y.push_back(lng);
+                            ui->rt_plot->xAxis->setRange(lat - 10, lat + 10);// range min to max // 상하좌우 20
+                            ui->rt_plot->yAxis->setRange(lng - 10, lng + 10);  //
+
+                            QCPScatterStyle myScatter4; //꽉찬 원, 빨간색, 사이즈 10
+                            myScatter4.setShape(QCPScatterStyle::ssDisc);
+                            myScatter4.setPen(QPen(Qt::red));
+                            myScatter4.setSize(5);
+                            ui->rt_plot->graph(1)->setScatterStyle(myScatter4);
+                            ui->rt_plot->addGraph();
+                            ui->rt_plot->graph(1)->setLineStyle(QCPGraph::lsNone);
+                            ui->rt_plot->graph(1)->setData(temp1, temp2);
+                            ui->rt_plot->replot();
+                            ui->rt_plot->update();
+                            temp1.clear();
+                            temp2.clear();
+
+                        }
+                    }
+                    vec.clear();
+                }
+            }
+            else {
+                //_gps.ClosePort();
+                cout << "GPS not connect" << endl;
+                emit(GPSExit());
+                //HeroNeverDies();
+            }
+        }
+    }
+}
+
+/// test version 1
+/*
 void GPSCom::comGPS() {
     cout << "gps start\n";
     QString temp = ui->comboBox_4->currentText();
@@ -409,6 +508,7 @@ void GPSCom::comGPS() {
         _gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
 
+        
         while (1) {
             BYTE*pByte = new BYTE[128];
 
@@ -416,6 +516,7 @@ void GPSCom::comGPS() {
 
                 dataContainer->updateValue_gps_status();
 
+                
                 pByte[127] = '\0';
                 char*p = (char*)pByte;
 
@@ -454,6 +555,7 @@ void GPSCom::comGPS() {
                     }
                 }
             }
+            
             else {
                 _gps.ClosePort();
                 emit(GPSExit());
@@ -467,6 +569,8 @@ void GPSCom::comGPS() {
         return;
     }
 }
+*/
+
 
 vector <double>UTM(double lat, double lng) { /// This function is to calculate UTM parameters.
     double lat_rad = lat * PI / 180.0;

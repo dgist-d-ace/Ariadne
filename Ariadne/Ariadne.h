@@ -107,13 +107,13 @@ class Ariadne : public QMainWindow
 public:
     Ariadne(QWidget *parent = Q_NULLPTR);
 
-    PlatformCom* platformCom;
+//    PlatformCom* platformCom;
  //   LidarCom*lidarCom;
     GPSCom* gpsCom;
  //   Scnn* scnn;
 	//Yolo* yolo;
 
-    QThread* platformThread;
+ //   QThread* platformThread;
  //   QThread* lidarThread;
     QThread* gpsThread;
  //   QThread* scnnThread;
