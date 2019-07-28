@@ -1,22 +1,20 @@
 
 #include "DataContainer.h"
+#include <iostream>
 
-// TODO: automode thread 생성하기
-
-class Mission
+class Driving : public QObject
 {
-private:
-
+	Q_OBJECT
 protected:
-	
-    int MissionNumber = 0;
 
 public:
-    DataContainer* dataContainer;
-	Mission();
-    bool emergencyStop();
-    int DecideMission();
-    void setMission(int k);// k번째 미션으로 넘어감
-    void doMission0();
- 
+	DataContainer *dataContainer;
+	Driving();
+
+public slots:
+	void Basic();
+
+	void Mission1();
+
 };
+

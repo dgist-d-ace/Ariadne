@@ -49,10 +49,10 @@ Ariadne::Ariadne(QWidget *parent)
 
 	//  -------------------  Driving control ------------------------- //
 
-	//driving = new Driving;
-	//drivingThread = new QThread;
-	//driving->moveToThread(drivingThread);
-	//connect(drivingThread, SIGNAL(started()), driving, SLOT(Basic()));
+	driving = new Driving;
+	drivingThread = new QThread;
+	driving->moveToThread(drivingThread);
+	connect(drivingThread, SIGNAL(started()), driving, SLOT(Basic()));
 
     //  -------------------  UI control ------------------------- //
 
@@ -70,7 +70,8 @@ Ariadne::Ariadne(QWidget *parent)
     // --------------------- Platform control Using UI ---------------------------------//
 
     QObject::connect(ui->Btn_Mission0, SIGNAL(clicked()), this, SLOT(clicked_btn_mission0()));
-    QObject::connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_btn_confirm()));
+    QObject::connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_btn_sensor()));
+	QObject::connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(clicked_btn_driving()));
     QObject::connect(ui->Btn_gearInput, SIGNAL(clicked()), this, SLOT(gear_input()));
     QObject::connect(ui->Btn_up, SIGNAL(clicked()), this, SLOT(clicked_speed_up()));
     QObject::connect(ui->Btn_down, SIGNAL(clicked()), this, SLOT(clicked_speed_down()));
@@ -101,7 +102,7 @@ CString ConvertQstringtoCString(QString qs)
 }
 
 // This function is to start communication with sensor.
-void Ariadne::clicked_btn_confirm() {
+void Ariadne::clicked_btn_sensor() {
 
 	//if (!scnnThread->isRunning())
 	//	scnnThread->start();
@@ -120,7 +121,12 @@ void Ariadne::clicked_btn_confirm() {
 	TimerSensorStatus->start(1000);
 }
 
-// This function is to start communication with sensor
+// This function is to start driving
+void Ariadne::clicked_btn_driving() {
+	if (!drivingThread->isRunning())
+		drivingThread->start();
+}
+
 void Ariadne::clicked_btn_mission0() {
 	//if (!drivingThread->isRunning())
 	//	drivingThread->start();
@@ -233,26 +239,6 @@ void Ariadne::updateSensorStatus()
 }
 
 Ui::AriadneClass* Ariadne::getUI() { return ui; }
-
-Driving::Driving() {
-	dataContainer = DataContainer::getInstance();
-}
-
-
-void Driving::Basic() {
-
-//
-// To do : Implement Basic Driving Algorithm
-//
-
-}
-
-void Driving::Mission1() {
-//
-// To do : Implement Basic Driving Algorithm
-//
-
-}
 
 
 /// ----------------- Platform Communication Function -------------- ///

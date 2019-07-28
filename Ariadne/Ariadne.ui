@@ -69,14 +69,14 @@
     <widget class="QPushButton" name="pushButton_2">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>170</y>
-       <width>201</width>
+       <width>101</width>
        <height>28</height>
       </rect>
      </property>
      <property name="text">
-      <string>확인</string>
+      <string>센서 통신</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_9">
@@ -152,6 +152,19 @@
        <width>101</width>
        <height>22</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_3">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>170</y>
+       <width>101</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>주행 시작</string>
      </property>
     </widget>
    </widget>

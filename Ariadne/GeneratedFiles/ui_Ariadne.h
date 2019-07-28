@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'Ariadne.ui'
 **
-** Created by: Qt User Interface Compiler version 5.12.2
+** Created by: Qt User Interface Compiler version 5.12.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -44,6 +44,7 @@ public:
     QLabel *label_12;
     QLabel *label_13;
     QComboBox *comboBox_5;
+    QPushButton *pushButton_3;
     QGroupBox *groupBox_2;
     QGroupBox *groupBox_3;
     QPushButton *Btn_Mission0;
@@ -116,7 +117,7 @@ public:
         comboBox_4->setGeometry(QRect(120, 110, 101, 22));
         pushButton_2 = new QPushButton(groupBox);
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-        pushButton_2->setGeometry(QRect(20, 170, 201, 28));
+        pushButton_2->setGeometry(QRect(10, 170, 101, 28));
         label_9 = new QLabel(groupBox);
         label_9->setObjectName(QString::fromUtf8("label_9"));
         label_9->setGeometry(QRect(10, 20, 64, 15));
@@ -135,6 +136,9 @@ public:
         comboBox_5 = new QComboBox(groupBox);
         comboBox_5->setObjectName(QString::fromUtf8("comboBox_5"));
         comboBox_5->setGeometry(QRect(120, 140, 101, 22));
+        pushButton_3 = new QPushButton(groupBox);
+        pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
+        pushButton_3->setGeometry(QRect(120, 170, 101, 28));
         groupBox_2 = new QGroupBox(centralWidget);
         groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
         groupBox_2->setGeometry(QRect(10, 10, 241, 171));
@@ -291,12 +295,13 @@ public:
     {
         AriadneClass->setWindowTitle(QApplication::translate("AriadneClass", "Ariadne", nullptr));
         groupBox->setTitle(QApplication::translate("AriadneClass", "GroupBox", nullptr));
-        pushButton_2->setText(QApplication::translate("AriadneClass", "\355\231\225\354\235\270", nullptr));
+        pushButton_2->setText(QApplication::translate("AriadneClass", "\354\204\274\354\204\234 \355\206\265\354\213\240", nullptr));
         label_9->setText(QApplication::translate("AriadneClass", "Platform", nullptr));
         label_10->setText(QApplication::translate("AriadneClass", "Camera1", nullptr));
         label_11->setText(QApplication::translate("AriadneClass", "Camera2", nullptr));
         label_12->setText(QApplication::translate("AriadneClass", "GPS", nullptr));
         label_13->setText(QApplication::translate("AriadneClass", "LiDAR", nullptr));
+        pushButton_3->setText(QApplication::translate("AriadneClass", "\354\243\274\355\226\211 \354\213\234\354\236\221", nullptr));
         groupBox_2->setTitle(QApplication::translate("AriadneClass", "GroupBox", nullptr));
         groupBox_3->setTitle(QApplication::translate("AriadneClass", "Mission", nullptr));
         Btn_Mission0->setText(QApplication::translate("AriadneClass", "Mission0", nullptr));

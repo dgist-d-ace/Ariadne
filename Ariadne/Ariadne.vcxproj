@@ -148,7 +148,10 @@
     <ClInclude Include="DataContainer.h" />
     <ClInclude Include="GeneratedFiles\ui_Ariadne.h" />
     <ClInclude Include="LidarFunc.h" />
-    <ClInclude Include="MissionAct.h" />
+    <QtMoc Include="MissionAct.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtPrintSupport;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include\opencv2;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\libtorch\include\torch\csrc\api\include;C:\libtorch\include;C:\opencv-3.4.5\opencv-3.4.5\build\include\opencv2;C:\opencv-3.4.5\opencv-3.4.5\build\include;C:\Users\DY\Downloads\libtorch-win-shared-with-deps-latest\libtorch\include;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include;.\GeneratedFiles;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtPrintSupport;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include\opencv2</IncludePath>
+    </QtMoc>
     <ClInclude Include="ScnnFunc.h" />
     <QtMoc Include="qcustomplot.h">
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>

@@ -1,9 +1,12 @@
 #pragma once
+#include "SensorStatus.h"
+#include "MissionAct.h"
+
 #include <QtWidgets/QMainWindow>
 #include "ui_Ariadne.h"
 #include <QtWidgets/QPushButton>
 #include <QTimer>
-#include "SensorStatus.h"
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -13,22 +16,6 @@
 #include "atlstr.h"
 #include <QString>
 #include <QTimer>
-
-class Driving : public QObject 
-{
-	Q_OBJECT
-protected:
-
-public:
-	DataContainer *dataContainer;
-	Driving();
-
-public slots:
-	void Basic();
-
-	void Mission1();
-
-};
 
 class GPSCom : public QObject
 {
@@ -119,8 +106,8 @@ public:
  //   QThread* scnnThread;
 	//QThread* yoloThread;
 
-	//Driving* driving;
-	//QThread* drivingThread;
+	Driving* driving;
+	QThread* drivingThread;
 
     DataContainer* dataContainer;
 
@@ -136,7 +123,9 @@ private:
 public slots:
     void clicked_btn_mission0();
     
-    void clicked_btn_confirm();
+    void clicked_btn_sensor();
+	void clicked_btn_driving();
+
     void clicked_speed_up();
     void clicked_speed_down();
     void clicked_steer_left();
