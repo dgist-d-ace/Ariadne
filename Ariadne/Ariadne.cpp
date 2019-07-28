@@ -79,7 +79,7 @@ Ariadne::Ariadne(QWidget *parent)
     QObject::connect(ui->Btn_right, SIGNAL(clicked()), this, SLOT(clicked_steer_right()));
     QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_E_stop()));
 
-    // ------------------- UI update for Platform status ----------------------//
+    // ------------------- UI update for Platform & GPS status ----------------------//
 
     /*
     connect(platformCom, SIGNAL(AorMChanged(int)), this, SLOT(onAorMChanged(int)));
@@ -91,6 +91,8 @@ Ariadne::Ariadne(QWidget *parent)
     connect(platformCom, SIGNAL(EncChanged(int)), this, SLOT(onEncChanged(int)));
 
     */
+    connect(gpsCom, SIGNAL(latitudeChanged(double)), this, SLOT(onLatitudeChanged(double)));
+    connect(gpsCom, SIGNAL(longitudeChanged(double)), this, SLOT(onLongitudeChanged(double)));
 }
 
 // This function is to change comport numbers from CString to QString.
@@ -128,8 +130,7 @@ void Ariadne::clicked_btn_driving() {
 }
 
 void Ariadne::clicked_btn_mission0() {
-	//if (!drivingThread->isRunning())
-	//	drivingThread->start();
+	
 }
 
 // These functions is to control gplatform
@@ -254,7 +255,7 @@ void PlatformCom::comPlatform() {
     QString ComportNum = ui->comboBox->currentText();
     CString Comport = ConvertQstringtoCString(ComportNum);    
 
-    if (_platform.OpenPort(Comport))   /// 실제 사용될 COM Port 를 넣어야합니다.  
+    if (_platform.OpenPort(Comport))  
     {
         _platform.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _platform.SetCommunicationTimeouts(0, 0, 0, 0, 0);
@@ -443,6 +444,10 @@ void GPSCom::comGPS() { // rt ; Real Time
 							dataContainer->setValue_gps_heading(heading);
 							dataContainer->setValue_gps_latitude(lat);
 							dataContainer->setValue_gps_longitude(lng);
+
+                            emit latitudeChanged(lat/10000);
+                            emit longitudeChanged(lng/10000); /// 숫자가 너무 커서 나눴음
+                            cout << lat << " " << lng << endl;
                         }
 						else if (vec[2] == "V") {
 							dataContainer->count_gps_valid();

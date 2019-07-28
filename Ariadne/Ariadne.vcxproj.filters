@@ -54,13 +54,13 @@
     <ClCompile Include="GeneratedFiles\qrc_Ariadne.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="qcustomplot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LidarFunc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ScnnFunc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qcustomplot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,10 +71,10 @@
     <QtMoc Include="SensorStatus.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="qcustomplot.h">
+    <QtMoc Include="MissionAct.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="MissionAct.h">
+    <QtMoc Include="qcustomplot.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

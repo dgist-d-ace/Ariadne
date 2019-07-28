@@ -653,7 +653,7 @@ p, li { white-space: pre-wrap; }
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>270</y>
+       <y>300</y>
        <width>101</width>
        <height>16</height>
       </rect>
@@ -665,9 +665,9 @@ p, li { white-space: pre-wrap; }
     <widget class="QLCDNumber" name="lcdNumber_8">
      <property name="geometry">
       <rect>
-       <x>130</x>
-       <y>240</y>
-       <width>64</width>
+       <x>23</x>
+       <y>260</y>
+       <width>171</width>
        <height>23</height>
       </rect>
      </property>
@@ -675,9 +675,9 @@ p, li { white-space: pre-wrap; }
     <widget class="QLCDNumber" name="lcdNumber_9">
      <property name="geometry">
       <rect>
-       <x>130</x>
-       <y>270</y>
-       <width>64</width>
+       <x>20</x>
+       <y>320</y>
+       <width>171</width>
        <height>23</height>
       </rect>
      </property>

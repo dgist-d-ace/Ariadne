@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'Ariadne.ui'
 **
-** Created by: Qt User Interface Compiler version 5.12.3
+** Created by: Qt User Interface Compiler version 5.12.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -261,13 +261,13 @@ public:
         label_5->setGeometry(QRect(20, 240, 101, 16));
         label_14 = new QLabel(groupBox_4);
         label_14->setObjectName(QString::fromUtf8("label_14"));
-        label_14->setGeometry(QRect(20, 270, 101, 16));
+        label_14->setGeometry(QRect(20, 300, 101, 16));
         lcdNumber_8 = new QLCDNumber(groupBox_4);
         lcdNumber_8->setObjectName(QString::fromUtf8("lcdNumber_8"));
-        lcdNumber_8->setGeometry(QRect(130, 240, 64, 23));
+        lcdNumber_8->setGeometry(QRect(23, 260, 171, 23));
         lcdNumber_9 = new QLCDNumber(groupBox_4);
         lcdNumber_9->setObjectName(QString::fromUtf8("lcdNumber_9"));
-        lcdNumber_9->setGeometry(QRect(130, 270, 64, 23));
+        lcdNumber_9->setGeometry(QRect(20, 320, 171, 23));
         rt_plot = new QCustomPlot(centralWidget);
         rt_plot->setObjectName(QString::fromUtf8("rt_plot"));
         rt_plot->setGeometry(QRect(269, 19, 691, 611));

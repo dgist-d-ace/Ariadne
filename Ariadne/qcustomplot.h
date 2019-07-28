@@ -1818,6 +1818,7 @@ public:
   
   QCPAxis *xAxis, *yAxis, *xAxis2, *yAxis2;
   QCPLegend *legend;
+
   
 signals:
   void mouseDoubleClick(QMouseEvent *event);

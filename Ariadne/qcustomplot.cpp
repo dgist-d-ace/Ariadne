@@ -9147,6 +9147,7 @@ void QCustomPlot::setAntialiasedElement(QCP::AntialiasedElement antialiasedEleme
     mNotAntialiasedElements |= ~mAntialiasedElements;
 }
 
+
 /*!
   Sets which elements are forcibly drawn not antialiased as an \a or combination of
   QCP::AntialiasedElement.
