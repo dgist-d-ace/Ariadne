@@ -28,7 +28,7 @@ Ariadne::Ariadne(QWidget *parent)
 	gpsThread = new QThread;
 	gpsCom->moveToThread(gpsThread);
 	connect(gpsThread, SIGNAL(started()), gpsCom, SLOT(comGPS()));
-	connect(gpsThread, SIGNAL(GPSExit()), gpsCom, SLOT(comGPS()));
+	connect(gpsCom, SIGNAL(GPSExit()), gpsCom, SLOT(comGPS()));
 
     /*
 	lidarCom = new LidarCom;
@@ -89,10 +89,7 @@ Ariadne::Ariadne(QWidget *parent)
     connect(platformCom, SIGNAL(BreakChanged(int)), this, SLOT(onBreakChanged(int)));
     connect(platformCom, SIGNAL(EncChanged(int)), this, SLOT(onEncChanged(int)));
 
-	connect(platformCom, SIGNAL(PlatformExit()), this, SLOT(onPlatformExit()));
-	connect(lidarCom, SIGNAL(LidarExit()), this, SLOT(onLidarExit()));
     */
-	connect(gpsCom, SIGNAL(GPSExit()), this, SLOT(onGPSExit()));
 }
 
 // This function is to change comport numbers from CString to QString.
@@ -339,7 +336,7 @@ void GPSCom::Paint_base() // �⺻ �� ����
 }
 
 void GPSCom::Paint_school() {
-    ifstream gpsfile("C:\\Qt\\txtfile\\filteredMapSch.txt");   //littleUTM , largeUTM, 30up, 123123, techALL,filteredMapSch
+    ifstream gpsfile("txtfile\\filteredMapSch.txt");   //littleUTM , largeUTM, 30up, 123123, techALL,filteredMapSch
     /// "C:\\Users\\bokyung\\Desktop\\Autonomous\\txtfile\\filteredMapSch.txt"
     cout << "Paint School fucntion is called" << endl;
     char line[200];
@@ -375,7 +372,7 @@ void GPSCom::Paint_school() {
     ui->rt_plot->replot();
     ui->rt_plot->update();
 
-    ifstream gpsfile1("C:\\Qt\\txtfile\\filteredMapSch_link.csv");
+    ifstream gpsfile1("txtfile\\filteredMapSch_link.csv");
     char line1[200];
     string tap1;
     vector<string> vec1;
@@ -401,15 +398,6 @@ void GPSCom::Paint_school() {
     gpsfile1.close();
 }
 
-//통신 끊겼을 때 다시 끊었다가 다시 여는 놈임
-void HeroNeverDies() {
-    _gps.ClosePort();
-    if (_gps.OpenPort(L"COM5")) {
-        _gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
-        _gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
-    }
-}
-
 //얘가 실시간 좌표찍는 애임 , 클릭버튼했을 대 이 함수호출되도록했음
 void GPSCom::comGPS() { // rt ; Real Time
     QVector<double> temp1;
@@ -419,21 +407,25 @@ void GPSCom::comGPS() { // rt ; Real Time
 
     cout << "RTK communication now" << endl;
 
-    if (_gps.OpenPort(L"COM5")) {
+	QString ComportNum = ui->comboBox_4->currentText();
+	CString Comport = ConvertQstringtoCString(ComportNum);
+
+    if (_gps.OpenPort(Comport)) {
 
         _gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
-
+		
         string tap;
         string tap2;
         vector<string> vec;
-
-        cout << "hihi" << endl;
 
         while (1) {
             BYTE * pByte = new BYTE[128]; // 2028
 
             if (_gps.ReadByte(pByte, 128)) {
+
+				dataContainer->updateValue_gps_status();
+
                 pByte[127] = '\0'; // 2027
 
                 const char * p = (const char*)pByte;
@@ -461,36 +453,23 @@ void GPSCom::comGPS() { // rt ; Real Time
                             lat = utm[0];
                             lng = utm[1];
 
-                            temp1.push_back(lat);
-                            temp2.push_back(lng);
-                            //store_x.push_back(lat);
-                            //store_y.push_back(lng);
-                            ui->rt_plot->xAxis->setRange(lat - 10, lat + 10);// range min to max // 상하좌우 20
-                            ui->rt_plot->yAxis->setRange(lng - 10, lng + 10);  //
-
-                            QCPScatterStyle myScatter4; //꽉찬 원, 빨간색, 사이즈 10
-                            myScatter4.setShape(QCPScatterStyle::ssDisc);
-                            myScatter4.setPen(QPen(Qt::red));
-                            myScatter4.setSize(5);
-                            ui->rt_plot->graph(1)->setScatterStyle(myScatter4);
-                            ui->rt_plot->addGraph();
-                            ui->rt_plot->graph(1)->setLineStyle(QCPGraph::lsNone);
-                            ui->rt_plot->graph(1)->setData(temp1, temp2);
-                            ui->rt_plot->replot();
-                            ui->rt_plot->update();
-                            temp1.clear();
-                            temp2.clear();
-
+							dataContainer->resetValue_gps_valid();
+							dataContainer->setValue_gps_heading(heading);
+							dataContainer->setValue_gps_latitude(lat);
+							dataContainer->setValue_gps_longitude(lng);
                         }
+						else if (vec[2] == "V") {
+							dataContainer->count_gps_valid();
+						}
                     }
                     vec.clear();
                 }
             }
             else {
-                //_gps.ClosePort();
                 cout << "GPS not connect" << endl;
+				_gps.ClosePort();
                 emit(GPSExit());
-                //HeroNeverDies();
+				return;
             }
         }
     }
