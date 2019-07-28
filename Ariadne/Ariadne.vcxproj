@@ -126,11 +126,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="LidarFun.cpp" />
+    <ClCompile Include="LidarFunc.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MissionAct.cpp" />
     <ClCompile Include="qcustomplot.cpp" />
-    <ClCompile Include="Scnn.cpp" />
+    <ClCompile Include="ScnnFunc.cpp" />
     <ClCompile Include="SensorStatus.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -147,9 +147,9 @@
     <ClInclude Include="CSerialPort.h" />
     <ClInclude Include="DataContainer.h" />
     <ClInclude Include="GeneratedFiles\ui_Ariadne.h" />
-    <ClInclude Include="LidarFun.h" />
+    <ClInclude Include="LidarFunc.h" />
     <ClInclude Include="MissionAct.h" />
-    <ClInclude Include="scnn.h" />
+    <ClInclude Include="ScnnFunc.h" />
     <QtMoc Include="qcustomplot.h">
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>

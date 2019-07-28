@@ -17,23 +17,25 @@ Ariadne::Ariadne(QWidget *parent)
 
 	//  -------------------  Sensor Thread control ------------------------- //
 
+    
     platformCom = new PlatformCom;
 	platformThread = new QThread;
 	platformCom->moveToThread(platformThread);
 	connect(platformThread, SIGNAL(started()), platformCom, SLOT(comPlatform()));
 	connect(platformCom, SIGNAL(PlatformExit()), platformCom, SLOT(comPlatform()));
 
-	lidarCom = new LidarCom;
-	lidarThread = new QThread;
-	lidarCom->moveToThread(lidarThread);
-	connect(lidarThread, SIGNAL(started()), lidarCom, SLOT(comLidar()));
-	connect(lidarCom, SIGNAL(LidarExit()), lidarCom, SLOT(comLidar()));
-
 	gpsCom = new GPSCom;
 	gpsThread = new QThread;
 	gpsCom->moveToThread(gpsThread);
 	connect(gpsThread, SIGNAL(started()), gpsCom, SLOT(comGPS()));
 	connect(gpsCom, SIGNAL(GPSExit()), gpsCom, SLOT(comGPS()));
+
+    /*
+	lidarCom = new LidarCom;
+	lidarThread = new QThread;
+	lidarCom->moveToThread(lidarThread);
+	connect(lidarThread, SIGNAL(started()), lidarCom, SLOT(comLidar()));
+	connect(lidarCom, SIGNAL(LidarExit()), lidarCom, SLOT(comLidar()));
 
 	scnn = new Scnn;
 	scnnThread = new QThread;
@@ -43,14 +45,14 @@ Ariadne::Ariadne(QWidget *parent)
 	yolo = new Yolo;
 	yoloThread = new QThread;
 	yolo->moveToThread(yoloThread);
-	connect(scnnThread, SIGNAL(started()), yolo, SLOT(comYolo()));
+	connect(scnnThread, SIGNAL(started()), yolo, SLOT(comYolo()));*/
 
 	//  -------------------  Driving control ------------------------- //
 
-	driving = new Driving;
-	drivingThread = new QThread;
-	driving->moveToThread(drivingThread);
-	connect(drivingThread, SIGNAL(started()), driving, SLOT(Basic()));
+	//driving = new Driving;
+	//drivingThread = new QThread;
+	//driving->moveToThread(drivingThread);
+	//connect(drivingThread, SIGNAL(started()), driving, SLOT(Basic()));
 
     //  -------------------  UI control ------------------------- //
 
@@ -61,7 +63,7 @@ Ariadne::Ariadne(QWidget *parent)
         ui->comboBox_3->addItem("COM" + QString::number(i));
         ui->comboBox_4->addItem("COM" + QString::number(i));
         ui->comboBox_5->addItem("COM" + QString::number(i));
-    } // combobox references : https://www.bogotobogo.com/Qt/Qt5_QComboBox.php
+    }
 
     ui->comboBox_6->addItems({ "Drive" , "Neutral", "Reverse"}); // gaer items input
 
@@ -87,7 +89,7 @@ Ariadne::Ariadne(QWidget *parent)
     connect(platformCom, SIGNAL(EncChanged(int)), this, SLOT(onEncChanged(int)));
 
 	connect(platformCom, SIGNAL(PlatformExit()), this, SLOT(onPlatformExit()));
-	connect(lidarCom, SIGNAL(LidarExit()), this, SLOT(onLidarExit()));
+	//connect(lidarCom, SIGNAL(LidarExit()), this, SLOT(onLidarExit()));
 	connect(gpsCom, SIGNAL(GPSExit()), this, SLOT(onGPSExit()));
 }
 
@@ -102,14 +104,14 @@ CString ConvertQstringtoCString(QString qs)
 // This function is to start communication with sensor.
 void Ariadne::clicked_btn_confirm() {
 
-	if (!scnnThread->isRunning())
-		scnnThread->start();
+	//if (!scnnThread->isRunning())
+	//	scnnThread->start();
 
-	if(!platformThread->isRunning())
-		platformThread->start();
+	/*if(!platformThread->isRunning())
+		platformThread->start();*/
 
-	if(!lidarThread->isRunning())
-		lidarThread->start();
+	//if(!lidarThread->isRunning())
+	//	lidarThread->start();
 
 	if(!gpsThread->isRunning())
 		gpsThread->start();
@@ -121,8 +123,8 @@ void Ariadne::clicked_btn_confirm() {
 
 // This function is to start communication with sensor
 void Ariadne::clicked_btn_mission0() {
-	if (!drivingThread->isRunning())
-		drivingThread->start();
+	//if (!drivingThread->isRunning())
+	//	drivingThread->start();
 }
 
 // These functions is to control gplatform
@@ -168,6 +170,8 @@ void Ariadne::onSpeedChanged(int Number) { ui->lcdNumber_4->display(Number); }
 void Ariadne::onSteerChanged(int Number) { ui->lcdNumber_5->display(Number); }
 void Ariadne::onBreakChanged(int Number) { ui->lcdNumber_6->display(Number); }
 void Ariadne::onEncChanged(int Number) { ui->lcdNumber_7->display(Number); }
+void Ariadne::onLatitudeChanged(double Number) { ui->lcdNumber_8->display(Number); }
+void Ariadne::onLongitudeChanged(double Number) { ui->lcdNumber_9->display(Number); }
 
 // This function is to change UI according to Sensor communication status
 void Ariadne::updateSensorStatus()
@@ -252,7 +256,7 @@ void Driving::Mission1() {
 }
 
 
-// ----------------- Platform Communication Function -------------//
+/// ----------------- Platform Communication Function -------------- ///
 
 PlatformCom::PlatformCom()
 {
@@ -265,7 +269,7 @@ void PlatformCom::comPlatform() {
     QString ComportNum = ui->comboBox->currentText();
     CString Comport = ConvertQstringtoCString(ComportNum);    
 
-    if (_platform.OpenPort(Comport))   // 실제 사용될 COM Port 를 넣어야합니다.  
+    if (_platform.OpenPort(Comport))   /// 실제 사용될 COM Port 를 넣어야합니다.  
     {
         _platform.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _platform.SetCommunicationTimeouts(0, 0, 0, 0, 0);
@@ -299,8 +303,7 @@ void PlatformCom::comPlatform() {
     }
 }
 
-
-// ------------------ GPS Communication Function -----------------//
+/// ------------------ GPS Communication Function -----------------///
 
 #define threshold 0.5
 #define PI 3.14159265358979323846
@@ -313,28 +316,30 @@ void PlatformCom::comPlatform() {
 bool sign;
 
 CSerialPort _gps;
-void HeroNeverDies();
+///void HeroNeverDies();
 vector <double>UTM(double lat, double lng);
 bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double heading);
 
 GPSCom::GPSCom() {
     ui = Ariadne::getUI();
     dataContainer = DataContainer::getInstance();
-    //Paint_base();
-    //Paint_school();
-    //ui->rt_plot->replot();
+    Paint_base();
+    Paint_school();
+    ui->rt_plot->replot();
 }
 
 void GPSCom::Paint_base() // �⺻ �� ����
 {
+
     ui->rt_plot->addGraph();
     ui->rt_plot->graph(0)->rescaleAxes();
     ui->rt_plot->axisRect()->setupFullAxesBox();
 }
 
 void GPSCom::Paint_school() {
-    ifstream gpsfile("C:\\Users\\bokyung\\Desktop\\Autonomous\\txtfile\\filteredMapSch.txt");   //littleUTM , largeUTM, 30up, 123123, techALL,filteredMapSch
-
+    ifstream gpsfile("C:\\Qt\\txtfile\\filteredMapSch.txt");   //littleUTM , largeUTM, 30up, 123123, techALL,filteredMapSch
+    /// "C:\\Users\\bokyung\\Desktop\\Autonomous\\txtfile\\filteredMapSch.txt"
+    cout << "Paint School fucntion is called" << endl;
     char line[200];
     string tap;
     vector<string> vec;
@@ -368,7 +373,7 @@ void GPSCom::Paint_school() {
     ui->rt_plot->replot();
     ui->rt_plot->update();
 
-    ifstream gpsfile1("C:\\Users\\bokyung\\Desktop\\Autonomous\\txtfile\\filteredMapSch_link.csv");
+    ifstream gpsfile1("C:\\Qt\\txtfile\\filteredMapSch_link.csv");
     char line1[200];
     string tap1;
     vector<string> vec1;
@@ -396,8 +401,10 @@ void GPSCom::Paint_school() {
 
 void GPSCom::comGPS() {
     cout << "gps start\n";
+    QString temp = ui->comboBox_4->currentText();
+    CString Comport = ConvertQstringtoCString(temp);
 
-    if (_gps.OpenPort(L"COM5")) {
+    if (_gps.OpenPort(Comport)) {
 
         _gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
@@ -438,8 +445,12 @@ void GPSCom::comGPS() {
                         dataContainer->resetValue_gps_valid();
                         dataContainer->setValue_gps_latitude(atof(list.at(2).c_str()));
                         dataContainer->setValue_gps_longitude(atof(list.at(4).c_str()));
-                        dataContainer->setValue_gps_velocity(atof(list.at(6).c_str()));
+                        //dataContainer->setValue_gps_velocity(atof(list.at(6).c_str()));
+                        // because of the inexactitude of GPS velocity, this part was commented.
                         dataContainer->setValue_gps_heading(atof(list.at(7).c_str()));
+
+                        emit latitudeChanged(dataContainer->getValue_gps_latitude());
+                        emit longitudeChanged(dataContainer->getValue_gps_latitude());
                     }
                 }
             }
@@ -457,7 +468,7 @@ void GPSCom::comGPS() {
     }
 }
 
-vector <double>UTM(double lat, double lng) {
+vector <double>UTM(double lat, double lng) { /// This function is to calculate UTM parameters.
     double lat_rad = lat * PI / 180.0;
     double lng_rad = lng * PI / 180.0;
 

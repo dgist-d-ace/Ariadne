@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+
 #define UPDATE_PLATFORM_STATUS 100
 #define UPDATE_SENSOR_CONNECTION 101
 #define UPDATE_SENSOR_STATUS 102

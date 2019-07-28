@@ -16,6 +16,7 @@
 using namespace std;
 
 
+
 class LidarCom : public QObject
 {
     Q_OBJECT

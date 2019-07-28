@@ -57,10 +57,10 @@
     <ClCompile Include="qcustomplot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LidarFun.cpp">
+    <ClCompile Include="LidarFunc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scnn.cpp">
+    <ClCompile Include="ScnnFunc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,10 +101,10 @@
     <ClInclude Include="GeneratedFiles\ui_Ariadne.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="LidarFun.h">
+    <ClInclude Include="LidarFunc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scnn.h">
+    <ClInclude Include="ScnnFunc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

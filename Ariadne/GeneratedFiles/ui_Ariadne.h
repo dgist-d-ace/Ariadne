@@ -72,7 +72,6 @@ public:
     QLabel *label_2;
     QLabel *label_3;
     QLabel *label_4;
-    QLabel *label_5;
     QLabel *label_6;
     QLabel *label_7;
     QLabel *label;
@@ -84,7 +83,10 @@ public:
     QLCDNumber *lcdNumber_5;
     QLCDNumber *lcdNumber_6;
     QLCDNumber *lcdNumber_7;
-    QTextBrowser *textBrowser_2;
+    QLabel *label_5;
+    QLabel *label_14;
+    QLCDNumber *lcdNumber_8;
+    QLCDNumber *lcdNumber_9;
     QCustomPlot *rt_plot;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
@@ -217,9 +219,6 @@ public:
         label_4 = new QLabel(groupBox_4);
         label_4->setObjectName(QString::fromUtf8("label_4"));
         label_4->setGeometry(QRect(20, 210, 101, 16));
-        label_5 = new QLabel(groupBox_4);
-        label_5->setObjectName(QString::fromUtf8("label_5"));
-        label_5->setGeometry(QRect(20, 240, 101, 16));
         label_6 = new QLabel(groupBox_4);
         label_6->setObjectName(QString::fromUtf8("label_6"));
         label_6->setGeometry(QRect(20, 30, 64, 21));
@@ -253,9 +252,18 @@ public:
         lcdNumber_7 = new QLCDNumber(groupBox_4);
         lcdNumber_7->setObjectName(QString::fromUtf8("lcdNumber_7"));
         lcdNumber_7->setGeometry(QRect(130, 210, 64, 23));
-        textBrowser_2 = new QTextBrowser(groupBox_4);
-        textBrowser_2->setObjectName(QString::fromUtf8("textBrowser_2"));
-        textBrowser_2->setGeometry(QRect(130, 240, 61, 21));
+        label_5 = new QLabel(groupBox_4);
+        label_5->setObjectName(QString::fromUtf8("label_5"));
+        label_5->setGeometry(QRect(20, 240, 101, 16));
+        label_14 = new QLabel(groupBox_4);
+        label_14->setObjectName(QString::fromUtf8("label_14"));
+        label_14->setGeometry(QRect(20, 270, 101, 16));
+        lcdNumber_8 = new QLCDNumber(groupBox_4);
+        lcdNumber_8->setObjectName(QString::fromUtf8("lcdNumber_8"));
+        lcdNumber_8->setGeometry(QRect(130, 240, 64, 23));
+        lcdNumber_9 = new QLCDNumber(groupBox_4);
+        lcdNumber_9->setObjectName(QString::fromUtf8("lcdNumber_9"));
+        lcdNumber_9->setGeometry(QRect(130, 270, 64, 23));
         rt_plot = new QCustomPlot(centralWidget);
         rt_plot->setObjectName(QString::fromUtf8("rt_plot"));
         rt_plot->setGeometry(QRect(269, 19, 691, 611));
@@ -318,12 +326,13 @@ public:
         groupBox_4->setTitle(QApplication::translate("AriadneClass", "SensorStatus", nullptr));
         label_2->setText(QApplication::translate("AriadneClass", "STEER", nullptr));
         label_3->setText(QApplication::translate("AriadneClass", "GEAR", nullptr));
-        label_4->setText(QApplication::translate("AriadneClass", "GPS location", nullptr));
-        label_5->setText(QApplication::translate("AriadneClass", "Geofense", nullptr));
+        label_4->setText(QApplication::translate("AriadneClass", "Encoder", nullptr));
         label_6->setText(QApplication::translate("AriadneClass", "AorM", nullptr));
         label_7->setText(QApplication::translate("AriadneClass", "E-Stop", nullptr));
         label->setText(QApplication::translate("AriadneClass", "BREAK", nullptr));
         label_8->setText(QApplication::translate("AriadneClass", "SPEED", nullptr));
+        label_5->setText(QApplication::translate("AriadneClass", "Latitude", nullptr));
+        label_14->setText(QApplication::translate("AriadneClass", "Longitude", nullptr));
     } // retranslateUi
 
 };

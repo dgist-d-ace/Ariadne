@@ -39,8 +39,7 @@ public:
     DataContainer *dataContainer;
     Ui::AriadneClass *ui;
 
-    GPSCom();
-
+    GPSCom();   
     bool loopStatusPlatform = true;
 
 private:
@@ -57,6 +56,8 @@ private:
 
 signals:
     void GPSExit();
+    void latitudeChanged(double);
+    void longitudeChanged(double);
 
 public slots:
     void comGPS();
@@ -68,6 +69,9 @@ class PlatformCom : public QObject
     Q_OBJECT
 protected:
     Ui::AriadneClass *ui;
+    /// Because of including header file, 
+    /// GPS Thread and Platform Com Thread should be in the Ariadne.h
+    /// These two classes use UI component.
 
 public:
     DataContainer *dataContainer;
@@ -75,12 +79,10 @@ public:
     PlatformCom();
     //void run();
 
-
 private:
-
     ComPlatform _platform;
-   
-signals: 
+
+signals:
     void AorMChanged(int);
     void EStopChanged(int);
     void GearChanged(int);
@@ -96,6 +98,8 @@ public slots:
 
 };
 
+
+
 class Ariadne : public QMainWindow
 {
     Q_OBJECT
@@ -104,19 +108,19 @@ public:
     Ariadne(QWidget *parent = Q_NULLPTR);
 
     PlatformCom* platformCom;
-    LidarCom*lidarCom;
+ //   LidarCom*lidarCom;
     GPSCom* gpsCom;
-    Scnn* scnn;
-	Yolo* yolo;
+ //   Scnn* scnn;
+	//Yolo* yolo;
 
     QThread* platformThread;
-    QThread* lidarThread;
+ //   QThread* lidarThread;
     QThread* gpsThread;
-    QThread* scnnThread;
-	QThread* yoloThread;
+ //   QThread* scnnThread;
+	//QThread* yoloThread;
 
-	Driving* driving;
-	QThread* drivingThread;
+	//Driving* driving;
+	//QThread* drivingThread;
 
     DataContainer* dataContainer;
 
@@ -147,6 +151,9 @@ public slots:
     void onBreakChanged(int);
     void onSteerChanged(int);
     void onEncChanged(int);
+
+    void onLatitudeChanged(double);
+    void onLongitudeChanged(double);
 
 };
 
