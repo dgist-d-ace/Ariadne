@@ -15,6 +15,7 @@
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QLCDNumber>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPlainTextEdit>
@@ -89,6 +90,11 @@ public:
     QLCDNumber *lcdNumber_8;
     QLCDNumber *lcdNumber_9;
     QCustomPlot *rt_plot;
+    QLineEdit *lineEdit;
+    QLineEdit *lineEdit_2;
+    QLabel *label_15;
+    QLabel *label_16;
+    QPushButton *Btn_Go;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -177,7 +183,7 @@ public:
         Btn_mission5->setGeometry(QRect(130, 40, 101, 31));
         plainTextEdit = new QPlainTextEdit(centralWidget);
         plainTextEdit->setObjectName(QString::fromUtf8("plainTextEdit"));
-        plainTextEdit->setGeometry(QRect(10, 640, 1171, 141));
+        plainTextEdit->setGeometry(QRect(10, 680, 1171, 101));
         tabWidget = new QTabWidget(centralWidget);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
         tabWidget->setGeometry(QRect(970, 80, 211, 191));
@@ -271,6 +277,21 @@ public:
         rt_plot = new QCustomPlot(centralWidget);
         rt_plot->setObjectName(QString::fromUtf8("rt_plot"));
         rt_plot->setGeometry(QRect(269, 19, 691, 611));
+        lineEdit = new QLineEdit(centralWidget);
+        lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
+        lineEdit->setGeometry(QRect(170, 640, 113, 21));
+        lineEdit_2 = new QLineEdit(centralWidget);
+        lineEdit_2->setObjectName(QString::fromUtf8("lineEdit_2"));
+        lineEdit_2->setGeometry(QRect(430, 640, 113, 21));
+        label_15 = new QLabel(centralWidget);
+        label_15->setObjectName(QString::fromUtf8("label_15"));
+        label_15->setGeometry(QRect(20, 640, 141, 16));
+        label_16 = new QLabel(centralWidget);
+        label_16->setObjectName(QString::fromUtf8("label_16"));
+        label_16->setGeometry(QRect(290, 640, 151, 16));
+        Btn_Go = new QPushButton(centralWidget);
+        Btn_Go->setObjectName(QString::fromUtf8("Btn_Go"));
+        Btn_Go->setGeometry(QRect(560, 640, 93, 28));
         AriadneClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AriadneClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -338,6 +359,9 @@ public:
         label_8->setText(QApplication::translate("AriadneClass", "SPEED", nullptr));
         label_5->setText(QApplication::translate("AriadneClass", "Latitude", nullptr));
         label_14->setText(QApplication::translate("AriadneClass", "Longitude", nullptr));
+        label_15->setText(QApplication::translate("AriadneClass", "Destination lattitude", nullptr));
+        label_16->setText(QApplication::translate("AriadneClass", "Destination longitude", nullptr));
+        Btn_Go->setText(QApplication::translate("AriadneClass", "GO", nullptr));
     } // retranslateUi
 
 };

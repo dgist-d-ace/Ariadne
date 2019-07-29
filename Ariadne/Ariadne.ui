@@ -328,9 +328,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>640</y>
+      <y>680</y>
       <width>1171</width>
-      <height>141</height>
+      <height>101</height>
      </rect>
     </property>
    </widget>
@@ -691,6 +691,65 @@ p, li { white-space: pre-wrap; }
       <width>691</width>
       <height>611</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>640</y>
+      <width>113</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_2">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>640</y>
+      <width>113</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_15">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>640</y>
+      <width>141</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Destination lattitude</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_16">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>640</y>
+      <width>151</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Destination longitude</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Btn_Go">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>640</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>GO</string>
     </property>
    </widget>
   </widget>

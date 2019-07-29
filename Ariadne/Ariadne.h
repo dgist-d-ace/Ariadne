@@ -26,7 +26,7 @@ public:
     DataContainer *dataContainer;
     Ui::AriadneClass *ui;
 
-    GPSCom();   
+    GPSCom();
     bool loopStatusPlatform = true;
 
 private:
@@ -94,13 +94,13 @@ class Ariadne : public QMainWindow
 public:
     Ariadne(QWidget *parent = Q_NULLPTR);
 
-//    PlatformCom* platformCom;
+    PlatformCom* platformCom;
  //   LidarCom*lidarCom;
     GPSCom* gpsCom;
  //   Scnn* scnn;
 	//Yolo* yolo;
 
- //   QThread* platformThread;
+    QThread* platformThread;
  //   QThread* lidarThread;
     QThread* gpsThread;
  //   QThread* scnnThread;
@@ -112,8 +112,9 @@ public:
     DataContainer* dataContainer;
 
     QTimer* TimerSensorStatus;
-
     static Ui::AriadneClass* getUI();
+
+    
 
 private:
     static Ui::AriadneClass* ui;
@@ -122,7 +123,6 @@ private:
 
 public slots:
     void clicked_btn_mission0();
-    
     void clicked_btn_sensor();
 	void clicked_btn_driving();
 
@@ -132,6 +132,8 @@ public slots:
     void clicked_steer_right();
     void gear_input();
     void clicked_E_stop();
+
+    void gotoGPSdestination();
 
     void onAorMChanged(int);
     void onEStopChanged(int);

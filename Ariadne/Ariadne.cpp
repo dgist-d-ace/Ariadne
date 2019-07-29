@@ -1,5 +1,6 @@
 #include "Ariadne.h"
 #include <iostream>
+#include "math.h"
 #include "atlstr.h"
 #include "qevent.h"
 
@@ -17,12 +18,11 @@ Ariadne::Ariadne(QWidget *parent)
 
 	//  -------------------  Sensor Thread control ------------------------- //
 
-    /*
     platformCom = new PlatformCom;
 	platformThread = new QThread;
 	platformCom->moveToThread(platformThread);
 	connect(platformThread, SIGNAL(started()), platformCom, SLOT(comPlatform()));
-	connect(platformCom, SIGNAL(PlatformExit()), platformCom, SLOT(comPlatform()));*/
+	connect(platformCom, SIGNAL(PlatformExit()), platformCom, SLOT(comPlatform()));
 
 	gpsCom = new GPSCom;
 	gpsThread = new QThread;
@@ -78,10 +78,11 @@ Ariadne::Ariadne(QWidget *parent)
     QObject::connect(ui->Btn_left, SIGNAL(clicked()), this, SLOT(clicked_steer_left()));
     QObject::connect(ui->Btn_right, SIGNAL(clicked()), this, SLOT(clicked_steer_right()));
     QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_E_stop()));
+    QObject::connect(ui->Btn_Go, SIGNAL(clicked()), this, SLOT(gotoGPSdestination()));
 
     // ------------------- UI update for Platform & GPS status ----------------------//
 
-    /*
+    
     connect(platformCom, SIGNAL(AorMChanged(int)), this, SLOT(onAorMChanged(int)));
     connect(platformCom, SIGNAL(EStopChanged(int)), this, SLOT(onEStopChanged(int)));
     connect(platformCom, SIGNAL(GearChanged(int)), this, SLOT(onGearChanged(int)));
@@ -90,7 +91,6 @@ Ariadne::Ariadne(QWidget *parent)
     connect(platformCom, SIGNAL(BreakChanged(int)), this, SLOT(onBreakChanged(int)));
     connect(platformCom, SIGNAL(EncChanged(int)), this, SLOT(onEncChanged(int)));
 
-    */
     connect(gpsCom, SIGNAL(latitudeChanged(double)), this, SLOT(onLatitudeChanged(double)));
     connect(gpsCom, SIGNAL(longitudeChanged(double)), this, SLOT(onLongitudeChanged(double)));
 }
@@ -109,8 +109,8 @@ void Ariadne::clicked_btn_sensor() {
 	//if (!scnnThread->isRunning())
 	//	scnnThread->start();
 
-	/*if(!platformThread->isRunning())
-		platformThread->start();*/
+	//if(!platformThread->isRunning())
+		//platformThread->start();
 
 	//if(!lidarThread->isRunning())
 	//	lidarThread->start();
@@ -127,6 +127,8 @@ void Ariadne::clicked_btn_sensor() {
 void Ariadne::clicked_btn_driving() {
 	if (!drivingThread->isRunning())
 		drivingThread->start();
+
+    
 }
 
 void Ariadne::clicked_btn_mission0() {
@@ -239,6 +241,8 @@ void Ariadne::updateSensorStatus()
 	dataContainer->setValue_gps_status(0);
 }
 
+//
+
 Ui::AriadneClass* Ariadne::getUI() { return ui; }
 
 
@@ -316,7 +320,6 @@ GPSCom::GPSCom() {
 
 void GPSCom::Paint_base() // �⺻ �� ����
 {
-
     ui->rt_plot->addGraph();
     ui->rt_plot->graph(0)->rescaleAxes();
     ui->rt_plot->axisRect()->setupFullAxesBox();
@@ -325,7 +328,6 @@ void GPSCom::Paint_base() // �⺻ �� ����
 void GPSCom::Paint_school() {
     ifstream gpsfile("txtfile\\filteredMapSch.txt");   //littleUTM , largeUTM, 30up, 123123, techALL,filteredMapSch
     /// "C:\\Users\\bokyung\\Desktop\\Autonomous\\txtfile\\filteredMapSch.txt"
-    cout << "Paint School fucntion is called" << endl;
     char line[200];
     string tap;
     vector<string> vec;
@@ -445,9 +447,10 @@ void GPSCom::comGPS() { // rt ; Real Time
 							dataContainer->setValue_gps_latitude(lat);
 							dataContainer->setValue_gps_longitude(lng);
 
-                            emit latitudeChanged(lat/10000);
-                            emit longitudeChanged(lng/10000); /// 숫자가 너무 커서 나눴음
-                            cout << lat << " " << lng << endl;
+                            emit latitudeChanged(lat/1000);
+                            emit longitudeChanged(lng/1000); /// 숫자가 너무 커서 나눴음
+
+                            cout << lat << "    " << lng << endl;
                         }
 						else if (vec[2] == "V") {
 							dataContainer->count_gps_valid();
@@ -462,85 +465,10 @@ void GPSCom::comGPS() { // rt ; Real Time
                 emit(GPSExit());
 				return;
             }
+            Sleep(100);
         }
     }
 }
-
-/// test version 1
-/*
-void GPSCom::comGPS() {
-    cout << "gps start\n";
-    QString temp = ui->comboBox_4->currentText();
-    CString Comport = ConvertQstringtoCString(temp);
-
-    if (_gps.OpenPort(Comport)) {
-
-        _gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
-        _gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
-
-        
-        while (1) {
-            BYTE*pByte = new BYTE[128];
-
-            if (_gps.ReadByte(pByte, 128)) {
-
-                dataContainer->updateValue_gps_status();
-
-                
-                pByte[127] = '\0';
-                char*p = (char*)pByte;
-
-                char* context = NULL;
-                char* tok = strtok_s(p, "$", &context);
-                tok = strtok_s(NULL, "$", &context);
-
-                char* tok2 = strtok_s(tok, ",", &context);
-                if (tok2[2] == 'R' && tok2[3] == 'M' && tok2[4] == 'C') {
-                    string temp;
-                    vector<string> list;
-
-                    for (int i = 0; i < strlen(context); i++) {
-                        if (context[i] != ',') {
-                            temp += context[i];
-                        }
-                        else {
-                            list.push_back(temp);
-                            temp.clear();
-                        }
-                    }
-
-                    if (list.at(1) == "V") {
-                        dataContainer->count_gps_valid();
-                    }
-                    else if (list.at(1) == "A") {
-                        dataContainer->resetValue_gps_valid();
-                        dataContainer->setValue_gps_latitude(atof(list.at(2).c_str()));
-                        dataContainer->setValue_gps_longitude(atof(list.at(4).c_str()));
-                        //dataContainer->setValue_gps_velocity(atof(list.at(6).c_str()));
-                        // because of the inexactitude of GPS velocity, this part was commented.
-                        dataContainer->setValue_gps_heading(atof(list.at(7).c_str()));
-
-                        emit latitudeChanged(dataContainer->getValue_gps_latitude());
-                        emit longitudeChanged(dataContainer->getValue_gps_latitude());
-                    }
-                }
-            }
-            
-            else {
-                _gps.ClosePort();
-                emit(GPSExit());
-                return;
-            }
-        }
-    }
-    else {
-        cout << "gps not connect\n";
-        emit(GPSExit());
-        return;
-    }
-}
-*/
-
 
 vector <double>UTM(double lat, double lng) { /// This function is to calculate UTM parameters.
     double lat_rad = lat * PI / 180.0;
@@ -712,4 +640,15 @@ bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double headin
     else {
         return false;
     }
+}
+void Ariadne::gotoGPSdestination()
+{
+    //double Currentlat = dataContainer->getValue_gps_latitude();
+    //double Currentlng = dataContainer->getValue_gps_longitude();
+    //double DestLat = ui->lineEdit->text().toDouble();
+    //double DestLng = ui->lineEdit_2->text().toDouble();
+    //double x = Currentlat - DestLat;
+    //double y = Currentlng - DestLng;
+    //
+    ////dataContainer->setValue_UtoP_list(1, 0, 0, 0, 0, 150);
 }
