@@ -69,7 +69,9 @@ Scnn::Scnn() {
 }
 
 void Scnn::comScnn() {
+
     cout << "scnn start\n";
+	
     while (1)
         mainfun();
 }
