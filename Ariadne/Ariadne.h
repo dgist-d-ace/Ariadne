@@ -98,13 +98,13 @@ public:
  //   LidarCom*lidarCom;
     GPSCom* gpsCom;
  //   Scnn* scnn;
-	//Yolo* yolo;
+	Yolo* yolo;
 
     QThread* platformThread;
  //   QThread* lidarThread;
     QThread* gpsThread;
  //   QThread* scnnThread;
-	//QThread* yoloThread;
+	QThread* yoloThread;
 
 	Driving* driving;
 	QThread* drivingThread;

@@ -13,6 +13,7 @@
 #include <queue>
 #include <cmath>
 #include <process.h>
+#include <thread>
 #include <WinSock2.h>   					    // <----- stdafx.h
 #pragma comment(lib,"ws2_32.lib")				// <----- stdafx.h
 #include <Windows.h>

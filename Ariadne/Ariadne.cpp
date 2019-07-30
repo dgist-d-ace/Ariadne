@@ -40,12 +40,12 @@ Ariadne::Ariadne(QWidget *parent)
 	scnn = new Scnn;
 	scnnThread = new QThread;
 	scnn->moveToThread(scnnThread);
-	connect(scnnThread, SIGNAL(started()), scnn, SLOT(comScnn()));
+	connect(scnnThread, SIGNAL(started()), scnn, SLOT(comScnn()));*/
 
 	yolo = new Yolo;
 	yoloThread = new QThread;
 	yolo->moveToThread(yoloThread);
-	connect(scnnThread, SIGNAL(started()), yolo, SLOT(comYolo()));*/
+	connect(yoloThread, SIGNAL(started()), yolo, SLOT(comYolo()));
 
 	//  -------------------  Driving control ------------------------- //
 
@@ -109,14 +109,18 @@ void Ariadne::clicked_btn_sensor() {
 	//if (!scnnThread->isRunning())
 	//	scnnThread->start();
 
+
+	if (!yoloThread->isRunning())
+		yoloThread->start();
+
 	//if(!platformThread->isRunning())
 		//platformThread->start();
 
 	//if(!lidarThread->isRunning())
 	//	lidarThread->start();
 
-    if (!gpsThread->isRunning()) 
-        gpsThread->start(); 
+ //   if (!gpsThread->isRunning()) 
+ //       gpsThread->start(); 
 
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);

@@ -46,6 +46,13 @@ protected:
 public:
     DataContainer *dataContainer;
 
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+	HANDLE tid;
+
+	SOCKET server;
+	SOCKET client;
+
     Scnn();
 
 private:
@@ -55,6 +62,8 @@ signals: /// thread�� ���� broadcast �Լ���
 
 public slots:
     void comScnn();
+	void SuspendScnn();
+	void ResumeScnn();
 };
 
 class Yolo : public QObject
@@ -64,8 +73,16 @@ protected:
 
 public:
 	DataContainer *dataContainer;
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+	HANDLE tid;
+
+	SOCKET server;
+	SOCKET client;
+	Yolo();
 
 private:
-	Yolo();
+public slots:
+
 	void comYolo();
 };
