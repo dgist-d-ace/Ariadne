@@ -150,3 +150,6 @@ public slots:
 
 CString ConvertQstringtoCString(QString); 
 // this function is used in GPSCom Class and PlatformCom Class
+
+double rad2deg(double);
+double deg2rad(double);

@@ -109,14 +109,14 @@ void Ariadne::clicked_btn_sensor() {
 	//if (!scnnThread->isRunning())
 	//	scnnThread->start();
 
-	//if(!platformThread->isRunning())
-		//platformThread->start();
+	if(!platformThread->isRunning())
+		platformThread->start();
 
 	//if(!lidarThread->isRunning())
 	//	lidarThread->start();
 
-    if (!gpsThread->isRunning()) 
-        gpsThread->start(); 
+    //if (!gpsThread->isRunning()) 
+    //    gpsThread->start(); 
 
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
@@ -643,12 +643,37 @@ bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double headin
 }
 void Ariadne::gotoGPSdestination()
 {
+
     //double Currentlat = dataContainer->getValue_gps_latitude();
     //double Currentlng = dataContainer->getValue_gps_longitude();
-    //double DestLat = ui->lineEdit->text().toDouble();
-    //double DestLng = ui->lineEdit_2->text().toDouble();
+    double x = ui->lineEdit->text().toDouble(); /// unit : meter, relative x coordinate from now to destination
+    double y = ui->lineEdit_2->text().toDouble(); /// unit : meter, relative y coordinate from now to destination
+    double heading = deg2rad(ui->lineEdit_3->text().toDouble()); /// input unit: degree, the target heading degree when the destination coordinates are reached.
+
+    double steerRad = atan(2 / (sqrt(pow(x + y * (tan(heading)), 2) - 1))); /// Steer Radian
+    double turningR = sqrt(1 + pow(2 / tan(steerRad), 2)); /// Turning Radius
+    cout << "turningRadius: " << turningR << endl;
+    cout << "heading: " << heading << endl;
+    cout << "steerRadian: " << steerRad << endl;
+    double steerDegree = rad2deg(steerRad); /// convert Radian to Degree
+
+    cout << "steerDeg: " << steerDegree << endl;
+
+    double time = 360 * steerRad * heading / (dataContainer->getValue_PtoU_SPEED()); /// unit: ms, time = distance / speed
+
+    if (-27 < steerDegree < 27) {
+        dataContainer->setValue_UtoP_STEER(steerDegree * 71); 
+        /// Because of the steer value set, can't be over than 2000 : it means the maximum steer degree is 28.16
+        Sleep(time); /// after time ms, the steer value return to 0.
+        cout << "exit " << endl;
+        //dataContainer->setValue_UtoP_STEER(0);
+    }
+    else { cout << "steerDegree is incorrect" << endl; } /// TODO: 여기서 maximum x y heading radian 구하기
     //double x = Currentlat - DestLat;
     //double y = Currentlng - DestLng;
     //
     ////dataContainer->setValue_UtoP_list(1, 0, 0, 0, 0, 150);
 }
+
+double rad2deg(double radian) { return radian * 180 / PI;}
+double deg2rad(double degree) { return degree * PI / 180; }

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'Ariadne.ui'
 **
-** Created by: Qt User Interface Compiler version 5.12.3
+** Created by: Qt User Interface Compiler version 5.12.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -95,6 +95,8 @@ public:
     QLabel *label_15;
     QLabel *label_16;
     QPushButton *Btn_Go;
+    QLabel *label_17;
+    QLineEdit *lineEdit_3;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -279,19 +281,25 @@ public:
         rt_plot->setGeometry(QRect(269, 19, 691, 611));
         lineEdit = new QLineEdit(centralWidget);
         lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
-        lineEdit->setGeometry(QRect(170, 640, 113, 21));
+        lineEdit->setGeometry(QRect(180, 640, 113, 21));
         lineEdit_2 = new QLineEdit(centralWidget);
         lineEdit_2->setObjectName(QString::fromUtf8("lineEdit_2"));
-        lineEdit_2->setGeometry(QRect(430, 640, 113, 21));
+        lineEdit_2->setGeometry(QRect(400, 640, 113, 21));
         label_15 = new QLabel(centralWidget);
         label_15->setObjectName(QString::fromUtf8("label_15"));
-        label_15->setGeometry(QRect(20, 640, 141, 16));
+        label_15->setGeometry(QRect(20, 640, 151, 16));
         label_16 = new QLabel(centralWidget);
         label_16->setObjectName(QString::fromUtf8("label_16"));
-        label_16->setGeometry(QRect(290, 640, 151, 16));
+        label_16->setGeometry(QRect(310, 640, 81, 16));
         Btn_Go = new QPushButton(centralWidget);
         Btn_Go->setObjectName(QString::fromUtf8("Btn_Go"));
-        Btn_Go->setGeometry(QRect(560, 640, 93, 28));
+        Btn_Go->setGeometry(QRect(790, 640, 93, 28));
+        label_17 = new QLabel(centralWidget);
+        label_17->setObjectName(QString::fromUtf8("label_17"));
+        label_17->setGeometry(QRect(530, 640, 121, 16));
+        lineEdit_3 = new QLineEdit(centralWidget);
+        lineEdit_3->setObjectName(QString::fromUtf8("lineEdit_3"));
+        lineEdit_3->setGeometry(QRect(650, 640, 113, 21));
         AriadneClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AriadneClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -306,7 +314,7 @@ public:
 
         retranslateUi(AriadneClass);
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(AriadneClass);
@@ -340,14 +348,16 @@ public:
         Btn_right->setText(QApplication::translate("AriadneClass", "\342\226\266", nullptr));
         Btn_left->setText(QApplication::translate("AriadneClass", "\342\227\200", nullptr));
         Btn_gearInput->setText(QApplication::translate("AriadneClass", "gear input", nullptr));
-        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("AriadneClass", "ManualMode", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("AriadneClass", "PC Con", nullptr));
         textBrowser->setHtml(QApplication::translate("AriadneClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'Gulim'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">\354\230\244\355\206\240\353\252\250\353\223\234\353\213\271!</p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">\354\227\254\352\270\260 \353\255\220 \353\204\243\354\235\204\354\247\200 \353\252\250\353\245\264\352\262\240\353\213\271!</p></body></html>", nullptr));
-        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("AriadneClass", "AutoMode", nullptr));
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">\354\241\260\354\242\205\352\270\260\353\241\234 \354\241\260\354\242\205\355\225\230\353\212\224 \353\252\250\353\223\234\353\213\271!</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">\354\227\254\352\270\260 \353\255\220 \353\204\243\354\235\204\354\247\200 \353\252\250\353\245\264\352\262\240\353\213\271!!</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">\352\267\270\353\246\254\352\263\240 \354\227\254\352"
+                        "\270\260 \354\225\204\354\247\201 \355\225\250\354\210\230 \354\225\210\353\247\214\353\223\244\354\227\210\353\213\271!!!</p></body></html>", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("AriadneClass", "remoteCon", nullptr));
         pushButton->setText(QApplication::translate("AriadneClass", "E-Stop", nullptr));
         groupBox_4->setTitle(QApplication::translate("AriadneClass", "SensorStatus", nullptr));
         label_2->setText(QApplication::translate("AriadneClass", "STEER", nullptr));
@@ -359,9 +369,10 @@ public:
         label_8->setText(QApplication::translate("AriadneClass", "SPEED", nullptr));
         label_5->setText(QApplication::translate("AriadneClass", "Latitude", nullptr));
         label_14->setText(QApplication::translate("AriadneClass", "Longitude", nullptr));
-        label_15->setText(QApplication::translate("AriadneClass", "Destination lattitude", nullptr));
-        label_16->setText(QApplication::translate("AriadneClass", "Destination longitude", nullptr));
+        label_15->setText(QApplication::translate("AriadneClass", "Destination lattitude(m)", nullptr));
+        label_16->setText(QApplication::translate("AriadneClass", "longitude", nullptr));
         Btn_Go->setText(QApplication::translate("AriadneClass", "GO", nullptr));
+        label_17->setText(QApplication::translate("AriadneClass", "heading(degree)", nullptr));
     } // retranslateUi
 
 };
