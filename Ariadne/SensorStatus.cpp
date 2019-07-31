@@ -11,6 +11,8 @@
 #define UPDATE_SENSOR_STATUS 102
 #define UPDATE_SENSOR_AUTOSTARTUP 103
 
+#define PIPE_NAME "\\\\.\\pipe\\test_pipe" 
+
 LidarCom::LidarCom() {
 
 }
@@ -148,7 +150,7 @@ Yolo::Yolo() {
 	sockaddr_in addr = { 0 };
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	addr.sin_port = htons(8020);
+	addr.sin_port = htons(800);
 
 	if (::bind(server, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR)
 		cout << "binding fail\n";
@@ -156,6 +158,23 @@ Yolo::Yolo() {
 	if (listen(server, SOMAXCONN) == SOCKET_ERROR)
 		cout << "listening fail\n";
 	dataContainer = DataContainer::getInstance();
+	//TCHAR pipe_name[] = TEXT("\\\\.\\pipe\\test_pipe");
+	//hNamePipe = CreateNamedPipe(pipe_name,
+	//	PIPE_ACCESS_DUPLEX,
+	//	PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT,
+	//	PIPE_UNLIMITED_INSTANCES,
+	//	0,
+	//	0,
+	//	20000,       // 대기 Timeout 시간
+	//	NULL
+	//);
+
+	//if (hNamePipe == INVALID_HANDLE_VALUE)
+	//	printf("CreateNamePipe error! \n");
+	//
+
+
+
 }
 
 void Yolo::comYolo() {
@@ -164,28 +183,133 @@ void Yolo::comYolo() {
 	//
 	//SuspendThread(tid);
 	ResumeThread(tid);
+
+	//while(1) {
+	//	if (!ConnectNamedPipe(hNamePipe, NULL))
+	//		CloseHandle(hNamePipe);
+	//	else {
+	//		if (ConnectClient(hNamePipe) == -1)
+	//			break;
+	//	}
+	//}
+	//DisconnectNamedPipe(hNamePipe);
+	//CloseHandle(hNamePipe);
+
 	cout << "try com\n";
 
-	client = accept(server, NULL, NULL);
-	if (client == INVALID_SOCKET)
-		cout << "invalid socket\n";
-	else cout << "valid socket\n";
+	Sleep(5000);
+		client = accept(server, NULL, NULL);
+		if (client == INVALID_SOCKET)
+			cout << "invalid socket\n";
+		else cout << "valid socket\n";
 
-	char* message;
+
+
+	char message[8192];
 	int strLen;
 	float* data;
 	cout << "communication1\n";
 
 	while (1) {
 		cout << "communication2\n";
+
 		strLen = recv(client, message, sizeof(message) - 1, 0);
-		if (strLen == 0) continue;
-		message[strLen] = '\0';
-		data = (float*)message;
-		cout<< *data << endl;
+		if (strLen == -1) cout << "send error\n";
+		cout << message << endl;
 	}
 
 	closesocket(client);
 	closesocket(server);
 }
+
+int ConnectClient(HANDLE hNamePipe)
+
+{
+
+	TCHAR recvMessage[100];
+
+	TCHAR sendMessage[100];
+
+	DWORD recvSize;
+
+	DWORD sendSize;
+
+
+
+	while (1)
+
+	{
+
+		_tprintf(_T("Input Send Message : "));
+
+		_tscanf(_T("%s"), sendMessage);
+
+
+
+		//sendSize -> NULL 포함한 바이트 수
+
+		if (!(WriteFile(
+
+			hNamePipe,
+
+			sendMessage,
+
+			(_tcslen(sendMessage) + 1) * sizeof(TCHAR),
+
+			&sendSize,
+
+			NULL
+
+		)))          // 
+
+		{
+
+			_tprintf(_T("WriteFile error! \n"));
+
+			return -1;
+
+		}
+
+		FlushFileBuffers(hNamePipe);
+
+
+
+		//recvSize -> NULL 포함한 바이트 수
+
+		if (!(ReadFile(
+
+			hNamePipe,
+
+			recvMessage,
+
+			sizeof(recvMessage) - sizeof(TCHAR) * 1,
+
+			&recvSize,
+
+			NULL
+
+		)))
+
+		{
+
+			printf("ReadFile error! \n");
+
+			return -1;
+
+		}
+
+		recvMessage[recvSize / sizeof(TCHAR) - 1] = _T('\x00');
+
+
+
+		_tprintf(_T("Recv Message : %s \n"), recvMessage);
+
+	}
+
+
+
+	return 1;
+
+}
+
 

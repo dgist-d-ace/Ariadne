@@ -77,6 +77,10 @@ public:
 	PROCESS_INFORMATION pi;
 	HANDLE tid;
 
+	HANDLE hNamePipe;
+
+
+
 	SOCKET server;
 	SOCKET client;
 	Yolo();
@@ -86,3 +90,5 @@ public slots:
 
 	void comYolo();
 };
+
+int ConnectClient(HANDLE hNamePipe);
