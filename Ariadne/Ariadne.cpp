@@ -40,12 +40,12 @@ Ariadne::Ariadne(QWidget *parent)
 	scnn = new Scnn;
 	scnnThread = new QThread;
 	scnn->moveToThread(scnnThread);
-	connect(scnnThread, SIGNAL(started()), scnn, SLOT(comScnn()));
+	connect(scnnThread, SIGNAL(started()), scnn, SLOT(comScnn()));*/
 
 	yolo = new Yolo;
 	yoloThread = new QThread;
 	yolo->moveToThread(yoloThread);
-	connect(scnnThread, SIGNAL(started()), yolo, SLOT(comYolo()));*/
+	connect(yoloThread, SIGNAL(started()), yolo, SLOT(comYolo()));
 
 	//  -------------------  Driving control ------------------------- //
 
@@ -82,7 +82,7 @@ Ariadne::Ariadne(QWidget *parent)
 
     // ------------------- UI update for Platform & GPS status ----------------------//
 
-    
+
     connect(platformCom, SIGNAL(AorMChanged(int)), this, SLOT(onAorMChanged(int)));
     connect(platformCom, SIGNAL(EStopChanged(int)), this, SLOT(onEStopChanged(int)));
     connect(platformCom, SIGNAL(GearChanged(int)), this, SLOT(onGearChanged(int)));
@@ -109,14 +109,18 @@ void Ariadne::clicked_btn_sensor() {
 	//if (!scnnThread->isRunning())
 	//	scnnThread->start();
 
-	if(!platformThread->isRunning())
-		platformThread->start();
+
+	if (!yoloThread->isRunning())
+		yoloThread->start();
+
+	//if(!platformThread->isRunning())
+		//platformThread->start();
 
 	//if(!lidarThread->isRunning())
 	//	lidarThread->start();
 
-    //if (!gpsThread->isRunning()) 
-    //    gpsThread->start(); 
+    //if (!gpsThread->isRunning())
+    //    gpsThread->start();
 
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
@@ -128,11 +132,11 @@ void Ariadne::clicked_btn_driving() {
 	if (!drivingThread->isRunning())
 		drivingThread->start();
 
-    
+
 }
 
 void Ariadne::clicked_btn_mission0() {
-	
+
 }
 
 // These functions is to control gplatform
@@ -257,9 +261,9 @@ PlatformCom::PlatformCom()
 void PlatformCom::comPlatform() {
     cout << "platform start" << endl;
     QString ComportNum = ui->comboBox->currentText();
-    CString Comport = ConvertQstringtoCString(ComportNum);    
+    CString Comport = ConvertQstringtoCString(ComportNum);
 
-    if (_platform.OpenPort(Comport))  
+    if (_platform.OpenPort(Comport))
     {
         _platform.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _platform.SetCommunicationTimeouts(0, 0, 0, 0, 0);
@@ -346,7 +350,7 @@ void GPSCom::Paint_school() {
     }
     gpsfile.close();
 
-    ui->rt_plot->xAxis->setRange(450589, 450700);// range min to max 
+    ui->rt_plot->xAxis->setRange(450589, 450700);// range min to max
     ui->rt_plot->yAxis->setRange(3951700, 3951800);
 
     QCPScatterStyle myScatter2; // �� ��, ������, ������ 5
@@ -403,7 +407,7 @@ void GPSCom::comGPS() { // rt ; Real Time
 
         _gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
-		
+
         string tap;
         string tap2;
         vector<string> vec;
@@ -517,7 +521,7 @@ double L1Distance(vector<double> coor1, vector<double> coor2) {
     return L1;
 }
 
-double L2Distance(double x2, double y2, double x1 = 0, double y1 = 0) { 
+double L2Distance(double x2, double y2, double x1 = 0, double y1 = 0) {
     double L2 = 0;
     L2 = pow(pow(x2 - x1, 2) + pow(y2 - y1, 2), 0.5);
 
@@ -662,7 +666,7 @@ void Ariadne::gotoGPSdestination()
     double time = 360 * steerRad * heading / (dataContainer->getValue_PtoU_SPEED()); /// unit: ms, time = distance / speed
 
     if (-27 < steerDegree < 27) {
-        dataContainer->setValue_UtoP_STEER(steerDegree * 71); 
+        dataContainer->setValue_UtoP_STEER(steerDegree * 71);
         /// Because of the steer value set, can't be over than 2000 : it means the maximum steer degree is 28.16
         Sleep(time); /// after time ms, the steer value return to 0.
         cout << "exit " << endl;

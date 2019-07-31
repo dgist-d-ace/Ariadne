@@ -2,6 +2,8 @@
 #include "ScnnFunc.h"
 
 #include <iostream>
+#include <list>
+#include <tchar.h>
 
 
 #define UPDATE_PLATFORM_STATUS 100
@@ -66,17 +68,93 @@ void LidarCom::comLidar() {
 
 Scnn::Scnn() {
 	dataContainer = DataContainer::getInstance();
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi)); // assign program memory
+	TCHAR commandLine[] = TEXT("C:\Python\Python36");
+
+	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi)) {
+	//}
+
+	//tid = pi.hThread;
+
+	server = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	sockaddr_in addr = { 0 };
+	addr.sin_family = AF_INET;
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	addr.sin_port = htons(23000);
+
+	if (::bind(server, (sockaddr*)&addr, sizeof(addr))==SOCKET_ERROR)
+		cout<<"binding fail\n";
+
+	if (listen(server, SOMAXCONN) == SOCKET_ERROR)
+		cout << "listening fail\n";
 }
 
 void Scnn::comScnn() {
+		
+	ResumeThread(tid);
 
-    cout << "scnn start\n";
-	
-    while (1)
-        mainfun();
+	client = accept(server, NULL, NULL);
+
+	char message[500];
+	int strLen;
+	list<int>* data;
+
+	while (1) {
+		strLen = recv(client, message, sizeof(message) - 1, 0);
+		if (strLen == 0) continue;
+		message[strLen] = '\0';
+		data = (list<int>*)message;
+		cout << data << endl;
+	}
+	closesocket(client);
+	closesocket(server);
+}
+
+void Scnn::SuspendScnn() {
+	SuspendThread(tid);
+}
+
+void Scnn::ResumeScnn() {
+	ResumeThread(tid);
 }
 
 Yolo::Yolo() {
+	dataContainer = DataContainer::getInstance();
+
+	WSADATA wsa;
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+		cout << "error\n";
+
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi)); // assign program memory
+	
+	TCHAR commandLine[] = TEXT("darknet detector demo data\\coco.data yolov3.cfg yolov3.weights data\\race1_cut.mp4");
+	SetCurrentDirectory(_T("C:\\Users\\D-Ace\\darknet-master\\build\\darknet\\x64"));
+	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi)) {
+	//}
+	if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
+		cout << "error\n";
+	}
+	else {
+		cout << "open ok";
+		tid = pi.hThread;
+		SuspendThread(tid);
+	}
+
+	server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	sockaddr_in addr = { 0 };
+	addr.sin_family = AF_INET;
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	addr.sin_port = htons(8020);
+
+	if (::bind(server, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR)
+		cout << "binding fail\n";
+
+	if (listen(server, SOMAXCONN) == SOCKET_ERROR)
+		cout << "listening fail\n";
 	dataContainer = DataContainer::getInstance();
 }
 
@@ -84,5 +162,30 @@ void Yolo::comYolo() {
 	//
 	// To Do : integraiting
 	//
+	//SuspendThread(tid);
+	ResumeThread(tid);
+	cout << "try com\n";
+
+	client = accept(server, NULL, NULL);
+	if (client == INVALID_SOCKET)
+		cout << "invalid socket\n";
+	else cout << "valid socket\n";
+
+	char* message;
+	int strLen;
+	float* data;
+	cout << "communication1\n";
+
+	while (1) {
+		cout << "communication2\n";
+		strLen = recv(client, message, sizeof(message) - 1, 0);
+		if (strLen == 0) continue;
+		message[strLen] = '\0';
+		data = (float*)message;
+		cout<< *data << endl;
+	}
+
+	closesocket(client);
+	closesocket(server);
 }
 
