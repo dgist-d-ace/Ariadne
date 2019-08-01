@@ -59,10 +59,7 @@ Ariadne::Ariadne(QWidget *parent)
     for (int i = 1; i < 8; i++) // added items on comboboxes.
     {
         ui->comboBox->addItem("COM" + QString::number(i));
-        ui->comboBox_2->addItem("COM" + QString::number(i));
-        ui->comboBox_3->addItem("COM" + QString::number(i));
         ui->comboBox_4->addItem("COM" + QString::number(i));
-        ui->comboBox_5->addItem("COM" + QString::number(i));
     }
 
     ui->comboBox_6->addItems({ "Drive" , "Neutral", "Reverse"}); // gaer items input
@@ -126,6 +123,8 @@ void Ariadne::clicked_btn_sensor() {
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
 	TimerSensorStatus->start(1000);
 }
+
+
 
 // This function is to start driving
 void Ariadne::clicked_btn_driving() {

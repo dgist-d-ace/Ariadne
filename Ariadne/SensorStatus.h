@@ -79,16 +79,18 @@ public:
 
 	HANDLE hNamePipe;
 
-
-
 	SOCKET server;
 	SOCKET client;
 	Yolo();
+
+	bool Yolo_Com = true;
 
 private:
 public slots:
 
 	void comYolo();
+	void SuspendYolo();
+	void ResumeYolo();
 };
 
 int ConnectClient(HANDLE hNamePipe);

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'Ariadne.ui'
 **
-** Created by: Qt User Interface Compiler version 5.12.2
+** Created by: Qt User Interface Compiler version 5.12.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -35,17 +35,20 @@ public:
     QWidget *centralWidget;
     QGroupBox *groupBox;
     QComboBox *comboBox;
-    QComboBox *comboBox_2;
-    QComboBox *comboBox_3;
     QComboBox *comboBox_4;
     QPushButton *pushButton_2;
     QLabel *label_9;
-    QLabel *label_10;
-    QLabel *label_11;
     QLabel *label_12;
     QLabel *label_13;
-    QComboBox *comboBox_5;
     QPushButton *pushButton_3;
+    QLabel *label_10;
+    QLabel *label_11;
+    QPushButton *Btn_lidar_restart;
+    QPushButton *Btn_lidar_stop;
+    QPushButton *Btn_yolo_stop;
+    QPushButton *Btn_yolo_restart;
+    QPushButton *Btn_scnn_stop;
+    QPushButton *pushButton_9;
     QGroupBox *groupBox_2;
     QGroupBox *groupBox_3;
     QPushButton *Btn_Mission0;
@@ -114,39 +117,48 @@ public:
         comboBox = new QComboBox(groupBox);
         comboBox->setObjectName(QString::fromUtf8("comboBox"));
         comboBox->setGeometry(QRect(120, 20, 101, 21));
-        comboBox_2 = new QComboBox(groupBox);
-        comboBox_2->setObjectName(QString::fromUtf8("comboBox_2"));
-        comboBox_2->setGeometry(QRect(120, 50, 101, 22));
-        comboBox_3 = new QComboBox(groupBox);
-        comboBox_3->setObjectName(QString::fromUtf8("comboBox_3"));
-        comboBox_3->setGeometry(QRect(120, 80, 101, 22));
         comboBox_4 = new QComboBox(groupBox);
         comboBox_4->setObjectName(QString::fromUtf8("comboBox_4"));
-        comboBox_4->setGeometry(QRect(120, 110, 101, 22));
+        comboBox_4->setGeometry(QRect(120, 50, 101, 22));
         pushButton_2 = new QPushButton(groupBox);
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
         pushButton_2->setGeometry(QRect(10, 170, 101, 28));
         label_9 = new QLabel(groupBox);
         label_9->setObjectName(QString::fromUtf8("label_9"));
         label_9->setGeometry(QRect(10, 20, 64, 15));
-        label_10 = new QLabel(groupBox);
-        label_10->setObjectName(QString::fromUtf8("label_10"));
-        label_10->setGeometry(QRect(10, 50, 64, 15));
-        label_11 = new QLabel(groupBox);
-        label_11->setObjectName(QString::fromUtf8("label_11"));
-        label_11->setGeometry(QRect(10, 80, 64, 15));
         label_12 = new QLabel(groupBox);
         label_12->setObjectName(QString::fromUtf8("label_12"));
-        label_12->setGeometry(QRect(10, 110, 64, 15));
+        label_12->setGeometry(QRect(10, 50, 64, 15));
         label_13 = new QLabel(groupBox);
         label_13->setObjectName(QString::fromUtf8("label_13"));
-        label_13->setGeometry(QRect(10, 140, 64, 15));
-        comboBox_5 = new QComboBox(groupBox);
-        comboBox_5->setObjectName(QString::fromUtf8("comboBox_5"));
-        comboBox_5->setGeometry(QRect(120, 140, 101, 22));
+        label_13->setGeometry(QRect(10, 80, 64, 15));
         pushButton_3 = new QPushButton(groupBox);
         pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
         pushButton_3->setGeometry(QRect(120, 170, 101, 28));
+        label_10 = new QLabel(groupBox);
+        label_10->setObjectName(QString::fromUtf8("label_10"));
+        label_10->setGeometry(QRect(10, 110, 64, 15));
+        label_11 = new QLabel(groupBox);
+        label_11->setObjectName(QString::fromUtf8("label_11"));
+        label_11->setGeometry(QRect(10, 140, 64, 15));
+        Btn_lidar_restart = new QPushButton(groupBox);
+        Btn_lidar_restart->setObjectName(QString::fromUtf8("Btn_lidar_restart"));
+        Btn_lidar_restart->setGeometry(QRect(150, 80, 71, 23));
+        Btn_lidar_stop = new QPushButton(groupBox);
+        Btn_lidar_stop->setObjectName(QString::fromUtf8("Btn_lidar_stop"));
+        Btn_lidar_stop->setGeometry(QRect(70, 80, 71, 23));
+        Btn_yolo_stop = new QPushButton(groupBox);
+        Btn_yolo_stop->setObjectName(QString::fromUtf8("Btn_yolo_stop"));
+        Btn_yolo_stop->setGeometry(QRect(70, 110, 71, 23));
+        Btn_yolo_restart = new QPushButton(groupBox);
+        Btn_yolo_restart->setObjectName(QString::fromUtf8("Btn_yolo_restart"));
+        Btn_yolo_restart->setGeometry(QRect(150, 110, 71, 23));
+        Btn_scnn_stop = new QPushButton(groupBox);
+        Btn_scnn_stop->setObjectName(QString::fromUtf8("Btn_scnn_stop"));
+        Btn_scnn_stop->setGeometry(QRect(70, 140, 71, 23));
+        pushButton_9 = new QPushButton(groupBox);
+        pushButton_9->setObjectName(QString::fromUtf8("pushButton_9"));
+        pushButton_9->setGeometry(QRect(150, 140, 71, 23));
         groupBox_2 = new QGroupBox(centralWidget);
         groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
         groupBox_2->setGeometry(QRect(10, 10, 241, 171));
@@ -303,7 +315,7 @@ public:
         AriadneClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AriadneClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1198, 26));
+        menuBar->setGeometry(QRect(0, 0, 1198, 21));
         AriadneClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(AriadneClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -326,11 +338,17 @@ public:
         groupBox->setTitle(QApplication::translate("AriadneClass", "GroupBox", nullptr));
         pushButton_2->setText(QApplication::translate("AriadneClass", "\354\204\274\354\204\234 \355\206\265\354\213\240", nullptr));
         label_9->setText(QApplication::translate("AriadneClass", "Platform", nullptr));
-        label_10->setText(QApplication::translate("AriadneClass", "Camera1", nullptr));
-        label_11->setText(QApplication::translate("AriadneClass", "Camera2", nullptr));
         label_12->setText(QApplication::translate("AriadneClass", "GPS", nullptr));
         label_13->setText(QApplication::translate("AriadneClass", "LiDAR", nullptr));
         pushButton_3->setText(QApplication::translate("AriadneClass", "\354\243\274\355\226\211 \354\213\234\354\236\221", nullptr));
+        label_10->setText(QApplication::translate("AriadneClass", "YOLO", nullptr));
+        label_11->setText(QApplication::translate("AriadneClass", "SCNN", nullptr));
+        Btn_lidar_restart->setText(QApplication::translate("AriadneClass", "RESTART", nullptr));
+        Btn_lidar_stop->setText(QApplication::translate("AriadneClass", "STOP", nullptr));
+        Btn_yolo_stop->setText(QApplication::translate("AriadneClass", "STOP", nullptr));
+        Btn_yolo_restart->setText(QApplication::translate("AriadneClass", "RESTART", nullptr));
+        Btn_scnn_stop->setText(QApplication::translate("AriadneClass", "STOP", nullptr));
+        pushButton_9->setText(QApplication::translate("AriadneClass", "RESTART", nullptr));
         groupBox_2->setTitle(QApplication::translate("AriadneClass", "GroupBox", nullptr));
         groupBox_3->setTitle(QApplication::translate("AriadneClass", "Mission", nullptr));
         Btn_Mission0->setText(QApplication::translate("AriadneClass", "Mission0", nullptr));

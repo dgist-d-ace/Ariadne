@@ -36,31 +36,11 @@
       </rect>
      </property>
     </widget>
-    <widget class="QComboBox" name="comboBox_2">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>50</y>
-       <width>101</width>
-       <height>22</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="comboBox_3">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>80</y>
-       <width>101</width>
-       <height>22</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QComboBox" name="comboBox_4">
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>110</y>
+       <y>50</y>
        <width>101</width>
        <height>22</height>
       </rect>
@@ -92,37 +72,11 @@
       <string>Platform</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_10">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>50</y>
-       <width>64</width>
-       <height>15</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Camera1</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_11">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>80</y>
-       <width>64</width>
-       <height>15</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Camera2</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_12">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>110</y>
+       <y>50</y>
        <width>64</width>
        <height>15</height>
       </rect>
@@ -135,23 +89,13 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>140</y>
+       <y>80</y>
        <width>64</width>
        <height>15</height>
       </rect>
      </property>
      <property name="text">
       <string>LiDAR</string>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="comboBox_5">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>140</y>
-       <width>101</width>
-       <height>22</height>
-      </rect>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_3">
@@ -165,6 +109,110 @@
      </property>
      <property name="text">
       <string>주행 시작</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_10">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>64</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>YOLO</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_11">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>140</y>
+       <width>64</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>SCNN</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Btn_lidar_restart">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>80</y>
+       <width>71</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>RESTART</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Btn_lidar_stop">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>80</y>
+       <width>71</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>STOP</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Btn_yolo_stop">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>110</y>
+       <width>71</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>STOP</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Btn_yolo_restart">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>110</y>
+       <width>71</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>RESTART</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Btn_scnn_stop">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>140</y>
+       <width>71</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>STOP</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_9">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>140</y>
+       <width>71</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>RESTART</string>
      </property>
     </widget>
    </widget>
@@ -783,7 +831,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1198</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

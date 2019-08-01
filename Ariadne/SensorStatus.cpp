@@ -5,7 +5,6 @@
 #include <list>
 #include <tchar.h>
 
-
 #define UPDATE_PLATFORM_STATUS 100
 #define UPDATE_SENSOR_CONNECTION 101
 #define UPDATE_SENSOR_STATUS 102
@@ -133,7 +132,7 @@ Yolo::Yolo() {
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi)); // assign program memory
 	
-	TCHAR commandLine[] = TEXT("darknet detector demo data\\coco.data yolov3.cfg yolov3.weights data\\race1_cut.mp4");
+	TCHAR commandLine[] = TEXT("darknet detector demo data\\obj.data cfg\\yolov3_please.cfg yolov3_34500.weights data\\race1_cut.mp4");
 	SetCurrentDirectory(_T("C:\\Users\\D-Ace\\darknet-master\\build\\darknet\\x64"));
 	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi)) {
 	//}
@@ -210,7 +209,8 @@ void Yolo::comYolo() {
 	float* data;
 	cout << "communication1\n";
 
-	while (1) {
+	/// TODO: control yolo flag in Ariadne.cpp
+	while (Yolo_Com) {
 		cout << "communication2\n";
 
 		strLen = recv(client, message, sizeof(message) - 1, 0);
@@ -220,6 +220,14 @@ void Yolo::comYolo() {
 
 	closesocket(client);
 	closesocket(server);
+}
+
+void Yolo::SuspendYolo() {
+	SuspendThread(tid);
+}
+
+void Yolo::ResumeYolo() {
+	ResumeThread(tid);
 }
 
 int ConnectClient(HANDLE hNamePipe)
