@@ -1,4 +1,5 @@
 #pragma once
+
 #include "SensorStatus.h"
 #include "MissionAct.h"
 
@@ -10,8 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <sstream>
-#include <vector>
+
 
 #include "atlstr.h"
 #include <QString>
