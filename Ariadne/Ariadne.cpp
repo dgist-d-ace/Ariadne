@@ -74,7 +74,14 @@ Ariadne::Ariadne(QWidget *parent)
     QObject::connect(ui->Btn_left, SIGNAL(clicked()), this, SLOT(clicked_steer_left()));
     QObject::connect(ui->Btn_right, SIGNAL(clicked()), this, SLOT(clicked_steer_right()));
     QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_E_stop()));
-    QObject::connect(ui->Btn_Go, SIGNAL(clicked()), this, SLOT(gotoGPSdestination()));
+    //QObject::connect(ui->Btn_Go, SIGNAL(clicked()), this, SLOT(gotoGPSdestination()));
+
+    QObject::connect(ui->Btn_lidar_stop, SIGNAL(clicked()), this, SLOT(clicked_lidar_stop()));
+    QObject::connect(ui->Btn_lidar_restart, SIGNAL(clicked()), this, SLOT(clicked_lidar_restart()));
+    QObject::connect(ui->Btn_yolo_stop, SIGNAL(clicked()), this, SLOT(clicked_yolo_stop()));
+    QObject::connect(ui->Btn_yolo_restart, SIGNAL(clicked()), this, SLOT(clicked_yolo_restart()));
+    QObject::connect(ui->Btn_scnn_stop, SIGNAL(clicked()), this, SLOT(clicked_scnn_stop()));
+    QObject::connect(ui->Btn_scnn_restart, SIGNAL(clicked()), this, SLOT(clicked_scnn_restart()));
 
     // ------------------- UI update for Platform & GPS status ----------------------//
 
@@ -123,6 +130,12 @@ void Ariadne::clicked_btn_sensor() {
 	TimerSensorStatus->start(1000);
 }
 
+void Ariadne::clicked_lidar_restart() {cout << "you clicked lidar restart" << endl;}
+void Ariadne::clicked_lidar_stop() { cout << "you clicked lidar stop" << endl; }
+void Ariadne::clicked_yolo_restart() { yolo->ResumeYolo(); }
+void Ariadne::clicked_yolo_stop() { yolo->SuspendYolo(); }
+void Ariadne::clicked_scnn_restart() { scnn->ResumeScnn(); }
+void Ariadne::clicked_scnn_stop() { scnn->SuspendScnn(); }
 
 
 // This function is to start driving

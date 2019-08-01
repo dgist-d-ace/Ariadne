@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'Ariadne.ui'
 **
-** Created by: Qt User Interface Compiler version 5.12.3
+** Created by: Qt User Interface Compiler version 5.12.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -48,7 +48,7 @@ public:
     QPushButton *Btn_yolo_stop;
     QPushButton *Btn_yolo_restart;
     QPushButton *Btn_scnn_stop;
-    QPushButton *pushButton_9;
+    QPushButton *Btn_scnn_restart;
     QGroupBox *groupBox_2;
     QGroupBox *groupBox_3;
     QPushButton *Btn_Mission0;
@@ -156,9 +156,9 @@ public:
         Btn_scnn_stop = new QPushButton(groupBox);
         Btn_scnn_stop->setObjectName(QString::fromUtf8("Btn_scnn_stop"));
         Btn_scnn_stop->setGeometry(QRect(70, 140, 71, 23));
-        pushButton_9 = new QPushButton(groupBox);
-        pushButton_9->setObjectName(QString::fromUtf8("pushButton_9"));
-        pushButton_9->setGeometry(QRect(150, 140, 71, 23));
+        Btn_scnn_restart = new QPushButton(groupBox);
+        Btn_scnn_restart->setObjectName(QString::fromUtf8("Btn_scnn_restart"));
+        Btn_scnn_restart->setGeometry(QRect(150, 140, 71, 23));
         groupBox_2 = new QGroupBox(centralWidget);
         groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
         groupBox_2->setGeometry(QRect(10, 10, 241, 171));
@@ -315,7 +315,7 @@ public:
         AriadneClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AriadneClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1198, 21));
+        menuBar->setGeometry(QRect(0, 0, 1198, 26));
         AriadneClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(AriadneClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -326,7 +326,7 @@ public:
 
         retranslateUi(AriadneClass);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(AriadneClass);
@@ -348,7 +348,7 @@ public:
         Btn_yolo_stop->setText(QApplication::translate("AriadneClass", "STOP", nullptr));
         Btn_yolo_restart->setText(QApplication::translate("AriadneClass", "RESTART", nullptr));
         Btn_scnn_stop->setText(QApplication::translate("AriadneClass", "STOP", nullptr));
-        pushButton_9->setText(QApplication::translate("AriadneClass", "RESTART", nullptr));
+        Btn_scnn_restart->setText(QApplication::translate("AriadneClass", "RESTART", nullptr));
         groupBox_2->setTitle(QApplication::translate("AriadneClass", "GroupBox", nullptr));
         groupBox_3->setTitle(QApplication::translate("AriadneClass", "Mission", nullptr));
         Btn_Mission0->setText(QApplication::translate("AriadneClass", "Mission0", nullptr));

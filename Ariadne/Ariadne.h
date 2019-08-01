@@ -133,6 +133,13 @@ public slots:
 
     //void gotoGPSdestination();
 
+    void clicked_lidar_stop();
+    void clicked_lidar_restart();
+    void clicked_yolo_stop();
+    void clicked_yolo_restart();
+    void clicked_scnn_stop();
+    void clicked_scnn_restart();
+
     void onAorMChanged(int);
     void onEStopChanged(int);
     void onGearChanged(int);

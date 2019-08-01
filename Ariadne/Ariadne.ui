@@ -202,7 +202,7 @@
       <string>STOP</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_9">
+    <widget class="QPushButton" name="Btn_scnn_restart">
      <property name="geometry">
       <rect>
        <x>150</x>
@@ -392,7 +392,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -831,7 +831,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1198</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

@@ -25,12 +25,10 @@ void Driving::GoTo(double x, double y, double theta)
     std::cout << "steerDeg: " << steerDegree << std::endl;
 
     if (-27 < steerDegree < 27) {
-        dataContainer->setValue_UtoP_SPEED(12);
         dataContainer->setValue_UtoP_STEER(steerDegree * 71);
         /// Because of the steer value set, can't be over than 2000 : it means the maximum steer degree is 28.16
         /// after time ms, the steer value return to 0.
         std::cout << "exit" << std::endl;
-        //dataContainer->setValue_UtoP_STEER(0);
     }
     else { std::cout << "steerDegree is incorrect" << std::endl; } /// TODO: 여기서 maximum x y heading radian 구하기
 }
@@ -41,6 +39,8 @@ void Driving::Basic() {
 	//
 	// To do : Implement Basic Driving Algorithm
 	//
+
+
 
 	std::cout << "drigving start\n";
 
