@@ -1,9 +1,8 @@
 #include "SensorStatus.h"
 #include "ScnnFunc.h"
 
-#include <iostream>
-#include <list>
 #include <tchar.h>
+
 
 #define UPDATE_PLATFORM_STATUS 100
 #define UPDATE_SENSOR_CONNECTION 101
@@ -72,18 +71,23 @@ Scnn::Scnn() {
 	ZeroMemory(&si, sizeof(si));
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi)); // assign program memory
-	TCHAR commandLine[] = TEXT("C:\Python\Python36");
+	TCHAR commandLine[] = TEXT("C:\\ProgramData\\Anaconda3\\Scripts\\activate_torch.bat");
+	if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
+	}
+	else {
+		tid = pi.hThread;
+		SuspendThread(tid);
+	}
 
-	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi)) {
-	//}
+	WSADATA wsa;
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+		cout << "error\n";
 
-	//tid = pi.hThread;
-
-	server = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	sockaddr_in addr = { 0 };
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	addr.sin_port = htons(23000);
+	addr.sin_port = htons(2222);
 
 	if (::bind(server, (sockaddr*)&addr, sizeof(addr))==SOCKET_ERROR)
 		cout<<"binding fail\n";
@@ -98,16 +102,38 @@ void Scnn::comScnn() {
 
 	client = accept(server, NULL, NULL);
 
-	char message[500];
+	char message[5000];
 	int strLen;
-	list<int>* data;
-
+	int n;
+	int i;
 	while (1) {
-		strLen = recv(client, message, sizeof(message) - 1, 0);
-		if (strLen == 0) continue;
-		message[strLen] = '\0';
-		data = (list<int>*)message;
-		cout << data << endl;
+		ZeroMemory(&message, sizeof(message));
+		strLen = recv(client, (char*)message, sizeof(message) - 1, 0);
+
+		//n = atoi(message);
+		cout << message << endl;
+		vector<vector<cv::Point2i>> lanes(4);
+		vector<int> existLanes(4);
+		stringstream in;
+		in.str(message);
+		for (i = 0; i < 4; i++) {
+			int n;
+			in >> n;
+			cout << n << endl;
+
+			for (int j = 0; j < n; j++) {
+				int x, y;
+				in >> x >> y;
+				lanes[i].push_back(cv::Point2i(x, y));
+			}
+		}
+		for (i = 0; i < 4; i++) {
+			in >> existLanes[i];
+			cout << existLanes[i] << endl;;
+		}
+
+		dataContainer->setValue_camera1_lanes(lanes);
+		dataContainer->setValue_camera1_existLanes(existLanes);
 	}
 	closesocket(client);
 	closesocket(server);

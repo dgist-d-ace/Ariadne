@@ -160,9 +160,11 @@ void deleteData_lidar_object(){}
 //
 //	Ä«¸Þ¶ó1
 //
-
-int DataContainer::getValue_camera1_steer() { mtx_camera1_steer.lock(); int temp = m_camera1_steer; mtx_camera1_steer.unlock(); return temp; }
-void DataContainer::setValue_camera1_steer(int value) { mtx_camera1_steer.lock(); m_camera1_steer = value; mtx_camera1_steer.unlock(); }
+void DataContainer::setValue_camera1_lanes(vector<vector<cv::Point2i>> lanes) { mtx_camera1_lanes.lock(); m_camera1_lanes = lanes; mtx_camera1_lanes.unlock(); }
+void DataContainer::setValue_camera1_existLanes(vector<int> existLanes) { mtx_camera1_existLanes.lock(); m_camara1_existLanes = existLanes; mtx_camera1_existLanes.unlock(); }
+vector<vector<cv::Point2i>> DataContainer::getValue_camera1_lanes() { mtx_camera1_lanes.lock(); vector<vector<cv::Point2i>> temp = m_camera1_lanes; return temp; mtx_camera1_lanes.unlock();
+}
+vector<int> DataContainer::getValue_camera1_existLanes() { mtx_camera1_existLanes.lock(); vector<int> temp = m_camara1_existLanes; return temp; mtx_camera1_existLanes.unlock(); }
 
 //
 //	GPS

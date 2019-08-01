@@ -1,8 +1,9 @@
 #pragma once
+
 #include <mutex>
-#include <vector>
 #include <QThread>
 #include <QMutex>
+#include "LidarFunc.h"
 
 class DataContainer {
 private:
@@ -79,9 +80,11 @@ private:
 	//
 	//카메라1: 주행용 (차선 인식) 
 	//
-	int m_camera1_steer;
+	vector<vector<cv::Point2i>> m_camera1_lanes;
+	vector<int> m_camara1_existLanes;
 
-	QMutex mtx_camera1_steer;
+	QMutex mtx_camera1_lanes;
+	QMutex mtx_camera1_existLanes;
 
 	//
 	//카메라2: 미정 (주차용) 
@@ -115,6 +118,8 @@ private:
 	QMutex mtx_imu_accelY;
 	QMutex mtx_imu_accelZ;
 
+
+	
 	QMutex mtx_gps_valid;
 	QMutex mtx_gps_latitude;
 	QMutex mtx_gps_longitude;
@@ -223,8 +228,11 @@ public:
 	//	카메라1
 	//
 
-	int getValue_camera1_steer();
-	void setValue_camera1_steer(int value);
+	vector<vector<cv::Point2i>> getValue_camera1_lanes();
+	vector<int> getValue_camera1_existLanes();
+	void setValue_camera1_lanes(vector<vector<cv::Point2i>> lanes);
+	void setValue_camera1_existLanes(vector<int> existLanes);
+	
 
 	//
 	//	GPS
