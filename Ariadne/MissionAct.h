@@ -10,6 +10,9 @@ protected:
 public:
 	DataContainer *dataContainer;
 	Driving();
+    void GoTo(double, double, double);
+    double rad2deg(double);
+    double deg2rad(double);
 
 public slots:
 	void Basic();

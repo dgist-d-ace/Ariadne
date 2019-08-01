@@ -95,7 +95,7 @@ public:
     Ariadne(QWidget *parent = Q_NULLPTR);
 
     PlatformCom* platformCom;
-    LidarCom*lidarCom;
+    LidarCom* lidarCom;
     GPSCom* gpsCom;
     Scnn* scnn;
 	Yolo* yolo;
@@ -131,7 +131,7 @@ public slots:
     void gear_input();
     void clicked_E_stop();
 
-    void gotoGPSdestination();
+    //void gotoGPSdestination();
 
     void onAorMChanged(int);
     void onEStopChanged(int);

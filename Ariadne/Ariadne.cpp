@@ -643,6 +643,8 @@ bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double headin
         return false;
     }
 }
+
+/*
 void Ariadne::gotoGPSdestination()
 {
 
@@ -677,3 +679,4 @@ void Ariadne::gotoGPSdestination()
 
 double rad2deg(double radian) { return radian * 180 / PI;}
 double deg2rad(double degree) { return degree * PI / 180; }
+*/
