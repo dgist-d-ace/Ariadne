@@ -95,15 +95,15 @@ public:
     Ariadne(QWidget *parent = Q_NULLPTR);
 
     PlatformCom* platformCom;
- //   LidarCom*lidarCom;
+    LidarCom*lidarCom;
     GPSCom* gpsCom;
- //   Scnn* scnn;
+    Scnn* scnn;
 	Yolo* yolo;
 
     QThread* platformThread;
- //   QThread* lidarThread;
+    QThread* lidarThread;
     QThread* gpsThread;
- //   QThread* scnnThread;
+    QThread* scnnThread;
 	QThread* yoloThread;
 
 	Driving* driving;
@@ -113,8 +113,6 @@ public:
 
     QTimer* TimerSensorStatus;
     static Ui::AriadneClass* getUI();
-
-    
 
 private:
     static Ui::AriadneClass* ui;
