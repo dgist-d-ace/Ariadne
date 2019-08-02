@@ -12,11 +12,31 @@
 #include <iostream>
 #include <iterator>
 #include <QtCore>
+#include <QThread>
 
 using namespace std;
 
 
+class LidarComThread : public QThread
+{
+    Q_OBJECT
+protected:
 
+public:
+    ///DataContainer *dataContainer;
+
+    int comLidar();
+    void run();
+
+private:
+
+signals:
+
+public slots:
+};
+
+
+/*
 class LidarCom : public QObject
 {
     Q_OBJECT
@@ -36,6 +56,10 @@ signals: /// thread�� ���� broadcast �Լ���
 public slots:
     void comLidar();
 };
+
+
+*/
+
 
 
 class Scnn : public QObject
@@ -87,7 +111,6 @@ public:
 
 private:
 public slots:
-
 	void comYolo();
 	void SuspendYolo();
 	void ResumeYolo();

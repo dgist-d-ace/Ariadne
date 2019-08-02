@@ -95,13 +95,14 @@ public:
     Ariadne(QWidget *parent = Q_NULLPTR);
 
     PlatformCom* platformCom;
-    LidarCom* lidarCom;
+    LidarComThread *lidarComThread;
+    // LidarCom* lidarCom;
     GPSCom* gpsCom;
     Scnn* scnn;
 	Yolo* yolo;
 
     QThread* platformThread;
-    QThread* lidarThread;
+    //QThread* lidarThread;
     QThread* gpsThread;
     QThread* scnnThread;
 	QThread* yoloThread;
@@ -150,6 +151,9 @@ public slots:
 
     void onLatitudeChanged(double);
     void onLongitudeChanged(double);
+
+    /// DY: 0802
+    void onLidarExit();
 
 };
 
