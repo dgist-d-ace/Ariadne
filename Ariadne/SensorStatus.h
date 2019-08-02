@@ -2,7 +2,6 @@
 
 #include "ComPlatform.h"
 #include "atlstr.h"
-#include "LidarFunc.h"
 
 #include <QObject>
 #include <QThread>
@@ -13,6 +12,7 @@
 #include <iterator>
 #include <QtCore>
 #include <QThread>
+#include <sstream>
 
 using namespace std;
 
@@ -46,8 +46,6 @@ public:
     DataContainer *dataContainer;
 
     LidarCom();
-
-
 private:
 
 signals: /// thread�� ���� broadcast �Լ���
