@@ -116,8 +116,8 @@ void Ariadne::clicked_btn_sensor() {
 	//if (!yoloThread->isRunning())
 	//	yoloThread->start();
 
-	//if(!platformThread->isRunning())
-		//platformThread->start();
+	if(!platformThread->isRunning())
+		platformThread->start();
 
 	//if(!lidarThread->isRunning())
 	//	lidarThread->start();
