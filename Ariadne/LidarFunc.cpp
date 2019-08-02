@@ -180,7 +180,6 @@ bool LastOfLiDAR::DisconnectToDevice()
     return true;
 }
 
-// 0717: 클래스 내부에서 정의한 enum을 어떻게 사용하지?
 status_t LastOfLiDAR::QueryStatus() 
 {
     char buf[256 + 1];
@@ -477,6 +476,8 @@ void LastOfLiDAR::ParseSickData(std::string& strBuf)
     m_vecRawScans = rawScans;
     ConvertRawToRTheta();
     m_bDataAvailable = true;
+
+    cout << "lol m_bDataAvailable: " << m_bDataAvailable << endl;
 
 
 
