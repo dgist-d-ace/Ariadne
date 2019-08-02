@@ -30,11 +30,16 @@ Ariadne::Ariadne(QWidget *parent)
 	connect(gpsThread, SIGNAL(started()), gpsCom, SLOT(comGPS()));
 	connect(gpsCom, SIGNAL(GPSExit()), gpsCom, SLOT(comGPS()));
 
+    lidarComThread = new LidarComThread;
+    ///connect(lidarComThread, SIGNAL(LidarExit()), this, SLOT(onLidarExit()));
+
+    /*
 	lidarCom = new LidarCom;
 	lidarThread = new QThread;
 	lidarCom->moveToThread(lidarThread);
 	connect(lidarThread, SIGNAL(started()), lidarCom, SLOT(comLidar()));
 	connect(lidarCom, SIGNAL(LidarExit()), lidarCom, SLOT(comLidar()));
+    */
 
 	scnn = new Scnn;
 	scnnThread = new QThread;
@@ -119,8 +124,8 @@ void Ariadne::clicked_btn_sensor() {
 	if(!platformThread->isRunning())
 		platformThread->start();
 
-	//if(!lidarThread->isRunning())
-	//	lidarThread->start();
+	if(!lidarComThread->isRunning())
+	    lidarComThread->start();
 
     //if (!gpsThread->isRunning())
     //    gpsThread->start();
@@ -128,6 +133,12 @@ void Ariadne::clicked_btn_sensor() {
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
 	TimerSensorStatus->start(1000);
+}
+
+void Ariadne::onLidarExit()
+{
+    cout << "onLidarExit is called" << endl;
+    lidarComThread->start();
 }
 
 void Ariadne::clicked_lidar_restart() {cout << "you clicked lidar restart" << endl;}
@@ -142,8 +153,6 @@ void Ariadne::clicked_scnn_stop() { scnn->SuspendScnn(); }
 void Ariadne::clicked_btn_driving() {
 	if (!drivingThread->isRunning())
 		drivingThread->start();
-
-
 }
 
 void Ariadne::clicked_btn_mission0() {
@@ -336,7 +345,7 @@ GPSCom::GPSCom() {
 void GPSCom::Paint_base() // �⺻ �� ����
 {
     ui->rt_plot->addGraph();
-    ui->rt_plot->graph(0)->rescaleAxes();
+	ui->rt_plot->graph(0)->rescaleAxes();
     ui->rt_plot->axisRect()->setupFullAxesBox();
 }
 

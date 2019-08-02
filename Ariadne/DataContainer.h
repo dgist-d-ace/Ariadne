@@ -73,9 +73,10 @@ private:
 	//
 	//라이다
 	//
-
-	//lidar 코드 보고 수정 필요
-	//m_lidar_obj[100];
+	vector<cv::Point2d> m_lidar_VecXY; //최종 좌표 집합 - 1프레임
+	queue<vector<vector<double> > > m_lidar_Data; //최종 데이터 집합 - 2프레임
+	vector<cv::Point2d> m_lidar_VecData; //물체의 벡터 집합 - 1프레임
+	vector<bool> m_lidar_BoolData; //물체의 동정적 여부 집합 - 1프레임
 
 	//
 	//카메라1: 주행용 (차선 인식) 
@@ -219,6 +220,17 @@ public:
 	//
 	//	라이다
 	//
+
+	vector<cv::Point2d> getValue_lidar_VecXY(); //최종 좌표 집합 - 1프레임
+	queue<vector<vector<double> > > getValue_lidar_Data(); //최종 데이터 집합 - 2프레임
+	vector<cv::Point2d> getValue_lidar_VecData(); //물체의 벡터 집합 - 1프레임
+	vector<bool> getValue_lidar_BoolData(); //물체의 동정적 여부 집합 - 1프레임
+
+	void setValue_lidar_VecXY(vector<cv::Point2d> VecXY); //최종 좌표 집합 - 1프레임
+	void setValue_lidar_Data(queue<vector<vector<double> > > data); //최종 데이터 집합 - 2프레임
+	void setValue_lidar_VecData(vector<cv::Point2d> vecData); //물체의 벡터 집합 - 1프레임
+	void setValue_lidar_BoolData(vector<bool> boolData); //물체의 동정적 여부 집합 - 1프레임
+
 	// 수정 필요
 	/*void setData_lidar_object(object* objL, int num);
 	void getData_lidar_object(object* objM);

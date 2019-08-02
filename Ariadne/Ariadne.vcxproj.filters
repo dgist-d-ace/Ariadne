@@ -101,10 +101,10 @@
     <ClInclude Include="GeneratedFiles\ui_Ariadne.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="LidarFunc.h">
+    <ClInclude Include="ScnnFunc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScnnFunc.h">
+    <ClInclude Include="LidarFunc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
