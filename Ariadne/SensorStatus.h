@@ -23,8 +23,8 @@ class LidarComThread : public QThread
 protected:
 
 public:
-    ///DataContainer *dataContainer;
-
+    DataContainer *dataContainer;
+	LidarComThread();
     int comLidar();
     void run();
 

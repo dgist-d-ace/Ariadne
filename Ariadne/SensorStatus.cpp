@@ -11,6 +11,10 @@
 
 #define PIPE_NAME "\\\\.\\pipe\\test_pipe" 
 
+LidarComThread::LidarComThread() {
+	dataContainer = DataContainer::getInstance();
+}
+
 int LidarComThread::comLidar() {
 
     cout << "comLidar function is made" << endl;
@@ -27,30 +31,32 @@ int LidarComThread::comLidar() {
     while (1) {
         if (lol.m_bDataAvailable) {
 
-            ///dataContainer->updateValue_lidar_status();
+            dataContainer->updateValue_lidar_status();
 
-            lol.imgLiDAR = cv::Mat::zeros(768, 1366, CV_8UC3);
+            
 
             lol.GetValidDataRTheta(lol.validScans);
             lol.Conversion(lol.validScans, lol.finQVecXY, 5);
             lol.Average(lol.finQVecXY, lol.finVecXY, 5);
             lol.Clustering(lol.finVecXY, lol.finLiDARData);
             lol.Vector(lol.finLiDARData, lol.finVecData, lol.finBoolData);
-            lol.DrawData(lol.finVecXY, lol.finLiDARData, lol.finVecData, lol.finBoolData, lol.imgLiDAR);
+			
+			dataContainer->setValue_lidar_BoolData(lol.finBoolData);
+			dataContainer->setValue_lidar_Data(lol.finLiDARData);
+			dataContainer->setValue_lidar_VecXY(lol.finVecXY);
+			dataContainer->setValue_lidar_VecData(lol.finVecData);
+
+            //lol.DrawData(lol.finVecXY, lol.finLiDARData, lol.finVecData, lol.finBoolData, lol.imgLiDAR);
 
             //ov.PlatformVector(lol.finLiDARData, ov.finVecData, ov.finBoolData);
             //ov.DrawVector(lol.finLiDARData, ov.finVecData, lol.imgLiDAR);
 
             cout << "Reset" << endl;
 
-            cv::imshow("DrawLiDARData", lol.imgLiDAR);
+           
         }
 
-        int key = cv::waitKey(1);
 
-        if (key == 27) {
-            break;
-        }
     }
 
     lol.StopCapture();

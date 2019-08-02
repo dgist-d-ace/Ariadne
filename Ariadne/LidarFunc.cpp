@@ -11,6 +11,7 @@
 #include <iostream>
 
 using namespace std;
+using namespace cv;
 
 LastOfLiDAR::LastOfLiDAR()
 {
@@ -786,6 +787,248 @@ bool LastOfLiDAR::Vector(queue<vector<vector<double> > > &finLiDARData, vector<c
     return true;
 }
 
+/*
+//Plan B: MAKING VORNOI FEILD & VOTING SYSTEM.
+void LastOfLiDAR::DrawData(vector<Point2d> &finVecXY, queue<vector<vector<double> > > &finObjData, vector<Point2d> &finVecData, vector<bool> &finBoolData, Mat &imgLiDAR)
+{
+	Mat img = imgLiDAR;
+	vector<Point2d> vecXY = finVecXY;
+	vector<Point2d> vecXYDraw;
+
+
+	double cenX = img.cols * 0.5, cenY = img.rows * 0.9;
+	double scale = cenY / (SICK_SCAN_ROI_Y + 200); //창 크기를 위한 스케일 조정(준규 노트북 : 0.35)
+
+	//Car size in map
+	double carW = CAR_WEITH * scale;
+	double carH = CAR_HEIGH * scale;
+
+	double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
+	double rightEndX = cenX + SICK_SCAN_ROI_X * scale;
+	double topEndY = cenY - SICK_SCAN_ROI_Y * scale;
+	double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
+
+	double platEndY = cenY - 50;
+	Point2d center(cenX, cenY), platEnd(cenX, platEndY);
+	Point2d leftTopEnd(leftEndX, topEndY), rightBottomEnd(rightEndX, cenY);
+
+	//rectangle(img, leftTopEnd, rightBottomEnd, CV_RGB(150, 150, 150), 2, CV_AA, 0);
+	//circle(img, center, 5, CV_RGB(255, 255, 255), -1); //실제 LiDAR 위치
+
+	for (int i = 0; i < vecXY.size(); ++i) { //스케일 조정
+		double xyDrawX = center.x + vecXY[i].x * scale;
+		double xyDrawY = center.y - vecXY[i].y * scale;
+
+		Point2d xyDraw(xyDrawX, xyDrawY);
+		vecXYDraw.push_back(xyDraw);
+	}
+
+	for (int i = 0; i < vecXYDraw.size() - 1; ++i) { //물체를 구성하는 점 연결
+		double dist = sqrt(pow(vecXYDraw[i].x - vecXYDraw[i + 1].x, 2) + pow(vecXYDraw[i].y - vecXYDraw[i + 1].y, 2));
+
+		if (dist <= SICK_SCAN_DIST_OBJECT * scale) {
+			if (vecXYDraw[i].x < rightEndX && vecXYDraw[i].x > leftEndX && vecXYDraw[i].y > topEndY) {
+				line(img, vecXYDraw[i], vecXYDraw[i + 1], CV_RGB(0, 255, 0), 2);
+			}
+		}
+	}
+
+
+	/// %%%%%%%%%%%%%%%%%%%%%%%%%%MINHO's native code for steering angle.%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//////////////////////////////////////////////////////////////////////////////
+	//////////Fill the Regions where cannot go in, because of obstacles.//////////
+	//////////////////////////////////////////////////////////////////////////////
+	
+	vector<vector<double> > objDataSet = finObjData.back();
+	Point polypts[1][4];
+
+	for (int i = 0; i < objDataSet.size(); i++)
+	{
+
+		double cirCenX = center.x + objDataSet[i][0] * scale;
+		double cirCenY = center.y - objDataSet[i][1] * scale;
+		double cirCenR = objDataSet[i][2] * scale;
+		Point2d cirCen(cirCenX, cirCenY); //물체를 나타내는 원 그리기
+
+		//circle(img, cirCen, objDataSet[i][2] * scale, CV_RGB(255, 0, 0), -1, CV_AA);
+
+
+		double cenDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2));
+		double touchDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2) - pow(cirCenR, 2));
+		double theta_s = asin(cirCenR / cenDist);
+		double theta_l = atan(objDataSet[i][1] / objDataSet[i][0]);
+		if (theta_l < 0)
+		{
+			theta_l += CV_PI;
+		}
+
+		int x1 = (int)(touchDist*cos(theta_l - theta_s) + cenX), y1 = (int)(cenY - touchDist * sin(theta_l - theta_s));
+		int x2 = (int)(touchDist*cos(theta_l + theta_s) + cenX), y2 = (int)(cenY - touchDist * sin(theta_l + theta_s));
+		int x3 = (x2 - cenX)*(cenY - topEndY) / (cenY - y2) + cenX, y3 = topEndY;
+		int x4 = (x1 - cenX)*(cenY - topEndY) / (cenY - y1) + cenX, y4 = topEndY;
+
+		if (y1 > cenY) {
+			x4 = x4 * (-1);
+			y4 = bottomEndY - 0.0001;
+		}
+		if (y2 > cenY) {
+			x3 = x3 * (-1);
+			y3 = bottomEndY - 0.0001;
+		}
+		polypts[0][0] = Point(x1, y1);
+		polypts[0][1] = Point(x2, y2);
+		polypts[0][2] = Point(x3, y3);
+		polypts[0][3] = Point(x4, y4);
+
+		const Point* ppt[1] = { polypts[0] };
+		int npt[] = { 4 };
+
+		fillPoly(img, ppt, npt, 1, CV_RGB(200, 200, 0));
+		circle(img, cirCen, cirCenR, CV_RGB(255, 0, 0), -1, CV_AA);
+	}
+	//////////////////////////////////////////////////////////////////////////////
+
+	//////////////////////////////////////////////////////////////////////////////////
+	///fill the Regions where cannot go in, because of max value of steering angle.///
+	//////////////////////////////////////////////////////////////////////////////////
+
+	//left blind area
+	Point points[1][3];
+	points[0][0] = Point(center.x - carW, center.y);
+	points[0][1] = Point(cenX - SICK_SCAN_ROI_X, center.y);
+	points[0][2] = Point(cenX - SICK_SCAN_ROI_X, center.y - (SICK_SCAN_ROI_X - carW)*sqrt(3)); //나중에 반경에 맞춰서 폴리곤으로 그릴것
+
+	const Point* pnts[1] = { points[0] };
+	int npt2[] = { 3 };
+
+	fillPoly(img, pnts, npt2, 1, CV_RGB(150, 0, 0));
+
+	//right blind area
+	Point points2[1][3];
+	points2[0][0] = Point(center.x + carW, center.y);
+	points2[0][1] = Point(cenX + SICK_SCAN_ROI_X, center.y);
+	points2[0][2] = Point(cenX + SICK_SCAN_ROI_X, center.y - (SICK_SCAN_ROI_X - carW) * sqrt(3)); //나중에 반경에 맞춰서 폴리곤으로 그릴것
+
+	const Point* pnts2[1] = { points2[0] };
+
+	fillPoly(img, pnts2, npt2, 1, CV_RGB(150, 0, 0));
+	//////////////////////////////////////////////////////////////////////////////////
+
+
+	//////////////////////////////////////////////////////////////////////////////////
+	////////////////////Fill the Regions which mean out of ROI////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	//rectangle(img, Point2d(0, 0), Point2d(img.cols, topEndY), CV_RGB(255, 255, 255), -1, CV_AA, 0);
+	//rectangle(img, Point2d(0, 0), Point2d(leftEndX, img.rows), CV_RGB(255, 255, 255), -1, CV_AA, 0);
+	//rectangle(img, Point2d(img.cols, img.rows), Point2d(0, cenY), CV_RGB(255, 255, 255), -1, CV_AA, 0);
+	//rectangle(img, Point2d(img.cols, img.rows), Point2d(rightEndX, 0), CV_RGB(255, 255, 255), -1, CV_AA, 0);
+	//////////////////////////////////////////////////////////////////////////////////
+
+	cv::cvtColor(img, img, CV_BGR2GRAY);
+	threshold(img, img, 1, 10, THRESH_BINARY_INV);
+
+	//MAKING VORNOI FIELD
+	int kerSize;
+	for (int i = 1; i < 5; i++)
+	{
+		kerSize = 30 * i;
+		Mat kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
+
+
+		Mat stepVot = Mat::zeros(img.cols, img.rows, CV_8UC1);
+		cv::morphologyEx(img, stepVot, MORPH_ERODE, kernel);
+		img += stepVot;
+	}
+
+	//VOTING PART: 
+	//REGION OF WORKABLE ANGLE: 60 ~ 120, with interval=5 degrees
+	vector<uint> score[13]; //include the scores at [90,85, 95, 80, 100, 75, 105, 70, 110, 65, 115, 60, 120]degrees
+	uchar onestep = 1500 * scale; //mean how much car move go in 0.5s. / 12km/hour -> 3m/second
+	vector<int> theta = { 0, -5, 5, -10, 10, -15, 15, -20, 20, -25, 25, -30, 30 }; //The steering angle candidates
+	Mat cirGray;
+	Mat scresult;
+	uint scoretheta;
+	uint sum;
+
+	//predict first step
+	for (int i = 0; i < theta.size(); i++)
+	{
+
+		cirGray = Mat::zeros(img.rows, img.cols, CV_8UC1);
+		scoretheta = 90 + theta.at(i);
+		Point2d scoreCir(cenX + onestep * cos(CV_PI*scoretheta / 180), cenY - onestep * sin(CV_PI*scoretheta / 180));
+
+		circle(cirGray, scoreCir, carW / 4, CV_RGB(1, 1, 1), -1, CV_AA, 0);
+		//imshow("test", cirGray);
+		//Mat cirGray;
+		//cvtColor(imgCircle, cirGray, CV_RGB2GRAY);
+		scresult = cirGray.mul(img);
+		sum = 0;
+		uchar *sumData = scresult.data;
+		int sheight = scresult.rows;
+		int swidth = scresult.cols;
+		for (int j = 0; j < sheight; j++)
+		{
+			for (int m = 0; m < swidth; m++)
+			{
+				//sum += scresult.at<uchar>(j,m);
+				sum += sumData[m*sheight + j];
+			}
+		}
+		score->push_back(sum);
+		//waitKey(1);
+	}
+
+	uint scoreMax1 = distance(score->begin(), max_element(score->begin(), score->end()));
+	int goTheta1 = theta.at(scoreMax1); //나를 기준으로 왼쪽은 +, 오른쪽은 - 로 조향각 설정, gotheta가 최종 조향각임
+	//cout << scoreMax << "th value" << goTheta1 << endl; 
+
+	Point stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1) / 180)));
+	cv::arrowedLine(img, center, stepFirst, CV_RGB(255, 255, 255), 5);
+
+	//Predict second step-----------------------------------------------------------미완성
+	vector<uint> score2[13];
+	for (int i = 0; i < theta.size(); i++)
+	{
+		cirGray = Mat::zeros(img.rows, img.cols, CV_8UC1);
+		scoretheta = 90 + theta.at(i);
+		Point2d scoreCir2(stepFirst.x + onestep * cos(CV_PI*scoretheta / 180), stepFirst.y - onestep * sin(CV_PI*scoretheta / 180));
+
+		circle(cirGray, scoreCir2, carW / 4, CV_RGB(1, 1, 1), -1, CV_AA, 0);
+		//imshow("test", cirGray);
+		//Mat cirGray;
+		//cvtColor(imgCircle, cirGray, CV_RGB2GRAY);
+		scresult = cirGray.mul(img);
+		sum = 0;
+		uchar *sumData = scresult.data;
+		int sheight = scresult.rows;
+		int swidth = scresult.cols;
+		for (int j = 0; j < sheight; j++)
+		{
+			for (int m = 0; m < swidth; m++)
+			{
+				//sum += scresult.at<uchar>(j,m);
+				sum += sumData[m*sheight + j];
+			}
+		}
+		score2->push_back(sum);
+		//waitKey(1);
+	}
+	uint scoreMax2 = distance(score2->begin(), max_element(score2->begin(), score2->end()));
+	int goTheta2 = theta.at(scoreMax2);
+	Point stepSecond(stepFirst.x + onestep * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*sin(CV_PI*(90 + goTheta2) / 180)));
+	cv::arrowedLine(img, stepFirst, stepSecond, CV_RGB(255, 255, 255), 5);
+
+
+	//DRAW ARROWLINES of LiDAR, and surrounding objects.
+	//DRAW the vectors meaning the movement of objects.
+
+
+	imgLiDAR = img;
+}
+
+*/
+/*
 void LastOfLiDAR::DrawData(vector<cv::Point2d> &finVecXY, queue<vector<vector<double> > > &finLiDARData, vector<cv::Point2d> &finVecData, vector<bool> &finBoolData, cv::Mat &img)
 {
     vector<cv::Point2d> vecXY = finVecXY;
@@ -853,7 +1096,7 @@ void LastOfLiDAR::DrawData(vector<cv::Point2d> &finVecXY, queue<vector<vector<do
         }
     }
 }
-
+*/
 /// ----------------------------- OBJECTVECTOR.cpp ------------------------------------------ ///
 bool ObjectVector::PlatformVector(queue<vector<vector<double> > > &finLiDARData, vector<cv::Point2d> &finVecData, vector<bool> &finBoolData) //플렛폼 속도, 조향각 참조 추가
 {

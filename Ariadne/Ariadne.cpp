@@ -153,8 +153,6 @@ void Ariadne::clicked_scnn_stop() { scnn->SuspendScnn(); }
 void Ariadne::clicked_btn_driving() {
 	if (!drivingThread->isRunning())
 		drivingThread->start();
-
-
 }
 
 void Ariadne::clicked_btn_mission0() {
@@ -347,7 +345,7 @@ GPSCom::GPSCom() {
 void GPSCom::Paint_base() // �⺻ �� ����
 {
     ui->rt_plot->addGraph();
-    ui->rt_plot->graph(0)->rescaleAxes();
+	ui->rt_plot->graph(0)->rescaleAxes();
     ui->rt_plot->axisRect()->setupFullAxesBox();
 }
 

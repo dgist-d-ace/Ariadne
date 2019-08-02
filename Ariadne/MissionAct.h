@@ -14,6 +14,8 @@ public:
     double rad2deg(double);
     double deg2rad(double);
 
+	cv::Mat imgPath;
+
 public slots:
 	void Basic();
 
