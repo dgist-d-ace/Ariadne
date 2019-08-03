@@ -37,7 +37,7 @@ int Driving::GoTo(double x, double y, double theta)
         if (steerDegree > 0) { return 2000; } ///set steer maximum value
         else { return -2000; }
     }
-        
+
 }
 
 double rad2deg(double radian) { return radian * 180 / PI; }
@@ -50,6 +50,7 @@ void Driving::Basic() {
 	//
 	// To do : Implement Basic Driving Algorithm
 	//
+	dataContainer->setValue_UtoP_AorM(1);
 
 //Plan B: MAKING VORNOI FEILD & VOTING SYSTEM.
 	while (1)
@@ -60,7 +61,7 @@ void Driving::Basic() {
 
 
 		double cenX = imgPath.cols * 0.5, cenY = imgPath.rows * 0.9;
-		double scale = cenY / (SICK_SCAN_ROI_Y + 200); //Ã¢ Å©±â¸¦ À§ÇÑ ½ºÄÉÀÏ Á¶Á¤(ÁØ±Ô ³ëÆ®ºÏ : 0.35)
+		double scale = cenY / (SICK_SCAN_ROI_Y + 200); //Ã¢ Å©ï¿½â¸¦ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½Ø±ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½ : 0.35)
 
 		//Car size in map
 		double carW = CAR_WEITH * scale;
@@ -76,9 +77,9 @@ void Driving::Basic() {
 		Point2d leftTopEnd(leftEndX, topEndY), rightBottomEnd(rightEndX, cenY);
 
 		//rectangle(img, leftTopEnd, rightBottomEnd, CV_RGB(150, 150, 150), 2, CV_AA, 0);
-		//circle(img, center, 5, CV_RGB(255, 255, 255), -1); //½ÇÁ¦ LiDAR À§Ä¡
+		//circle(img, center, 5, CV_RGB(255, 255, 255), -1); //ï¿½ï¿½ï¿½ï¿½ LiDAR ï¿½ï¿½Ä¡
 
-		for (int i = 0; i < vecXY.size(); ++i) { //½ºÄÉÀÏ Á¶Á¤
+		for (int i = 0; i < vecXY.size(); ++i) { //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			double xyDrawX = center.x + vecXY[i].x * scale;
 			double xyDrawY = center.y - vecXY[i].y * scale;
 
@@ -86,7 +87,7 @@ void Driving::Basic() {
 			vecXYDraw.push_back(xyDraw);
 		}
 
-		for (int i = 0; i < vecXYDraw.size() - 1; ++i) { //¹°Ã¼¸¦ ±¸¼ºÇÏ´Â Á¡ ¿¬°á
+		for (int i = 0; i < vecXYDraw.size() - 1; ++i) { //ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			double dist = sqrt(pow(vecXYDraw[i].x - vecXYDraw[i + 1].x, 2) + pow(vecXYDraw[i].y - vecXYDraw[i + 1].y, 2));
 
 			if (dist <= SICK_SCAN_DIST_OBJECT * scale) {
@@ -111,7 +112,7 @@ void Driving::Basic() {
 			double cirCenX = center.x + objDataSet[i][0] * scale;
 			double cirCenY = center.y - objDataSet[i][1] * scale;
 			double cirCenR = objDataSet[i][2] * scale;
-			Point2d cirCen(cirCenX, cirCenY); //¹°Ã¼¸¦ ³ªÅ¸³»´Â ¿ø ±×¸®±â
+			Point2d cirCen(cirCenX, cirCenY); //ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½
 
 			//circle(img, cirCen, objDataSet[i][2] * scale, CV_RGB(255, 0, 0), -1, CV_AA);
 
@@ -159,7 +160,7 @@ void Driving::Basic() {
 		Point points[1][3];
 		points[0][0] = Point(center.x - carW, center.y);
 		points[0][1] = Point(cenX - SICK_SCAN_ROI_X, center.y);
-		points[0][2] = Point(cenX - SICK_SCAN_ROI_X, center.y - (SICK_SCAN_ROI_X - carW)*sqrt(3)); //³ªÁß¿¡ ¹Ý°æ¿¡ ¸ÂÃç¼­ Æú¸®°ïÀ¸·Î ±×¸±°Í
+		points[0][2] = Point(cenX - SICK_SCAN_ROI_X, center.y - (SICK_SCAN_ROI_X - carW)*sqrt(3)); //ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½Ý°æ¿¡ ï¿½ï¿½ï¿½ç¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½
 
 		const Point* pnts[1] = { points[0] };
 		int npt2[] = { 3 };
@@ -170,7 +171,7 @@ void Driving::Basic() {
 		Point points2[1][3];
 		points2[0][0] = Point(center.x + carW, center.y);
 		points2[0][1] = Point(cenX + SICK_SCAN_ROI_X, center.y);
-		points2[0][2] = Point(cenX + SICK_SCAN_ROI_X, center.y - (SICK_SCAN_ROI_X - carW) * sqrt(3)); //³ªÁß¿¡ ¹Ý°æ¿¡ ¸ÂÃç¼­ Æú¸®°ïÀ¸·Î ±×¸±°Í
+		points2[0][2] = Point(cenX + SICK_SCAN_ROI_X, center.y - (SICK_SCAN_ROI_X - carW) * sqrt(3)); //ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½Ý°æ¿¡ ï¿½ï¿½ï¿½ç¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½
 
 		const Point* pnts2[1] = { points2[0] };
 
@@ -203,7 +204,7 @@ void Driving::Basic() {
 			imgPath += stepVot;
 		}
 
-		//VOTING PART: 
+		//VOTING PART:
 		//REGION OF WORKABLE ANGLE: 60 ~ 120, with interval=5 degrees
 		vector<uint> score[13]; //include the scores at [90,85, 95, 80, 100, 75, 105, 70, 110, 65, 115, 60, 120]degrees
 		uchar onestep = 500 * scale; //mean how much car move go in 0.5s. / 12km/hour -> 3m/second
@@ -243,13 +244,13 @@ void Driving::Basic() {
 		}
 
 		uint scoreMax1 = distance(score->begin(), max_element(score->begin(), score->end()));
-		int goTheta1 = theta.at(scoreMax1); //³ª¸¦ ±âÁØÀ¸·Î ¿ÞÂÊÀº +, ¿À¸¥ÂÊÀº - ·Î Á¶Çâ°¢ ¼³Á¤, gotheta°¡ ÃÖÁ¾ Á¶Çâ°¢ÀÓ
-		//cout << scoreMax << "th value" << goTheta1 << endl; 
+		int goTheta1 = theta.at(scoreMax1); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ +, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ - ï¿½ï¿½ ï¿½ï¿½ï¿½â°¢ ï¿½ï¿½ï¿½ï¿½, gothetaï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â°¢ï¿½ï¿½
+		//cout << scoreMax << "th value" << goTheta1 << endl;
 
 		Point2d stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1) / 180)));
 		cv::arrowedLine(imgPath, center, stepFirst, CV_RGB(255, 255, 255), 5);
 
-		//Predict second step-----------------------------------------------------------¹Ì¿Ï¼º
+		//Predict second step-----------------------------------------------------------ï¿½Ì¿Ï¼ï¿½
 		vector<uint> score2[13];
 		for (int i = 0; i < theta.size(); i++)
 		{
@@ -287,7 +288,7 @@ void Driving::Basic() {
 		//DRAW the vectors meaning the movement of objects.
 
 		/*
-		arrowedLine(img, center, platEnd, CV_RGB(150, 150, 150), 2); //¶óÀÌ´Ù º»Ã¼ º¤ÅÍ
+		arrowedLine(img, center, platEnd, CV_RGB(150, 150, 150), 2); //ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½
 
 		vector<Point2d> vecData = finVecData;
 		vector<bool> boolData = finBoolData;
@@ -299,10 +300,10 @@ void Driving::Basic() {
 			double arrowPointX = arrowCenX + vecData[i].x;
 			double arrowPointY = arrowCenY - vecData[i].y;
 
-			Point2d arrowCen(arrowCenX, arrowCenY); //È­»ìÇ¥ ²¿¸® ÁÂÇ¥
-			Point2d arrowPoint(arrowPointX, arrowPointY); //È­»ìÇ¥ ¸Ó¸® ÁÂÇ¥
+			Point2d arrowCen(arrowCenX, arrowCenY); //È­ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥
+			Point2d arrowPoint(arrowPointX, arrowPointY); //È­ï¿½ï¿½Ç¥ ï¿½Ó¸ï¿½ ï¿½ï¿½Ç¥
 
-			arrowedLine(img, arrowCen, arrowPoint, CV_RGB(0, 255, 255), 2, 8, 0, 0.3); //¹°Ã¼ÀÇ º¤ÅÍ
+			arrowedLine(img, arrowCen, arrowPoint, CV_RGB(0, 255, 255), 2, 8, 0, 0.3); //ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 			if (boolData[i] == true) {
 				putText(img, "True", arrowCen, FONT_HERSHEY_SIMPLEX, 1, CV_RGB(255, 255, 255));
@@ -325,6 +326,7 @@ void Driving::Basic() {
 
 
 		dataContainer->setValue_UtoP_STEER(GoTo(gotox,gotoy,goTheta2));
+		dataContainer->setValue_UtoP_SPEED(18);
 
 		printf("x1 = %f x= %f y=%f theta=%d", stepSecond.x, gotox, gotoy, goTheta2);
 		cv::imshow("DrawLiDARData", imgPath);
@@ -336,8 +338,8 @@ void Driving::Basic() {
 			break;
 		}
 	}
-	
-   
+
+
 }
 
 void Driving::Mission1() {

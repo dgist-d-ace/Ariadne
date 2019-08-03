@@ -17,7 +17,7 @@ private:
 	//
 	// UPPER to PCU (ÇÃ·§Æû¿¡ º¸³»´Â °ª)
 	//
-	int m_UtoP_AorM = 1;
+	int m_UtoP_AorM = 0;
 	int m_UtoP_E_STOP = 0;
 	int m_UtoP_GEAR = 0;
 	int m_UtoP_SPEED = 0;
