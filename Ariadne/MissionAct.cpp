@@ -40,6 +40,7 @@ void Driving::Basic() {
 	//
 	// To do : Implement Basic Driving Algorithm
 	//
+	dataContainer->setValue_UtoP_AorM(1);
 
 //Plan B: MAKING VORNOI FEILD & VOTING SYSTEM.
 	while (1)
@@ -314,7 +315,10 @@ void Driving::Basic() {
 		double gotoy = (imgPath.rows *0.9 -stepSecond.y)/1000 ;
 
 
-		GoTo(gotox,gotoy,goTheta2);
+		//GoTo(gotox,gotoy,goTheta2);
+		
+		dataContainer->setValue_UtoP_STEER(goTheta2);
+		dataContainer->setValue_UtoP_SPEED(18);
 
 		printf("x1 = %f x= %f y=%f theta=%d", stepSecond.x, gotox, gotoy, goTheta2);
 		cv::imshow("DrawLiDARData", imgPath);
