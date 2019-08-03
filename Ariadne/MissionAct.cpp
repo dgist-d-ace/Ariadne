@@ -9,30 +9,40 @@ Driving::Driving() {
 	dataContainer = DataContainer::getInstance();
 }
 
-void Driving::GoTo(double x, double y, double theta)
+// input: destination coordinate x, y(m), heading value of destination(radian)
+// output: steer Value
+int Driving::GoTo(double x, double y, double theta)
 {
     /// x unit : meter, relative x coordinate from now to destination
     /// y unit : meter, relative y coordinate from now to destination
-    /// theta unit: degree, the target heading degree when the destination coordinates are reached.
-
-    double turningR = x + y * tan(-(theta)); /// Turning Radius
+    /// theta unit: radian, the target heading degree when the destination coordinates are reached.
+    double turningR = abs(x + y / tan(-(theta))); /// Turning Radius
+    if (turningR < 0.8)
+    {
+        if (x > 0) { return 2000; }
+        else { return -2000; }
+    }
     double steerRad;
-    if (x > 0) { steerRad = atan(2 / sqrt(pow(turningR, 2) - 1)); }
-    else { steerRad = -atan(2 / sqrt(pow(turningR, 2) - 1)); } /// Steer Radian
-    std::cout << "turningRadius: " << turningR << std::endl;
-    std::cout << "steerRadian: " << steerRad << std::endl;
+    if (x > 0) { steerRad = atan(pow(0.8, 2) / sqrt(pow(turningR, 2) - 0.64)); }
+    else { steerRad = -atan(pow(0.8, 2) / sqrt(pow(turningR, 2) - 0.64)); } /// Steer Radian
+
     double steerDegree = rad2deg(steerRad); /// convert Radian to Degree
 
-    std::cout << "steerDeg: " << steerDegree << std::endl;
-
     if (-27 < steerDegree && steerDegree < 27) {
-        dataContainer->setValue_UtoP_STEER(steerDegree * 71);
+        return steerDegree * 71;
         /// Because of the steer value set, can't be over than 2000 : it means the maximum steer degree is 28.16
-        /// after time ms, the steer value return to 0.
-        std::cout << "exit" << std::endl;
     }
-    else { std::cout << "steerDegree is incorrect" << std::endl; } /// TODO: 여기서 maximum x y heading radian 구하기
+    else
+    {
+        if (steerDegree > 0) { return 2000; } ///set steer maximum value
+        else { return -2000; }
+    }
+        
 }
+
+double rad2deg(double radian) { return radian * 180 / PI; }
+double deg2rad(double degree) { return degree * PI / 180; }
+
 
 
 void Driving::Basic() {
@@ -314,7 +324,7 @@ void Driving::Basic() {
 		double gotoy = (imgPath.rows *0.9 -stepSecond.y)/1000 ;
 
 
-		GoTo(gotox,gotoy,goTheta2);
+		dataContainer->setValue_UtoP_STEER(GoTo(gotox,gotoy,goTheta2));
 
 		printf("x1 = %f x= %f y=%f theta=%d", stepSecond.x, gotox, gotoy, goTheta2);
 		cv::imshow("DrawLiDARData", imgPath);

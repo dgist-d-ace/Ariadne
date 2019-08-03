@@ -16,8 +16,6 @@ LidarComThread::LidarComThread() {
 }
 
 int LidarComThread::comLidar() {
-
-    cout << "comLidar function is made" << endl;
     LastOfLiDAR lol;
     ObjectVector ov;
 
@@ -51,7 +49,7 @@ int LidarComThread::comLidar() {
             //ov.PlatformVector(lol.finLiDARData, ov.finVecData, ov.finBoolData);
             //ov.DrawVector(lol.finLiDARData, ov.finVecData, lol.imgLiDAR);
 
-            cout << "Reset" << endl;
+            // cout << "Reset" << endl;
 
            
         }

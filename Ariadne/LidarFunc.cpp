@@ -697,9 +697,9 @@ void LastOfLiDAR::Clustering(vector<cv::Point2d> &finVecXY, queue<vector<vector<
             objData.push_back(cirCen.y);
             objData.push_back(radius);
 
-            cout << "Center X of Circle: " << cirCen.x;
+            /*cout << "Center X of Circle: " << cirCen.x;
             cout << ", Center Y of Circle: " << cirCen.y;
-            cout << ", Radius of circle: " << radius << endl;
+            cout << ", Radius of circle: " << radius << endl;*/
 
             objDataSet.push_back(objData);
         }

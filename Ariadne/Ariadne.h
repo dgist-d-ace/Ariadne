@@ -132,7 +132,7 @@ public slots:
     void gear_input();
     void clicked_E_stop();
 
-    //void gotoGPSdestination();
+    //int gotoGPSdestination();
 
     void clicked_lidar_stop();
     void clicked_lidar_restart();
