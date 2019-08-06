@@ -207,7 +207,7 @@ void Driving::Basic() {
 		//VOTING PART:
 		//REGION OF WORKABLE ANGLE: 60 ~ 120, with interval=5 degrees
 		vector<uint> score[13]; //include the scores at [90,85, 95, 80, 100, 75, 105, 70, 110, 65, 115, 60, 120]degrees
-		uchar onestep = 500 * scale; //mean how much car move go in 0.5s. / 12km/hour -> 3m/second
+		uchar onestep = 750 * scale; //mean how much car move go in 0.5s. / 12km/hour -> 3m/second
 		vector<int> theta = { 0, -5, 5, -10, 10, -15, 15, -20, 20, -25, 25, -30, 30 }; //The steering angle candidates
 		Mat cirGray;
 		Mat scresult;
@@ -222,7 +222,7 @@ void Driving::Basic() {
 			scoretheta = 90 + theta.at(i);
 			Point2d scoreCir(cenX + onestep * cos(CV_PI*scoretheta / 180), cenY - onestep * sin(CV_PI*scoretheta / 180));
 
-			circle(cirGray, scoreCir, carW / 4, CV_RGB(1, 1, 1), -1, CV_AA, 0);
+			circle(cirGray, scoreCir, carW / 2, CV_RGB(1, 1, 1), -1, CV_AA, 0);
 			//imshow("test", cirGray);
 			//Mat cirGray;
 			//cvtColor(imgCircle, cirGray, CV_RGB2GRAY);
@@ -244,12 +244,21 @@ void Driving::Basic() {
 		}
 
 		uint scoreMax1 = distance(score->begin(), max_element(score->begin(), score->end()));
-		int goTheta1 = theta.at(scoreMax1); //���� �������� ������ +, �������� - �� ���Ⱒ ����, gotheta�� ���� ���Ⱒ��
+		int goTheta1 = theta.at(scoreMax1) * 0.8 * -71; //���� �������� ������ +, �������� - �� ���Ⱒ ����, gotheta�� ���� ���Ⱒ��
+		if (goTheta1 > 2000)
+		{
+			goTheta1 = 2000;
+		}
+		else if (goTheta1 < (-2000))
+		{
+			goTheta1 = -2000;
+		}
 		//cout << scoreMax << "th value" << goTheta1 << endl;
 
-		Point2d stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1) / 180)));
+		Point2d stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1/-71) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1/-71) / 180)));
 		cv::arrowedLine(imgPath, center, stepFirst, CV_RGB(255, 255, 255), 5);
 
+		/*
 		//Predict second step-----------------------------------------------------------�̿ϼ�
 		vector<uint> score2[13];
 		for (int i = 0; i < theta.size(); i++)
@@ -282,7 +291,8 @@ void Driving::Basic() {
 		int goTheta2 = theta.at(scoreMax2);
 		Point2d stepSecond(stepFirst.x + onestep * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*sin(CV_PI*(90 + goTheta2) / 180)));
 		cv::arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(255, 255, 255), 5);
-
+		*/
+		///////////second end///////////
 
 		//DRAW ARROWLINES of LiDAR, and surrounding objects.
 		//DRAW the vectors meaning the movement of objects.
@@ -312,6 +322,8 @@ void Driving::Basic() {
 				putText(img, "False", arrowCen, FONT_HERSHEY_SIMPLEX, 1, CV_RGB(255, 255, 255));
 			}
 		}*/
+
+		/*
 		if (goTheta2 > 26)
 		{
 			goTheta2 = 26;
@@ -323,12 +335,13 @@ void Driving::Basic() {
 
 		double gotox = (stepSecond.x -imgPath.cols/2)/1000;
 		double gotoy = (imgPath.rows *0.9 -stepSecond.y)/1000 ;
+		*/
 
+		//dataContainer->setValue_UtoP_STEER(GoTo(gotox,gotoy,goTheta2));
+		dataContainer->setValue_UtoP_STEER(goTheta1);
+		dataContainer->setValue_UtoP_SPEED(30);
 
-		dataContainer->setValue_UtoP_STEER(GoTo(gotox,gotoy,goTheta2));
-		dataContainer->setValue_UtoP_SPEED(18);
-
-		printf("x1 = %f x= %f y=%f theta=%d", stepSecond.x, gotox, gotoy, goTheta2);
+		//printf("x1 = %f x= %f y=%f theta=%d", stepSecond.x, gotox, gotoy, goTheta2);
 		cv::imshow("DrawLiDARData", imgPath);
 
 

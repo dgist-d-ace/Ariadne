@@ -478,7 +478,7 @@ void LastOfLiDAR::ParseSickData(std::string& strBuf)
     ConvertRawToRTheta();
     m_bDataAvailable = true;
 
-    cout << "lol m_bDataAvailable: " << m_bDataAvailable << endl;
+   // cout << "lol m_bDataAvailable: " << m_bDataAvailable << endl;
 
 
 
