@@ -22,8 +22,9 @@ public:
 public slots:
 	void Basic();
 
-	void setData_speed(int speed);
+	void setData_speed(int speed);			
 	void setData_steering(int steering);
+	
 	void Mission1();
 
 };

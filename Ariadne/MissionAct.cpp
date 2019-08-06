@@ -217,14 +217,47 @@ void Driving::Basic() {
 			//////////////////////////////////////////////////////////////////////////////
 
 		//REGION OF WORKABLE ANGLE: 60 ~ 120, with interval=5 degrees
-		vector<uint> score[13]; //include the scores at [90,85, 95, 80, 100, 75, 105, 70, 110, 65, 115, 60, 120]degrees
+		vector<uint> score[49]; //include the scores at [90,85, 95, 80, 100, 75, 105, 70, 110, 65, 115, 60, 120]degrees
 		uchar onestep = 750 * scale; //mean how much car move go in 0.5s. / 12km/hour -> 3m/second
-		vector<int> theta = { 0, -5, 5, -10, 10, -15, 15, -20, 20, -25, 25, -30, 30 }; //The steering angle candidates
+		//vector<int> theta = { 0, -5, 5, -10, 10, -15, 15, -20, 20, -25, 25, -30, 30 }; //The steering angle candidates
+		vector<int> theta = { 0, -5, 5, -10, 10, -15, 15 };
 		Mat cirGray;
 		Mat scresult;
 		uint scoretheta;
 		uint sum;
 
+
+		for (int i = 0; i < theta.size(); i++)
+		{
+
+			cirGray = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
+			scoretheta = 90 + theta.at(i);
+			Point2d step1(cenX + onestep * cos(CV_PI*scoretheta / 180), cenY - onestep * sin(CV_PI*scoretheta / 180));
+			circle(cirGray, step1, carW / 2, CV_RGB(1, 1, 1), -1, CV_AA, 0);
+			for (int j = 0; j < theta.size(); j++)
+			{
+				Point2d step2(step1.x + onestep * cos(CV_PI*scoretheta / 180), step1.y +onestep* sin(CV_PI*scoretheta / 180));
+				circle(cirGray, step2, carW / 2, CV_RGB(1, 1, 1), -1, CV_AA, 0);
+				imshow("check Circle img", cirGray);
+				sum = 0;
+				scresult = cirGray.mul(imgPath);
+				uchar *sumData = scresult.data;
+				int sheight = scresult.rows;
+				int swidth = scresult.cols;
+				for (int n = 0; n < sheight; n++)
+				{
+					for (int m = 0; m < swidth; m++)
+					{
+
+						sum += sumData[m*sheight + n];
+					}
+				}
+				score->push_back(sum);
+				waitKey(1);
+			}
+		}
+
+		/* scoring 1st and 2nd step seperately
 		//predict first step
 		for (int i = 0; i < theta.size(); i++)
 		{
@@ -253,6 +286,7 @@ void Driving::Basic() {
 			score->push_back(sum);
 			//waitKey(1);
 		}
+
 		uint scoreMax1 = distance(score->begin(), max_element(score->begin(), score->end()));
 		int goTheta1 = theta.at(scoreMax1);
 		Point2d stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1) / 180)));
@@ -291,6 +325,7 @@ void Driving::Basic() {
 		int goTheta2 = theta.at(scoreMax2);
 		Point2d stepSecond(stepFirst.x + onestep * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*sin(CV_PI*(90 + goTheta2) / 180)));
 		cv::arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(255, 255, 255), 5);
+		*/
 
 		//int goTheta1 = theta.at(scoreMax1) * 0.8 * -71; 
 		//if (goTheta1 > 2000)
@@ -344,7 +379,6 @@ void Driving::Basic() {
 		}
 	}
 }
-
 
 void Driving::setData_speed(int desired_speed)
 {
