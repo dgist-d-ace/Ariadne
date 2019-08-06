@@ -28,6 +28,7 @@ Ariadne::Ariadne(QWidget *parent)
 	connect(platformThread, SIGNAL(started()), platformCom, SLOT(comPlatform()));
 	connect(platformCom, SIGNAL(PlatformExit()), platformCom, SLOT(comPlatform()));
 
+
 	gpsCom = new GPSCom;
 	gpsThread = new QThread;
 	gpsCom->moveToThread(gpsThread);
@@ -89,8 +90,6 @@ Ariadne::Ariadne(QWidget *parent)
     QObject::connect(ui->Btn_scnn_restart, SIGNAL(clicked()), this, SLOT(clicked_scnn_restart()));
 
     // ------------------- UI update for Platform & GPS status ----------------------//
-
-
     connect(platformCom, SIGNAL(AorMChanged(int)), this, SLOT(onAorMChanged(int)));
     connect(platformCom, SIGNAL(EStopChanged(int)), this, SLOT(onEStopChanged(int)));
     connect(platformCom, SIGNAL(GearChanged(int)), this, SLOT(onGearChanged(int)));
@@ -177,8 +176,10 @@ void Ariadne::clicked_scnn_stop() { scnn->SuspendScnn(); }
 
 // This function is to start driving
 void Ariadne::clicked_btn_driving() {
-	if (!drivingThread->isRunning())
+
+	if (!drivingThread->isRunning()) {
 		drivingThread->start();
+	}
 }
 
 void Ariadne::clicked_btn_mission0() {
@@ -330,22 +331,37 @@ void Ariadne::updateSensorStatus()
     { ui->label_13->setStyleSheet("background-color: rgb(255, 82, 66)"); }
     dataContainer->setValue_lidar_status(0);
 
-	/*
-    // CAMERA1 communication code
-    if (dataContainer->getValue_camera1_status() > 5)
+	
+    // SCNN communication code
+    if (dataContainer->getValue_scnn_status() > 5)
     {
-        cout << "ī�޶�1�� �����Ǿ����ϴ�." << endl;
-    }
-    else if (dataContainer->getValue_camera1_status() > 0)
+		ui->label_11->setStyleSheet("background-color: rgb(144, 198, 241)");
+	}
+    else if (dataContainer->getValue_scnn_status() > 0)
     {
-        cout << "ī�޶�1�� ������ �����ǰ� �ֽ��ϴ�." << endl;
-    }
-    else if (dataContainer->getValue_camera1_status() == 0)
+		ui->label_11->setStyleSheet("background-color: rgb(255, 212, 57)");
+	}
+    else if (dataContainer->getValue_scnn_status() == 0)
     {
-        cout << "ī�޶�1�� ������ �����Ͽ����ϴ�." << endl;
-    }
-	dataContainer->setValue_camera1_status(0);
-	*/
+		ui->label_11->setStyleSheet("background-color: rgb(255, 82, 66)");
+	}
+	dataContainer->setValue_scnn_status(0);
+
+	// YOLO communication code
+	if (dataContainer->getValue_yolo_status() > 5)
+	{
+		ui->label_10->setStyleSheet("background-color: rgb(144, 198, 241)");
+	}
+	else if (dataContainer->getValue_yolo_status() > 0)
+	{
+		ui->label_10->setStyleSheet("background-color: rgb(255, 212, 57)");
+	}
+	else if (dataContainer->getValue_yolo_status() == 0)
+	{
+		ui->label_10->setStyleSheet("background-color: rgb(255, 82, 66)");
+	}
+	dataContainer->setValue_yolo_status(0);
+	
 
     // GPS communication code
     if (dataContainer->getValue_gps_status() > 5)

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'Ariadne.ui'
 **
-** Created by: Qt User Interface Compiler version 5.12.2
+** Created by: Qt User Interface Compiler version 5.12.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -125,22 +125,22 @@ public:
         pushButton_2->setGeometry(QRect(10, 170, 101, 28));
         label_9 = new QLabel(groupBox);
         label_9->setObjectName(QString::fromUtf8("label_9"));
-        label_9->setGeometry(QRect(10, 20, 64, 15));
+        label_9->setGeometry(QRect(10, 20, 61, 16));
         label_12 = new QLabel(groupBox);
         label_12->setObjectName(QString::fromUtf8("label_12"));
-        label_12->setGeometry(QRect(10, 50, 64, 15));
+        label_12->setGeometry(QRect(10, 50, 31, 16));
         label_13 = new QLabel(groupBox);
         label_13->setObjectName(QString::fromUtf8("label_13"));
-        label_13->setGeometry(QRect(10, 80, 64, 15));
+        label_13->setGeometry(QRect(10, 80, 41, 16));
         pushButton_3 = new QPushButton(groupBox);
         pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
         pushButton_3->setGeometry(QRect(120, 170, 101, 28));
         label_10 = new QLabel(groupBox);
         label_10->setObjectName(QString::fromUtf8("label_10"));
-        label_10->setGeometry(QRect(10, 110, 64, 15));
+        label_10->setGeometry(QRect(10, 110, 41, 16));
         label_11 = new QLabel(groupBox);
         label_11->setObjectName(QString::fromUtf8("label_11"));
-        label_11->setGeometry(QRect(10, 140, 64, 15));
+        label_11->setGeometry(QRect(10, 140, 41, 16));
         Btn_lidar_restart = new QPushButton(groupBox);
         Btn_lidar_restart->setObjectName(QString::fromUtf8("Btn_lidar_restart"));
         Btn_lidar_restart->setGeometry(QRect(150, 80, 71, 23));

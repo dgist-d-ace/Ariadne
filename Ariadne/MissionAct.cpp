@@ -7,6 +7,24 @@
 using namespace cv;
 Driving::Driving() {
 	dataContainer = DataContainer::getInstance();
+	WSADATA wsa;
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+		cout << "arduino communication error\n";
+
+	server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	sockaddr_in addr = { 0 };
+	addr.sin_family = AF_INET;
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	addr.sin_port = htons(8888);
+	
+
+	if (::bind(server, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR)
+		cout << "binding fail\n";
+	if (listen(server, SOMAXCONN) == SOCKET_ERROR)
+		cout << "listening fail\n";
+	
+	//client = accept(server, NULL, NULL);
+	//SendToArduino(ON);
 }
 
 // input: destination coordinate x, y(m), heading value of destination(radian)
@@ -49,7 +67,6 @@ void Driving::Basic() {
 	// To do : Implement Basic Driving Algorithm
 	//
 	dataContainer->setValue_UtoP_AorM(1);
-
 
 //Plan B: Auto-driving with Score Map Rule (ASMR)
 	//Please name this algorithm
@@ -378,8 +395,11 @@ void Driving::setData_steering(int desired_steering)
 	dataContainer->setValue_UtoP_STEER(desired_steering);
 }
 
+void Driving::SendToArduino(int a) {
+	send(client, (char*)a, sizeof(a), 0);
+}
 
-void Driving::Mission1() {
+void Driving::Intersection() {
 	//
 	// To do : Implement Basic Driving Algorithm
 	//

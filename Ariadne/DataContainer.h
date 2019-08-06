@@ -64,13 +64,14 @@ private:
 
 	int m_platform_status = 0;
 	int m_lidar_status = 0;
-	int m_camera1_status = 0;
+	int m_scnn_status = 0;
+	int m_yolo_status = 0;
 	int m_gps_status = 0;
 
 	QMutex mtx_platform_status;
 	QMutex mtx_lidar_status;
-	QMutex mtx_camera1_status;
-	QMutex mtx_camera2_status;
+	QMutex mtx_scnn_status;
+	QMutex mtx_yolo_status;
 	QMutex mtx_gps_status;
 	
 	//
@@ -84,11 +85,11 @@ private:
 	//
 	//카메라1: 주행용 (차선 인식) 
 	//
-	vector<vector<cv::Point2i>> m_camera1_lanes;
+	vector<vector<cv::Point2i>> m_scnn_lanes;
 	vector<int> m_camara1_existLanes;
 
-	QMutex mtx_camera1_lanes;
-	QMutex mtx_camera1_existLanes;
+	QMutex mtx_scnn_lanes;
+	QMutex mtx_scnn_existLanes;
 
 	//
 	//카메라2: 미정 (주차용) 
@@ -165,9 +166,13 @@ public:
 	void setValue_lidar_status(int value);
 	void updateValue_lidar_status();
 
-	int getValue_camera1_status();
-	void setValue_camera1_status(int value);
-	void updateValue_camera1_status();
+	int getValue_scnn_status();
+	void setValue_scnn_status(int value);
+	void updateValue_scnn_status();
+
+	int getValue_yolo_status();
+	void setValue_yolo_status(int value);
+	void updateValue_yolo_status();
 
 	int getValue_gps_status();
 	void setValue_gps_status(int value);
@@ -239,20 +244,20 @@ public:
 	void setValue_lidar_VecData(vector<cv::Point2d> vecData); //물체의 벡터 집합 - 1프레임
 	void setValue_lidar_BoolData(vector<bool> boolData); //물체의 동정적 여부 집합 - 1프레임
 
-	// 수정 필요
-	/*void setData_lidar_object(object* objL, int num);
-	void getData_lidar_object(object* objM);
-	void deleteData_lidar_object();*/
 
 	//
-	//	카메라1
+	//	카메라1  SCNN
 	//
 
-	vector<vector<cv::Point2i>> getValue_camera1_lanes();
-	vector<int> getValue_camera1_existLanes();
-	void setValue_camera1_lanes(vector<vector<cv::Point2i>> lanes);
-	void setValue_camera1_existLanes(vector<int> existLanes);
+	vector<vector<cv::Point2i>> getValue_scnn_lanes();
+	vector<int> getValue_scnn_existLanes();
+	void setValue_scnn_lanes(vector<vector<cv::Point2i>> lanes);
+	void setValue_scnn_existLanes(vector<int> existLanes);
 	
+	//
+	//	카메라2 YOLO
+	//
+
 
 	//
 	//	GPS

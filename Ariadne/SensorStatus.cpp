@@ -83,7 +83,7 @@ Scnn::Scnn() {
 
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-		cout << "error\n";
+		cout << "scnn communication error\n";
 
 	server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	sockaddr_in addr = { 0 };
@@ -109,6 +109,7 @@ void Scnn::comScnn() {
 	int n;
 	int i;
 	while (1) {
+		dataContainer->updateValue_scnn_status();
 		ZeroMemory(&message, sizeof(message));
 		strLen = recv(client, (char*)message, sizeof(message) - 1, 0);
 
@@ -134,8 +135,8 @@ void Scnn::comScnn() {
 			cout << existLanes[i] << endl;;
 		}
 
-		dataContainer->setValue_camera1_lanes(lanes);
-		dataContainer->setValue_camera1_existLanes(existLanes);
+		dataContainer->setValue_scnn_lanes(lanes);
+		dataContainer->setValue_scnn_existLanes(existLanes);
 	}
 	closesocket(client);
 	closesocket(server);
@@ -154,7 +155,7 @@ Yolo::Yolo() {
 
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-		cout << "error\n";
+		cout << "yolo error\n";
 
 	ZeroMemory(&si, sizeof(si));
 	si.cb = sizeof(si);
@@ -164,14 +165,14 @@ Yolo::Yolo() {
 	SetCurrentDirectory(_T("C:\\Users\\D-Ace\\darknet-master\\build\\darknet\\x64"));
 	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi)) {
 	//}
-	if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
-		cout << "error\n";
-	}
-	else {
-		cout << "open ok";
-		tid = pi.hThread;
-		SuspendThread(tid);
-	}
+	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
+	//	cout << "yolo process error\n";
+	//}
+	//else {
+	//	cout << "open ok";
+	//	tid = pi.hThread;
+	//	SuspendThread(tid);
+	//}
 
 	server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	sockaddr_in addr = { 0 };
@@ -239,6 +240,8 @@ void Yolo::comYolo() {
 
 	/// TODO: control yolo flag in Ariadne.cpp
 	while (Yolo_Com) {
+		dataContainer->updateValue_yolo_status();
+
 		cout << "communication2\n";
 
 		strLen = recv(client, message, sizeof(message) - 1, 0);

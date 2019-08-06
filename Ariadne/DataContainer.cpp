@@ -28,17 +28,20 @@ void DataContainer::setValue_gps_port(CString port) { m_gps_port = port; }
 
 int DataContainer::getValue_platform_status() { mtx_platform_status.lock(); int temp = m_platform_status; mtx_platform_status.unlock(); return temp; }
 int DataContainer::getValue_lidar_status() { mtx_lidar_status.lock(); int temp = m_lidar_status; mtx_lidar_status.unlock(); return temp; }
-int DataContainer::getValue_camera1_status() { mtx_camera1_status.lock(); int temp = m_camera1_status; mtx_camera1_status.unlock(); return temp; }
+int DataContainer::getValue_scnn_status() { mtx_scnn_status.lock(); int temp = m_scnn_status; mtx_scnn_status.unlock(); return temp; }
+int DataContainer::getValue_yolo_status() { mtx_yolo_status.lock(); int temp = m_yolo_status; mtx_yolo_status.unlock(); return temp; }
 int DataContainer::getValue_gps_status() { mtx_gps_status.lock(); int temp = m_gps_status; mtx_gps_status.unlock(); return temp; }
 
 void DataContainer::setValue_platform_status(int value) { mtx_platform_status.lock(); m_platform_status = value; mtx_platform_status.unlock(); }
 void DataContainer::setValue_lidar_status(int value) { mtx_lidar_status.lock(); m_lidar_status = value; mtx_lidar_status.unlock(); }
-void DataContainer::setValue_camera1_status(int value) { mtx_camera1_status.lock(); m_camera1_status = value; mtx_camera1_status.unlock(); }
+void DataContainer::setValue_scnn_status(int value) { mtx_scnn_status.lock(); m_scnn_status = value; mtx_scnn_status.unlock(); }
+void DataContainer::setValue_yolo_status(int value) { mtx_yolo_status.lock(); m_yolo_status = value; mtx_yolo_status.unlock(); }
 void DataContainer::setValue_gps_status(int value) { mtx_gps_status.lock(); m_gps_status = value; mtx_gps_status.unlock(); }
 
 void DataContainer::updateValue_platform_status() { mtx_platform_status.lock(); m_platform_status < 256 ? m_platform_status++ : 256; mtx_platform_status.unlock(); }
 void DataContainer::updateValue_lidar_status() { mtx_lidar_status.lock(); m_lidar_status < 256 ? m_lidar_status++ : 256; mtx_lidar_status.unlock(); }
-void DataContainer::updateValue_camera1_status() { mtx_camera1_status.lock(); m_camera1_status < 256 ? m_camera1_status++ : 256; mtx_camera1_status.unlock(); }
+void DataContainer::updateValue_scnn_status() { mtx_scnn_status.lock(); m_scnn_status < 256 ? m_scnn_status++ : 256; mtx_scnn_status.unlock(); }
+void DataContainer::updateValue_yolo_status() { mtx_yolo_status.lock(); m_yolo_status < 256 ? m_yolo_status++ : 256; mtx_yolo_status.unlock(); }
 void DataContainer::updateValue_gps_status() { mtx_gps_status.lock(); m_gps_status < 256 ? m_gps_status++ : 256; mtx_gps_status.unlock(); }
 
 
@@ -173,13 +176,13 @@ void deleteData_lidar_object(){}
 */
 
 //
-//	카메라1
+//	카메라1 : SCNN
 //
-void DataContainer::setValue_camera1_lanes(vector<vector<cv::Point2i>> lanes) { mtx_camera1_lanes.lock(); m_camera1_lanes = lanes; mtx_camera1_lanes.unlock(); }
-void DataContainer::setValue_camera1_existLanes(vector<int> existLanes) { mtx_camera1_existLanes.lock(); m_camara1_existLanes = existLanes; mtx_camera1_existLanes.unlock(); }
-vector<vector<cv::Point2i>> DataContainer::getValue_camera1_lanes() { mtx_camera1_lanes.lock(); vector<vector<cv::Point2i>> temp = m_camera1_lanes; return temp; mtx_camera1_lanes.unlock();
+void DataContainer::setValue_scnn_lanes(vector<vector<cv::Point2i>> lanes) { mtx_scnn_lanes.lock(); m_scnn_lanes = lanes; mtx_scnn_lanes.unlock(); }
+void DataContainer::setValue_scnn_existLanes(vector<int> existLanes) { mtx_scnn_existLanes.lock(); m_camara1_existLanes = existLanes; mtx_scnn_existLanes.unlock(); }
+vector<vector<cv::Point2i>> DataContainer::getValue_scnn_lanes() { mtx_scnn_lanes.lock(); vector<vector<cv::Point2i>> temp = m_scnn_lanes; return temp; mtx_scnn_lanes.unlock();
 }
-vector<int> DataContainer::getValue_camera1_existLanes() { mtx_camera1_existLanes.lock(); vector<int> temp = m_camara1_existLanes; return temp; mtx_camera1_existLanes.unlock(); }
+vector<int> DataContainer::getValue_scnn_existLanes() { mtx_scnn_existLanes.lock(); vector<int> temp = m_camara1_existLanes; return temp; mtx_scnn_existLanes.unlock(); }
 
 //
 //	GPS
