@@ -16,6 +16,11 @@ DataContainer* DataContainer::getInstance() {
 	return instance;
 }
 
+// port 연결
+CString DataContainer::getValue_platform_port() { return m_platform_port; }
+void DataContainer::setValue_platform_port(CString port) { m_platform_port = port; }
+CString DataContainer::getValue_gps_port() { return m_gps_port;}
+void DataContainer::setValue_gps_port(CString port) { m_gps_port = port; }
 
 //
 // 센서 연결 상태 정보

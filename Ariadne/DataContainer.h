@@ -1,5 +1,5 @@
 #pragma once
-
+#include "atlstr.h"
 #include <mutex>
 #include <QThread>
 #include <QMutex>
@@ -58,6 +58,9 @@ private:
 	//
 	// 센서 및 플랫폼 연결 상태 정보
 	//
+
+	CString m_platform_port;
+	CString m_gps_port;
 
 	int m_platform_status = 0;
 	int m_lidar_status = 0;
@@ -148,6 +151,11 @@ public:
 	//
 	//센서 및 플랫폼 연결 상태
 	//
+
+	CString getValue_platform_port();
+	void setValue_platform_port(CString port);
+	CString getValue_gps_port();
+	void setValue_gps_port(CString port);
 
 	int getValue_platform_status();
 	void setValue_platform_status(int value);

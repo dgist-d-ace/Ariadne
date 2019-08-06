@@ -1,8 +1,12 @@
 #include "Ariadne.h"
 #include <iostream>
 #include "math.h"
-#include "atlstr.h"
 #include "qevent.h"
+#include <codecvt>
+#include <string>
+
+using utf8_str = std::string;
+using u16_str = std::wstring;
 
 // This file has same function as HyeAhn View
 using namespace std;
@@ -31,7 +35,7 @@ Ariadne::Ariadne(QWidget *parent)
 	connect(gpsCom, SIGNAL(GPSExit()), gpsCom, SLOT(comGPS()));
 
     lidarComThread = new LidarComThread;
-    ///connect(lidarComThread, SIGNAL(LidarExit()), this, SLOT(onLidarExit()));
+    connect(lidarComThread, SIGNAL(LidarExit()), this, SLOT(comLidar()));
 
     /*
 	lidarCom = new LidarCom;
@@ -101,7 +105,32 @@ Ariadne::Ariadne(QWidget *parent)
 
     connect(gpsCom, SIGNAL(latitudeChanged(double)), this, SLOT(onLatitudeChanged(double)));
     connect(gpsCom, SIGNAL(longitudeChanged(double)), this, SLOT(onLongitudeChanged(double)));
-}
+	
+	gpsGuid.Data1 = 1295444344;
+	gpsGuid.Data2 = 58149;
+	gpsGuid.Data3 = 4558;
+	gpsGuid.Data4[0] = (unsigned char)191;
+	gpsGuid.Data4[1] = (unsigned char)193;
+	gpsGuid.Data4[2] = (unsigned char)8;
+	gpsGuid.Data4[3] = (unsigned char)0;
+	gpsGuid.Data4[4] = (unsigned char)43;
+	gpsGuid.Data4[5] = (unsigned char)225;
+	gpsGuid.Data4[6] = (unsigned char)3;
+	gpsGuid.Data4[7] = (unsigned char)24;
+
+	platformGuid.Data1 = 1295444344;
+	platformGuid.Data2 = 58149;
+	platformGuid.Data3 = 4558;
+	platformGuid.Data4[0] = (unsigned char)191;
+	platformGuid.Data4[1] = (unsigned char)193;
+	platformGuid.Data4[2] = (unsigned char)8;
+	platformGuid.Data4[3] = (unsigned char)0;
+	platformGuid.Data4[4] = (unsigned char)43;
+	platformGuid.Data4[5] = (unsigned char)225;
+	platformGuid.Data4[6] = (unsigned char)3;
+	platformGuid.Data4[7] = (unsigned char)24;
+
+ }
 
 // This function is to change comport numbers from CString to QString.
 CString ConvertQstringtoCString(QString qs)
@@ -114,6 +143,8 @@ CString ConvertQstringtoCString(QString qs)
 // This function is to start communication with sensor.
 void Ariadne::clicked_btn_sensor() {
 
+	AutoPortFinder();
+
 	//if (!scnnThread->isRunning())
 		//scnnThread->start();
 
@@ -121,14 +152,14 @@ void Ariadne::clicked_btn_sensor() {
 	//if (!yoloThread->isRunning())
 	//	yoloThread->start();
 
-	if(!platformThread->isRunning())
-		platformThread->start();
+	//if(!platformThread->isRunning())
+	//	platformThread->start();
 
-	if(!lidarComThread->isRunning())
-	    lidarComThread->start();
+	//if(!lidarComThread->isRunning())
+	//   lidarComThread->start();
 
-    //if (!gpsThread->isRunning())
-    //    gpsThread->start();
+    if (!gpsThread->isRunning())
+        gpsThread->start();
 
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
@@ -138,7 +169,7 @@ void Ariadne::clicked_btn_sensor() {
 void Ariadne::onLidarExit()
 {
     cout << "onLidarExit is called" << endl;
-    lidarComThread->start();
+
 }
 
 void Ariadne::clicked_lidar_restart() {cout << "you clicked lidar restart" << endl;}
@@ -156,7 +187,7 @@ void Ariadne::clicked_btn_driving() {
 }
 
 void Ariadne::clicked_btn_mission0() {
-
+	AutoPortFinder();
 }
 
 // These functions is to control gplatform
@@ -204,6 +235,79 @@ void Ariadne::onBreakChanged(int Number) { ui->lcdNumber_6->display(Number); }
 void Ariadne::onEncChanged(int Number) { ui->lcdNumber_7->display(Number); }
 void Ariadne::onLatitudeChanged(double Number) { ui->lcdNumber_8->display(Number); }
 void Ariadne::onLongitudeChanged(double Number) { ui->lcdNumber_9->display(Number); }
+
+void Ariadne::AutoPortFinder() {
+
+	SP_DEVINFO_DATA devInfoData = {};
+	devInfoData.cbSize = sizeof(devInfoData);
+
+	// get the tree containing the info for the ports
+	HDEVINFO hDeviceInfo = SetupDiGetClassDevs(&GUID_DEVCLASS_PORTS,
+		0,
+		nullptr,
+		DIGCF_PRESENT
+	);
+	if (hDeviceInfo == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+
+	// iterate over all the devices in the tree
+	int nDevice = 0;
+	while (SetupDiEnumDeviceInfo(hDeviceInfo,            // Our device tree
+		nDevice++,            // The member to look for
+		&devInfoData))
+	{
+		DWORD regDataType;
+		DWORD reqSize = 0;
+
+		//428843652
+		// find the size required to hold the device info
+		SetupDiGetDeviceRegistryProperty(hDeviceInfo, &devInfoData, SPDRP_HARDWAREID, nullptr, nullptr, 0, &reqSize);
+		BYTE* hardwareId = new BYTE[(reqSize > 1) ? reqSize : 1];
+		// now store it in a buffer
+		if (SetupDiGetDeviceRegistryProperty(hDeviceInfo, &devInfoData, SPDRP_HARDWAREID, &regDataType, hardwareId, sizeof(hardwareId) * reqSize, nullptr))
+		{
+			// find the size required to hold the friendly name
+			reqSize =0;
+			SetupDiGetDeviceRegistryProperty(hDeviceInfo, &devInfoData, SPDRP_FRIENDLYNAME, nullptr, nullptr, 0, &reqSize);
+			
+			BYTE* friendlyName = new BYTE[(reqSize > 1) ? reqSize : 1];
+			//TCHAR friendly_name[256];
+			// now store it in a buffer
+
+			
+			if (!SetupDiGetDeviceRegistryProperty(hDeviceInfo, &devInfoData, SPDRP_FRIENDLYNAME, nullptr, friendlyName, sizeof(friendlyName) * reqSize, nullptr))
+			{
+				// device does not have this property set
+				memset(friendlyName, 0, reqSize > 1 ? reqSize : 1);
+			}
+			else {
+				CString strPort((const wchar_t*)friendlyName);
+				
+				CString port = strPort.Mid(reqSize / 2 - 6, 4);
+
+				if (devInfoData.ClassGuid == gpsGuid) {
+					dataContainer->setValue_gps_port(port);
+				}
+				else if (devInfoData.ClassGuid == platformGuid) {
+					dataContainer->setValue_platform_port(port);
+				}
+				
+				cout << devInfoData.ClassGuid.Data1 << endl;
+				cout << devInfoData.ClassGuid.Data2 << endl;
+				cout << devInfoData.ClassGuid.Data3 << endl;
+				for (int i = 0; i < 8; i++)
+					cout << (unsigned int)devInfoData.ClassGuid.Data4[i] << endl;
+
+			}
+			// use friendlyName here
+			delete[] friendlyName;
+
+		}
+		delete[] hardwareId;
+	}
+}
 
 // This function is to change UI according to Sensor communication status
 void Ariadne::updateSensorStatus()
@@ -280,10 +384,8 @@ PlatformCom::PlatformCom()
 
 void PlatformCom::comPlatform() {
     cout << "platform start" << endl;
-    QString ComportNum = ui->comboBox->currentText();
-    CString Comport = ConvertQstringtoCString(ComportNum);
 
-    if (_platform.OpenPort(Comport))
+    if (_platform.OpenPort(dataContainer->getValue_platform_port()))
     {
         _platform.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _platform.SetCommunicationTimeouts(0, 0, 0, 0, 0);
@@ -418,16 +520,12 @@ void GPSCom::comGPS() { // rt ; Real Time
     QVector<double> store_x;
     QVector<double> store_y;
 
-    cout << "RTK communication now" << endl;
+    cout << "gps communication now" << endl;
 
-	QString ComportNum = ui->comboBox_4->currentText();
-	CString Comport = ConvertQstringtoCString(ComportNum);
-
-    if (_gps.OpenPort(Comport)) {
+    if (_gps.OpenPort(dataContainer->getValue_gps_port())) {
 
         _gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
-
         string tap;
         string tap2;
         vector<string> vec;
