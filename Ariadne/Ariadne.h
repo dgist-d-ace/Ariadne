@@ -98,8 +98,8 @@ public:
     Ariadne(QWidget *parent = Q_NULLPTR);
 
     PlatformCom* platformCom;
-    LidarComThread *lidarComThread;
-    // LidarCom* lidarCom;
+    //LidarComThread *lidarComThread;
+    LidarCom* lidarCom;
     GPSCom* gpsCom;
     Scnn* scnn;
 	Yolo* yolo;
@@ -108,7 +108,7 @@ public:
 	GUID platformGuid;
 
     QThread* platformThread;
-    //QThread* lidarThread;
+    QThread* lidarThread;
     QThread* gpsThread;
     QThread* scnnThread;
 	QThread* yoloThread;
