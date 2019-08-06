@@ -46,22 +46,27 @@ double deg2rad(double degree) { return degree * PI / 180; }
 
 
 void Driving::Basic() {
-
-	//
 	// To do : Implement Basic Driving Algorithm
 	//
 	dataContainer->setValue_UtoP_AorM(1);
 
-//Plan B: MAKING VORNOI FEILD & VOTING SYSTEM.
+
+//Plan B: Auto-driving with Score Map Rule (ASMR)
+	//Please name this algorithm
 	while (1)
 	{
-		imgPath = cv::Mat::zeros(768, 1366, CV_8UC3);
+		clock_t start, end;
+		start = clock();
+
+		imgPath = cv::Mat::zeros(900, 900, CV_8UC3); //50fps
+		//imgPath = cv::Mat::zeros(600, 600, CV_8UC3); //100fps
+		//imgPath = cv::Mat::zeros(1200, 1200, CV_8UC3); //20fps
+		//imgPath = cv::Mat::zeros(768, 1366, CV_8UC3);
 		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
 		vector<Point2d> vecXYDraw;
 
-
-		double cenX = imgPath.cols * 0.5, cenY = imgPath.rows * 0.9;
-		double scale = cenY / (SICK_SCAN_ROI_Y + 200); //â ũ�⸦ ���� ������ ����(�ر� ��Ʈ�� : 0.35)
+		double cenX = imgPath.cols * 0.5, cenY = imgPath.rows *0.98; //the location of LiDAR in the map.
+		double scale = cenY / (SICK_SCAN_ROI_Y+50);				  //obj_Data => imgPath
 
 		//Car size in map
 		double carW = CAR_WEITH * scale;
@@ -72,91 +77,14 @@ void Driving::Basic() {
 		double topEndY = cenY - SICK_SCAN_ROI_Y * scale;
 		double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
 
-		double platEndY = cenY - 50;
-		Point2d center(cenX, cenY), platEnd(cenX, platEndY);
-		Point2d leftTopEnd(leftEndX, topEndY), rightBottomEnd(rightEndX, cenY);
+		//Objects in XY coordinate -> in imgPath
+		Point2d center(cenX, cenY);
 
-		//rectangle(img, leftTopEnd, rightBottomEnd, CV_RGB(150, 150, 150), 2, CV_AA, 0);
-		//circle(img, center, 5, CV_RGB(255, 255, 255), -1); //���� LiDAR ��ġ
+			////////////////////////////////////////////////////////////////////////////////////
+			////Fill the Regions where cannot go in, because of max value of steering angle.////
+			////////////////////////////////////////////////////////////////////////////////////
 
-		for (int i = 0; i < vecXY.size(); ++i) { //������ ����
-			double xyDrawX = center.x + vecXY[i].x * scale;
-			double xyDrawY = center.y - vecXY[i].y * scale;
-
-			Point2d xyDraw(xyDrawX, xyDrawY);
-			vecXYDraw.push_back(xyDraw);
-		}
-
-		for (int i = 0; i < vecXYDraw.size() - 1; ++i) { //��ü�� �����ϴ� �� ����
-			double dist = sqrt(pow(vecXYDraw[i].x - vecXYDraw[i + 1].x, 2) + pow(vecXYDraw[i].y - vecXYDraw[i + 1].y, 2));
-
-			if (dist <= SICK_SCAN_DIST_OBJECT * scale) {
-				if (vecXYDraw[i].x < rightEndX && vecXYDraw[i].x > leftEndX && vecXYDraw[i].y > topEndY) {
-					line(imgPath, vecXYDraw[i], vecXYDraw[i + 1], CV_RGB(0, 255, 0), 2);
-				}
-			}
-		}
-
-
-		/// %%%%%%%%%%%%%%%%%%%%%%%%%%MINHO's native code for steering angle.%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		//////////////////////////////////////////////////////////////////////////////
-		//////////Fill the Regions where cannot go in, because of obstacles.//////////
-		//////////////////////////////////////////////////////////////////////////////
-
-		vector<vector<double> > objDataSet = dataContainer->getValue_lidar_Data().back();
-		Point polypts[1][4];
-
-		for (int i = 0; i < objDataSet.size(); i++)
-		{
-
-			double cirCenX = center.x + objDataSet[i][0] * scale;
-			double cirCenY = center.y - objDataSet[i][1] * scale;
-			double cirCenR = objDataSet[i][2] * scale;
-			Point2d cirCen(cirCenX, cirCenY); //��ü�� ��Ÿ���� �� �׸���
-
-			//circle(img, cirCen, objDataSet[i][2] * scale, CV_RGB(255, 0, 0), -1, CV_AA);
-
-
-			double cenDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2));
-			double touchDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2) - pow(cirCenR, 2));
-			double theta_s = asin(cirCenR / cenDist);
-			double theta_l = atan(objDataSet[i][1] / objDataSet[i][0]);
-			if (theta_l < 0)
-			{
-				theta_l += CV_PI;
-			}
-
-			int x1 = (int)(touchDist*cos(theta_l - theta_s) + cenX), y1 = (int)(cenY - touchDist * sin(theta_l - theta_s));
-			int x2 = (int)(touchDist*cos(theta_l + theta_s) + cenX), y2 = (int)(cenY - touchDist * sin(theta_l + theta_s));
-			int x3 = (x2 - cenX)*(cenY - topEndY) / (cenY - y2) + cenX, y3 = topEndY;
-			int x4 = (x1 - cenX)*(cenY - topEndY) / (cenY - y1) + cenX, y4 = topEndY;
-
-			if (y1 > cenY) {
-				x4 = x4 * (-1);
-				y4 = bottomEndY - 0.0001;
-			}
-			if (y2 > cenY) {
-				x3 = x3 * (-1);
-				y3 = bottomEndY - 0.0001;
-			}
-			polypts[0][0] = Point(x1, y1);
-			polypts[0][1] = Point(x2, y2);
-			polypts[0][2] = Point(x3, y3);
-			polypts[0][3] = Point(x4, y4);
-
-			const Point* ppt[1] = { polypts[0] };
-			int npt[] = { 4 };
-
-			fillPoly(imgPath, ppt, npt, 1, CV_RGB(200, 200, 0));
-			circle(imgPath, cirCen, cirCenR, CV_RGB(255, 0, 0), -1, CV_AA);
-		}
-		//////////////////////////////////////////////////////////////////////////////
-
-		//////////////////////////////////////////////////////////////////////////////////
-		///fill the Regions where cannot go in, because of max value of steering angle.///
-		//////////////////////////////////////////////////////////////////////////////////
-
-		//left blind area
+		//Left area where platform can not go
 		Point points[1][3];
 		points[0][0] = Point(center.x - carW, center.y);
 		points[0][1] = Point(cenX - SICK_SCAN_ROI_X, center.y);
@@ -167,7 +95,7 @@ void Driving::Basic() {
 
 		fillPoly(imgPath, pnts, npt2, 1, CV_RGB(150, 0, 0));
 
-		//right blind area
+		//Right area where platform can not go
 		Point points2[1][3];
 		points2[0][0] = Point(center.x + carW, center.y);
 		points2[0][1] = Point(cenX + SICK_SCAN_ROI_X, center.y);
@@ -176,24 +104,100 @@ void Driving::Basic() {
 		const Point* pnts2[1] = { points2[0] };
 
 		fillPoly(imgPath, pnts2, npt2, 1, CV_RGB(150, 0, 0));
-		//////////////////////////////////////////////////////////////////////////////////
 
 
-		//////////////////////////////////////////////////////////////////////////////////
-		////////////////////Fill the Regions which mean out of ROI////////////////////////
-		//////////////////////////////////////////////////////////////////////////////////
-		//rectangle(img, Point2d(0, 0), Point2d(img.cols, topEndY), CV_RGB(255, 255, 255), -1, CV_AA, 0);
-		//rectangle(img, Point2d(0, 0), Point2d(leftEndX, img.rows), CV_RGB(255, 255, 255), -1, CV_AA, 0);
-		//rectangle(img, Point2d(img.cols, img.rows), Point2d(0, cenY), CV_RGB(255, 255, 255), -1, CV_AA, 0);
-		//rectangle(img, Point2d(img.cols, img.rows), Point2d(rightEndX, 0), CV_RGB(255, 255, 255), -1, CV_AA, 0);
-		//////////////////////////////////////////////////////////////////////////////////
+			//////////////////////////////////////////////
+			////Fill the Regions which mean out of ROI////
+			//////////////////////////////////////////////
+
+		rectangle(imgPath, Point2d(0, 0), Point2d(imgPath.cols, topEndY), CV_RGB(255, 255, 255), -1, CV_AA, 0);
+		rectangle(imgPath, Point2d(0, 0), Point2d(leftEndX, imgPath.rows), CV_RGB(255, 255, 255), -1, CV_AA, 0);
+		rectangle(imgPath, Point2d(imgPath.cols, imgPath.rows), Point2d(0, cenY), CV_RGB(255, 255, 255), -1, CV_AA, 0);
+		rectangle(imgPath, Point2d(imgPath.cols, imgPath.rows), Point2d(rightEndX, 0), CV_RGB(255, 255, 255), -1, CV_AA, 0);
+
+
+			//////////////////////////////////////////////////////////////////
+			////Fill the Regions where cannot go in, because of obstacles.////
+			//////////////////////////////////////////////////////////////////
+
+		for (int i = 0; i < vecXY.size(); ++i) { 
+			double xyDrawX = center.x + vecXY[i].x * scale;
+			double xyDrawY = center.y - vecXY[i].y * scale;
+
+			Point2d xyDraw(xyDrawX, xyDrawY);
+			vecXYDraw.push_back(xyDraw);
+		}
+
+		for (int i = 0; i < vecXYDraw.size() - 1; ++i) { 
+			double dist = sqrt(pow(vecXYDraw[i].x - vecXYDraw[i + 1].x, 2) + pow(vecXYDraw[i].y - vecXYDraw[i + 1].y, 2));
+
+			if (dist <= SICK_SCAN_DIST_OBJECT * scale) {
+				if (vecXYDraw[i].x < rightEndX && vecXYDraw[i].x > leftEndX && vecXYDraw[i].y > topEndY) {
+					line(imgPath, vecXYDraw[i], vecXYDraw[i + 1], CV_RGB(0, 255, 0), 2);
+				}
+			}
+		}
+
+		vector<vector<double> > objDataSet = dataContainer->getValue_lidar_Data().back();
+		Point polypts[1][4];
+		double cirCenX, cirCenY, cirCenR;
+		double cenDist, touchDist, theta_s, theta_l;
+		int polyX1, polyY1, polyX2, polyY2, polyX3, polyY3, polyX4, polyY4;
+		for (int i = 0; i < objDataSet.size(); i++){
+			cirCenX = center.x + objDataSet[i][0] * scale;
+			cirCenY = center.y - objDataSet[i][1] * scale;
+			cirCenR = objDataSet[i][2] * scale;
+			Point2d cirCen(cirCenX, cirCenY); //center of objs.
+
+			//circle(img, cirCen, objDataSet[i][2] * scale, CV_RGB(255, 0, 0), -1, CV_AA);
+
+			cenDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2));
+			touchDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2) - pow(cirCenR, 2));
+			theta_s = asin(cirCenR / cenDist);
+			theta_l = atan(objDataSet[i][1] / objDataSet[i][0]);
+
+			if (theta_l < 0){
+				theta_l += CV_PI;
+			}
+
+			polyX1 = (int)(touchDist*cos(theta_l - theta_s) + cenX), polyY1 = (int)(cenY - touchDist * sin(theta_l - theta_s));
+			polyX2 = (int)(touchDist*cos(theta_l + theta_s) + cenX), polyY2 = (int)(cenY - touchDist * sin(theta_l + theta_s));
+			polyX3 = (polyX2 - cenX)*(cenY - topEndY) / (cenY - polyY2) + cenX, polyY3 = topEndY;
+			polyX4 = (polyX1 - cenX)*(cenY - topEndY) / (cenY - polyY1) + cenX, polyY4 = topEndY;
+
+			if (polyY1 > cenY) {
+				polyX4 = polyX4 * (-1);
+				polyY4 = bottomEndY - 0.0001;
+			}
+			if (polyY2 > cenY) {
+				polyX3 = polyX3 * (-1);
+				polyY3 = bottomEndY - 0.0001;
+			}
+			polypts[0][0] = Point(polyX1, polyY1);
+			polypts[0][1] = Point(polyX2, polyY2);
+			polypts[0][2] = Point(polyX3, polyY3);
+			polypts[0][3] = Point(polyX4, polyY4);
+
+			const Point* ppt[1] = { polypts[0] };
+			int npt[] = { 4 };
+
+			fillPoly(imgPath, ppt, npt, 1, CV_RGB(200, 200, 0));
+			circle(imgPath, cirCen, cirCenR, CV_RGB(255, 0, 0), -1, CV_AA);
+		}
+
+		//imshow("test", imgPath);
+
+			/////////////////////////////////////////////
+			////Finally, make the image to Grayscale.////
+			/////////////////////////////////////////////
 
 		cv::cvtColor(imgPath, imgPath, CV_BGR2GRAY);
 		threshold(imgPath, imgPath, 1, 10, THRESH_BINARY_INV);
 
+
 		//MAKING VORNOI FIELD
 		int kerSize;
-		for (int i = 1; i < 5; i++)
+		for (int i = 1; i < 4; i++)
 		{
 			kerSize = 30 * i;
 			Mat kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
@@ -203,8 +207,15 @@ void Driving::Basic() {
 			cv::morphologyEx(imgPath, stepVot, MORPH_ERODE, kernel);
 			imgPath += stepVot;
 		}
+		uchar *asd = imgPath.data;
+		
+		cout << (uint)asd[imgPath.cols*(imgPath.rows/2)+imgPath.cols/2] << endl;
+		cout << (uint)asd[imgPath.cols*(1) + 1] << endl;
 
-		//VOTING PART:
+			//////////////////////////////////////////////////////////////////////////////
+			////Determine the desired Steering Angle in Score System with Vornoi Field////
+			//////////////////////////////////////////////////////////////////////////////
+
 		//REGION OF WORKABLE ANGLE: 60 ~ 120, with interval=5 degrees
 		vector<uint> score[13]; //include the scores at [90,85, 95, 80, 100, 75, 105, 70, 110, 65, 115, 60, 120]degrees
 		uchar onestep = 750 * scale; //mean how much car move go in 0.5s. / 12km/hour -> 3m/second
@@ -242,24 +253,13 @@ void Driving::Basic() {
 			score->push_back(sum);
 			//waitKey(1);
 		}
-
 		uint scoreMax1 = distance(score->begin(), max_element(score->begin(), score->end()));
-		int goTheta1 = theta.at(scoreMax1) * 0.8 * -71; //���� �������� ������ +, �������� - �� ���Ⱒ ����, gotheta�� ���� ���Ⱒ��
-		if (goTheta1 > 2000)
-		{
-			goTheta1 = 2000;
-		}
-		else if (goTheta1 < (-2000))
-		{
-			goTheta1 = -2000;
-		}
-		//cout << scoreMax << "th value" << goTheta1 << endl;
-
-		Point2d stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1/-71) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1/-71) / 180)));
+		int goTheta1 = theta.at(scoreMax1);
+		Point2d stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1) / 180)));
 		cv::arrowedLine(imgPath, center, stepFirst, CV_RGB(255, 255, 255), 5);
 
-		/*
-		//Predict second step-----------------------------------------------------------�̿ϼ�
+
+		//Predict second step
 		vector<uint> score2[13];
 		for (int i = 0; i < theta.size(); i++)
 		{
@@ -291,37 +291,27 @@ void Driving::Basic() {
 		int goTheta2 = theta.at(scoreMax2);
 		Point2d stepSecond(stepFirst.x + onestep * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*sin(CV_PI*(90 + goTheta2) / 180)));
 		cv::arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(255, 255, 255), 5);
-		*/
-		///////////second end///////////
 
-		//DRAW ARROWLINES of LiDAR, and surrounding objects.
-		//DRAW the vectors meaning the movement of objects.
+		//int goTheta1 = theta.at(scoreMax1) * 0.8 * -71; 
+		//if (goTheta1 > 2000)
+		//{
+		//	goTheta1 = 2000;	
+		//}
+		//else if (goTheta1 < (-2000))
+		//{
+		//	goTheta1 = -2000;
+		//}
+		//cout << scoreMax << "th value" << goTheta1 << endl;
 
-		/*
-		arrowedLine(img, center, platEnd, CV_RGB(150, 150, 150), 2); //���̴� ��ü ����
+			/////////////////////////////////////////////////////////////////////
+			////Determine the desired Speed in Score System with Vornoi Field////
+			/////////////////////////////////////////////////////////////////////
 
-		vector<Point2d> vecData = finVecData;
-		vector<bool> boolData = finBoolData;
 
-		for (int i = 0; i < vecData.size(); i++) {
-			double arrowCenX = center.x + objDataSet[i][0] * scale;
-			double arrowCenY = center.y - objDataSet[i][1] * scale;
+			//////////////////////////////////////////////////
+			////Final Control the steering angle and speed////
+			//////////////////////////////////////////////////
 
-			double arrowPointX = arrowCenX + vecData[i].x;
-			double arrowPointY = arrowCenY - vecData[i].y;
-
-			Point2d arrowCen(arrowCenX, arrowCenY); //ȭ��ǥ ���� ��ǥ
-			Point2d arrowPoint(arrowPointX, arrowPointY); //ȭ��ǥ �Ӹ� ��ǥ
-
-			arrowedLine(img, arrowCen, arrowPoint, CV_RGB(0, 255, 255), 2, 8, 0, 0.3); //��ü�� ����
-
-			if (boolData[i] == true) {
-				putText(img, "True", arrowCen, FONT_HERSHEY_SIMPLEX, 1, CV_RGB(255, 255, 255));
-			}
-			else if (boolData[i] == false) {
-				putText(img, "False", arrowCen, FONT_HERSHEY_SIMPLEX, 1, CV_RGB(255, 255, 255));
-			}
-		}*/
 
 		/*
 		if (goTheta2 > 26)
@@ -338,12 +328,14 @@ void Driving::Basic() {
 		*/
 
 		//dataContainer->setValue_UtoP_STEER(GoTo(gotox,gotoy,goTheta2));
-		dataContainer->setValue_UtoP_STEER(goTheta1);
-		dataContainer->setValue_UtoP_SPEED(30);
+		//dataContainer->setValue_UtoP_STEER(goTheta1);
+		//dataContainer->setValue_UtoP_SPEED(30);
 
 		//printf("x1 = %f x= %f y=%f theta=%d", stepSecond.x, gotox, gotoy, goTheta2);
 		cv::imshow("DrawLiDARData", imgPath);
 
+		end = clock();
+		cout << "time: " << (double)(end - start) / 1000 << "sec" << endl ;
 
 		int key = cv::waitKey(1);
 
@@ -351,9 +343,41 @@ void Driving::Basic() {
 			break;
 		}
 	}
-
-
 }
+
+
+void Driving::setData_speed(int desired_speed)
+{
+	int present_speed = dataContainer->getValue_PtoU_SPEED(); //0~200
+	desired_speed *= 10;
+
+	desired_speed = (desired_speed - present_speed) *speedKP + present_speed;
+
+	if (desired_speed > 200) {
+		desired_speed = 200;
+	}
+	else if (desired_speed < 0) {
+		desired_speed = 0;
+	}
+	dataContainer->setValue_UtoP_SPEED(desired_speed);
+}
+
+void Driving::setData_steering(int desired_steering)
+{
+	int present_steering = dataContainer->getValue_PtoU_STEER(); //-2000~2000
+	desired_steering *= 71;
+
+	desired_steering = (desired_steering - present_steering) *steeringKP + present_steering;
+
+	if (desired_steering > 2000) {
+		desired_steering = 2000;
+	}
+	else if (desired_steering < -2000) {
+		desired_steering = -2000;
+	}                                                                                                    
+	dataContainer->setValue_UtoP_STEER(desired_steering);
+}
+
 
 void Driving::Mission1() {
 	//

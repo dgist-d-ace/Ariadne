@@ -25,7 +25,11 @@
 #define LOG_OUT
 #endif
 
+#define ACCESS_MASK ::ACCESS_MASK
+
 using namespace std;
+using namespace cv;
+
 
 typedef enum {
 	SICK_STATUS_UNDEFINED		= 0,
@@ -42,8 +46,8 @@ typedef enum {
 enum {
 	//SICK_SCAN_NUM_MAX = 541,
 	SICK_SCAN_FRAME_NUM = 1,			// average of 2 frame
-	SICK_SCAN_ROI_X = 3000,				// 반폭: 3.0 m
-	SICK_SCAN_ROI_Y = 4000,				// 9.0 m
+	SICK_SCAN_ROI_X = 3000,				// 반폭: 3.0 m, 좌우 총 6.0m
+	SICK_SCAN_ROI_Y = 6000,				// 6.0 m
 	SICK_SCAN_DIST_MIN = 100,		    // 0.1 m
 	SICK_SCAN_DIST_MAX = 50000,			// 50 m
 	SICK_SCAN_DIST_AVERAGE = 100,		// 0.1 m
@@ -73,27 +77,27 @@ public:
 	bool StopCapture();
 	bool GetValidDataRTheta(vector<pair<int, double> > &vecRTheta);
 	static unsigned int CALLBACK proc(void* arg);
-
-	void Conversion(vector<pair<int, double> > &vecRTheta, queue<vector<cv::Point2d> > &finQVecXY, int num);
-	bool Average(queue<vector<cv::Point2d> > &finQVecXY, vector<cv::Point2d> &finVecXY, int num);
-	void Clustering(vector<cv::Point2d> &finVecXY, queue<vector<vector<double> > > &finLiDARData);
-	bool Vector(queue<vector<vector<double> > > &finLiDARData, vector<cv::Point2d> &finVecData, vector<bool> &finBoolData);
-	void DrawData(vector<cv::Point2d> &finVecXY, queue<vector<vector<double> > > &finLiDARData, vector<cv::Point2d> &finVecData, vector<bool> &finBoolData, cv::Mat &img);
-
+	
+	void Conversion(vector<pair<int, double> > &vecRTheta, queue<vector<Point2d> > &finQVecXY);
+	bool Average(queue<vector<Point2d> > &finQVecXY, vector<Point2d> &finVecXY);
+	void Clustering(vector<Point2d> &finVecXY, queue<vector<vector<double> > > &finObjData);
+	bool Vector(queue<vector<vector<double> > > &finObjData, vector<Point2d> &finVecData, vector<bool> &finBoolData);
+	//void DrawData(vector<Point2d> &finVecXY, queue<vector<vector<double> > > &finObjData, vector<Point2d> &finVecData, vector<bool> &finBoolData, Mat &imgLiDAR);
+	//int funcLiDAR();
 	bool m_bDataAvailable;
-
-	//GUI
-	cv::Mat imgLiDAR;
 
 	//Using Data
 	vector<pair<int, double> > validScans; //R, Theta 스캔 데이터 - 1프레임
-	queue<vector<cv::Point2d> > finQVecXY; //노이즈 포함 데이터 집합 - 5프레임
-
+	queue<vector<Point2d> > finQVecXY; //노이즈 포함 데이터 집합 - 5프레임
+	vector<Point2d> finVecXY; //최종 좌표 집합 - 1프레임
+	
 	//Final Data
-	vector<cv::Point2d> finVecXY; //최종 좌표 집합 - 1프레임
-	queue<vector<vector<double> > > finLiDARData; //최종 데이터 집합 - 2프레임
-	vector<cv::Point2d> finVecData; //물체의 벡터 집합 - 1프레임
+	queue<vector<vector<double> > > finObjData; //최종 데이터 집합 - 2프레임
+	vector<Point2d> finVecData; //물체의 벡터 집합 - 1프레임
 	vector<bool> finBoolData; //물체의 동정적 여부 집합 - 1프레임
+
+	//GUI
+	Mat imgLiDAR;
 
 private:
 	bool ConnectToDevice(string host, int port);
@@ -127,16 +131,4 @@ private:
 	// thread
 	HANDLE m_hThread;
 	volatile bool m_bRunThread;
-};
-
-/// ------------------- Objectvector.h ---------------------- ////
-
-class ObjectVector {
-public:
-	//bool Average(queue<vector<vector<double> > > &LiDARData, queue<vector<vector<double> > > &finLiDARData, int num);
-	bool PlatformVector(queue<vector<vector<double> > > &finLiDARData, vector<cv::Point2d> &finVecData, vector<bool> &finBoolData);
-	void DrawVector(queue<vector<vector<double> > > &finLiDARData, vector<cv::Point2d> &finVecData, cv::Mat &img);
-
-	vector<cv::Point2d> finVecData;
-	vector<bool> finBoolData;
 };

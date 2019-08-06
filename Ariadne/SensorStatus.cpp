@@ -17,7 +17,6 @@ LidarComThread::LidarComThread() {
 
 int LidarComThread::comLidar() {
     LastOfLiDAR lol;
-    ObjectVector ov;
 
     if (!lol.Initialize()) {
         cout << "Connect ERROR!!!" << endl;
@@ -32,15 +31,14 @@ int LidarComThread::comLidar() {
             dataContainer->updateValue_lidar_status();
 
             
-
-            lol.GetValidDataRTheta(lol.validScans);
-            lol.Conversion(lol.validScans, lol.finQVecXY, 5);
-            lol.Average(lol.finQVecXY, lol.finVecXY, 5);
-            lol.Clustering(lol.finVecXY, lol.finLiDARData);
-            lol.Vector(lol.finLiDARData, lol.finVecData, lol.finBoolData);
+			lol.GetValidDataRTheta(lol.validScans);
+			lol.Conversion(lol.validScans, lol.finQVecXY);
+			lol.Average(lol.finQVecXY, lol.finVecXY);
+			lol.Clustering(lol.finVecXY, lol.finObjData);
+			lol.Vector(lol.finObjData, lol.finVecData, lol.finBoolData);
 			
 			dataContainer->setValue_lidar_BoolData(lol.finBoolData);
-			dataContainer->setValue_lidar_Data(lol.finLiDARData);
+			dataContainer->setValue_lidar_Data(lol.finObjData);
 			dataContainer->setValue_lidar_VecXY(lol.finVecXY);
 			dataContainer->setValue_lidar_VecData(lol.finVecData);
 
