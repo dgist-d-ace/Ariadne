@@ -34,16 +34,12 @@ Ariadne::Ariadne(QWidget *parent)
 	connect(gpsThread, SIGNAL(started()), gpsCom, SLOT(comGPS()));
 	connect(gpsCom, SIGNAL(GPSExit()), gpsCom, SLOT(comGPS()));
 
-    lidarComThread = new LidarComThread;
-    connect(lidarComThread, SIGNAL(LidarExit()), this, SLOT(comLidar()));
-
-    /*
 	lidarCom = new LidarCom;
 	lidarThread = new QThread;
 	lidarCom->moveToThread(lidarThread);
 	connect(lidarThread, SIGNAL(started()), lidarCom, SLOT(comLidar()));
 	connect(lidarCom, SIGNAL(LidarExit()), lidarCom, SLOT(comLidar()));
-    */
+    
 
 	scnn = new Scnn;
 	scnnThread = new QThread;
@@ -148,18 +144,17 @@ void Ariadne::clicked_btn_sensor() {
 	//if (!scnnThread->isRunning())
 		//scnnThread->start();
 
-
 	//if (!yoloThread->isRunning())
 	//	yoloThread->start();
 
 	//if(!platformThread->isRunning())
 	//	platformThread->start();
 
-	//if(!lidarComThread->isRunning())
-	//   lidarComThread->start();
+	if (!lidarThread->isRunning())
+		lidarThread->start();
 
-    if (!gpsThread->isRunning())
-        gpsThread->start();
+    //if (!gpsThread->isRunning())
+    //    gpsThread->start();
 
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);

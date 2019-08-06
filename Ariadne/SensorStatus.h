@@ -16,27 +16,6 @@
 
 using namespace std;
 
-
-class LidarComThread : public QThread
-{
-    Q_OBJECT
-protected:
-
-public:
-    DataContainer *dataContainer;
-	LidarComThread();
-    int comLidar();
-    void run();
-
-private:
-
-signals:
-
-public slots:
-};
-
-
-/*
 class LidarCom : public QObject
 {
     Q_OBJECT
@@ -52,12 +31,8 @@ signals: /// thread�� ���� broadcast �Լ���
     void LidarExit();
 
 public slots:
-    void comLidar();
+    int comLidar();
 };
-
-
-*/
-
 
 
 class Scnn : public QObject
