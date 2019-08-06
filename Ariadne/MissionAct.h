@@ -4,6 +4,7 @@
 
 #define steeringKP 0.75
 #define speedKP		1.5
+#define steerRatio  0.8
 
 class Driving : public QObject
 {
