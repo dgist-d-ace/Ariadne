@@ -19,6 +19,9 @@ int LidarCom::comLidar() {
 
 	if (!lol.Initialize()) {
 		cout << "Connect ERROR!!!" << endl;
+		lol.StopCapture();
+		lol.UnInitialize();
+		emit(LidarExit());
 		return -1;
 	}
 	else {
@@ -30,7 +33,6 @@ int LidarCom::comLidar() {
 		if (lol.m_bDataAvailable) {
 
 			dataContainer->updateValue_lidar_status();
-
 
 			lol.GetValidDataRTheta(lol.validScans);
 			lol.Conversion(lol.validScans, lol.finQVecXY);
@@ -52,8 +54,12 @@ int LidarCom::comLidar() {
 
 
 		}
-
-
+		else {
+			lol.StopCapture();
+			lol.UnInitialize();
+			emit(LidarExit());
+			return -1;
+		}
 	}
 
 	lol.StopCapture();
