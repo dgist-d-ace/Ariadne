@@ -1,3 +1,5 @@
+/*
+
 #include <torch/script.h>
 #include <torch/torch.h> 
 #include <torch/data/transforms/tensor.h> 
@@ -61,8 +63,8 @@ int mainfun()
 
         std::cout << "test15" << std::endl;
 
-        std::cout << out_tensor.slice(/*dim=*/1, /*start=*/0, /*end=*/10) << '\n';
-
+        //std::cout << out_tensor.slice(/*dim=*//*1, /*start=*//*0, /*end=*//*10) << '\n';*/
+		/*
 
         std::cout << "test" << std::endl;
 
@@ -96,3 +98,5 @@ int mainfun()
         }
     return 0;
 }
+
+*/
