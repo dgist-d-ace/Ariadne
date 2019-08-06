@@ -314,21 +314,20 @@ void Ariadne::updateSensorStatus()
 
 	// Platform communication
     if (dataContainer->getValue_platform_status() > 5)
-    { ui->comboBox->setStyleSheet("background-color: rgb(255, 82, 66)"); }
+    { ui->label_9->setStyleSheet("background-color: rgb(144, 198, 241)"); }
     else if (dataContainer->getValue_platform_status() > 0)
-    { ui->comboBox->setStyleSheet("background-color: rgb(250, 255, 107)"); }
+    { ui->label_9->setStyleSheet("background-color: rgb(255, 212, 57)"); }
     else if (dataContainer->getValue_platform_status() == 0)
-    { ui->comboBox->setStyleSheet("background-color: rgb(181, 206, 212)"); }
+    { ui->label_9->setStyleSheet("background-color: rgb(255, 82, 66)"); }
 	dataContainer->setValue_platform_status(0);
 
     // LiDAR communication code
     if (dataContainer->getValue_lidar_status() > 5)
-    { ui->comboBox->setStyleSheet("background-color: rgb(255, 82, 66)"); }
+    {  ui->label_13->setStyleSheet("background-color: rgb(144, 198, 241)"); }
     else if (dataContainer->getValue_lidar_status() > 0)
-    { ui->comboBox->setStyleSheet("background-color: rgb(250, 255, 107)"); }
+    { ui->label_13->setStyleSheet("background-color: rgb(255, 212, 57)"); }
     else if (dataContainer->getValue_lidar_status() == 0)
-    { ui->comboBox->setStyleSheet("background-color: rgb(181, 206, 212)"); }
-
+    { ui->label_13->setStyleSheet("background-color: rgb(255, 82, 66)"); }
     dataContainer->setValue_lidar_status(0);
 
 	/*
@@ -351,15 +350,15 @@ void Ariadne::updateSensorStatus()
     // GPS communication code
     if (dataContainer->getValue_gps_status() > 5)
     {
-        ui->comboBox->setStyleSheet("background-color: rgb(255, 82, 66)");
+        ui->label_12->setStyleSheet("background-color: rgb(144, 198, 241)");
     }
     else if (dataContainer->getValue_gps_status() > 0)
     {
-        ui->comboBox->setStyleSheet("background-color: rgb(250, 255, 107)");
+        ui->label_12->setStyleSheet("background-color: rgb(255, 212, 57)");
     }
     else if (dataContainer->getValue_gps_status() == 0)
     {
-        ui->comboBox->setStyleSheet("background-color: rgb(181, 206, 212)");
+        ui->label_12->setStyleSheet("background-color: rgb(255, 82, 66)");
     }
 	dataContainer->setValue_gps_status(0);
 }
