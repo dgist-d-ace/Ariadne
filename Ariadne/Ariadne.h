@@ -1,5 +1,5 @@
 #pragma once
-
+#pragma comment(lib, "setupapi.lib")
 #include "SensorStatus.h"
 #include "MissionAct.h"
 
@@ -11,8 +11,11 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
-
+#include <initguid.h>
+#include <objbase.h>
+#include <devguid.h>
+#include <setupapi.h>
+#include <cfgmgr32.h>   
 #include "atlstr.h"
 #include <QString>
 #include <QTimer>
@@ -101,6 +104,9 @@ public:
     Scnn* scnn;
 	Yolo* yolo;
 
+	GUID gpsGuid;
+	GUID platformGuid;
+
     QThread* platformThread;
     //QThread* lidarThread;
     QThread* gpsThread;
@@ -118,7 +124,7 @@ public:
 private:
     static Ui::AriadneClass* ui;
     void updateSensorStatus();
-    void keyPressEvent(QKeyEvent *);
+    void keyPressEvent(QKeyEvent *);	
 
 public slots:
     void clicked_btn_mission0();
@@ -155,6 +161,8 @@ public slots:
     /// DY: 0802
     void onLidarExit();
 
+	void AutoPortFinder();
+	
 };
 
 CString ConvertQstringtoCString(QString); 

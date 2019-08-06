@@ -23,6 +23,8 @@ int LidarComThread::comLidar() {
         cout << "Connect ERROR!!!" << endl;
         return -1;
     }
+	else {
+	}
 
     lol.StartCapture();
 
