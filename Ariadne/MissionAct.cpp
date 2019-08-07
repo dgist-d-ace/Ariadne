@@ -354,22 +354,7 @@ void Driving::Basic() {
 		setData_steering(desired_steering);
 		//setData_speed(desired_speed);
 		dataContainer->setValue_UtoP_SPEED(30);
-
-		/*
-		if (goTheta2 > 26)
-		{
-			goTheta2 = 26;
-		}
-		else if (goTheta2 < (-26))
-		{
-			goTheta2 = -26;
-		}
-
-		double gotox = (stepSecond.x -imgPath.cols/2)/1000;
-		double gotoy = (imgPath.rows *0.9 -stepSecond.y)/1000 ;
-		*/
-
-		//printf("x1 = %f x= %f y=%f theta=%d", stepSecond.x, gotox, gotoy, goTheta2);
+		cv::imshow("LaneMap", scoreMap);
 		cv::imshow("DrawLiDARData", imgPath);
 
 		end = clock();
