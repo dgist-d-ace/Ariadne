@@ -147,8 +147,8 @@ void Ariadne::clicked_btn_sensor() {
 	//if (!yoloThread->isRunning())
 	//	yoloThread->start();
 
-	//if(!platformThread->isRunning())
-	//	platformThread->start();
+	if(!platformThread->isRunning())
+		platformThread->start();
 
 	if (!lidarThread->isRunning())
 		lidarThread->start();
@@ -379,8 +379,8 @@ PlatformCom::PlatformCom()
 
 void PlatformCom::comPlatform() {
     cout << "platform start" << endl;
-
-    if (_platform.OpenPort(dataContainer->getValue_platform_port()))
+	//dataContainer->getValue_platform_port()
+    if (_platform.OpenPort(L"COM7"))
     {
         _platform.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _platform.SetCommunicationTimeouts(0, 0, 0, 0, 0);
