@@ -139,7 +139,7 @@ CString ConvertQstringtoCString(QString qs)
 // This function is to start communication with sensor.
 void Ariadne::clicked_btn_sensor() {
 
-	AutoPortFinder();
+	//AutoPortFinder();
 
 	//if (!scnnThread->isRunning())
 		//scnnThread->start();
@@ -147,8 +147,8 @@ void Ariadne::clicked_btn_sensor() {
 	//if (!yoloThread->isRunning())
 	//	yoloThread->start();
 
-	if(!platformThread->isRunning())
-		platformThread->start();
+	//if(!platformThread->isRunning())
+	//	platformThread->start();
 
 	if (!lidarThread->isRunning())
 		lidarThread->start();

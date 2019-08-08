@@ -49,13 +49,15 @@ void Driving::Basic() {
 
 //Plan B: Auto-driving with Score Map Rule (ASMR)
 	//Please name this algorithm
+	clock_t start, end;
 	while (1)
 	{
-		clock_t start, end;
+
 		start = clock();
 
 		//imgPath = cv::Mat::zeros(900, 900, CV_8UC3); //50fps
 		imgPath = cv::Mat::zeros(600, 600, CV_8UC3); //100fps
+		//Mat scoreMap = cv::Mat::zeros(600, 600, CV_8UC3);
 		//imgPath = cv::Mat::zeros(1200, 1200, CV_8UC3); //20fps
 		//imgPath = cv::Mat::zeros(768, 1366, CV_8UC3);
 		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
@@ -100,7 +102,10 @@ void Driving::Basic() {
 		const Point* pnts2[1] = { points2[0] };
 
 		fillPoly(imgPath, pnts2, npt2, 1, CV_RGB(150, 0, 0));
-		
+	
+		cv::cvtColor(imgPath, scoreMap, CV_BGR2GRAY);
+		threshold(scoreMap, scoreMap, 1, 10, THRESH_BINARY_INV);
+		//imshow("Map1", scoreMap);
 
 			//////////////////////////////////////////////
 			////Fill the Regions which mean out of ROI////
@@ -110,7 +115,11 @@ void Driving::Basic() {
 		//rectangle(imgPath, Point2d(0, 0), Point2d(leftEndX, imgPath.rows), CV_RGB(255, 255, 255), -1, CV_AA, 0);
 		//rectangle(imgPath, Point2d(imgPath.cols, imgPath.rows), Point2d(0, cenY), CV_RGB(255, 255, 255), -1, CV_AA, 0);
 		//rectangle(imgPath, Point2d(imgPath.cols, imgPath.rows), Point2d(rightEndX, 0), CV_RGB(255, 255, 255), -1, CV_AA, 0);
-		Mat scoreMap = imgPath;
+
+		//rectangle(scoreMap, Point2d(0, 0), Point2d(imgPath.cols, topEndY), CV_RGB(255, 255, 255), -1, CV_AA, 0);
+		//rectangle(scoreMap, Point2d(0, 0), Point2d(leftEndX, imgPath.rows), CV_RGB(255, 255, 255), -1, CV_AA, 0);
+		//rectangle(scoreMap, Point2d(imgPath.cols, imgPath.rows), Point2d(0, cenY), CV_RGB(255, 255, 255), -1, CV_AA, 0);
+		//rectangle(scoreMap, Point2d(imgPath.cols, imgPath.rows), Point2d(rightEndX, 0), CV_RGB(255, 255, 255), -1, CV_AA, 0);
 		//imshow("1", imgPath);
 
 			//////////////////////////////////////////////////////////////////
@@ -139,6 +148,7 @@ void Driving::Basic() {
 		Point polypts[1][4];
 		double cirCenX, cirCenY, cirCenR;
 		double cenDist, touchDist, theta_s, theta_l;
+		vector<double>objdist;
 		int polyX1, polyY1, polyX2, polyY2, polyX3, polyY3, polyX4, polyY4;
 		for (int i = 0; i < objDataSet.size(); i++){
 			cirCenX = center.x + objDataSet[i][0] * scale;
@@ -149,6 +159,7 @@ void Driving::Basic() {
 			//circle(img, cirCen, objDataSet[i][2] * scale, CV_RGB(255, 0, 0), -1, CV_AA);
 
 			cenDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2));
+			objdist.push_back(cenDist);
 			touchDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2) - pow(cirCenR, 2));
 			theta_s = asin(cirCenR / cenDist);
 			theta_l = atan(objDataSet[i][1] / objDataSet[i][0]);
@@ -186,53 +197,56 @@ void Driving::Basic() {
 			////Make the image to Grayscale.////
 			////////////////////////////////////
 
-		cv::cvtColor(scoreMap, scoreMap, CV_BGR2GRAY);
-		threshold(scoreMap, scoreMap, 1, 10, THRESH_BINARY_INV);
-		
 		cv::cvtColor(imgPath, imgPath, CV_BGR2GRAY);
 		threshold(imgPath, imgPath, 1, 10, THRESH_BINARY_INV);
 
 		//MAKING VORNOI FIELD
 		int kerSize;
+		Mat kernel;
+		Mat stepVot = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
+		Mat stepVot2 = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
 		for (int i = 1; i < 4; i++)
 		{
 			kerSize = 20 * i;
-			Mat kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
-
-
-			Mat stepVot = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
-			cv::morphologyEx(imgPath, stepVot, MORPH_ERODE, kernel);
+			kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
+			
+			morphologyEx(scoreMap, stepVot2, MORPH_ERODE, kernel);
+			morphologyEx(imgPath, stepVot, MORPH_ERODE, kernel);
 			imgPath += stepVot;
+			scoreMap += stepVot2;
 		}
 		//uchar *asd = imgPath.data;
 		
 		//cout << (uint)asd[imgPath.cols*(imgPath.rows/2)+imgPath.cols/2] << endl;
 		//cout << (uint)asd[imgPath.cols*(1) + 1] << endl;
-
+		//imshow("Map", scoreMap);
 			//////////////////////////////////////////////////////////////////////////////
 			////Determine the desired Steering Angle in Score System with Vornoi Field////
 			//////////////////////////////////////////////////////////////////////////////
 
 		//REGION OF WORKABLE ANGLE: 60 ~ 120, with interval=5 degrees
-		uchar onestep = carH*scale; //mean how much car move go in 0.5s. / 12km/hour -> 3m/second
+		vector<uint> score[169]; //include the scores at [90,85, 95, 80, 100, 75, 105, 70, 110, 65, 115, 60, 120]degrees
+		vector<int> theta = { 0, -5, 5, -10, 10, -15, 15, -20, 20, -25, 25, -30, 30 }; //The steering angle candidates
+		uchar onestep = (1210) * scale; //carH; //mean how much car move go in 0.5s. / 12km/hour -> 3m/second
 		Mat cirGray;
 		Mat cirGray2;
 		Mat scresult;
 		uint scoreTheta;
 		uint scoreTheta2;
 		uint sum;
+
 		for (int i = 0; i < theta.size(); i++)
 		{
 			cirGray = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 			scoreTheta = 90 + theta.at(i);
 			Point2d step1(cenX + onestep * cos(CV_PI*scoreTheta / 180), cenY - onestep * sin(CV_PI*scoreTheta / 180));
-			circle(cirGray, step1, carH / 2, CV_RGB(50, 50, 50), -1, CV_AA, 0);
+			circle(cirGray, step1, carW / 2, CV_RGB(10, 10, 10), -1, CV_AA, 0);
 			for (int j = 0; j < theta.size(); j++)
 			{
 				cirGray2 = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 				scoreTheta2 = 90 + theta.at(j);
 				Point2d step2(step1.x + onestep * cos(CV_PI*scoreTheta2 / 180), step1.y -onestep* sin(CV_PI*scoreTheta2 / 180));
-				circle(cirGray2, step2, carH / 2, CV_RGB(50,50,50), -1, CV_AA, 0);
+				circle(cirGray2, step2, carW / 2, CV_RGB(10,10,10), -1, CV_AA, 0);
 				cirGray2 += cirGray;
 				//imshow("check Circle img", cirGray2);
 				sum = 0;
@@ -254,13 +268,10 @@ void Driving::Basic() {
 		int goTheta2 = theta.at(scoreMax % theta.size());
 		Point2d stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1) / 180)));
 		Point2d stepSecond(stepFirst.x + onestep * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*sin(CV_PI*(90 + goTheta2) / 180)));
-		cv::arrowedLine(imgPath, center, stepFirst, CV_RGB(255, 255, 255), 5);
-		cv::arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(255, 255, 255), 5);
-		
-		uint desired_steering = goTheta1 * steerRatio + goTheta2 *(1-steerRatio);
-		Point2d pntF(cenX + onestep*2 * cos(CV_PI*(90 + desired_steering) / 180), cenY - (onestep*2*sin(CV_PI*(90 + desired_steering) / 180)));
-		cv::arrowedLine(imgPath, center, pntF, CV_RGB(150, 150, 150), 5);
 
+		
+		int desired_steering = goTheta1 * steerRatio + goTheta2 *(1-steerRatio);
+		Point2d pntF(cenX + onestep*1.5 * cos(CV_PI*(90 + desired_steering) / 180), cenY - (onestep*1.5*sin(CV_PI*(90 + desired_steering) / 180)));
 
 		//scoring 1st and 2nd step seperately
 		/* 
@@ -339,26 +350,51 @@ void Driving::Basic() {
 		
 		//Add the line data in the scoreMap and img Path.
 		
-		uint scoreofMap; //total sum of scoreMap
-		uint scoreofPath;//total sum of imgPath
-		uint speedHigh;
-		uint speedLow;
+		uint scoreofMap=0; //total sum of scoreMap
+		uint scoreofPath=0;//total sum of imgPath
+		uint speedHigh = 10;
+		uint speedLow = 3;
 		uint desired_speed;
 
+		uchar *map = scoreMap.data;
+		uchar *path = imgPath.data;
+		int mapH = imgPath.rows;
+		int mapW = imgPath.cols;
+		for (int i = 0; i < mapH; i++) {
+			for (int j = 0; j < mapW; j++) {
+				scoreofMap += map[i*mapW + j];
+				scoreofPath += path[i*mapW + j];
+			}
+		}
 		//compare the scoreofMap and scoreofPath
+		desired_speed = (uint)((double)speedHigh * scoreofPath / scoreofMap);
+		//cout << "ratio: " << ((double)scoreofPath / scoreofMap) << endl;
 
+			/////////////////////////////
+			////!!!!!!EMERGENCY!!!!!!////
+			/////////////////////////////
+		double objClose = objdist.at(distance(objdist.begin(), min_element(objdist.begin(), objdist.end())));
+		if (desired_speed < speedLow) { desired_speed = 0; cout << "Fucking Low!!"<<endl; }
+		else if (objClose < 750 * scale) { desired_speed = 0; cout << "TOO CLOSE!!!!" << endl; }
+		else {
+			cv::arrowedLine(imgPath, center, pntF, CV_RGB(250, 250, 250), 5);
+			cv::arrowedLine(imgPath, center, stepFirst, CV_RGB(100, 100, 100), 3);
+			cv::arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(100, 100, 100), 3);
+		}
+		cout << "desired_speed = " << desired_speed << endl;
+		cout << "desired_steer = " << desired_steering << endl;
+		imshow("LaneMap", scoreMap);
+		imshow("DrawLiDARData", imgPath);	
 
 			//////////////////////////////////////////////////
 			////Final Control the steering angle and speed////
 			//////////////////////////////////////////////////
-		setData_steering(desired_steering);
+		//setData_steering(desired_steering);
 		//setData_speed(desired_speed);
-		dataContainer->setValue_UtoP_SPEED(30);
-		cv::imshow("LaneMap", scoreMap);
-		cv::imshow("DrawLiDARData", imgPath);
-
+		//dataContainer->setValue_UtoP_SPEED(30);
+	
 		end = clock();
-		cout << "time: " << (double)(end - start) / 1000 << "sec" << endl ;
+		//cout << "time: " << (double)(end - start) / 1000 << "sec" << endl ;
 
 		int key = cv::waitKey(1);
 
