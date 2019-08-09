@@ -155,7 +155,7 @@ Yolo::Yolo() {
 	ZeroMemory(&pi, sizeof(pi)); // assign program memory
 	
 	TCHAR commandLine[] = TEXT("darknet detector demo data\\obj.data cfg\\yolov3_please.cfg yolov3_34500.weights data\\race1_cut.mp4");
-	SetCurrentDirectory(_T("C:\\Users\\D-Ace\\darknet-master\\build\\darknet\\x64"));
+	SetCurrentDirectory(_T("C:\\Users\\D-Ace\\darknet-master\\build\\darknet\\x64")); // Darknet program start command
 	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi)) {
 	//}
 	if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
@@ -178,7 +178,7 @@ Yolo::Yolo() {
 
 	if (listen(server, SOMAXCONN) == SOCKET_ERROR)
 		cout << "listening fail\n";
-	dataContainer = DataContainer::getInstance();
+
 	//TCHAR pipe_name[] = TEXT("\\\\.\\pipe\\test_pipe");
 	//hNamePipe = CreateNamedPipe(pipe_name,
 	//	PIPE_ACCESS_DUPLEX,
@@ -225,7 +225,6 @@ void Yolo::comYolo() {
 		else cout << "valid socket\n";
 
 
-
 	char message[8192];
 	int strLen;
 	float* data;
@@ -252,94 +251,113 @@ void Yolo::ResumeYolo() {
 	ResumeThread(tid);
 }
 
+/*
+Ariadne to View Communication
+포트 8888
+전송 데이터타입 : 숫자
+1 상시
+2 좌
+3 우
+4 후진
+5 비상정지
+6 동적장애
+7 시동
+숫자로 전송하면됨,
+통합 요청 사항 - 특정 이벤트가 끝나고 나면 1번 상시등으로 전환 부탁.
+*/
+
+View::View() {
+    dataContainer = DataContainer::getInstance();
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
+    ZeroMemory(&pi, sizeof(pi)); // assign program memory
+    TCHAR commandLine[] = TEXT(" "); // VIEW command창에서 실행할 수 있는 명령어
+    if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
+    }
+    else {
+        tid = pi.hThread;
+        SuspendThread(tid);
+    }
+
+    WSADATA wsa;
+    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+        cout << "View error\n";
+
+    server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    sockaddr_in addr = { 0 };
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    addr.sin_port = htons(8888); // 내부 포트 번호
+
+    if (::bind(server, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR)
+        cout << "View binding fail\n";
+
+    if (listen(server, SOMAXCONN) == SOCKET_ERROR)
+        cout << "View listening fail\n";
+}
+
+void View::comView() {
+}
+
+void View::SuspendView() {
+    SuspendThread(tid);
+}
+
+void View::ResumeView() {
+    ResumeThread(tid);
+}
+
 int ConnectClient(HANDLE hNamePipe)
-
 {
-
 	TCHAR recvMessage[100];
-
 	TCHAR sendMessage[100];
-
 	DWORD recvSize;
-
 	DWORD sendSize;
 
-
-
 	while (1)
-
 	{
-
 		_tprintf(_T("Input Send Message : "));
-
-		_tscanf(_T("%s"), sendMessage);
-
-
+        _tscanf(_T("%s"), sendMessage);
 
 		//sendSize -> NULL 포함한 바이트 수
 
 		if (!(WriteFile(
 
 			hNamePipe,
-
-			sendMessage,
-
-			(_tcslen(sendMessage) + 1) * sizeof(TCHAR),
-
-			&sendSize,
-
-			NULL
+            sendMessage,
+            (_tcslen(sendMessage) + 1) * sizeof(TCHAR),
+            &sendSize,
+            NULL
 
 		)))          // 
 
 		{
-
-			_tprintf(_T("WriteFile error! \n"));
-
-			return -1;
-
-		}
+            _tprintf(_T("WriteFile error! \n"));
+            return -1;
+        }
 
 		FlushFileBuffers(hNamePipe);
-
-
-
+        
 		//recvSize -> NULL 포함한 바이트 수
 
 		if (!(ReadFile(
-
-			hNamePipe,
-
+            hNamePipe,
 			recvMessage,
-
 			sizeof(recvMessage) - sizeof(TCHAR) * 1,
-
 			&recvSize,
-
 			NULL
-
 		)))
 
 		{
-
 			printf("ReadFile error! \n");
-
 			return -1;
-
 		}
 
 		recvMessage[recvSize / sizeof(TCHAR) - 1] = _T('\x00');
-
-
-
 		_tprintf(_T("Recv Message : %s \n"), recvMessage);
-
 	}
 
-
-
 	return 1;
-
 }
 
 

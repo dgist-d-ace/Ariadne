@@ -74,7 +74,7 @@ private:
 	QMutex mtx_gps_status;
 	
 	//
-	//라이다
+	// 라이다
 	//
 	vector<cv::Point2d> m_lidar_VecXY; //최종 좌표 집합 - 1프레임
 	queue<vector<vector<double> > > m_lidar_Data; //최종 데이터 집합 - 2프레임
@@ -82,7 +82,7 @@ private:
 	vector<bool> m_lidar_BoolData; //물체의 동정적 여부 집합 - 1프레임
 
 	//
-	//카메라1: 주행용 (차선 인식) 
+	// 카메라1: 주행용 (차선 인식) 
 	//
 	vector<vector<cv::Point2i>> m_camera1_lanes;
 	vector<int> m_camara1_existLanes;
@@ -135,6 +135,13 @@ private:
 	QMutex mtx_gps_flted_vx;
 	QMutex mtx_gps_flted_vy;
 
+    //
+    // View: 전조등 제어 시스템
+    //
+
+    int m_view_number = 0;
+
+    QMutex mtx_view_number;
 
 public:
 
@@ -296,4 +303,11 @@ public:
 
 	void show_imu();
 	void show_gps();
+
+    //
+    // view
+    //
+
+    int getValue_view_number();
+    void setValue_view_number(int);
 };

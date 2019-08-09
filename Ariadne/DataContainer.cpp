@@ -6,7 +6,6 @@ using namespace std;
 
 bool DataContainer::instanceFlag = false;
 DataContainer* DataContainer::instance = NULL;
-// BK: Ariadne* DataContainer::window = NULL;
 
 DataContainer* DataContainer::getInstance() {
 	if (!instance) {
@@ -232,3 +231,12 @@ void DataContainer::show_gps()
 	printf("[ gps data | valid : %u latitude : %6.2f longitude : %6.2f velocity : %6.2f heading : %6.3f ]\n",
 	m_gps_Valid, m_gps_latitude, m_gps_longitude, m_gps_velocity, m_gps_heading);
 }
+
+
+//
+// view: 전조등 컨트롤 시스템
+//
+
+
+int DataContainer::getValue_view_number() { mtx_view_number.lock(); int temp = m_view_number; mtx_view_number.unlock(); return temp; }
+void DataContainer::setValue_view_number(int value) { mtx_view_number.lock(); m_view_number = value; mtx_view_number.unlock(); }

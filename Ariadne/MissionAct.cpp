@@ -444,6 +444,21 @@ void Driving::Mission1() {
 
 }
 
+void Driving::Mission2() {
+
+}
+
+void Driving::Mission3() {
+
+
+}
+
+void Driving::Mission4() {
+
+}
+
+void Driving::Mission5() {}
+
 /// functions which switch radian and degree
 double Driving::rad2deg(double radian) { return radian * 180 / PI; }
 double Driving::deg2rad(double degree) { return degree * PI / 180; }

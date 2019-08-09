@@ -89,4 +89,28 @@ public slots:
 	void ResumeYolo();
 };
 
+class View : public QObject
+{
+    Q_OBJECT
+protected:
+    
+public:
+    DataContainer *dataContainer;
+
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+    HANDLE tid;
+    SOCKET server;
+    SOCKET client;
+    View();
+
+private:
+
+public slots:
+    void comView();
+    void SuspendView();
+    void ResumeView();
+
+};
+
 int ConnectClient(HANDLE hNamePipe);

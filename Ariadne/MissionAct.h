@@ -28,6 +28,10 @@ public slots:
 	void setData_steering(int steering);
 	
 	void Mission1();
+    void Mission2();
+    void Mission3();
+    void Mission4();
+    void Mission5();
 
 };
 
