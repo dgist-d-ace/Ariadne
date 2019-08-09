@@ -7,6 +7,7 @@
 
 # Ariadne program hierarchy
 ![alt text](https://postfiles.pstatic.net/MjAxOTA4MTBfMjAw/MDAxNTY1Mzc4MTc1ODUx.CWugtekXf_WcWrr2mYzbEi_SFn2pVIg-m80nwYfAsBMg.vHEthG3dxMyB4Chh3K8eDxuBzLfNfPoPVF8XPme6Wpgg.PNG.cdoyu/ariadneHierarchy.png?type=w580)
+
 main.cpp의 main 함수에서 ui_Ariadne 창을 생성합니다.
 Ariadne.h에는 GPS, Platform 클래스와 Ariadne 클래스가 정의되어있으며, Ariadne.cpp에서 버튼을 함수와 연결하고 쓰레드를 생성하며 ui를 업데이트합니다.
 SensorStatus.h에는 yolo, scnn class가 정의되어있으며, SensorStatus.cpp파일에서 실행되는 comLidar, comScnn 함수에서 전처리가 끝난 데이터를 dataContainer에 보관합니다.
@@ -16,4 +17,5 @@ SensorStatus.h에는 yolo, scnn class가 정의되어있으며, SensorStatus.cpp
 
 # Platform Communication functions to design autodriving algorithm
 플랫폼 communication 함수 설정 방법
+
 ![alt text](https://postfiles.pstatic.net/MjAxOTA4MTBfNDgg/MDAxNTY1Mzc4MTgyMjUx.28JR8RDkz5GPoAI1lYPJMlSCCwni8X199G8US_fs46og.NerUntpluxmQpXulz7Gjl2M0SE2KUY4h5L69xkM-HTsg.PNG.cdoyu/PlatformFunction.png?type=w580)
