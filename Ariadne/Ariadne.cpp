@@ -150,11 +150,11 @@ void Ariadne::clicked_btn_sensor() {
 	//if (!yoloThread->isRunning())
 	//	yoloThread->start();
 
-	//if(!platformThread->isRunning())
-	//	platformThread->start();
+	if(!platformThread->isRunning())
+		platformThread->start();
 
-	if (!lidarThread->isRunning())
-		lidarThread->start();
+	//if (!lidarThread->isRunning())
+	//	lidarThread->start();
 
     //if (!gpsThread->isRunning())
     //    gpsThread->start();
@@ -264,6 +264,7 @@ void Ariadne::AutoPortFinder() {
 		SetupDiGetDeviceRegistryProperty(hDeviceInfo, &devInfoData, SPDRP_HARDWAREID, nullptr, nullptr, 0, &reqSize);
 		BYTE* hardwareId = new BYTE[(reqSize > 1) ? reqSize : 1];
 		// now store it in a buffer
+		
 		if (SetupDiGetDeviceRegistryProperty(hDeviceInfo, &devInfoData, SPDRP_HARDWAREID, &regDataType, hardwareId, sizeof(hardwareId) * reqSize, nullptr))
 		{
 			// find the size required to hold the friendly name
@@ -281,23 +282,18 @@ void Ariadne::AutoPortFinder() {
 				memset(friendlyName, 0, reqSize > 1 ? reqSize : 1);
 			}
 			else {
+				CString hwID((const wchar_t*)hardwareId);
 				CString strPort((const wchar_t*)friendlyName);
-				
+				CString portName = strPort.Left(reqSize / 2 - 7);
 				CString port = strPort.Mid(reqSize / 2 - 6, 4);
-
-				if (devInfoData.ClassGuid == gpsGuid) {
+				printf("%S\n", hwID);
+				//printf("port = %S\n port name = %S\n port num = %S\n", strPort, portName, port);
+				if (hwID == "AX99100MF\\AX99100_COM") {
 					dataContainer->setValue_gps_port(port);
 				}
-				else if (devInfoData.ClassGuid == platformGuid) {
+				else if (hwID == "USB\\VID_067B&PID_2303&REV_0300") {
 					dataContainer->setValue_platform_port(port);
-				}
-				
-				cout << devInfoData.ClassGuid.Data1 << endl;
-				cout << devInfoData.ClassGuid.Data2 << endl;
-				cout << devInfoData.ClassGuid.Data3 << endl;
-				for (int i = 0; i < 8; i++)
-					cout << (unsigned int)devInfoData.ClassGuid.Data4[i] << endl;
-
+				}				
 			}
 			// use friendlyName here
 			delete[] friendlyName;
@@ -383,7 +379,7 @@ PlatformCom::PlatformCom()
 void PlatformCom::comPlatform() {
     cout << "platform start" << endl;
 	//dataContainer->getValue_platform_port();
-    if (_platform.OpenPort(L"COM5")) ////////////  @@@@@@  막 바꾸지 맙시다  @@@@@@  ////////////
+    if (_platform.OpenPort(dataContainer->getValue_platform_port())) ////////////  @@@@@@  막 바꾸지 맙시다  @@@@@@  ////////////
     {
         _platform.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _platform.SetCommunicationTimeouts(0, 0, 0, 0, 0);
@@ -519,8 +515,8 @@ void GPSCom::comGPS() { // rt ; Real Time
     QVector<double> store_y;
 
     cout << "gps communication now" << endl;
-	// dataContainer->getValue_gps_port()
-    if (_gps.OpenPort(L"COM3")) {
+	// 
+    if (_gps.OpenPort(dataContainer->getValue_gps_port())) {
 
         _gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
