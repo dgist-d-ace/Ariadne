@@ -47,12 +47,12 @@ enum {
 	//SICK_SCAN_NUM_MAX = 541,
 	SICK_SCAN_FRAME_NUM = 1,			// average of 2 frame
 	SICK_SCAN_ROI_X = 3000,				// 반폭: 3.0 m, 좌우 총 6.0m
-	SICK_SCAN_ROI_Y = 6000,				// 6.0 m
+	SICK_SCAN_ROI_Y = 9500,				// 6.0 m
 	SICK_SCAN_DIST_MIN = 100,		    // 0.1 m
 	SICK_SCAN_DIST_MAX = 50000,			// 50 m
 	SICK_SCAN_DIST_AVERAGE = 100,		// 0.1 m
 	SICK_SCAN_DIST_OBJECT = 50,         // 0.05 m
-	SICK_SCAN_DIST_CIRCLE_MIN = 50,     // 0.05 m
+	SICK_SCAN_DIST_CIRCLE_MIN = 25,     // 0.05 m
 	SICK_SCAN_DIST_CIRCLE_MAX = 500,    // 0.5 m
 	SICK_SCAN_DEG_START = 0,			// 0 deg
 	SICK_SCAN_DEG_RESOLUTION = 250,		// 0.25 deg
@@ -97,7 +97,7 @@ public:
 	vector<bool> finBoolData; //물체의 동정적 여부 집합 - 1프레임
 
 	//GUI
-	Mat imgLiDAR;
+	Mat imgLiDAR; //최종 이미지
 
 private:
 	bool ConnectToDevice(string host, int port);

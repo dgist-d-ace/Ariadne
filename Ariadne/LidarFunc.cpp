@@ -476,10 +476,8 @@ void LastOfLiDAR::ParseSickData(std::string& strBuf)
     m_vecRawScans = rawScans;
     ConvertRawToRTheta();
     m_bDataAvailable = true;
-
-   // cout << "lol m_bDataAvailable: " << m_bDataAvailable << endl;
-
-
+	
+   //cout << "lol m_bDataAvailable: " << m_bDataAvailable << endl;
 
     free(buf);
 }
@@ -658,7 +656,7 @@ void LastOfLiDAR::Clustering(vector<Point2d> &finVecXY, queue<vector<vector<doub
 	if (finObjData.size() == 2) { //Queue ²Ë Â÷¸é pop
 		finObjData.pop();
 	}
-
+	
 	finObjData.push(objDataSet);
 }
 

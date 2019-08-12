@@ -150,18 +150,20 @@ void DataContainer::show_PtoU()
 }
 
 //
-//	라이다
+//	라이다				???????싫비???????
 //
 
 vector<cv::Point2d> DataContainer::getValue_lidar_VecXY() { return m_lidar_VecXY; }
 queue<vector<vector<double> > > DataContainer::getValue_lidar_Data() { return m_lidar_Data; }
 vector<cv::Point2d> DataContainer::getValue_lidar_VecData() { return m_lidar_VecData; }
 vector<bool> DataContainer::getValue_lidar_BoolData() { return m_lidar_BoolData; }
+cv::Mat DataContainer::getValue_lidar_imgData() { return m_lidar_imgData; }
 
 void DataContainer::setValue_lidar_VecXY(vector<cv::Point2d> VecXY) { m_lidar_VecXY = VecXY; }
 void DataContainer::setValue_lidar_Data(queue<vector<vector<double> > > data) { m_lidar_Data = data; }
 void DataContainer::setValue_lidar_VecData(vector<cv::Point2d> vecData) { m_lidar_VecData = vecData; }
 void DataContainer::setValue_lidar_BoolData(vector<bool> boolData) { m_lidar_BoolData = boolData; }
+void DataContainer::setValue_lidar_ImgData(cv::Mat imgData) { m_lidar_imgData = imgData; }
 
 
 // 수정 필요

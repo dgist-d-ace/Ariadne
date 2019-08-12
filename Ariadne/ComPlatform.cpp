@@ -98,12 +98,50 @@ void ComPlatform::setWritePram(BYTE* writeBuffer)
 	writeBuffer[3] = (BYTE)(dataContainer->getValue_UtoP_AorM());
 	writeBuffer[4] = (BYTE)(dataContainer->getValue_UtoP_E_STOP());
 	writeBuffer[5] = (BYTE)(dataContainer->getValue_UtoP_GEAR());
-	writeBuffer[6] = lower(dataContainer->getValue_UtoP_SPEED());
-	writeBuffer[7] = upper(dataContainer->getValue_UtoP_SPEED());
-	writeBuffer[8] = lower(dataContainer->getValue_UtoP_STEER());
-	writeBuffer[9] = upper(dataContainer->getValue_UtoP_STEER());
+	writeBuffer[6] = lower(setData_speed(dataContainer->getValue_UtoP_SPEED()));
+	writeBuffer[7] = upper(setData_speed(dataContainer->getValue_UtoP_SPEED()));
+	writeBuffer[8] = lower(setData_steering(dataContainer->getValue_UtoP_STEER()));
+	writeBuffer[9] = upper(setData_steering(dataContainer->getValue_UtoP_STEER()));
 	writeBuffer[10] = (BYTE)(dataContainer->getValue_UtoP_BRAKE());
 	writeBuffer[11] = (BYTE)(dataContainer->getValue_UtoP_ALIVE());
 	writeBuffer[12] = 0x0d;
 	writeBuffer[13] = 0x0a;
+}
+
+#define steeringKP 0.75
+#define speedKP		1.5
+#define steerRatio  1.0
+
+int ComPlatform::setData_steering(int desired_steering)
+{
+	int present_steering = dataContainer->getValue_PtoU_STEER(); //-2000~2000
+	desired_steering *= -71;
+
+	desired_steering = (desired_steering - present_steering) *steeringKP + present_steering;
+
+	if (desired_steering > 2000) {
+		desired_steering = 2000;
+	}
+	else if (desired_steering < -2000) {
+		desired_steering = -2000;
+	}
+	return desired_steering;
+	//dataContainer->setValue_UtoP_STEER(desired_steering);
+}
+
+int ComPlatform::setData_speed(int desired_speed)
+{
+	int present_speed = dataContainer->getValue_PtoU_SPEED(); //0~200
+	desired_speed *= 10;
+
+	desired_speed = (desired_speed - present_speed) *speedKP + present_speed;
+
+	if (desired_speed > 200) {
+		desired_speed = 200;
+	}
+	else if (desired_speed < 0) {
+		desired_speed = 0;
+	}
+	return desired_speed;
+	//dataContainer->setValue_UtoP_SPEED(desired_speed);
 }

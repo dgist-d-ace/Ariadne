@@ -56,7 +56,10 @@ Ariadne::Ariadne(QWidget *parent)
 	driving = new Driving;
 	drivingThread = new QThread;
 	driving->moveToThread(drivingThread);
+
+	//SWITCH LIDAR CONTROLING.
 	connect(drivingThread, SIGNAL(started()), driving, SLOT(Basic()));
+	//connect(drivingThread, SIGNAL(started()), driving, SLOT(LOS()));
 
     //  -------------------  UI control ------------------------- //
 
@@ -139,7 +142,7 @@ CString ConvertQstringtoCString(QString qs)
 // This function is to start communication with sensor.
 void Ariadne::clicked_btn_sensor() {
 
-	//AutoPortFinder();
+	AutoPortFinder();
 
 	//if (!scnnThread->isRunning())
 		//scnnThread->start();
@@ -379,8 +382,8 @@ PlatformCom::PlatformCom()
 
 void PlatformCom::comPlatform() {
     cout << "platform start" << endl;
-	//dataContainer->getValue_platform_port()
-    if (_platform.OpenPort(L"COM7"))
+	//dataContainer->getValue_platform_port();
+    if (_platform.OpenPort(L"COM5")) ////////////  @@@@@@  막 바꾸지 맙시다  @@@@@@  ////////////
     {
         _platform.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _platform.SetCommunicationTimeouts(0, 0, 0, 0, 0);
@@ -516,8 +519,8 @@ void GPSCom::comGPS() { // rt ; Real Time
     QVector<double> store_y;
 
     cout << "gps communication now" << endl;
-
-    if (_gps.OpenPort(dataContainer->getValue_gps_port())) {
+	// dataContainer->getValue_gps_port()
+    if (_gps.OpenPort(L"COM3")) {
 
         _gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);

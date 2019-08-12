@@ -1,6 +1,5 @@
 #include "SensorStatus.h"
 #include "ScnnFunc.h"
-
 #include <tchar.h>
 
 
@@ -14,53 +13,81 @@ LidarCom::LidarCom() {
 }
 
 
+State getStartState(int startX, int startY, int startTheta, int startSteer, int startSpeed) {
+	//to do: read from yml file
+	//start point: center of bottom, theta: always 18.
+	return State(startX, startY, startTheta, startSteer, startSpeed);
+}
+
+State getTargetState(int targetX, int targetY, int targetTheta, int targetSteer, int targetSpeed) {
+	//to do: read from yml file
+	//target point: center of top, alpha: random
+	return State(targetX, targetY, targetTheta, targetSteer, targetSpeed);
+}
+
+Map getMatMap(Mat &imgLiDAR) {
+	//to do: read from yml file
+	//start point: center of bottom, theta: always 18.
+	return Map(imgLiDAR);
+}
+
 int LidarCom::comLidar() {
 	LastOfLiDAR lol;
 
+	/**/
 	if (!lol.Initialize()) {
 		cout << "Connect ERROR!!!" << endl;
 		return -1;
 	}
-	else {
-	}
 
 	lol.StartCapture();
 
-	while (1) {
-		if (lol.m_bDataAvailable) {
+	//Mat picLiDAR = imread("maps/intersection1.png", 0); // exeption error: 파일 이름 잘못된거임
 
+	// 교차로 1번 경로를 위한 시작 및 종착점 설정
+	//int startX = MAPX / 2, startY = MAPY - BOT_L, startTheta = 305, startSteer = 0, startSpeed = 60; // It will be multiplied by 5, so 18 is 90 degree
+	//int targetX = MAPX / 2, targetY = BOT_L, targetTheta = 270, targetSteer = 0, targetSpeed = 60;
+
+	while (1) {
+		if (lol.m_bDataAvailable) { // lol.m_bDataAvailable
+			/**/
 			dataContainer->updateValue_lidar_status();
 
-
+			Mat M(MAPY, MAPX, CV_8UC3, Scalar::all(255));
+			lol.imgLiDAR = M; //default == 2160,3840
 			lol.GetValidDataRTheta(lol.validScans);
 			lol.Conversion(lol.validScans, lol.finQVecXY);
 			lol.Average(lol.finQVecXY, lol.finVecXY);
 			lol.Clustering(lol.finVecXY, lol.finObjData);
 			lol.Vector(lol.finObjData, lol.finVecData, lol.finBoolData);
 
-			dataContainer->setValue_lidar_BoolData(lol.finBoolData);
-			dataContainer->setValue_lidar_Data(lol.finObjData);
-			dataContainer->setValue_lidar_VecXY(lol.finVecXY);
-			dataContainer->setValue_lidar_VecData(lol.finVecData);
+				dataContainer->setValue_lidar_BoolData(lol.finBoolData);
+				dataContainer->setValue_lidar_Data(lol.finObjData);
+				dataContainer->setValue_lidar_VecXY(lol.finVecXY);
+				dataContainer->setValue_lidar_VecData(lol.finVecData);
 
-			//lol.DrawData(lol.finVecXY, lol.finLiDARData, lol.finVecData, lol.finBoolData, lol.imgLiDAR);
 
-			//ov.PlatformVector(lol.finLiDARData, ov.finVecData, ov.finBoolData);
-			//ov.DrawVector(lol.finLiDARData, ov.finVecData, lol.imgLiDAR);
+			//dataContainer->setValue_lidar_ImgData(lol.imgLiDAR);
+			//lol.DrawData(lol.finVecXY, lol.finObjData, lol.finVecData, lol.finBoolData, lol.imgLiDAR);
 
-			// cout << "Reset" << endl;
+			//cout << "Reset" << endl;
 
+			//imshow("DrawLiDARData", resizeLiDAR);
 
 		}
 
+		int key = waitKey(1);
 
+		if (key == 27) {
+			break;
+		}
 	}
 
 	lol.StopCapture();
 	lol.UnInitialize();
+
 	return 0;
 }
-
 
 Scnn::Scnn() {
 	dataContainer = DataContainer::getInstance();

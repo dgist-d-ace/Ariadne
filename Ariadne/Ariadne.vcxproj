@@ -68,6 +68,7 @@
       <AdditionalLibraryDirectories>C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\x64\vc15\lib;$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;Qt5PrintSupportd.lib;opencv_world345d.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <StackReserveSize>0xa000000</StackReserveSize>
     </Link>
     <QtMoc>
       <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
@@ -99,6 +100,7 @@
       <AdditionalLibraryDirectories>C:\Users\D-Ace\Desktop\libtorch\lib;C:\Users\D-Ace\opencv\build\x64\vc15\lib;C:\libtorch\lib;C:\opencv-3.4.5\opencv-3.4.5\build\x64\vc15\lib;C:\Users\DY\Downloads\libtorch-win-shared-with-deps-latest\libtorch\lib;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\x64\vc15\lib;$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;Qt5PrintSupport.lib;opencv_world345.lib;opencv_img_hash345.lib;torch.lib;caffe2_module_test_dynamic.lib;caffe2.lib;onnx.lib;onnx_proto.lib;libprotoc.lib;libprotobuf.lib;cpuinfo.lib;clog.lib;libprotobuf-lite.lib;c10.lib;foxi_loader.lib;foxi_dummy.lib;onnxifi_dummy.lib;onnxifi_loader.lib;qtmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <StackReserveSize>0xa000000</StackReserveSize>
     </Link>
     <QtMoc>
       <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
@@ -117,6 +119,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Ariadne.cpp" />
+    <ClCompile Include="Compare.cpp" />
     <ClCompile Include="ComPlatform.cpp" />
     <ClCompile Include="CSerialPort.cpp" />
     <ClCompile Include="DataContainer.cpp" />
@@ -126,12 +129,16 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Gui.cpp" />
     <ClCompile Include="LidarFunc.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="MissionAct.cpp" />
+    <ClCompile Include="Planner.cpp" />
     <ClCompile Include="qcustomplot.cpp" />
     <ClCompile Include="ScnnFunc.cpp" />
     <ClCompile Include="SensorStatus.cpp" />
+    <ClCompile Include="State.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Ariadne.h" />
@@ -143,10 +150,13 @@
     <QtRcc Include="Ariadne.qrc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Compare.hpp" />
     <ClInclude Include="ComPlatform.h" />
     <ClInclude Include="CSerialPort.h" />
     <ClInclude Include="DataContainer.h" />
     <ClInclude Include="GeneratedFiles\ui_Ariadne.h" />
+    <ClInclude Include="State.hpp" />
+    <ClInclude Include="Utils.hpp" />
     <QtMoc Include="MissionAct.h">
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtPrintSupport;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include\opencv2;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include</IncludePath>
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\libtorch\include\torch\csrc\api\include;C:\libtorch\include;C:\opencv-3.4.5\opencv-3.4.5\build\include\opencv2;C:\opencv-3.4.5\opencv-3.4.5\build\include;C:\Users\DY\Downloads\libtorch-win-shared-with-deps-latest\libtorch\include;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include;.\GeneratedFiles;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtPrintSupport;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include\opencv2</IncludePath>
@@ -155,7 +165,10 @@
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtPrintSupport;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include\opencv2;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include</IncludePath>
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\libtorch\include\torch\csrc\api\include;C:\libtorch\include;C:\opencv-3.4.5\opencv-3.4.5\build\include\opencv2;C:\opencv-3.4.5\opencv-3.4.5\build\include;C:\Users\DY\Downloads\libtorch-win-shared-with-deps-latest\libtorch\include;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include;.\GeneratedFiles;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtPrintSupport;C:\Users\DY\Desktop\opencv-3.4.5\opencv-3.4.5\build\include\opencv2</IncludePath>
     </QtMoc>
+    <ClInclude Include="Gui.hpp" />
     <ClInclude Include="LidarFunc.h" />
+    <ClInclude Include="Map.hpp" />
+    <ClInclude Include="Planner.hpp" />
     <ClInclude Include="ScnnFunc.h" />
     <QtMoc Include="SensorStatus.h">
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>

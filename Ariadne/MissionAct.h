@@ -1,5 +1,6 @@
 
 #include "DataContainer.h"
+#include "Planner.hpp"
 #include <iostream>
 
 #define steeringKP 0.75
@@ -21,7 +22,12 @@ public:
 	Mat imgPath;
 	Mat scoreMap;
 	//vector<int> theta = { 0, -5, 5, -10, 10, -15, 15 };
+
+	Planner *aster;
+
 public slots:
+	void DrawData();
+	void LOS();
 	void Basic();
 
 	void setData_speed(int speed);			
