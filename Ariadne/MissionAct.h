@@ -29,10 +29,8 @@ public slots:
 	void DrawData();
 	void LOS();
 	void Basic();
+	Mat getLaneData();
 
-	void setData_speed(int speed);			
-	void setData_steering(int steering);
-	
 	void Mission1();
     void Mission2();
     void Mission3();

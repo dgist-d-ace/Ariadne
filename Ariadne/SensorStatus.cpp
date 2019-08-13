@@ -94,7 +94,7 @@ int LidarCom::comLidar() {
 
 			//cout << "Reset" << endl;
 
-			//imshow("DrawLiDARData", resizeLiDAR);
+			//imshow("DrawLiDARData", lol.imgLiDAR);
 
 		}
 
@@ -170,6 +170,7 @@ int Scnn::boostScnn() {
 
 	while (1)
 	{
+		dataContainer->updateValue_scnn_status();
 		py::object params = scnn.attr("scnn_run")();
 		vector<int> lists = to_std_vector<int>(params);
 		vector<int> existLanes;
@@ -182,27 +183,27 @@ int Scnn::boostScnn() {
 		}
 
 		dataContainer->setValue_scnn_existLanes(existLanes);
-		cout << "existLanes : ";
+		//cout << "existLanes : ";
 
 		for (i = 0; i < 4; i++)
 		{
-			cout << lists[i] << " ";
+			//cout << lists[i] << " ";
 		}
-		cout << endl;
+		//cout << endl;
 
-		cout << "existLanes : ";
+		//cout << "existLanes : ";
 		for (i = 0; i < 4; i++)
 		{
-			cout << existLanes[i] << " ";
+			//cout << existLanes[i] << " ";
 		}
-		cout << endl;
+		//cout << endl;
 
-		cout << "existLanes : ";
+		//cout << "existLanes : ";
 		for (i = 0; i < 4; i++)
 		{
-			cout << dataContainer->getValue_scnn_existLanes()[i] << " ";
+			//cout << dataContainer->getValue_scnn_existLanes()[i] << " ";
 		}
-		cout << endl;
+		//cout << endl;
 
 		j = 0;
 		for (i = 5; i < lists.size(); i++) {
@@ -220,10 +221,10 @@ int Scnn::boostScnn() {
 
 		for (int i = 0; i < 4; i++)
 		{
-			cout << "lane " << i << " : ";
-			for(int j = 0; j < dataContainer->getValue_scnn_lanes()[i].size(); j++)
-				cout << dataContainer->getValue_scnn_lanes()[i][j] << " ";
-			cout << endl;
+			//cout << "lane " << i << " : ";
+			for(int j = 0; j < dataContainer->getValue_scnn_lanes()[i].size(); j++){}
+				//cout << dataContainer->getValue_scnn_lanes()[i][j] << " ";
+			//cout << endl;
 		}
 
 		existLanes.clear();
