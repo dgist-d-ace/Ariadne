@@ -28,16 +28,19 @@ void DataContainer::setValue_gps_port(CString port) { m_gps_port = port; }
 int DataContainer::getValue_platform_status() { mtx_platform_status.lock(); int temp = m_platform_status; mtx_platform_status.unlock(); return temp; }
 int DataContainer::getValue_lidar_status() { mtx_lidar_status.lock(); int temp = m_lidar_status; mtx_lidar_status.unlock(); return temp; }
 int DataContainer::getValue_scnn_status() { mtx_scnn_status.lock(); int temp = m_scnn_status; mtx_scnn_status.unlock(); return temp; }
+int DataContainer::getValue_yolo_status() { mtx_yolo_status.lock(); int temp = m_yolo_status; mtx_yolo_status.unlock(); return temp; }
 int DataContainer::getValue_gps_status() { mtx_gps_status.lock(); int temp = m_gps_status; mtx_gps_status.unlock(); return temp; }
 
 void DataContainer::setValue_platform_status(int value) { mtx_platform_status.lock(); m_platform_status = value; mtx_platform_status.unlock(); }
 void DataContainer::setValue_lidar_status(int value) { mtx_lidar_status.lock(); m_lidar_status = value; mtx_lidar_status.unlock(); }
 void DataContainer::setValue_scnn_status(int value) { mtx_scnn_status.lock(); m_scnn_status = value; mtx_scnn_status.unlock(); }
+void DataContainer::setValue_yolo_status(int value) { mtx_yolo_status.lock(); m_yolo_status = value; mtx_yolo_status.unlock(); }
 void DataContainer::setValue_gps_status(int value) { mtx_gps_status.lock(); m_gps_status = value; mtx_gps_status.unlock(); }
 
 void DataContainer::updateValue_platform_status() { mtx_platform_status.lock(); m_platform_status < 256 ? m_platform_status++ : 256; mtx_platform_status.unlock(); }
 void DataContainer::updateValue_lidar_status() { mtx_lidar_status.lock(); m_lidar_status < 256 ? m_lidar_status++ : 256; mtx_lidar_status.unlock(); }
 void DataContainer::updateValue_scnn_status() { mtx_scnn_status.lock(); m_scnn_status < 256 ? m_scnn_status++ : 256; mtx_scnn_status.unlock(); }
+void DataContainer::updateValue_yolo_status() { mtx_yolo_status.lock(); m_yolo_status < 256 ? m_yolo_status++ : 256; mtx_yolo_status.unlock(); }
 void DataContainer::updateValue_gps_status() { mtx_gps_status.lock(); m_gps_status < 256 ? m_gps_status++ : 256; mtx_gps_status.unlock(); }
 
 
@@ -153,17 +156,17 @@ void DataContainer::show_PtoU()
 //	라이다				???????싫비???????
 //
 
-vector<cv::Point2d> DataContainer::getValue_lidar_VecXY() { return m_lidar_VecXY; }
-queue<vector<vector<double> > > DataContainer::getValue_lidar_Data() { return m_lidar_Data; }
-vector<cv::Point2d> DataContainer::getValue_lidar_VecData() { return m_lidar_VecData; }
-vector<bool> DataContainer::getValue_lidar_BoolData() { return m_lidar_BoolData; }
-cv::Mat DataContainer::getValue_lidar_imgData() { return m_lidar_imgData; }
+vector<cv::Point2d> DataContainer::getValue_lidar_VecXY() { mtx_lidar_VecXY.lock();vector<cv::Point2d> temp = m_lidar_VecXY; mtx_lidar_VecXY.unlock(); return temp; }
+queue<vector<vector<double> > > DataContainer::getValue_lidar_Data() { mtx_lidar_data.lock(); queue<vector<vector<double> > > temp = m_lidar_Data; mtx_lidar_data.unlock(); return temp; }
+vector<cv::Point2d> DataContainer::getValue_lidar_VecData() { mtx_lidar_VecData.lock(); vector<cv::Point2d> temp = m_lidar_VecData; mtx_lidar_VecData.unlock(); return temp; }
+vector<bool> DataContainer::getValue_lidar_BoolData() { mtx_lidar_BoolData.lock(); vector<bool> temp = m_lidar_BoolData; mtx_lidar_BoolData.unlock(); return temp; }
+cv::Mat DataContainer::getValue_lidar_imgData() { mtx_lidar_imgData.lock(); cv::Mat temp = m_lidar_imgData; mtx_lidar_imgData.unlock(); return temp; }
 
-void DataContainer::setValue_lidar_VecXY(vector<cv::Point2d> VecXY) { m_lidar_VecXY = VecXY; }
-void DataContainer::setValue_lidar_Data(queue<vector<vector<double> > > data) { m_lidar_Data = data; }
-void DataContainer::setValue_lidar_VecData(vector<cv::Point2d> vecData) { m_lidar_VecData = vecData; }
-void DataContainer::setValue_lidar_BoolData(vector<bool> boolData) { m_lidar_BoolData = boolData; }
-void DataContainer::setValue_lidar_ImgData(cv::Mat imgData) { m_lidar_imgData = imgData; }
+void DataContainer::setValue_lidar_VecXY(vector<cv::Point2d> VecXY) { mtx_lidar_VecXY.lock(); m_lidar_VecXY = VecXY; mtx_lidar_VecXY.unlock();}
+void DataContainer::setValue_lidar_Data(queue<vector<vector<double> > > data) { mtx_lidar_data.lock(); m_lidar_Data = data; mtx_lidar_data.unlock(); }
+void DataContainer::setValue_lidar_VecData(vector<cv::Point2d> vecData) { mtx_lidar_VecData.lock(); m_lidar_VecData = vecData; mtx_lidar_VecData.unlock(); }
+void DataContainer::setValue_lidar_BoolData(vector<bool> boolData) { mtx_lidar_BoolData.lock(); m_lidar_BoolData = boolData; mtx_lidar_BoolData.unlock(); }
+void DataContainer::setValue_lidar_ImgData(cv::Mat imgData) { mtx_lidar_imgData.lock(); m_lidar_imgData = imgData; mtx_lidar_imgData.unlock();}
 
 
 // 수정 필요
