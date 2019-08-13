@@ -62,6 +62,7 @@ public slots:
     void comScnn();
 	void SuspendScnn();
 	void ResumeScnn();
+	int boostScnn(); /// for boost test
 };
 
 class Yolo : public QObject

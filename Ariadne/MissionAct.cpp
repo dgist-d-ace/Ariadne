@@ -525,7 +525,7 @@ void Driving::Basic() {
 		//Add the line data in the scoreMap and img Path.
 		uint scoreofMap=0; //total sum of scoreMap
 		uint scoreofPath=0;//total sum of imgPath
-		uint speedHigh = 10;
+		uint speedHigh = 8;
 		uint speedLow = 3;
 		uint desired_speed;
 
@@ -552,8 +552,20 @@ void Driving::Basic() {
 		}
 		else {
 			double objClose = objdist.at(distance(objdist.begin(), min_element(objdist.begin(), objdist.end())));
-			if (desired_speed < speedLow) { desired_speed = 0; cout << "Fucking LOW SCORE!!" << endl; }
-			else if (objClose < 750 * scale) { desired_speed = 0; cout << "TOO CLOSE!!!!" << endl; }
+			if (desired_speed < speedLow) {
+				desired_speed = speedLow; cout << "Fucking LOW SCORE!!" << endl;
+				cv::arrowedLine(imgPath, center, pntF, CV_RGB(250, 250, 250), 5);
+				cv::arrowedLine(imgPath, center, stepFirst, CV_RGB(100, 100, 100), 3);
+				cv::arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(100, 100, 100), 3);
+			
+			}
+			else if (objClose < 750 * scale) { 
+				desired_speed = speedLow; cout << "TOO CLOSE!!!!" << endl;
+				cv::arrowedLine(imgPath, center, pntF, CV_RGB(250, 250, 250), 5);
+				cv::arrowedLine(imgPath, center, stepFirst, CV_RGB(100, 100, 100), 3);
+				cv::arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(100, 100, 100), 3);
+			
+			}
 			else {
 				cv::arrowedLine(imgPath, center, pntF, CV_RGB(250, 250, 250), 5);
 				cv::arrowedLine(imgPath, center, stepFirst, CV_RGB(100, 100, 100), 3);

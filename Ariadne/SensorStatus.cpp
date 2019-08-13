@@ -8,6 +8,28 @@
 #define UPDATE_SENSOR_STATUS 102
 #define UPDATE_SENSOR_AUTOSTARTUP 103
 
+/// for Scnn: this part is run by boosted python: scnn python program is included in Ariadne program
+/// for more information: last line in this cpp file
+#define BOOST_PYTHON_STATIC_LIB
+//#define BOOST_LIB_NAME "boost_numpy35"
+//#include <boost/config/auto_link.hpp>
+#include <boost/python.hpp>
+#include <boost/python/numpy.hpp>
+#include <iostream>
+#include <boost/python/stl_iterator.hpp>
+
+namespace py = boost::python;
+namespace np = boost::python::numpy;
+
+template< typename T >
+std::vector< T > to_std_vector(const py::object& iterable)
+{
+	return std::vector< T >(py::stl_input_iterator< T >(iterable),
+		py::stl_input_iterator< T >());
+}
+
+/// ////////////////////////////////////////////////////////////////////
+
 LidarCom::LidarCom() {
 	dataContainer = DataContainer::getInstance();
 }
@@ -91,75 +113,173 @@ int LidarCom::comLidar() {
 
 Scnn::Scnn() {
 	dataContainer = DataContainer::getInstance();
-	ZeroMemory(&si, sizeof(si));
-	si.cb = sizeof(si);
-	ZeroMemory(&pi, sizeof(pi)); // assign program memory
-	TCHAR commandLine[] = TEXT("C:\\ProgramData\\Anaconda3\\Scripts\\activate_torch.bat");
-	if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
-	}
-	else {
-		tid = pi.hThread;
-		SuspendThread(tid);
-	}
+	//ZeroMemory(&si, sizeof(si));
+	//si.cb = sizeof(si);
+	//ZeroMemory(&pi, sizeof(pi)); // assign program memory
+	//TCHAR commandLine[] = TEXT("C:\\ProgramData\\Anaconda3\\Scripts\\activate_torch.bat");
+	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
+	//}
+	//else {
+	//	tid = pi.hThread;
+	//	SuspendThread(tid);
+	//}
 
-	WSADATA wsa;
-	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-		cout << "error\n";
+	//WSADATA wsa;
+	//if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+	//	cout << "error\n";
 
-	server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-	sockaddr_in addr = { 0 };
-	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	addr.sin_port = htons(2222);
+	//server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	//sockaddr_in addr = { 0 };
+	//addr.sin_family = AF_INET;
+	//addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	//addr.sin_port = htons(2222);
 
-	if (::bind(server, (sockaddr*)&addr, sizeof(addr))==SOCKET_ERROR)
-		cout<<"binding fail\n";
+	//if (::bind(server, (sockaddr*)&addr, sizeof(addr))==SOCKET_ERROR)
+	//	cout<<"binding fail\n";
 
-	if (listen(server, SOMAXCONN) == SOCKET_ERROR)
-		cout << "listening fail\n";
+	//if (listen(server, SOMAXCONN) == SOCKET_ERROR)
+	//	cout << "listening fail\n";
 }
 
-void Scnn::comScnn() {
-		
-	ResumeThread(tid);
+/// this function is for ruuning python scnn program in Ariadne
+int Scnn::boostScnn() {
 
-	client = accept(server, NULL, NULL);
+	using namespace std;
 
-	char message[5000];
-	int strLen;
-	int n;
-	int i;
-	while (1) {
-		ZeroMemory(&message, sizeof(message));
-		strLen = recv(client, (char*)message, sizeof(message) - 1, 0);
+	Py_SetPythonHome(L"C:/Users/D-Ace/.conda/envs/py35");
 
-		//n = atoi(message);
-		cout << message << endl;
-		vector<vector<cv::Point2i>> lanes(4);
-		vector<int> existLanes(4);
-		stringstream in;
-		in.str(message);
+	Py_Initialize();
+	np::initialize();
+
+	py::object main_module = py::import("__main__");
+	py::object main_namespace = main_module.attr("__dict__");
+	py::object print = py::import("__main__").attr("__builtins__").attr("print");
+
+
+	//py::exec("import simple", main_namespace);
+	py::exec("import scnn_c_implementation", main_namespace);
+	
+
+	py::object scnn = py::import("scnn_c_implementation");
+
+
+	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/exp1_kcity_best_50.pth", 0, true);
+	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/exp1_kcity_best_50.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test.mp4", true);
+	//scnn.attr("scnn_init")("exp1_kcity_best_50.pth", 0, true);
+
+	while (1)
+	{
+		py::object params = scnn.attr("scnn_run2")();
+		vector<int> lists = to_std_vector<int>(params);
+		vector<int> existLanes;
+		vector<vector<Point2i>> lanes(4);
+
+		int i, j = 0;
+
 		for (i = 0; i < 4; i++) {
-			int n;
-			in >> n;
-			cout << n << endl;
+			existLanes.push_back(lists[i]);
+		}
 
-			for (int j = 0; j < n; j++) {
-				int x, y;
-				in >> x >> y;
-				lanes[i].push_back(cv::Point2i(x, y));
+		dataContainer->setValue_scnn_existLanes(existLanes);
+		cout << "existLanes : ";
+
+		for (i = 0; i < 4; i++)
+		{
+			cout << lists[i] << " ";
+		}
+		cout << endl;
+
+		cout << "existLanes : ";
+		for (i = 0; i < 4; i++)
+		{
+			cout << existLanes[i] << " ";
+		}
+		cout << endl;
+
+		cout << "existLanes : ";
+		for (i = 0; i < 4; i++)
+		{
+			cout << dataContainer->getValue_scnn_existLanes()[i] << " ";
+		}
+		cout << endl;
+
+		j = 0;
+		for (i = 5; i < lists.size(); i++) {
+			if (lists[i] == -1) {
+				j++;
+			}
+			else {
+				cv::Point2i coordinate(lists[i], lists[i+1]);
+				lanes[j].push_back(coordinate);
+				i++;
 			}
 		}
-		for (i = 0; i < 4; i++) {
-			in >> existLanes[i];
-			cout << existLanes[i] << endl;;
+
+		dataContainer->setValue_scnn_lanes(lanes);
+
+		for (int i = 0; i < 4; i++)
+		{
+			cout << "lane " << i << " : ";
+			for(int j = 0; j < dataContainer->getValue_scnn_lanes()[i].size(); j++)
+				cout << dataContainer->getValue_scnn_lanes()[i][j] << " ";
+			cout << endl;
 		}
 
-		dataContainer->setValue_camera1_lanes(lanes);
-		dataContainer->setValue_camera1_existLanes(existLanes);
+		existLanes.clear();
+		lanes.clear();
 	}
-	closesocket(client);
-	closesocket(server);
+
+	scnn.attr("scnn_destroy")();
+	print("good");
+
+
+	return 0;
+}
+
+/// this function is for TCP/IP communication by WinSOCK: not used now.
+void Scnn::comScnn() {
+		
+	//ResumeThread(tid);
+
+	//client = accept(server, NULL, NULL); /// 누군가 나에게 연결할때까지 기다리겠다 <- 연결을 확실히 시도했다고 들 때
+	///// 잘못 썼다가 Ariadne가 멈출 수도 있음. cout이 안뜬다 이러면 accept가 잘못되었을 가능성이 있음
+
+	//char message[5000];
+	//int strLen;
+	//int n;
+	//int i;
+	//while (1) {
+	//	ZeroMemory(&message, sizeof(message));
+	//	strLen = recv(client, (char*)message, sizeof(message) - 1, 0);
+	//	/// 받아오는 메시지의 사이즈
+	//	//n = atoi(message);
+	//	cout << message << endl;
+	//	vector<vector<cv::Point2i>> lanes(4);
+	//	vector<int> existLanes(4); /// 레인이 있는지 없는지
+	//	stringstream in; /// string으로 받아옴 띄어쓰기 기준으로 -> 뭐 하나 오고 띄우고 띄우고 띄우고
+	//	in.str(message);
+	//	for (i = 0; i < 4; i++) {
+	//		int n;
+	//		in >> n;
+	//		cout << n << endl;
+
+	//		for (int j = 0; j < n; j++) {
+	//			int x, y;
+	//			in >> x >> y;
+	//			lanes[i].push_back(cv::Point2i(x, y));
+	//		}
+	//	}
+	//	for (i = 0; i < 4; i++) {
+	//		in >> existLanes[i];
+	//		cout << existLanes[i] << endl;; /// lane이 4개 들어오는데 왼쪽부터 차선에 있는 점을 줌.
+	//		/// 벡터 하나가 한 차선. 벡터 4개 받음
+	//	}
+
+	//	dataContainer->setValue_scnn_lanes(lanes);
+	//	dataContainer->setValue_scnn_existLanes(existLanes);
+	//}
+	//closesocket(client); /// 통신 끊음
+	//closesocket(server); /// 통신 끊음
 }
 
 void Scnn::SuspendScnn() {
@@ -298,32 +418,29 @@ View::View() {
     ZeroMemory(&si, sizeof(si));
     si.cb = sizeof(si);
     ZeroMemory(&pi, sizeof(pi)); // assign program memory
-    TCHAR commandLine[] = TEXT(" "); // VIEW command창에서 실행할 수 있는 명령어
+    TCHAR commandLine[] = TEXT(""); // VIEW command창에서 실행할 수 있는 명령어
     if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
-    }
-    else {
-        tid = pi.hThread;
-        SuspendThread(tid);
     }
 
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-        cout << "View error\n";
+        cout << "View error\n"; /// 통신 포트 초기화 왠진 모르겠지만 해야함
 
     server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     sockaddr_in addr = { 0 };
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    addr.sin_addr.s_addr = inet_addr("127.0.0.1"); /// local host의 번호(무조건 이거)
     addr.sin_port = htons(8888); // 내부 포트 번호
 
     if (::bind(server, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR)
         cout << "View binding fail\n";
 
     if (listen(server, SOMAXCONN) == SOCKET_ERROR)
-        cout << "View listening fail\n";
+        cout << "View listening fail\n"; /// 바인드: 포트를 잡아놓음 리슨: 포트를 듣겠다
 }
 
 void View::comView() {
+
 }
 
 void View::SuspendView() {
@@ -387,4 +504,21 @@ int ConnectClient(HANDLE hNamePipe)
 	return 1;
 }
 
+/// ///// 통합 프로그램 작성자 최도연
 
+/// SCNN은 차선 검출을 위한 딥러닝 알고리즘으로 사용한 라이브러리는 파이토치이며 파이썬으로 작성되었습니다. (파이썬 SCNN 개발자: 배인환)
+/// 하지만 파이토치를 c++에서 쓸 수 없어 C++용 라이브러리인 리브토치를 사용하려고 했습니다.
+/// 그러나 리브토치는 현시점(2019.08)에 개발된 지 얼마 안되는 라이브러리로 파이토치를 이용한 함수 계산 결과와
+/// 리브토치를 이용한 함수 계산 결과가 다르다는 문제가 있었습니다. 
+/// 통합 프로그램 아리아드네에서 scnn, lidar, yolo, platform, drive thread를 돌리기 위해서는 scnn에서 검출한 차선 정보가 필요했습니다
+/// 그럼에도 위에서 서술한 문제를 해결하지 못해 처음에는 Ariadne.exe 파일과 scnn.exe 파일을 TCP/IP 통신으로 정보를 주고받는 방법으로 해결하고자 했습니다.
+/// 해당 코드가 comScnn()입니다.
+/// 그러나 파이썬 부스트를 c++에서 import하여 쓸 수 있는 방법이 성공하여 기존의 TCP/IP 통신 방법을 쓰지 않고 아리아드네 내부에서 SCNN을 돌리게 되었습니다.
+/// 해당 코드는 boostScnn() 입니다.
+/// boostSCNN()은 SCNN에서 검출한 차선 정보를 std::vector로 담아서 쓰는 함수입니다.
+/// 
+///
+///
+///
+///
+///

@@ -64,13 +64,14 @@ private:
 
 	int m_platform_status = 0;
 	int m_lidar_status = 0;
-	int m_camera1_status = 0;
+	int m_scnn_status = 0;
+	int m_yolo_status = 0;
 	int m_gps_status = 0;
 
 	QMutex mtx_platform_status;
 	QMutex mtx_lidar_status;
-	QMutex mtx_camera1_status;
-	QMutex mtx_camera2_status;
+	QMutex mtx_scnn_status;
+	QMutex mtx_yolo_status;
 	QMutex mtx_gps_status;
 	
 	//
@@ -85,11 +86,11 @@ private:
 	//
 	// 카메라1: 주행용 (차선 인식) 
 	//
-	vector<vector<cv::Point2i>> m_camera1_lanes;
-	vector<int> m_camara1_existLanes;
+	vector<vector<cv::Point2i>> m_scnn_lanes;
+	vector<int> m_scnn_existLanes;
 
-	QMutex mtx_camera1_lanes;
-	QMutex mtx_camera1_existLanes;
+	QMutex mtx_scnn_lanes;
+	QMutex mtx_scnn_existLanes;
 
 	//
 	//카메라2: 미정 (주차용) 
@@ -122,8 +123,6 @@ private:
 	QMutex mtx_imu_accelX;
 	QMutex mtx_imu_accelY;
 	QMutex mtx_imu_accelZ;
-
-
 	
 	QMutex mtx_gps_valid;
 	QMutex mtx_gps_latitude;
@@ -173,9 +172,9 @@ public:
 	void setValue_lidar_status(int value);
 	void updateValue_lidar_status();
 
-	int getValue_camera1_status();
-	void setValue_camera1_status(int value);
-	void updateValue_camera1_status();
+	int getValue_scnn_status();
+	void setValue_scnn_status(int value);
+	void updateValue_scnn_status();
 
 	int getValue_gps_status();
 	void setValue_gps_status(int value);
@@ -258,10 +257,10 @@ public:
 	//	카메라1
 	//
 
-	vector<vector<cv::Point2i>> getValue_camera1_lanes();
-	vector<int> getValue_camera1_existLanes();
-	void setValue_camera1_lanes(vector<vector<cv::Point2i>> lanes);
-	void setValue_camera1_existLanes(vector<int> existLanes);
+	vector<vector<cv::Point2i>> getValue_scnn_lanes();
+	vector<int> getValue_scnn_existLanes();
+	void setValue_scnn_lanes(vector<vector<cv::Point2i>> lanes);
+	void setValue_scnn_existLanes(vector<int> existLanes);
 	
 
 	//

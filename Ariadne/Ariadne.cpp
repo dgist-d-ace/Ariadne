@@ -40,11 +40,10 @@ Ariadne::Ariadne(QWidget *parent)
 	connect(lidarThread, SIGNAL(started()), lidarCom, SLOT(comLidar()));
 	connect(lidarCom, SIGNAL(LidarExit()), lidarCom, SLOT(comLidar()));
     
-
 	scnn = new Scnn;
 	scnnThread = new QThread;
 	scnn->moveToThread(scnnThread);
-	connect(scnnThread, SIGNAL(started()), scnn, SLOT(comScnn()));
+	connect(scnnThread, SIGNAL(started()), scnn, SLOT(boostScnn()));
 
 	yolo = new Yolo;
 	yoloThread = new QThread;
@@ -144,14 +143,14 @@ void Ariadne::clicked_btn_sensor() {
 
 	AutoPortFinder();
 
-	//if (!scnnThread->isRunning())
-		//scnnThread->start();
+	if (!scnnThread->isRunning())
+		scnnThread->start();
 
 	//if (!yoloThread->isRunning())
 	//	yoloThread->start();
 
-	if(!platformThread->isRunning())
-		platformThread->start();
+	//if(!platformThread->isRunning())
+	//	platformThread->start();
 
 	//if (!lidarThread->isRunning())
 	//	lidarThread->start();
@@ -284,9 +283,7 @@ void Ariadne::AutoPortFinder() {
 			else {
 				CString hwID((const wchar_t*)hardwareId);
 				CString strPort((const wchar_t*)friendlyName);
-				CString portName = strPort.Left(reqSize / 2 - 7);
 				CString port = strPort.Mid(reqSize / 2 - 6, 4);
-				printf("%S\n", hwID);
 				//printf("port = %S\n port name = %S\n port num = %S\n", strPort, portName, port);
 				if (hwID == "AX99100MF\\AX99100_COM") {
 					dataContainer->setValue_gps_port(port);
@@ -312,57 +309,55 @@ void Ariadne::updateSensorStatus()
     dataContainer = DataContainer::getInstance();
 
 	// Platform communication
-    if (dataContainer->getValue_platform_status() > 5)
-    { ui->comboBox->setStyleSheet("background-color: rgb(255, 82, 66)"); }
-    else if (dataContainer->getValue_platform_status() > 0)
-    { ui->comboBox->setStyleSheet("background-color: rgb(250, 255, 107)"); }
-    else if (dataContainer->getValue_platform_status() == 0)
-    { ui->comboBox->setStyleSheet("background-color: rgb(181, 206, 212)"); }
+	if (dataContainer->getValue_platform_status() > 5)
+	{ ui->label_9->setStyleSheet("background-color: rgb(144, 198, 241)"); }
+	else if (dataContainer->getValue_platform_status() > 0)
+	{ ui->label_9->setStyleSheet("background-color: rgb(255, 212, 57)"); }
+	else if (dataContainer->getValue_platform_status() == 0)
+	{ ui->label_9->setStyleSheet("background-color: rgb(255, 82, 66)"); }
 	dataContainer->setValue_platform_status(0);
 
-    // LiDAR communication code
-    if (dataContainer->getValue_lidar_status() > 5)
-    { ui->comboBox->setStyleSheet("background-color: rgb(255, 82, 66)"); }
-    else if (dataContainer->getValue_lidar_status() > 0)
-    { ui->comboBox->setStyleSheet("background-color: rgb(250, 255, 107)"); }
-    else if (dataContainer->getValue_lidar_status() == 0)
-    { ui->comboBox->setStyleSheet("background-color: rgb(181, 206, 212)"); }
+	// LiDAR communication code
+	if (dataContainer->getValue_lidar_status() > 5)
+	{  ui->label_13->setStyleSheet("background-color: rgb(144, 198, 241)"); }
+	else if (dataContainer->getValue_lidar_status() > 0)
+	{ ui->label_13->setStyleSheet("background-color: rgb(255, 212, 57)"); }
+	else if (dataContainer->getValue_lidar_status() == 0)
+	{ ui->label_13->setStyleSheet("background-color: rgb(255, 82, 66)"); }
+	dataContainer->setValue_lidar_status(0);
 
-    dataContainer->setValue_lidar_status(0);
-
-	/*
-    // CAMERA1 communication code
-    if (dataContainer->getValue_camera1_status() > 5)
-    {
-        cout << "ī�޶�1�� �����Ǿ����ϴ�." << endl;
-    }
-    else if (dataContainer->getValue_camera1_status() > 0)
-    {
-        cout << "ī�޶�1�� ������ �����ǰ� �ֽ��ϴ�." << endl;
-    }
-    else if (dataContainer->getValue_camera1_status() == 0)
-    {
-        cout << "ī�޶�1�� ������ �����Ͽ����ϴ�." << endl;
-    }
-	dataContainer->setValue_camera1_status(0);
-	*/
-
-    // GPS communication code
-    if (dataContainer->getValue_gps_status() > 5)
-    {
-        ui->comboBox->setStyleSheet("background-color: rgb(255, 82, 66)");
-    }
-    else if (dataContainer->getValue_gps_status() > 0)
-    {
-        ui->comboBox->setStyleSheet("background-color: rgb(250, 255, 107)");
-    }
-    else if (dataContainer->getValue_gps_status() == 0)
-    {
-        ui->comboBox->setStyleSheet("background-color: rgb(181, 206, 212)");
-    }
+	// GPS communication code
+	if (dataContainer->getValue_gps_status() > 5)
+	{
+		ui->label_12->setStyleSheet("background-color: rgb(144, 198, 241)");
+	}
+	else if (dataContainer->getValue_gps_status() > 0)
+	{
+		ui->label_12->setStyleSheet("background-color: rgb(255, 212, 57)");
+	}
+	else if (dataContainer->getValue_gps_status() == 0)
+	{
+		ui->label_12->setStyleSheet("background-color: rgb(255, 82, 66)");
+	}
 	dataContainer->setValue_gps_status(0);
 }
 
+	/*
+    // scnn communication code
+    if (dataContainer->getValue_scnn_status() > 5)
+    {
+        cout << "ī�޶�1�� �����Ǿ����ϴ�." << endl;
+    }
+    else if (dataContainer->getValue_scnn_status() > 0)
+    {
+        cout << "ī�޶�1�� ������ �����ǰ� �ֽ��ϴ�." << endl;
+    }
+    else if (dataContainer->getValue_scnn_status() == 0)
+    {
+        cout << "ī�޶�1�� ������ �����Ͽ����ϴ�." << endl;
+    }
+	dataContainer->setValue_scnn_status(0);
+	*/
 //
 
 Ui::AriadneClass* Ariadne::getUI() { return ui; }
