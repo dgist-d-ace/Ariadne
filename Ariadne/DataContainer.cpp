@@ -177,7 +177,7 @@ void deleteData_lidar_object(){}
 */
 
 //
-//	Ä«¸Þ¶ó1
+// SCNN
 //
 void DataContainer::setValue_scnn_lanes(vector<vector<cv::Point2i>> lanes) { mtx_scnn_lanes.lock(); m_scnn_lanes = lanes; mtx_scnn_lanes.unlock(); }
 void DataContainer::setValue_scnn_existLanes(vector<int> existLanes) { mtx_scnn_existLanes.lock(); m_scnn_existLanes = existLanes; mtx_scnn_existLanes.unlock(); }

@@ -578,8 +578,7 @@ void Driving::Basic() {
 			imshow("DrawLiDARData", imgPath);
 		}
 
-		dataContainer->setValue_UtoP_STEER(desired_steering);
-		dataContainer->setValue_UtoP_SPEED(desired_speed);
+
 
 			//////////////////////////////////////////////////
 			////Final Control the steering angle and speed////
@@ -590,6 +589,7 @@ void Driving::Basic() {
 	
 		//end = clock();
 		//cout << "time: " << (double)(end - start) / 1000 << "sec" << endl ;
+
 
 		int key = cv::waitKey(1);
 
