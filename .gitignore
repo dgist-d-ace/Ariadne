@@ -259,3 +259,7 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+Ariadne/0805.pth
+Ariadne/test.mp4
+Ariadne/exp1_kcity_best_50.pth
+Ariadne/1.jpg
