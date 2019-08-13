@@ -303,27 +303,39 @@ void Ariadne::AutoPortFinder() {
 // This function is to change UI according to Sensor communication status
 void Ariadne::updateSensorStatus()
 {
-    using namespace std;
+	using namespace std;
 
-    DataContainer *dataContainer;
-    dataContainer = DataContainer::getInstance();
+	DataContainer *dataContainer;
+	dataContainer = DataContainer::getInstance();
 
 	// Platform communication
 	if (dataContainer->getValue_platform_status() > 5)
-	{ ui->label_9->setStyleSheet("background-color: rgb(144, 198, 241)"); }
+	{
+		ui->label_9->setStyleSheet("background-color: rgb(144, 198, 241)");
+	}
 	else if (dataContainer->getValue_platform_status() > 0)
-	{ ui->label_9->setStyleSheet("background-color: rgb(255, 212, 57)"); }
+	{
+		ui->label_9->setStyleSheet("background-color: rgb(255, 212, 57)");
+	}
 	else if (dataContainer->getValue_platform_status() == 0)
-	{ ui->label_9->setStyleSheet("background-color: rgb(255, 82, 66)"); }
+	{
+		ui->label_9->setStyleSheet("background-color: rgb(255, 82, 66)");
+	}
 	dataContainer->setValue_platform_status(0);
 
 	// LiDAR communication code
 	if (dataContainer->getValue_lidar_status() > 5)
-	{  ui->label_13->setStyleSheet("background-color: rgb(144, 198, 241)"); }
+	{
+		ui->label_13->setStyleSheet("background-color: rgb(144, 198, 241)");
+	}
 	else if (dataContainer->getValue_lidar_status() > 0)
-	{ ui->label_13->setStyleSheet("background-color: rgb(255, 212, 57)"); }
+	{
+		ui->label_13->setStyleSheet("background-color: rgb(255, 212, 57)");
+	}
 	else if (dataContainer->getValue_lidar_status() == 0)
-	{ ui->label_13->setStyleSheet("background-color: rgb(255, 82, 66)"); }
+	{
+		ui->label_13->setStyleSheet("background-color: rgb(255, 82, 66)");
+	}
 	dataContainer->setValue_lidar_status(0);
 
 	// GPS communication code
@@ -340,25 +352,38 @@ void Ariadne::updateSensorStatus()
 		ui->label_12->setStyleSheet("background-color: rgb(255, 82, 66)");
 	}
 	dataContainer->setValue_gps_status(0);
-}
 
-	/*
-    // scnn communication code
-    if (dataContainer->getValue_scnn_status() > 5)
-    {
-        cout << "ī�޶�1�� �����Ǿ����ϴ�." << endl;
-    }
-    else if (dataContainer->getValue_scnn_status() > 0)
-    {
-        cout << "ī�޶�1�� ������ �����ǰ� �ֽ��ϴ�." << endl;
-    }
-    else if (dataContainer->getValue_scnn_status() == 0)
-    {
-        cout << "ī�޶�1�� ������ �����Ͽ����ϴ�." << endl;
-    }
+	// scnn communication code
+	if (dataContainer->getValue_scnn_status() > 5)
+	{
+		ui->label_11->setStyleSheet("background-color: rgb(144, 198, 241)");
+	}
+	else if (dataContainer->getValue_scnn_status() > 0)
+	{
+		ui->label_11->setStyleSheet("background-color: rgb(255, 212, 57)");
+	}
+	else if (dataContainer->getValue_scnn_status() == 0)
+	{
+		ui->label_11->setStyleSheet("background-color: rgb(255, 82, 66)");
+	}
 	dataContainer->setValue_scnn_status(0);
-	*/
-//
+
+	// yolo communication code
+	if (dataContainer->getValue_yolo_status() > 5)
+	{
+		ui->label_10->setStyleSheet("background-color: rgb(144, 198, 241)");
+	}
+	else if (dataContainer->getValue_yolo_status() > 0)
+	{
+		ui->label_10->setStyleSheet("background-color: rgb(255, 212, 57)");
+	}
+	else if (dataContainer->getValue_yolo_status() == 0)
+	{
+		ui->label_10->setStyleSheet("background-color: rgb(255, 82, 66)");
+	}
+	dataContainer->setValue_yolo_status(0);
+
+}
 
 Ui::AriadneClass* Ariadne::getUI() { return ui; }
 

@@ -83,6 +83,12 @@ private:
 	vector<bool> m_lidar_BoolData; //물체의 동정적 여부 집합 - 1프레임
 	cv::Mat m_lidar_imgData; //최종 이미지
 
+	QMutex mtx_lidar_VecXY;
+	QMutex mtx_lidar_data;
+	QMutex mtx_lidar_VecData;
+	QMutex mtx_lidar_BoolData;
+	QMutex mtx_lidar_imgData;
+
 	//
 	// 카메라1: 주행용 (차선 인식) 
 	//
@@ -176,6 +182,10 @@ public:
 	void setValue_scnn_status(int value);
 	void updateValue_scnn_status();
 
+	int getValue_yolo_status();
+	void setValue_yolo_status(int value);
+	void updateValue_yolo_status();
+
 	int getValue_gps_status();
 	void setValue_gps_status(int value);
 	void updateValue_gps_status();
@@ -262,7 +272,7 @@ public:
 	void setValue_scnn_lanes(vector<vector<cv::Point2i>> lanes);
 	void setValue_scnn_existLanes(vector<int> existLanes);
 	
-
+	
 	//
 	//	GPS
 	//
