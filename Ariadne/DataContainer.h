@@ -93,7 +93,8 @@ private:
 	// 카메라1: 주행용 (차선 인식) 
 	//
 	vector<vector<cv::Point2i>> m_scnn_lanes;
-	vector<int> m_scnn_existLanes;
+	// 0: no lane 1: white lane 2: blue lane 3: yellow lane 
+	vector<int> m_scnn_existLanes; 
 
 	QMutex mtx_scnn_lanes;
 	QMutex mtx_scnn_existLanes;
