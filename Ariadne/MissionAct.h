@@ -6,7 +6,8 @@
 #define steeringKP 0.75
 #define speedKP		1.5
 #define steerRatio  1.0
-
+#define speedHigh	10
+#define speedLow	4
 class Driving : public QObject
 {
 	Q_OBJECT
@@ -29,7 +30,7 @@ public slots:
 	void DrawData();
 	void LOS();
 	void Basic();
-	Mat getLaneData();
+	Mat getLaneData(int scorestep);
 
 	void Mission1();
     void Mission2();

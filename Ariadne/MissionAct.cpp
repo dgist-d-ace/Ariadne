@@ -45,7 +45,9 @@ int Driving::GoTo(double x, double y, double theta)
 
 
 //using the data from scnn
-Mat Driving::getLaneData()
+//output: 600x600 Mat image
+//out of white lane: x*1, out of blue lane: x*2, out of yellow line: x*3
+Mat Driving::getLaneData(int scorestep)
 {
 	//the form of existLanes: vector<int> like [ll, l, r, rr], (0: None, 1: White, 2: Blue, 3: Yellow)
 	//the form of lanes: vector<vector<Point2i>> [[the points of ll],[the points of l],[the points of r],[the points of rr]]
@@ -53,16 +55,16 @@ Mat Driving::getLaneData()
 	vector<int> idLane = dataContainer->getValue_scnn_existLanes();
 	vector<vector<Point2i>> Lanes = dataContainer->getValue_scnn_lanes();
 	if (idLane[0] == 0 && idLane[1] == 0 && idLane[2] == 0 && idLane[3] == 0) {
-
+		//cout<< "there is no lane!!!!!" <<endl;
 	}
 	else {
 		Point2i endUp;
 		Point2i endDown;
 		
-		//l, ll
+		//check the l, ll lanes
 		for (int i = 1; i > -1; i--){
-			Scalar fillColor(50 * idLane[i], 50 * idLane[i], 50 * idLane[i]);
-			if (idLane[i] == 0) {}
+			Scalar fillColor(scorestep * idLane[i], scorestep * idLane[i], scorestep * idLane[i]);
+			if (idLane[i] == 0) {} 
 			else{
 				endUp = Point(0, 0);
 				endDown = Point(0, bufferImg.rows);
@@ -74,12 +76,10 @@ Mat Driving::getLaneData()
 				int ptNum = Mat(lineContour).rows;
 				fillPoly(bufferImg, &pts, &ptNum, 1, fillColor);
 			}
-
 		}
-		
-		//r, rr
+		//check the r, rr lines
 		for (int i = 2; i < idLane.size(); i++){
-			Scalar fillColor(50 * idLane[i], 50 * idLane[i], 50 * idLane[i]);
+			Scalar fillColor(scorestep * idLane[i], scorestep * idLane[i], scorestep * idLane[i]);
 			if (idLane[i] == 0) {}
 			else{
 				endUp = Point(bufferImg.cols, 0);
@@ -88,8 +88,6 @@ Mat Driving::getLaneData()
 				lineContour.push_back(endDown);
 				for (int j = 0; j < Lanes.at(i).size(); j++) { lineContour.push_back(Lanes.at(i).at(j)); }
 				lineContour.push_back(endUp);
-
-
 				const Point2i *pts = (const Point2i*)Mat(lineContour).data;
 				int ptNum = Mat(lineContour).rows;
 				fillPoly(bufferImg, &pts, &ptNum, 1, fillColor);
@@ -97,13 +95,13 @@ Mat Driving::getLaneData()
 		}
 	}
 	//imshow("Origin", bufferImg);
-	bufferImg = bufferImg(Range(800 - 429, 800), Range(400 - 214, 400 + 215));
+	//bufferImg = bufferImg(Range(800 - 429, 800), Range(400 - 214, 400 + 215));	//crop the image for sync with the lidar data.
+	bufferImg = bufferImg(Range(800 - 400, 800), Range(400 - 200, 400 + 200));
 	//imshow("CROP", bufferImg);
-	resize(bufferImg, bufferImg, Size(600, 600), 0, 0, CV_INTER_NN);
+	resize(bufferImg, bufferImg, Size(600, 600), 0, 0, CV_INTER_NN);	//resize the image for be same the size of lidar data
 	//imshow("RESIZE", bufferImg);
 	return bufferImg;
 }
-
 
 //VOSS algorithm (VOronoi Score System)
 void Driving::Basic() {
@@ -130,26 +128,31 @@ void Driving::Basic() {
 		//Localization of LiDAR in the ROI
 		Point2d center(cenX, cenY);
 
-
 			////////////////////////////////////////////////////////////////////////////////////
 			////Fill the Regions where cannot go in, because of max value of steering angle.////
 			////////////////////////////////////////////////////////////////////////////////////
+
 		//Left area where platform can not go (left 60degrees)
-		Point points[1][3];
-		points[0][0] = Point(center.x - carW, center.y);
-		points[0][1] = Point(cenX - SICK_SCAN_ROI_X, center.y);
-		points[0][2] = Point(cenX - SICK_SCAN_ROI_X, center.y - (SICK_SCAN_ROI_X - carW)*sqrt(3)); 
+		Point points[1][4];
+		points[0][0] = Point(cenX - carW, center.y);
+		points[0][1] = Point(leftEndX, center.y);
+		points[0][2] = Point(leftEndX, center.y - (SICK_SCAN_ROI_X*scale - carW)*sqrt(3)/2);
+		points[0][3] = Point(cenX - (SICK_SCAN_ROI_X*scale + carW)/2, center.y - (SICK_SCAN_ROI_X*scale - carW)*sqrt(3)/2);
 		const Point* pnts[1] = { points[0] };
-		int npt2[] = { 3 };
+		int npt2[] = { 4 };
+
 		//Right area where platform can not go (right 60degrees)
-		Point points2[1][3];
+		Point points2[1][4];
 		points2[0][0] = Point(center.x + carW, center.y);
-		points2[0][1] = Point(cenX + SICK_SCAN_ROI_X, center.y);
-		points2[0][2] = Point(cenX + SICK_SCAN_ROI_X, center.y - (SICK_SCAN_ROI_X - carW) * sqrt(3));
+		points2[0][1] = Point(rightEndX, center.y);
+		points2[0][2] = Point(rightEndX, center.y - (SICK_SCAN_ROI_X*scale - carW) * sqrt(3) / 2);
+		points2[0][3] = Point(cenX + (SICK_SCAN_ROI_X*scale + carW) / 2, center.y - (SICK_SCAN_ROI_X*scale - carW)*sqrt(3) / 2);
 		const Point* pnts2[1] = { points2[0] };
+
 		//Drawing
 		fillPoly(imgPath, pnts, npt2, 1, CV_RGB(150, 0, 0));
 		fillPoly(imgPath, pnts2, npt2, 1, CV_RGB(150, 0, 0));
+		imshow("check", imgPath);
 	
 		cv::cvtColor(imgPath, scoreMap, CV_BGR2GRAY);
 		threshold(scoreMap, scoreMap, 1, 20, THRESH_BINARY_INV);
@@ -203,7 +206,8 @@ void Driving::Basic() {
 			//circle(img, cirCen, objDataSet[i][2] * scale, CV_RGB(255, 0, 0), -1, CV_AA);
 
 			cenDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2));
-			objdist.push_back(cenDist);
+			objdist.push_back(cenDist-cirCenR);
+
 			touchDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2) - pow(cirCenR, 2));
 			theta_s = asin(cirCenR / cenDist);
 			theta_l = atan(objDataSet[i][1] / objDataSet[i][0]);
@@ -238,7 +242,7 @@ void Driving::Basic() {
 		}
 		//imshow("testimgagagagagggg", imgPath);
 			////////////////////////////////////
-			////Make the image to Grayscale.////
+			////Make the image to Score map.////
 			////////////////////////////////////
 
 		cv::cvtColor(imgPath, imgPath, CV_BGR2GRAY);
@@ -265,8 +269,8 @@ void Driving::Basic() {
 		//imshow("Map", scoreMap);
 
 		//Apply the lane data to the lidar data
-		Mat laneImg = getLaneData();
-		imshow("Lane Data", laneImg);
+		Mat laneImg = getLaneData(45);
+		//imshow("Lane Data", laneImg);
 		scoreMap -= laneImg;
 		imgPath -= laneImg;
 
@@ -391,16 +395,15 @@ void Driving::Basic() {
 		Point2d stepSecond(stepFirst.x + onestep * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*sin(CV_PI*(90 + goTheta2) / 180)));
 		cv::arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(255, 255, 255), 5);
 		*/
+		cv::arrowedLine(imgPath, center, stepFirst, CV_RGB(50, 50, 50), 5);
+		cv::arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(50, 50, 50), 5);
 
 			/////////////////////////////////////////////////////////////////////
 			////Determine the desired Speed in Score System with Vornoi Field////
 			/////////////////////////////////////////////////////////////////////
-		
 		//Add the line data in the scoreMap and img Path.
 		uint scoreofMap=0; //total sum of scoreMap
 		uint scoreofPath=0;//total sum of imgPath
-		uint speedHigh = 8;
-		uint speedLow = 3;
 		uint desired_speed;
 
 		uchar *map = scoreMap.data;
@@ -420,25 +423,30 @@ void Driving::Basic() {
 			/////////////////////////////
 			////!!!!!!EMERGENCY!!!!!!////
 			/////////////////////////////
-
 		if (objdist.size() == 0) {
-			cout << "do nothing" << endl;
+			//cout << "do nothing" << endl;
+			cv::arrowedLine(imgPath, center, pntF, CV_RGB(200, 200, 200), 2);
 		}
 		else {
+			//stop condition
+			//if there is any object within 600mm, STOP
+			//if the score is lower then threshold
 			double objClose = objdist.at(distance(objdist.begin(), min_element(objdist.begin(), objdist.end())));
-			if (desired_speed < speedLow) {
-				desired_speed = 0; //cout << "Fucking LOW SCORE!!" << endl;
+			if (objClose < 600*scale) { 
+				desired_speed = 0; 
+				dataContainer->setValue_UtoP_BRAKE(100);
+				cout << "STOP!!!!!!!TOO CLOSE!!!!" << endl;
 			}
-			else if (objClose < 750 * scale) { 
-				desired_speed = speedLow; //cout << "TOO CLOSE!!!!" << endl;
+			else if (desired_speed < speedLow) {
+				desired_speed = speedLow; cout << "Fucking LOW SCORE!!" << endl;
+				cv::arrowedLine(imgPath, center, pntF, CV_RGB(200, 200, 200), 2);
 			}
 			else {
 				desired_speed = desired_speed;
+				cv::arrowedLine(imgPath, center, pntF, CV_RGB(200, 200, 200), 2);
 			}
 		}
-		cv::arrowedLine(imgPath, center, pntF, CV_RGB(250, 250, 250), 5);
-		cv::arrowedLine(imgPath, center, stepFirst, CV_RGB(100, 100, 100), 3);
-		cv::arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(100, 100, 100), 3);
+
 		/*cout << "desired_speed = " << desired_speed << endl;
 		cout << "desired_steer = " << desired_steering << endl;*/
 		imshow("Map", scoreMap);

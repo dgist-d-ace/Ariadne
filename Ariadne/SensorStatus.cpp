@@ -159,10 +159,10 @@ int Scnn::boostScnn() {
 	//py::exec("import simple", main_namespace);
 	py::exec("import scnn_c_implementation_v2", main_namespace);
 	
-
 	py::object scnn = py::import("scnn_c_implementation_v2");
-
-
+	
+	
+	//change the vision sensor
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/exp1_kcity_best_50.pth", 0, true);
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", 0, true);
 	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test.mp4", true);
