@@ -116,7 +116,10 @@ Scnn::Scnn() {
 	//ZeroMemory(&si, sizeof(si));
 	//si.cb = sizeof(si);
 	//ZeroMemory(&pi, sizeof(pi)); // assign program memory
-	//TCHAR commandLine[] = TEXT("C:\\ProgramData\\Anaconda3\\Scripts\\activate_torch.bat");
+
+	////change webcam or video here
+	////TCHAR commandLine[] = TEXT("C:\\ProgramData\\Anaconda3\\Scripts\\activate_torch.bat");
+	//TCHAR commandLine[] = TEXT("C:\\ProgramData\\Anaconda3\\Scripts\\activate_torch_cam.bat");
 	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
 	//}
 	//else {
@@ -164,8 +167,8 @@ int Scnn::boostScnn() {
 	
 	//change the vision sensor
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/exp1_kcity_best_50.pth", 0, true);
-	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", 0, true);
-	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test.mp4", true);
+	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", 0, true);
+	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test.mp4", true);
 	//scnn.attr("scnn_init")("exp1_kcity_best_50.pth", 0, true);
 
 	while (1)
@@ -241,47 +244,47 @@ int Scnn::boostScnn() {
 /// this function is for TCP/IP communication by WinSOCK: not used now.
 void Scnn::comScnn() {
 		
-	//ResumeThread(tid);
+	ResumeThread(tid);
 
-	//client = accept(server, NULL, NULL); /// 누군가 나에게 연결할때까지 기다리겠다 <- 연결을 확실히 시도했다고 들 때
-	///// 잘못 썼다가 Ariadne가 멈출 수도 있음. cout이 안뜬다 이러면 accept가 잘못되었을 가능성이 있음
+	client = accept(server, NULL, NULL); /// 누군가 나에게 연결할때까지 기다리겠다 <- 연결을 확실히 시도했다고 들 때
+	/// 잘못 썼다가 Ariadne가 멈출 수도 있음. cout이 안뜬다 이러면 accept가 잘못되었을 가능성이 있음
 
-	//char message[5000];
-	//int strLen;
-	//int n;
-	//int i;
-	//while (1) {
-	//	ZeroMemory(&message, sizeof(message));
-	//	strLen = recv(client, (char*)message, sizeof(message) - 1, 0);
-	//	/// 받아오는 메시지의 사이즈
-	//	//n = atoi(message);
-	//	cout << message << endl;
-	//	vector<vector<cv::Point2i>> lanes(4);
-	//	vector<int> existLanes(4); /// 레인이 있는지 없는지
-	//	stringstream in; /// string으로 받아옴 띄어쓰기 기준으로 -> 뭐 하나 오고 띄우고 띄우고 띄우고
-	//	in.str(message);
-	//	for (i = 0; i < 4; i++) {
-	//		int n;
-	//		in >> n;
-	//		cout << n << endl;
+	char message[5000];
+	int strLen;
+	int n;
+	int i;
+	while (1) {
+		ZeroMemory(&message, sizeof(message));
+		strLen = recv(client, (char*)message, sizeof(message) - 1, 0);
+		/// 받아오는 메시지의 사이즈
+		//n = atoi(message);
+		cout << message << endl;
+		vector<vector<cv::Point2i>> lanes(4);
+		vector<int> existLanes(4); /// 레인이 있는지 없는지
+		stringstream in; /// string으로 받아옴 띄어쓰기 기준으로 -> 뭐 하나 오고 띄우고 띄우고 띄우고
+		in.str(message);
+		for (i = 0; i < 4; i++) {
+			int n;
+			in >> n;
+			cout << n << endl;
 
-	//		for (int j = 0; j < n; j++) {
-	//			int x, y;
-	//			in >> x >> y;
-	//			lanes[i].push_back(cv::Point2i(x, y));
-	//		}
-	//	}
-	//	for (i = 0; i < 4; i++) {
-	//		in >> existLanes[i];
-	//		cout << existLanes[i] << endl;; /// lane이 4개 들어오는데 왼쪽부터 차선에 있는 점을 줌.
-	//		/// 벡터 하나가 한 차선. 벡터 4개 받음
-	//	}
+			for (int j = 0; j < n; j++) {
+				int x, y;
+				in >> x >> y;
+				lanes[i].push_back(cv::Point2i(x, y));
+			}
+		}
+		for (i = 0; i < 4; i++) {
+			in >> existLanes[i];
+			cout << existLanes[i] << endl;; /// lane이 4개 들어오는데 왼쪽부터 차선에 있는 점을 줌.
+			/// 벡터 하나가 한 차선. 벡터 4개 받음
+		}
 
-	//	dataContainer->setValue_scnn_lanes(lanes);
-	//	dataContainer->setValue_scnn_existLanes(existLanes);
-	//}
-	//closesocket(client); /// 통신 끊음
-	//closesocket(server); /// 통신 끊음
+		dataContainer->setValue_scnn_lanes(lanes);
+		dataContainer->setValue_scnn_existLanes(existLanes);
+	}
+	closesocket(client); /// 통신 끊음
+	closesocket(server); /// 통신 끊음
 }
 
 void Scnn::SuspendScnn() {
