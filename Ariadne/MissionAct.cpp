@@ -21,14 +21,14 @@ Mat Driving::getLaneData(int scorestep)
 	Mat bufferImg = Mat::zeros(800, 800, CV_8UC1);
 	vector<int> idLane = dataContainer->getValue_scnn_existLanes();
 	vector<vector<Point2i>> Lanes = dataContainer->getValue_scnn_lanes();
+	Mat bufferImgR = Mat::zeros(800, 800, CV_8UC1);
+	Mat bufferImgL = Mat::zeros(800, 800, CV_8UC1);
 	if (idLane[0] == 0 && idLane[1] == 0 && idLane[2] == 0 && idLane[3] == 0) {
 		//cout<< "there is no lane!!!!!" <<endl;
 	}
 	else {
 		Point2i endUp;
 		Point2i endDown;
-		Mat bufferImgR = Mat::zeros(800,800,CV_8UC1);
-		Mat bufferImgL = Mat::zeros(800, 800, CV_8UC1);
 		int itvLane = 20;
 		//check the l, ll lanes
 		for (int i = 1; i > -1; i--) {
@@ -47,7 +47,6 @@ Mat Driving::getLaneData(int scorestep)
 				lineContour8.push_back(endDown);
 				for (int j = 0; j < Lanes.at(i).size(); j++)
 				{
-
 					lineContour1.push_back(Lanes.at(i).at(j));
 					lineContour2.push_back(Point2i(Lanes.at(i).at(j).x + itvLane, Lanes.at(i).at(j).y));
 					lineContour3.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 2, Lanes.at(i).at(j).y));
@@ -85,7 +84,6 @@ Mat Driving::getLaneData(int scorestep)
 				fillPoly(bufferImgL, &pts3, &ptNum, 1, Scalar(scorestep * 3, scorestep * 3, scorestep * 3));
 				fillPoly(bufferImgL, &pts2, &ptNum, 1, Scalar(scorestep * 4, scorestep * 4, scorestep * 4));
 				fillPoly(bufferImgL, &pts1, &ptNum, 1, Scalar(scorestep*5, scorestep*5, scorestep*5));
-
 				break;
 			}
 		}
@@ -144,45 +142,24 @@ Mat Driving::getLaneData(int scorestep)
 				fillPoly(bufferImgR, &pts3, &ptNum, 1, Scalar(scorestep * 3, scorestep * 3, scorestep * 3));
 				fillPoly(bufferImgR, &pts2, &ptNum, 1, Scalar(scorestep * 4, scorestep * 4, scorestep * 4));
 				fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar(scorestep*5, scorestep*5, scorestep*5));
-
 				break;
-				
 			}
 		}
 		//crop the image for sync with the lidar data.
 		//imshow("R", bufferImgR);
 		//imshow("L", bufferImgL);
 
-		bufferImg = bufferImgR + bufferImgL;
-		imshow("total lane image", bufferImg);
-		bufferImg = bufferImg(Range(800 - 400, 800), Range(400 - 200, 400 + 200));
 
-		//threshold(bufferImg, bufferImg, 2, 10, THRESH_BINARY);
-		//imshow("CROP", bufferImg);
-		resize(bufferImg, bufferImg, Size(600, 600), 0, 0, CV_INTER_NN);	//resize the image for be same the size of lidar data
-		//imshow("Lane", bufferImg);
-
-		////Make the score lane map. for tracking the center of lane.
-		//int kerSize;
-		//Mat kernel;
-		//Mat buffer = Mat::zeros(600, 600, CV_8UC1);
-		////buffer = Scalar(50);
-		//Mat stepVot = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
-		//for (int i = 1; i < 7; i++) {
-		//	//Mat stepVot;
-		//	kerSize = 40 * i;
-		//	kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
-		//	morphologyEx(bufferImg, stepVot, MORPH_ERODE, kernel);
-		//	//buffer += stepVot;
-		//	if (i < 5) { buffer += stepVot; }
-		//	else { buffer -= stepVot; }
-		//}
-		imshow("buffer", bufferImg);
-		//bufferImg = Scalar(30);
-		//bufferImg += buffer;
-		//imshow("Lane Scoremap", bufferImg);
-		return bufferImg;
 	}
+	bufferImg = bufferImgR + bufferImgL;
+	//imshow("total lane image", bufferImg);
+	bufferImg = bufferImg(Range(800 - 400, 800), Range(400 - 200, 400 + 200));
+	//threshold(bufferImg, bufferImg, 2, 10, THRESH_BINARY);
+	//imshow("CROP", bufferImg);
+	resize(bufferImg, bufferImg, Size(600, 600), 0, 0, CV_INTER_NN);	//resize the image for be same the size of lidar data
+	//imshow("buffer", bufferImg);
+	return bufferImg;
+
 }
 
 //VOSS algorithm (VOronoi Score System)
@@ -316,13 +293,13 @@ void Driving::Basic() {
 			imgPath += stepVot;
 			scoreMap += stepVot2;
 		}
+
 		//Apply the lane data to the lidar data
-		Mat laneImg = getLaneData(5);
+		Mat buf = Mat::zeros(600, 600, CV_8UC1);
+		Mat laneImg = getLaneData(10);
+		imshow("LaneMap", laneImg);
 		scoreMap -= laneImg;
 		imgPath -= laneImg;
-
-		////imshow("Lane Data", laneImg);
-		//imshow("map", scoreMap);
 
 			//////////////////////////////////////////////////////////////////////////////
 			////Determine the desired Steering Angle in Score System with Vornoi Field////
@@ -499,14 +476,14 @@ void Driving::Basic() {
 
 		/*cout << "desired_speed = " << desired_speed << endl;
 		cout << "desired_steer = " << desired_steering << endl;*/
-		//imshow("Map", scoreMap);
+		imshow("Map", scoreMap);
 		imshow("Path", imgPath);
 
 			//////////////////////////////////////////////////
 			////Final Control the steering angle and speed////
 			//////////////////////////////////////////////////
-		dataContainer->setValue_UtoP_STEER(desired_steering);
-		dataContainer->setValue_UtoP_SPEED(desired_speed);
+		//dataContainer->setValue_UtoP_STEER(desired_steering);
+		//dataContainer->setValue_UtoP_SPEED(desired_speed);
 		
 		end = clock();
 		cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl ;
