@@ -140,6 +140,7 @@ CString ConvertQstringtoCString(QString qs)
 
 // This function is to start communication with sensor.
 void Ariadne::clicked_btn_sensor() {
+	//SENSOR SWITCH
 
 	AutoPortFinder();
 

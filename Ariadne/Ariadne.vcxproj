@@ -134,6 +134,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MissionAct.cpp" />
+    <ClCompile Include="missionTrigger.cpp" />
     <ClCompile Include="Planner.cpp" />
     <ClCompile Include="qcustomplot.cpp" />
     <ClCompile Include="ScnnFunc.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="CSerialPort.h" />
     <ClInclude Include="DataContainer.h" />
     <ClInclude Include="GeneratedFiles\ui_Ariadne.h" />
+    <ClInclude Include="missionTrigger.h" />
     <ClInclude Include="State.hpp" />
     <ClInclude Include="Utils.hpp" />
     <QtMoc Include="MissionAct.h">

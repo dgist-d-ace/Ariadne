@@ -6,43 +6,10 @@
 
 using namespace std;
 using namespace cv;
+
 Driving::Driving() {
 	dataContainer = DataContainer::getInstance();
 }
-
-// input: destination coordinate x, y(m), heading value of destination(radian)
-// output: steer Value
-int Driving::GoTo(double x, double y, double theta)
-{
-	
-    /// x unit : meter, relative x coordinate from now to destination
-    /// y unit : meter, relative y coordinate from now to destination
-    /// theta unit: radian, the target heading degree when the destination coordinates are reached.
-    double turningR = abs(x + y / tan(-(theta))); /// Turning Radius
-    if (turningR < 0.8)
-    {
-        if (x > 0) { return 2000; }
-        else { return -2000; }
-    }
-    double steerRad;
-    if (x > 0) { steerRad = atan(pow(0.8, 2) / sqrt(pow(turningR, 2) - 0.64)); }
-    else { steerRad = -atan(pow(0.8, 2) / sqrt(pow(turningR, 2) - 0.64)); } /// Steer Radian
-
-    double steerDegree = rad2deg(steerRad); /// convert Radian to Degree
-
-    if (-27 < steerDegree && steerDegree < 27) {
-        return steerDegree * 71;
-        /// Because of the steer value set, can't be over than 2000 : it means the maximum steer degree is 28.16
-    }
-    else
-    {
-        if (steerDegree > 0) { return 2000; } ///set steer maximum value
-        else { return -2000; }
-    }
-	
-	return 1;
-}
-
 
 //using the data from scnn
 //output: 600x600 Mat image
@@ -51,7 +18,7 @@ Mat Driving::getLaneData(int scorestep)
 {
 	//the form of existLanes: vector<int> like [ll, l, r, rr], (0: None, 1: White, 2: Blue, 3: Yellow)
 	//the form of lanes: vector<vector<Point2i>> [[the points of ll],[the points of l],[the points of r],[the points of rr]]
-	Mat bufferImg = Mat::zeros(800,800,CV_8UC1);
+	Mat bufferImg = Mat::zeros(800, 800, CV_8UC1);
 	vector<int> idLane = dataContainer->getValue_scnn_existLanes();
 	vector<vector<Point2i>> Lanes = dataContainer->getValue_scnn_lanes();
 	if (idLane[0] == 0 && idLane[1] == 0 && idLane[2] == 0 && idLane[3] == 0) {
@@ -60,47 +27,162 @@ Mat Driving::getLaneData(int scorestep)
 	else {
 		Point2i endUp;
 		Point2i endDown;
-		
+		Mat bufferImgR = Mat::zeros(800,800,CV_8UC1);
+		Mat bufferImgL = Mat::zeros(800, 800, CV_8UC1);
+		int itvLane = 20;
 		//check the l, ll lanes
-		for (int i = 1; i > -1; i--){
-			Scalar fillColor(scorestep * idLane[i], scorestep * idLane[i], scorestep * idLane[i]);
-			if (idLane[i] == 0) {} 
-			else{
+		for (int i = 1; i > -1; i--) {
+			if (idLane[i] == 0) {}
+			else {
 				endUp = Point(0, 0);
 				endDown = Point(0, bufferImg.rows);
-				vector<Point2i> lineContour;
-				lineContour.push_back(endDown);
-				for (int j = 0; j < Lanes.at(i).size(); j++) { lineContour.push_back(Lanes.at(i).at(j)); }
-				lineContour.push_back(endUp);
-				const Point2i *pts = (const Point2i*)Mat(lineContour).data;
-				int ptNum = Mat(lineContour).rows;
-				fillPoly(bufferImg, &pts, &ptNum, 1, fillColor);
+				vector<Point2i> lineContour1, lineContour2, lineContour3, lineContour4, lineContour5, lineContour6, lineContour7, lineContour8;
+				lineContour1.push_back(endDown);
+				lineContour2.push_back(endDown);
+				lineContour3.push_back(endDown);
+				lineContour4.push_back(endDown);
+				lineContour5.push_back(endDown);
+				lineContour6.push_back(endDown);
+				lineContour7.push_back(endDown);
+				lineContour8.push_back(endDown);
+				for (int j = 0; j < Lanes.at(i).size(); j++)
+				{
+
+					lineContour1.push_back(Lanes.at(i).at(j));
+					lineContour2.push_back(Point2i(Lanes.at(i).at(j).x + itvLane, Lanes.at(i).at(j).y));
+					lineContour3.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 2, Lanes.at(i).at(j).y));
+					lineContour4.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 3, Lanes.at(i).at(j).y));
+					lineContour5.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 4, Lanes.at(i).at(j).y));
+					lineContour6.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 5, Lanes.at(i).at(j).y));
+					lineContour7.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 6, Lanes.at(i).at(j).y));
+					lineContour8.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 7, Lanes.at(i).at(j).y));
+				}
+				lineContour1.push_back(endUp);
+				lineContour2.push_back(endUp);
+				lineContour3.push_back(endUp);
+				lineContour4.push_back(endUp);
+				lineContour5.push_back(endUp);
+				lineContour6.push_back(endUp);
+				lineContour7.push_back(endUp);
+				lineContour8.push_back(endUp);
+
+				const Point2i *pts1 = (const Point2i*)Mat(lineContour1).data;
+				const Point2i *pts2 = (const Point2i*)Mat(lineContour2).data;
+				const Point2i *pts3 = (const Point2i*)Mat(lineContour3).data;
+				const Point2i *pts4 = (const Point2i*)Mat(lineContour4).data;
+				const Point2i *pts5 = (const Point2i*)Mat(lineContour5).data;
+				const Point2i *pts6 = (const Point2i*)Mat(lineContour6).data;
+				const Point2i *pts7 = (const Point2i*)Mat(lineContour7).data;
+				const Point2i *pts8 = (const Point2i*)Mat(lineContour8).data;
+
+				int ptNum = Mat(lineContour1).rows;
+
+				fillPoly(bufferImgL, &pts8, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
+				fillPoly(bufferImgL, &pts7, &ptNum, 1, Scalar(scorestep * 1, scorestep * 1, scorestep * 1));
+				fillPoly(bufferImgL, &pts6, &ptNum, 1, Scalar(scorestep * 0, scorestep * 0, scorestep * 0));
+				fillPoly(bufferImgL, &pts5, &ptNum, 1, Scalar(scorestep * 1, scorestep * 1, scorestep * 1));
+				fillPoly(bufferImgL, &pts4, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
+				fillPoly(bufferImgL, &pts3, &ptNum, 1, Scalar(scorestep * 3, scorestep * 3, scorestep * 3));
+				fillPoly(bufferImgL, &pts2, &ptNum, 1, Scalar(scorestep * 4, scorestep * 4, scorestep * 4));
+				fillPoly(bufferImgL, &pts1, &ptNum, 1, Scalar(scorestep*5, scorestep*5, scorestep*5));
+
+				break;
 			}
 		}
 		//check the r, rr lines
-		for (int i = 2; i < idLane.size(); i++){
-			Scalar fillColor(scorestep * idLane[i], scorestep * idLane[i], scorestep * idLane[i]);
+		for (int i = 2; i < idLane.size(); i++) {
 			if (idLane[i] == 0) {}
-			else{
+			else {
 				endUp = Point(bufferImg.cols, 0);
 				endDown = Point(bufferImg.cols, bufferImg.rows);
-				vector<Point2i> lineContour;
-				lineContour.push_back(endDown);
-				for (int j = 0; j < Lanes.at(i).size(); j++) { lineContour.push_back(Lanes.at(i).at(j)); }
-				lineContour.push_back(endUp);
-				const Point2i *pts = (const Point2i*)Mat(lineContour).data;
-				int ptNum = Mat(lineContour).rows;
-				fillPoly(bufferImg, &pts, &ptNum, 1, fillColor);
+				vector<Point2i> lineContour1, lineContour2, lineContour3, lineContour4, lineContour5, lineContour6, lineContour7, lineContour8;
+				lineContour1.push_back(endDown);
+				lineContour2.push_back(endDown);
+				lineContour3.push_back(endDown);
+				lineContour4.push_back(endDown);
+				lineContour5.push_back(endDown);
+				lineContour6.push_back(endDown);
+				lineContour7.push_back(endDown);
+				lineContour8.push_back(endDown);
+				for (int j = 0; j < Lanes.at(i).size(); j++)
+				{
+
+					lineContour1.push_back(Lanes.at(i).at(j));
+					lineContour2.push_back(Point2i(Lanes.at(i).at(j).x - itvLane, Lanes.at(i).at(j).y));
+					lineContour3.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 2, Lanes.at(i).at(j).y));
+					lineContour4.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 3, Lanes.at(i).at(j).y));
+					lineContour5.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 4, Lanes.at(i).at(j).y));
+					lineContour6.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 5, Lanes.at(i).at(j).y));
+					lineContour7.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 6, Lanes.at(i).at(j).y));
+					lineContour8.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 7, Lanes.at(i).at(j).y));
+				}
+				lineContour1.push_back(endUp);
+				lineContour2.push_back(endUp);
+				lineContour3.push_back(endUp);
+				lineContour4.push_back(endUp);
+				lineContour5.push_back(endUp);
+				lineContour6.push_back(endUp);
+				lineContour7.push_back(endUp);
+				lineContour8.push_back(endUp);
+
+				const Point2i *pts1 = (const Point2i*)Mat(lineContour1).data;
+				const Point2i *pts2 = (const Point2i*)Mat(lineContour2).data;
+				const Point2i *pts3 = (const Point2i*)Mat(lineContour3).data;
+				const Point2i *pts4 = (const Point2i*)Mat(lineContour4).data;
+				const Point2i *pts5 = (const Point2i*)Mat(lineContour5).data;
+				const Point2i *pts6 = (const Point2i*)Mat(lineContour6).data;
+				const Point2i *pts7 = (const Point2i*)Mat(lineContour7).data;
+				const Point2i *pts8 = (const Point2i*)Mat(lineContour8).data;
+
+				int ptNum = Mat(lineContour1).rows;
+
+				fillPoly(bufferImgR, &pts8, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
+				fillPoly(bufferImgR, &pts7, &ptNum, 1, Scalar(scorestep * 1, scorestep * 1, scorestep * 1));
+				fillPoly(bufferImgR, &pts6, &ptNum, 1, Scalar(scorestep * 0, scorestep * 0, scorestep * 0));
+				fillPoly(bufferImgR, &pts5, &ptNum, 1, Scalar(scorestep * 1, scorestep * 1, scorestep * 1));
+				fillPoly(bufferImgR, &pts4, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
+				fillPoly(bufferImgR, &pts3, &ptNum, 1, Scalar(scorestep * 3, scorestep * 3, scorestep * 3));
+				fillPoly(bufferImgR, &pts2, &ptNum, 1, Scalar(scorestep * 4, scorestep * 4, scorestep * 4));
+				fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar(scorestep*5, scorestep*5, scorestep*5));
+
+				break;
+				
 			}
 		}
+		//crop the image for sync with the lidar data.
+		//imshow("R", bufferImgR);
+		//imshow("L", bufferImgL);
+
+		bufferImg = bufferImgR + bufferImgL;
+		imshow("total lane image", bufferImg);
+		bufferImg = bufferImg(Range(800 - 400, 800), Range(400 - 200, 400 + 200));
+
+		//threshold(bufferImg, bufferImg, 2, 10, THRESH_BINARY);
+		//imshow("CROP", bufferImg);
+		resize(bufferImg, bufferImg, Size(600, 600), 0, 0, CV_INTER_NN);	//resize the image for be same the size of lidar data
+		//imshow("Lane", bufferImg);
+
+		////Make the score lane map. for tracking the center of lane.
+		//int kerSize;
+		//Mat kernel;
+		//Mat buffer = Mat::zeros(600, 600, CV_8UC1);
+		////buffer = Scalar(50);
+		//Mat stepVot = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
+		//for (int i = 1; i < 7; i++) {
+		//	//Mat stepVot;
+		//	kerSize = 40 * i;
+		//	kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
+		//	morphologyEx(bufferImg, stepVot, MORPH_ERODE, kernel);
+		//	//buffer += stepVot;
+		//	if (i < 5) { buffer += stepVot; }
+		//	else { buffer -= stepVot; }
+		//}
+		imshow("buffer", bufferImg);
+		//bufferImg = Scalar(30);
+		//bufferImg += buffer;
+		//imshow("Lane Scoremap", bufferImg);
+		return bufferImg;
 	}
-	//imshow("Origin", bufferImg);
-	//bufferImg = bufferImg(Range(800 - 429, 800), Range(400 - 214, 400 + 215));	//crop the image for sync with the lidar data.
-	bufferImg = bufferImg(Range(800 - 400, 800), Range(400 - 200, 400 + 200));
-	//imshow("CROP", bufferImg);
-	resize(bufferImg, bufferImg, Size(600, 600), 0, 0, CV_INTER_NN);	//resize the image for be same the size of lidar data
-	//imshow("RESIZE", bufferImg);
-	return bufferImg;
 }
 
 //VOSS algorithm (VOronoi Score System)
@@ -131,7 +213,6 @@ void Driving::Basic() {
 			////////////////////////////////////////////////////////////////////////////////////
 			////Fill the Regions where cannot go in, because of max value of steering angle.////
 			////////////////////////////////////////////////////////////////////////////////////
-
 		//Left area where platform can not go (left 60degrees)
 		Point points[1][4];
 		points[0][0] = Point(cenX - carW, center.y);
@@ -140,7 +221,6 @@ void Driving::Basic() {
 		points[0][3] = Point(cenX - (SICK_SCAN_ROI_X*scale + carW)/2, center.y - (SICK_SCAN_ROI_X*scale - carW)*sqrt(3)/2);
 		const Point* pnts[1] = { points[0] };
 		int npt2[] = { 4 };
-
 		//Right area where platform can not go (right 60degrees)
 		Point points2[1][4];
 		points2[0][0] = Point(center.x + carW, center.y);
@@ -148,28 +228,10 @@ void Driving::Basic() {
 		points2[0][2] = Point(rightEndX, center.y - (SICK_SCAN_ROI_X*scale - carW) * sqrt(3) / 2);
 		points2[0][3] = Point(cenX + (SICK_SCAN_ROI_X*scale + carW) / 2, center.y - (SICK_SCAN_ROI_X*scale - carW)*sqrt(3) / 2);
 		const Point* pnts2[1] = { points2[0] };
-
 		//Drawing
 		fillPoly(imgPath, pnts, npt2, 1, CV_RGB(150, 0, 0));
 		fillPoly(imgPath, pnts2, npt2, 1, CV_RGB(150, 0, 0));
-		imshow("check", imgPath);
-	
 		cv::cvtColor(imgPath, scoreMap, CV_BGR2GRAY);
-		threshold(scoreMap, scoreMap, 1, 20, THRESH_BINARY_INV);
-
-			//////////////////////////////////////////////
-			////Fill the Regions which mean out of ROI////
-			//////////////////////////////////////////////
-		//rectangle(imgPath, Point2d(0, 0), Point2d(imgPath.cols, topEndY), CV_RGB(255, 255, 255), -1, CV_AA, 0);
-		//rectangle(imgPath, Point2d(0, 0), Point2d(leftEndX, imgPath.rows), CV_RGB(255, 255, 255), -1, CV_AA, 0);
-		//rectangle(imgPath, Point2d(imgPath.cols, imgPath.rows), Point2d(0, cenY), CV_RGB(255, 255, 255), -1, CV_AA, 0);
-		//rectangle(imgPath, Point2d(imgPath.cols, imgPath.rows), Point2d(rightEndX, 0), CV_RGB(255, 255, 255), -1, CV_AA, 0);
-
-		//rectangle(scoreMap, Point2d(0, 0), Point2d(imgPath.cols, topEndY), CV_RGB(255, 255, 255), -1, CV_AA, 0);
-		//rectangle(scoreMap, Point2d(0, 0), Point2d(leftEndX, imgPath.rows), CV_RGB(255, 255, 255), -1, CV_AA, 0);
-		//rectangle(scoreMap, Point2d(imgPath.cols, imgPath.rows), Point2d(0, cenY), CV_RGB(255, 255, 255), -1, CV_AA, 0);
-		//rectangle(scoreMap, Point2d(imgPath.cols, imgPath.rows), Point2d(rightEndX, 0), CV_RGB(255, 255, 255), -1, CV_AA, 0);
-		//imshow("1", imgPath);
 
 			//////////////////////////////////////////////////////////////////
 			////Because Of Obstacles, Fill the Regions where cannot go in.////
@@ -202,25 +264,18 @@ void Driving::Basic() {
 			cirCenY = center.y - objDataSet[i][1] * scale;
 			cirCenR = objDataSet[i][2] * scale;
 			Point2d cirCen(cirCenX, cirCenY); //center of objs.
-
-			//circle(img, cirCen, objDataSet[i][2] * scale, CV_RGB(255, 0, 0), -1, CV_AA);
-
 			cenDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2));
 			objdist.push_back(cenDist-cirCenR);
-
 			touchDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2) - pow(cirCenR, 2));
 			theta_s = asin(cirCenR / cenDist);
 			theta_l = atan(objDataSet[i][1] / objDataSet[i][0]);
-
 			if (theta_l < 0){
 				theta_l += CV_PI;
 			}
-
 			polyX1 = (int)(touchDist*cos(theta_l - theta_s) + cenX), polyY1 = (int)(cenY - touchDist * sin(theta_l - theta_s));
 			polyX2 = (int)(touchDist*cos(theta_l + theta_s) + cenX), polyY2 = (int)(cenY - touchDist * sin(theta_l + theta_s));
 			polyX3 = (polyX2 - cenX)*(cenY - topEndY) / (cenY - polyY2) + cenX, polyY3 = topEndY;
 			polyX4 = (polyX1 - cenX)*(cenY - topEndY) / (cenY - polyY1) + cenX, polyY4 = topEndY;
-
 			if (polyY1 > cenY) {
 				polyX4 = polyX4 * (-1);
 				polyY4 = bottomEndY - 0.0001;
@@ -233,46 +288,41 @@ void Driving::Basic() {
 			polypts[0][1] = Point(polyX2, polyY2);
 			polypts[0][2] = Point(polyX3, polyY3);
 			polypts[0][3] = Point(polyX4, polyY4);
-
 			const Point* ppt[1] = { polypts[0] };
 			int npt[] = { 4 };
-
 			fillPoly(imgPath, ppt, npt, 1, CV_RGB(200, 200, 0));
 			circle(imgPath, cirCen, cirCenR, CV_RGB(255, 0, 0), -1, CV_AA);
 		}
-		//imshow("testimgagagagagggg", imgPath);
+
 			////////////////////////////////////
 			////Make the image to Score map.////
 			////////////////////////////////////
 
 		cv::cvtColor(imgPath, imgPath, CV_BGR2GRAY);
-		threshold(imgPath, imgPath, 1, 20, THRESH_BINARY_INV);
+		threshold(imgPath, imgPath, 1, 10, THRESH_BINARY_INV);
+		threshold(scoreMap, scoreMap, 1, 10, THRESH_BINARY_INV);
 
 		//MAKING VORNOI FIELD
 		int kerSize;
-		Mat kernel;
+		Mat kernel; 
 		Mat stepVot = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
 		Mat stepVot2 = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
 		for (int i = 1; i < 4; i++)
 		{
 			kerSize = 15 * i;
 			kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
-			
 			morphologyEx(scoreMap, stepVot2, MORPH_ERODE, kernel);
 			morphologyEx(imgPath, stepVot, MORPH_ERODE, kernel);
 			imgPath += stepVot;
 			scoreMap += stepVot2;
 		}
-		//uchar *asd = imgPath.data;
-		//cout << (uint)asd[imgPath.cols*(imgPath.rows/4)+imgPath.cols/2] << endl;
-		//cout << (uint)asd[imgPath.cols*(1) + 1] << endl;
-		//imshow("Map", scoreMap);
-
 		//Apply the lane data to the lidar data
-		Mat laneImg = getLaneData(45);
-		//imshow("Lane Data", laneImg);
+		Mat laneImg = getLaneData(5);
 		scoreMap -= laneImg;
 		imgPath -= laneImg;
+
+		////imshow("Lane Data", laneImg);
+		//imshow("map", scoreMap);
 
 			//////////////////////////////////////////////////////////////////////////////
 			////Determine the desired Steering Angle in Score System with Vornoi Field////
@@ -281,7 +331,7 @@ void Driving::Basic() {
 		//REGION OF WORKABLE ANGLE: 60 ~ 120, with interval=5 degrees
 		vector<uint> score[169]; //include the scores at [90,85, 95, 80, 100, 75, 105, 70, 110, 65, 115, 60, 120]degrees
 		vector<int> theta = { 0, -5, 5, -10, 10, -15, 15, -20, 20, -25, 25, -30, 30 }; //The steering angle candidates
-		uchar onestep = (CAR_WEITH) * scale; 
+		uchar onestep = (CAR_HEIGH) * scale; 
 		Mat cirGray;
 		Mat cirGray2;
 		Mat scresult;
@@ -424,8 +474,8 @@ void Driving::Basic() {
 			////!!!!!!EMERGENCY!!!!!!////
 			/////////////////////////////
 		if (objdist.size() == 0) {
-			//cout << "do nothing" << endl;
-			cv::arrowedLine(imgPath, center, pntF, CV_RGB(200, 200, 200), 2);
+			cout << "do nothing" << endl;
+			//cv::arrowedLine(imgPath, center, pntF, CV_RGB(255, 255, 25), 5);
 		}
 		else {
 			//stop condition
@@ -449,16 +499,15 @@ void Driving::Basic() {
 
 		/*cout << "desired_speed = " << desired_speed << endl;
 		cout << "desired_steer = " << desired_steering << endl;*/
-		imshow("Map", scoreMap);
+		//imshow("Map", scoreMap);
 		imshow("Path", imgPath);
 
 			//////////////////////////////////////////////////
 			////Final Control the steering angle and speed////
 			//////////////////////////////////////////////////
-		//setData_steering(desired_steering);
-		//setData_speed(desired_speed);
-		//dataContainer->setValue_UtoP_SPEED(30);
-	
+		dataContainer->setValue_UtoP_STEER(desired_steering);
+		dataContainer->setValue_UtoP_SPEED(desired_speed);
+		
 		end = clock();
 		cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl ;
 		int key = cv::waitKey(1);

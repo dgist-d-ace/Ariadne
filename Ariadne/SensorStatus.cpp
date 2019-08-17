@@ -1,7 +1,7 @@
 #include "SensorStatus.h"
 #include "ScnnFunc.h"
 #include <tchar.h>
-
+#include "missionTrigger.h"
 
 #define UPDATE_PLATFORM_STATUS 100
 #define UPDATE_SENSOR_CONNECTION 101
@@ -167,8 +167,10 @@ int Scnn::boostScnn() {
 	
 	//change the vision sensor
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/exp1_kcity_best_50.pth", 0, true);
-	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", 0, true);
-	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test.mp4", true);
+	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", 0, true);
+	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test.mp4", true);
+	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", "C:/Users/D-Ace/Pictures/Camera Roll/4.mp4", true);
+
 	//scnn.attr("scnn_init")("exp1_kcity_best_50.pth", 0, true);
 
 	while (1)
@@ -371,10 +373,10 @@ void Yolo::comYolo() {
 	cout << "try com\n";
 
 	Sleep(5000);
-		client = accept(server, NULL, NULL);
-		if (client == INVALID_SOCKET)
-			cout << "invalid socket\n";
-		else cout << "valid socket\n";
+	client = accept(server, NULL, NULL);
+	if (client == INVALID_SOCKET)
+		cout << "invalid socket\n";
+	else cout << "valid socket\n";
 
 
 	char message[8192];
@@ -382,13 +384,27 @@ void Yolo::comYolo() {
 	float* data;
 	cout << "communication1\n";
 
+	static MissionContainer trigger;
+
 	/// TODO: control yolo flag in Ariadne.cpp
 	while (Yolo_Com) {
 		cout << "communication2\n";
 
 		strLen = recv(client, message, sizeof(message) - 1, 0);
 		if (strLen == -1) cout << "send error\n";
-		cout << message << endl;
+		cout << message << endl; // 여기서 정보 출력!
+
+		// 문자열 파싱
+		stringstream ss1(message);
+		for (string str1; getline(ss1, str1, '\n');) {
+			stringstream ss2(str1);
+			vector<string> in;
+			for (string str2; getline(ss2, str2, ' ');) in.push_back(str2);
+			trigger.putbox(in[0], stof(in[3]), stof(in[4]));
+		}
+		trigger.update();
+		trigger.showObjects(1);
+
 	}
 
 	closesocket(client);
