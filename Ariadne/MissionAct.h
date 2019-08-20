@@ -3,8 +3,6 @@
 #include "Planner.hpp"
 #include <iostream>
 
-#define steeringKP 0.5
-#define speedKP		1.5
 #define steerRatio  1.0
 #define speedHigh	12
 #define speedLow	4
@@ -16,7 +14,6 @@ protected:
 public:
 	DataContainer *dataContainer;
 	Driving();
-    int GoTo(double, double, double);
     double rad2deg(double);
     double deg2rad(double);
 

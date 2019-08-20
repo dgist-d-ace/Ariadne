@@ -11,9 +11,12 @@ Driving::Driving() {
 	dataContainer = DataContainer::getInstance();
 }
 
+#define scoreStep 5
+#define itvLane	25
 //using the data from scnn
 //output: 600x600 Mat image
 //out of white lane: x*1, out of blue lane: x*2, out of yellow line: x*3
+//Make the scored lane map 
 Mat Driving::getLaneData(int scorestep)
 {
 	//the form of existLanes: vector<int> like [ll, l, r, rr], (0: None, 1: White, 2: Blue, 3: Yellow)
@@ -23,13 +26,13 @@ Mat Driving::getLaneData(int scorestep)
 	vector<vector<Point2i>> Lanes = dataContainer->getValue_scnn_lanes();
 	Mat bufferImgR = Mat::zeros(800, 800, CV_8UC1);
 	Mat bufferImgL = Mat::zeros(800, 800, CV_8UC1);
+	cout << idLane[0] << idLane[1] << idLane[2] << idLane[3] << endl;
 	if (idLane[0] == 0 && idLane[1] == 0 && idLane[2] == 0 && idLane[3] == 0) {
 		//cout<< "there is no lane!!!!!" <<endl;
 	}
 	else {
 		Point2i endUp;
 		Point2i endDown;
-		int itvLane = 20;
 		//check the l, ll lanes
 		for (int i = 1; i > -1; i--) {
 			if (idLane[i] == 0) {}
@@ -88,7 +91,14 @@ Mat Driving::getLaneData(int scorestep)
 				fillPoly(bufferImgL, &pts4, &ptNum, 1, Scalar(scorestep * 4, scorestep * 4, scorestep * 4));
 				fillPoly(bufferImgL, &pts3, &ptNum, 1, Scalar(scorestep * 6, scorestep * 6, scorestep * 6));
 				fillPoly(bufferImgL, &pts2, &ptNum, 1, Scalar(scorestep * 8, scorestep * 8, scorestep * 8));
-				fillPoly(bufferImgL, &pts1, &ptNum, 1, Scalar(scorestep*10, scorestep*10, scorestep*10));
+				fillPoly(bufferImgL, &pts1, &ptNum, 1, Scalar(scorestep * 10 * idLane[i], scorestep * 10 * idLane[i], scorestep * 10 * idLane[i]));
+				if ((idLane[2] == 0 )&& (idLane[3] == 0)) { 
+					Mat bufferIv = Mat::zeros(800, 800, CV_8UC1);
+					fillPoly(bufferIv, &pts9, &ptNum, 1, Scalar(scorestep, scorestep, scorestep));
+					threshold(bufferIv, bufferIv, 1, scorestep*20, THRESH_BINARY_INV);
+					//imshow("INVL", bufferIv);
+					bufferImgL += bufferIv;
+				}
 				break;
 			}
 		}
@@ -96,6 +106,10 @@ Mat Driving::getLaneData(int scorestep)
 		for (int i = 2; i < idLane.size(); i++) {
 			if (idLane[i] == 0) {}
 			else {
+				int id = idLane[i];
+				if (idLane[3] == 0){id = 3;}
+				else { id = idLane[i]; }
+
 				endUp = Point(bufferImg.cols, 0);
 				endDown = Point(bufferImg.cols, bufferImg.rows);
 				vector<Point2i> lineContour1, lineContour2, lineContour3, lineContour4, lineContour5, lineContour6, lineContour7, lineContour8, lineContour9;
@@ -111,7 +125,6 @@ Mat Driving::getLaneData(int scorestep)
 
 				for (int j = 0; j < Lanes.at(i).size(); j++)
 				{
-
 					lineContour1.push_back(Lanes.at(i).at(j));
 					lineContour2.push_back(Point2i(Lanes.at(i).at(j).x - itvLane, Lanes.at(i).at(j).y));
 					lineContour3.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 2, Lanes.at(i).at(j).y));
@@ -121,7 +134,6 @@ Mat Driving::getLaneData(int scorestep)
 					lineContour7.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 6, Lanes.at(i).at(j).y));
 					lineContour8.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 7, Lanes.at(i).at(j).y));
 					lineContour9.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 7, Lanes.at(i).at(j).y));
-
 				}
 				lineContour1.push_back(endUp);
 				lineContour2.push_back(endUp);
@@ -146,16 +158,6 @@ Mat Driving::getLaneData(int scorestep)
 
 				int ptNum = Mat(lineContour1).rows;
 
-				//fillPoly(bufferImgR, &pts9, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
-				//fillPoly(bufferImgR, &pts8, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
-				//fillPoly(bufferImgR, &pts7, &ptNum, 1, Scalar(scorestep * 1, scorestep * 1, scorestep * 1));
-				//fillPoly(bufferImgR, &pts6, &ptNum, 1, Scalar(scorestep * 0, scorestep * 0, scorestep * 0));
-				//fillPoly(bufferImgR, &pts5, &ptNum, 1, Scalar(scorestep * 1, scorestep * 1, scorestep * 1));
-				//fillPoly(bufferImgR, &pts4, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
-				//fillPoly(bufferImgR, &pts3, &ptNum, 1, Scalar(scorestep * 3, scorestep * 3, scorestep * 3));
-				//fillPoly(bufferImgR, &pts2, &ptNum, 1, Scalar(scorestep * 4, scorestep * 4, scorestep * 4));
-				//fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar(scorestep*5, scorestep*5, scorestep*5));
-				
 				fillPoly(bufferImgR, &pts9, &ptNum, 1, Scalar(scorestep * 3, scorestep * 3, scorestep * 3));
 				fillPoly(bufferImgR, &pts8, &ptNum, 1, Scalar(scorestep *2, scorestep *2, scorestep *2));
 				fillPoly(bufferImgR, &pts7, &ptNum, 1, Scalar(scorestep * 1, scorestep * 1, scorestep * 1));
@@ -164,33 +166,65 @@ Mat Driving::getLaneData(int scorestep)
 				fillPoly(bufferImgR, &pts4, &ptNum, 1, Scalar(scorestep * 4, scorestep * 4, scorestep * 4));
 				fillPoly(bufferImgR, &pts3, &ptNum, 1, Scalar(scorestep * 6, scorestep * 6, scorestep * 6));
 				fillPoly(bufferImgR, &pts2, &ptNum, 1, Scalar(scorestep * 8, scorestep * 8, scorestep * 8));
-				fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar(scorestep * 10, scorestep *10, scorestep *10));
+				fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar(scorestep * 10 * id, scorestep *10 * id, scorestep *10 * id));
+				if ((idLane[0] == 0) && (idLane[1] == 0)) {
+					Mat bufferIv = Mat::zeros(800, 800, CV_8UC1);
+					fillPoly(bufferIv, &pts9, &ptNum, 1, Scalar(scorestep, scorestep, scorestep));
+					threshold(bufferIv, bufferIv, 1, scorestep * 10, THRESH_BINARY_INV);
+					//imshow("INVR", bufferIv);
+
+					bufferImgR += bufferIv;
+				}
 				break;
 			}
 		}
-		//crop the image for sync with the lidar data.
-		//imshow("R", bufferImgR);
-		//imshow("L", bufferImgL);
-
-
 	}
 	bufferImg = bufferImgR + bufferImgL;
-	//imshow("R", bufferImgR);
-	//imshow("L", bufferImgL);
-	//imshow("total lane image", bufferImg);
 	bufferImg = bufferImg(Range(800 - 400, 800), Range(400 - 200, 400 + 200));
-	//threshold(bufferImg, bufferImg, 2, 10, THRESH_BINARY);
-	//imshow("CROP", bufferImg);
 	resize(bufferImg, bufferImg, Size(600, 600), 0, 0, CV_INTER_NN);	//resize the image for be same the size of lidar data
-	imshow("buffer", bufferImg);
+	//imshow("buffer", bufferImg);
 	return bufferImg;
-
 }
 
-//VOSS algorithm (VOronoi Score System)
+//PASIV (Pointcloud-based Auto-driving with Score Implemented Voronoi field)
 void Driving::Basic() {
-	//cout << "FUCK COME IN BASIC" << endl;
 	dataContainer->setValue_UtoP_AorM(1);
+	
+		////////////////////
+		////INITIALIZING////
+		////////////////////
+	imgPath = Mat::zeros(600, 600, CV_8UC1);
+	double cenX = imgPath.cols * 0.5, cenY = imgPath.rows *0.99; //the location of LiDAR in the map.
+	double scale = cenY / (SICK_SCAN_ROI_Y + 50);				  //obj_Data => imgPath
+	//Car size in map
+	double carW = CAR_WEITH * scale;
+	double carH = CAR_HEIGH * scale;
+	//vector<int> checkTheta = { 0, -2,2, -4, 4, -6, 6, -8, 8, -10,10, -12,12, -14, 14, -16,16,-18,18, -20, 20, -22,22,-24,24,-26, 26 };//The steering angle candidates
+	//vector<int> checkTheta = { 0, -5,5,-10,10,-15,15,-20,20,-25,25,-30,30 };//The steering angle candidates
+	vector<int> checkTheta = { 0, -3,3,-6,6,-9,9,-12,12,-15,15,-18,18,-21,21,-24,24,-27,27 };
+	vector<int> checkTheta2 = { 0,-6,6,-12,12,-18,18,-24,24 };
+	uchar onestep = (CAR_HEIGH)* scale;
+	Mat cirGray, cirGray2, buffer;
+	uint Theta, Theta2;
+	vector<Mat> checkImgs;
+	for (int i = 0; i < checkTheta.size(); i++) {
+		cirGray = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
+		Theta = 90 + checkTheta.at(i);
+		Point2d step1(cenX + onestep * cos(CV_PI*Theta / 180), cenY - onestep * sin(CV_PI*Theta / 180));
+		circle(cirGray, step1, (onestep / 2) - 5, CV_RGB(10, 10, 10), -1, CV_AA, 0);
+		
+		for (int j = 0; j < checkTheta2.size(); j++)
+		{
+			cirGray2 = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
+			Theta2 = 90 + checkTheta2.at(j);
+			Point2d step2(step1.x + onestep * cos(CV_PI*Theta2 / 180), step1.y - onestep * sin(CV_PI*Theta2 / 180));
+			circle(cirGray2, step2, (onestep / 2) - 5, CV_RGB(10, 10, 10), -1, CV_AA, 0);
+			cirGray2 += cirGray;
+			buffer = cirGray2.clone();
+			checkImgs.push_back(buffer);
+		}
+	}
+
 	clock_t start, end;
 	while (1)
 	{
@@ -199,11 +233,7 @@ void Driving::Basic() {
 		imgPath = cv::Mat::zeros(600, 600, CV_8UC3); 
 		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
 		vector<Point2d> vecXYDraw;
-		double cenX = imgPath.cols * 0.5, cenY = imgPath.rows *0.99; //the location of LiDAR in the map.
-		double scale = cenY / (SICK_SCAN_ROI_Y+50);				  //obj_Data => imgPath
-		//Car size in map
-		double carW = CAR_WEITH * scale;
-		double carH = CAR_HEIGH * scale;
+
 		//ROI AREA
 		double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
 		double rightEndX = cenX + SICK_SCAN_ROI_X * scale;
@@ -299,12 +329,11 @@ void Driving::Basic() {
 			////////////////////////////////////
 			////Make the image to Score map.////
 			////////////////////////////////////
-
 		cv::cvtColor(imgPath, imgPath, CV_BGR2GRAY);
 		threshold(imgPath, imgPath, 1, 25, THRESH_BINARY_INV);
 		threshold(scoreMap, scoreMap, 1, 25, THRESH_BINARY_INV);
 
-		//MAKING VORNOI FIELD
+		//MAKING SCORE IMPLEMENTED VORONOI FIELD
 		int kerSize;
 		Mat kernel; 
 		Mat stepVot = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
@@ -319,9 +348,8 @@ void Driving::Basic() {
 			scoreMap += stepVot2;
 		}
 
-		//Apply the lane data to the lidar data
-		Mat buf = Mat::zeros(600, 600, CV_8UC1);
-		Mat laneImg = getLaneData(20);
+		////Apply the lane data to the lidar data
+		Mat laneImg = getLaneData(scoreStep);
 		//imshow("LaneMap", laneImg);
 		scoreMap -= laneImg;
 		imgPath -= laneImg;
@@ -329,126 +357,40 @@ void Driving::Basic() {
 			//////////////////////////////////////////////////////////////////////////////
 			////Determine the desired Steering Angle in Score System with Vornoi Field////
 			//////////////////////////////////////////////////////////////////////////////
-
 		//REGION OF WORKABLE ANGLE: 60 ~ 120, with interval=5 degrees
-		vector<uint> score[169]; //include the scores at [90,85, 95, 80, 100, 75, 105, 70, 110, 65, 115, 60, 120]degrees
-		vector<int> theta = { 0, -5, 5, -10, 10, -15, 15, -20, 20, -25, 25, -30, 30 }; //The steering angle candidates
-		uchar onestep = (CAR_HEIGH) * scale; 
-		Mat cirGray;
-		Mat cirGray2;
+		vector<uint> score[361]; //include the scores at [90,85, 95, 80, 100, 75, 105, 70, 110, 65, 115, 60, 120]degrees
 		Mat scresult;
-		uint scoreTheta;
-		uint scoreTheta2;
 		uint sum;
-		for (int i = 0; i < theta.size(); i++)
-		{
-			cirGray = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
-			scoreTheta = 90 + theta.at(i);
-			Point2d step1(cenX + onestep * cos(CV_PI*scoreTheta / 180), cenY - onestep * sin(CV_PI*scoreTheta / 180));
-			circle(cirGray, step1, (onestep/ 2 )- 5, CV_RGB(10, 10, 10), -1, CV_AA, 0);
-			for (int j = 0; j < theta.size(); j++)
-			{
-				cirGray2 = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
-				scoreTheta2 = 90 + theta.at(j);
-				Point2d step2(step1.x + onestep * cos(CV_PI*scoreTheta2 / 180), step1.y - onestep * sin(CV_PI*scoreTheta2 / 180));
-				circle(cirGray2, step2, (onestep / 2) -5, CV_RGB(10,10,10), -1, CV_AA, 0);
-				cirGray2 += cirGray;
-				//imshow("check Circle img", cirGray2);
-				sum = 0;
-				scresult = cirGray2.mul(imgPath);
-				uchar *sumData = scresult.data;
-				int sheight = scresult.rows;
-				int swidth = scresult.cols;
-				for (int n = 0; n < sheight; n++){
-					for (int m = 0; m < swidth; m++){
-						sum += sumData[m*sheight + n];}}
-				score->push_back(sum);
-				//waitKey(1);
-				//Sleep(100);
-			}
-		}
+		for (int i = 0; i < checkImgs.size(); i++){
+			//cout << "CHECKING" << endl;
+			//cout << i << endl;
+			//imshow("checkImgs", checkImgs[i]);
+			//imshow("imgPath", imgPath);
 
-		uint scoreMax = distance(score->begin(), max_element(score->begin(), score->end()));
-		int goTheta1 = theta.at(scoreMax / theta.size());
-		int goTheta2 = theta.at(scoreMax % theta.size());
-		Point2d stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1) / 180)));
-		Point2d stepSecond(stepFirst.x + onestep * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*sin(CV_PI*(90 + goTheta2) / 180)));
-		
-		int desired_steering = goTheta1 * steerRatio + goTheta2 *(1-steerRatio);
-		Point2d pntF(cenX + onestep*1.5 * cos(CV_PI*(90 + desired_steering) / 180), cenY - (onestep*1.5*sin(CV_PI*(90 + desired_steering) / 180)));
-
-		//scoring 1st and 2nd step seperately
-		/* 
-		//predict first step
-		for (int i = 0; i < theta.size(); i++)
-		{
-
-			cirGray = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
-			scoretheta = 90 + theta.at(i);
-			Point2d scoreCir(cenX + onestep * cos(CV_PI*scoretheta / 180), cenY - onestep * sin(CV_PI*scoretheta / 180));
-
-			circle(cirGray, scoreCir, carW / 2, CV_RGB(1, 1, 1), -1, CV_AA, 0);
-			//imshow("test", cirGray);
-			//Mat cirGray;
-			//cvtColor(imgCircle, cirGray, CV_RGB2GRAY);
-			scresult = cirGray.mul(imgPath);
-			sum = 0;
+			scresult = checkImgs[i].mul(imgPath);
 			uchar *sumData = scresult.data;
-			int sheight = scresult.rows;
-			int swidth = scresult.cols;
-			for (int j = 0; j < sheight; j++)
-			{
-				for (int m = 0; m < swidth; m++)
-				{
-					//sum += scresult.at<uchar>(j,m);
-					sum += sumData[m*sheight + j];
-				}
-			}
+			int scHeight = scresult.rows;
+			int scWidth = scresult.cols;
+			sum = 0;
+			for (int h = 0; h < scHeight; h++){
+				for (int w = 0; w < scWidth; w++){
+					sum += sumData[w*scHeight + h];}}
 			score->push_back(sum);
+			//cout << "sum" << endl;
 			//waitKey(1);
 		}
+		uint scoreMax = distance(score->begin(), max_element(score->begin(), score->end()));
+		int goTheta1 = checkTheta.at(scoreMax / checkTheta2.size());
+		int goTheta2 = checkTheta2.at(scoreMax % checkTheta2.size());
 
-		uint scoreMax1 = distance(score->begin(), max_element(score->begin(), score->end()));
-		int goTheta1 = theta.at(scoreMax1);
 		Point2d stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1) / 180)));
-		cv::arrowedLine(imgPath, center, stepFirst, CV_RGB(255, 255, 255), 5);
-
-
-		//Predict second step
-		vector<uint> score2[13];
-		for (int i = 0; i < theta.size(); i++)
-		{
-			cirGray = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
-			scoretheta = 90 + theta.at(i);
-			Point2d scoreCir2(stepFirst.x + onestep * cos(CV_PI*scoretheta / 180), stepFirst.y - onestep * sin(CV_PI*scoretheta / 180));
-
-			circle(cirGray, scoreCir2, carW / 4, CV_RGB(1, 1, 1), -1, CV_AA, 0);
-			//imshow("test", cirGray);
-			//Mat cirGray;
-			//cvtColor(imgCircle, cirGray, CV_RGB2GRAY);
-			scresult = cirGray.mul(imgPath);
-			sum = 0;
-			uchar *sumData = scresult.data;
-			int sheight = scresult.rows;
-			int swidth = scresult.cols;
-			for (int j = 0; j < sheight; j++)
-			{
-				for (int m = 0; m < swidth; m++)
-				{
-					//sum += scresult.at<uchar>(j,m);
-					sum += sumData[m*sheight + j];
-				}
-			}
-			score2->push_back(sum);
-			//waitKey(1);
-		}
-		uint scoreMax2 = distance(score2->begin(), max_element(score2->begin(), score2->end()));
-		int goTheta2 = theta.at(scoreMax2);
 		Point2d stepSecond(stepFirst.x + onestep * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*sin(CV_PI*(90 + goTheta2) / 180)));
-		cv::arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(255, 255, 255), 5);
-		*/
-		cv::arrowedLine(imgPath, center, stepFirst, CV_RGB(50, 50, 50), 5);
-		cv::arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(50, 50, 50), 5);
+
+		double desired_steering = goTheta1 * steerRatio + goTheta2 *(1-steerRatio);
+		Point2d pntF(cenX + onestep * 1.5 * cos(CV_PI*(90 + desired_steering) / 180), cenY - onestep * 1.5*sin(CV_PI*(90 + desired_steering) / 180));
+
+		arrowedLine(imgPath, center, stepFirst, CV_RGB(50, 50, 50), 5);
+		arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(50, 50, 50), 5);
 
 			/////////////////////////////////////////////////////////////////////
 			////Determine the desired Speed in Score System with Vornoi Field////
