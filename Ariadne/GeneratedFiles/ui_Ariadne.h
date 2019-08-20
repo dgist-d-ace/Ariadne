@@ -12,17 +12,16 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
+#include <QtWidgets/QFrame>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QLCDNumber>
 #include <QtWidgets/QLabel>
-#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTabWidget>
-#include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
 #include "qcustomplot.h"
@@ -49,7 +48,6 @@ public:
     QPushButton *Btn_yolo_restart;
     QPushButton *Btn_scnn_stop;
     QPushButton *Btn_scnn_restart;
-    QGroupBox *groupBox_2;
     QGroupBox *groupBox_3;
     QPushButton *Btn_Mission0;
     QPushButton *Btn_mission1;
@@ -61,6 +59,8 @@ public:
     QPushButton *Btn_mission4;
     QPushButton *Btn_mission9;
     QPushButton *Btn_mission5;
+    QPushButton *Btn_mission9_2;
+    QPushButton *Btn_mission9_3;
     QPlainTextEdit *plainTextEdit;
     QTabWidget *tabWidget;
     QWidget *tab;
@@ -71,7 +71,6 @@ public:
     QComboBox *comboBox_6;
     QPushButton *Btn_gearInput;
     QWidget *tab_2;
-    QTextBrowser *textBrowser;
     QPushButton *pushButton;
     QGroupBox *groupBox_4;
     QLabel *label_2;
@@ -92,14 +91,21 @@ public:
     QLabel *label_14;
     QLCDNumber *lcdNumber_8;
     QLCDNumber *lcdNumber_9;
-    QCustomPlot *rt_plot;
-    QLineEdit *lineEdit;
-    QLineEdit *lineEdit_2;
+    QFrame *line;
     QLabel *label_15;
+    QLCDNumber *lcdNumber_10;
+    QFrame *line_2;
     QLabel *label_16;
-    QPushButton *Btn_Go;
     QLabel *label_17;
-    QLineEdit *lineEdit_3;
+    QLabel *label_18;
+    QLabel *label_19;
+    QLCDNumber *lcdNumber_11;
+    QLCDNumber *lcdNumber_12;
+    QLCDNumber *lcdNumber_13;
+    QLCDNumber *lcdNumber_14;
+    QCustomPlot *rt_plot;
+    QGroupBox *groupBox_5;
+    QLabel *AriadneLogo;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -113,7 +119,7 @@ public:
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         groupBox = new QGroupBox(centralWidget);
         groupBox->setObjectName(QString::fromUtf8("groupBox"));
-        groupBox->setGeometry(QRect(10, 180, 241, 211));
+        groupBox->setGeometry(QRect(10, 100, 241, 211));
         comboBox = new QComboBox(groupBox);
         comboBox->setObjectName(QString::fromUtf8("comboBox"));
         comboBox->setGeometry(QRect(120, 20, 101, 21));
@@ -131,16 +137,16 @@ public:
         label_12->setGeometry(QRect(10, 50, 64, 15));
         label_13 = new QLabel(groupBox);
         label_13->setObjectName(QString::fromUtf8("label_13"));
-        label_13->setGeometry(QRect(10, 80, 64, 15));
+        label_13->setGeometry(QRect(10, 80, 51, 16));
         pushButton_3 = new QPushButton(groupBox);
         pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
         pushButton_3->setGeometry(QRect(120, 170, 101, 28));
         label_10 = new QLabel(groupBox);
         label_10->setObjectName(QString::fromUtf8("label_10"));
-        label_10->setGeometry(QRect(10, 110, 64, 15));
+        label_10->setGeometry(QRect(10, 110, 51, 16));
         label_11 = new QLabel(groupBox);
         label_11->setObjectName(QString::fromUtf8("label_11"));
-        label_11->setGeometry(QRect(10, 140, 64, 15));
+        label_11->setGeometry(QRect(10, 140, 51, 16));
         Btn_lidar_restart = new QPushButton(groupBox);
         Btn_lidar_restart->setObjectName(QString::fromUtf8("Btn_lidar_restart"));
         Btn_lidar_restart->setGeometry(QRect(150, 80, 71, 23));
@@ -159,45 +165,48 @@ public:
         Btn_scnn_restart = new QPushButton(groupBox);
         Btn_scnn_restart->setObjectName(QString::fromUtf8("Btn_scnn_restart"));
         Btn_scnn_restart->setGeometry(QRect(150, 140, 71, 23));
-        groupBox_2 = new QGroupBox(centralWidget);
-        groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
-        groupBox_2->setGeometry(QRect(10, 10, 241, 171));
         groupBox_3 = new QGroupBox(centralWidget);
         groupBox_3->setObjectName(QString::fromUtf8("groupBox_3"));
-        groupBox_3->setGeometry(QRect(10, 390, 241, 241));
+        groupBox_3->setGeometry(QRect(10, 310, 241, 261));
         Btn_Mission0 = new QPushButton(groupBox_3);
         Btn_Mission0->setObjectName(QString::fromUtf8("Btn_Mission0"));
-        Btn_Mission0->setGeometry(QRect(10, 40, 101, 31));
+        Btn_Mission0->setGeometry(QRect(10, 20, 101, 31));
         Btn_mission1 = new QPushButton(groupBox_3);
         Btn_mission1->setObjectName(QString::fromUtf8("Btn_mission1"));
-        Btn_mission1->setGeometry(QRect(10, 80, 101, 31));
+        Btn_mission1->setGeometry(QRect(10, 60, 101, 31));
         Btn_mission2 = new QPushButton(groupBox_3);
         Btn_mission2->setObjectName(QString::fromUtf8("Btn_mission2"));
-        Btn_mission2->setGeometry(QRect(10, 120, 101, 31));
+        Btn_mission2->setGeometry(QRect(10, 100, 101, 31));
         Btn_mission3 = new QPushButton(groupBox_3);
         Btn_mission3->setObjectName(QString::fromUtf8("Btn_mission3"));
-        Btn_mission3->setGeometry(QRect(10, 160, 101, 31));
+        Btn_mission3->setGeometry(QRect(10, 140, 101, 31));
         Btn_mission6 = new QPushButton(groupBox_3);
         Btn_mission6->setObjectName(QString::fromUtf8("Btn_mission6"));
-        Btn_mission6->setGeometry(QRect(130, 80, 101, 31));
+        Btn_mission6->setGeometry(QRect(130, 20, 101, 31));
         Btn_mission7 = new QPushButton(groupBox_3);
         Btn_mission7->setObjectName(QString::fromUtf8("Btn_mission7"));
-        Btn_mission7->setGeometry(QRect(130, 120, 101, 31));
+        Btn_mission7->setGeometry(QRect(130, 60, 101, 31));
         Btn_mission8 = new QPushButton(groupBox_3);
         Btn_mission8->setObjectName(QString::fromUtf8("Btn_mission8"));
-        Btn_mission8->setGeometry(QRect(130, 160, 101, 31));
+        Btn_mission8->setGeometry(QRect(130, 100, 101, 31));
         Btn_mission4 = new QPushButton(groupBox_3);
         Btn_mission4->setObjectName(QString::fromUtf8("Btn_mission4"));
-        Btn_mission4->setGeometry(QRect(10, 200, 101, 31));
+        Btn_mission4->setGeometry(QRect(10, 180, 101, 31));
         Btn_mission9 = new QPushButton(groupBox_3);
         Btn_mission9->setObjectName(QString::fromUtf8("Btn_mission9"));
-        Btn_mission9->setGeometry(QRect(130, 200, 101, 31));
+        Btn_mission9->setGeometry(QRect(130, 140, 101, 31));
         Btn_mission5 = new QPushButton(groupBox_3);
         Btn_mission5->setObjectName(QString::fromUtf8("Btn_mission5"));
-        Btn_mission5->setGeometry(QRect(130, 40, 101, 31));
+        Btn_mission5->setGeometry(QRect(10, 220, 101, 31));
+        Btn_mission9_2 = new QPushButton(groupBox_3);
+        Btn_mission9_2->setObjectName(QString::fromUtf8("Btn_mission9_2"));
+        Btn_mission9_2->setGeometry(QRect(130, 180, 101, 31));
+        Btn_mission9_3 = new QPushButton(groupBox_3);
+        Btn_mission9_3->setObjectName(QString::fromUtf8("Btn_mission9_3"));
+        Btn_mission9_3->setGeometry(QRect(130, 220, 101, 31));
         plainTextEdit = new QPlainTextEdit(centralWidget);
         plainTextEdit->setObjectName(QString::fromUtf8("plainTextEdit"));
-        plainTextEdit->setGeometry(QRect(10, 680, 1171, 101));
+        plainTextEdit->setGeometry(QRect(270, 680, 691, 101));
         tabWidget = new QTabWidget(centralWidget);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
         tabWidget->setGeometry(QRect(970, 80, 211, 191));
@@ -224,16 +233,13 @@ public:
         tabWidget->addTab(tab, QString());
         tab_2 = new QWidget();
         tab_2->setObjectName(QString::fromUtf8("tab_2"));
-        textBrowser = new QTextBrowser(tab_2);
-        textBrowser->setObjectName(QString::fromUtf8("textBrowser"));
-        textBrowser->setGeometry(QRect(10, 20, 191, 101));
         tabWidget->addTab(tab_2, QString());
         pushButton = new QPushButton(centralWidget);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
         pushButton->setGeometry(QRect(970, 10, 211, 61));
         groupBox_4 = new QGroupBox(centralWidget);
         groupBox_4->setObjectName(QString::fromUtf8("groupBox_4"));
-        groupBox_4->setGeometry(QRect(970, 280, 211, 351));
+        groupBox_4->setGeometry(QRect(970, 280, 211, 501));
         label_2 = new QLabel(groupBox_4);
         label_2->setObjectName(QString::fromUtf8("label_2"));
         label_2->setGeometry(QRect(20, 150, 64, 15));
@@ -278,44 +284,69 @@ public:
         lcdNumber_7->setGeometry(QRect(130, 210, 64, 23));
         label_5 = new QLabel(groupBox_4);
         label_5->setObjectName(QString::fromUtf8("label_5"));
-        label_5->setGeometry(QRect(20, 240, 101, 16));
+        label_5->setGeometry(QRect(20, 270, 101, 16));
         label_14 = new QLabel(groupBox_4);
         label_14->setObjectName(QString::fromUtf8("label_14"));
         label_14->setGeometry(QRect(20, 300, 101, 16));
         lcdNumber_8 = new QLCDNumber(groupBox_4);
         lcdNumber_8->setObjectName(QString::fromUtf8("lcdNumber_8"));
-        lcdNumber_8->setGeometry(QRect(23, 260, 171, 23));
+        lcdNumber_8->setGeometry(QRect(130, 260, 61, 23));
         lcdNumber_9 = new QLCDNumber(groupBox_4);
         lcdNumber_9->setObjectName(QString::fromUtf8("lcdNumber_9"));
-        lcdNumber_9->setGeometry(QRect(20, 320, 171, 23));
+        lcdNumber_9->setGeometry(QRect(130, 290, 61, 23));
+        line = new QFrame(groupBox_4);
+        line->setObjectName(QString::fromUtf8("line"));
+        line->setGeometry(QRect(20, 240, 171, 16));
+        line->setFrameShape(QFrame::HLine);
+        line->setFrameShadow(QFrame::Sunken);
+        label_15 = new QLabel(groupBox_4);
+        label_15->setObjectName(QString::fromUtf8("label_15"));
+        label_15->setGeometry(QRect(20, 330, 101, 16));
+        lcdNumber_10 = new QLCDNumber(groupBox_4);
+        lcdNumber_10->setObjectName(QString::fromUtf8("lcdNumber_10"));
+        lcdNumber_10->setGeometry(QRect(130, 320, 61, 23));
+        line_2 = new QFrame(groupBox_4);
+        line_2->setObjectName(QString::fromUtf8("line_2"));
+        line_2->setGeometry(QRect(20, 350, 171, 16));
+        line_2->setFrameShape(QFrame::HLine);
+        line_2->setFrameShadow(QFrame::Sunken);
+        label_16 = new QLabel(groupBox_4);
+        label_16->setObjectName(QString::fromUtf8("label_16"));
+        label_16->setGeometry(QRect(20, 370, 101, 16));
+        label_17 = new QLabel(groupBox_4);
+        label_17->setObjectName(QString::fromUtf8("label_17"));
+        label_17->setGeometry(QRect(20, 400, 101, 16));
+        label_18 = new QLabel(groupBox_4);
+        label_18->setObjectName(QString::fromUtf8("label_18"));
+        label_18->setGeometry(QRect(20, 430, 101, 16));
+        label_19 = new QLabel(groupBox_4);
+        label_19->setObjectName(QString::fromUtf8("label_19"));
+        label_19->setGeometry(QRect(20, 460, 101, 16));
+        lcdNumber_11 = new QLCDNumber(groupBox_4);
+        lcdNumber_11->setObjectName(QString::fromUtf8("lcdNumber_11"));
+        lcdNumber_11->setGeometry(QRect(130, 370, 61, 23));
+        lcdNumber_12 = new QLCDNumber(groupBox_4);
+        lcdNumber_12->setObjectName(QString::fromUtf8("lcdNumber_12"));
+        lcdNumber_12->setGeometry(QRect(130, 400, 61, 23));
+        lcdNumber_13 = new QLCDNumber(groupBox_4);
+        lcdNumber_13->setObjectName(QString::fromUtf8("lcdNumber_13"));
+        lcdNumber_13->setGeometry(QRect(130, 430, 61, 23));
+        lcdNumber_14 = new QLCDNumber(groupBox_4);
+        lcdNumber_14->setObjectName(QString::fromUtf8("lcdNumber_14"));
+        lcdNumber_14->setGeometry(QRect(130, 460, 61, 23));
         rt_plot = new QCustomPlot(centralWidget);
         rt_plot->setObjectName(QString::fromUtf8("rt_plot"));
-        rt_plot->setGeometry(QRect(269, 19, 691, 611));
-        lineEdit = new QLineEdit(centralWidget);
-        lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
-        lineEdit->setGeometry(QRect(180, 640, 113, 21));
-        lineEdit_2 = new QLineEdit(centralWidget);
-        lineEdit_2->setObjectName(QString::fromUtf8("lineEdit_2"));
-        lineEdit_2->setGeometry(QRect(400, 640, 113, 21));
-        label_15 = new QLabel(centralWidget);
-        label_15->setObjectName(QString::fromUtf8("label_15"));
-        label_15->setGeometry(QRect(20, 640, 151, 16));
-        label_16 = new QLabel(centralWidget);
-        label_16->setObjectName(QString::fromUtf8("label_16"));
-        label_16->setGeometry(QRect(310, 640, 81, 16));
-        Btn_Go = new QPushButton(centralWidget);
-        Btn_Go->setObjectName(QString::fromUtf8("Btn_Go"));
-        Btn_Go->setGeometry(QRect(790, 640, 93, 28));
-        label_17 = new QLabel(centralWidget);
-        label_17->setObjectName(QString::fromUtf8("label_17"));
-        label_17->setGeometry(QRect(530, 640, 121, 16));
-        lineEdit_3 = new QLineEdit(centralWidget);
-        lineEdit_3->setObjectName(QString::fromUtf8("lineEdit_3"));
-        lineEdit_3->setGeometry(QRect(650, 640, 113, 21));
+        rt_plot->setGeometry(QRect(269, 19, 691, 651));
+        groupBox_5 = new QGroupBox(centralWidget);
+        groupBox_5->setObjectName(QString::fromUtf8("groupBox_5"));
+        groupBox_5->setGeometry(QRect(10, 580, 241, 201));
+        AriadneLogo = new QLabel(centralWidget);
+        AriadneLogo->setObjectName(QString::fromUtf8("AriadneLogo"));
+        AriadneLogo->setGeometry(QRect(10, 20, 241, 71));
         AriadneClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AriadneClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1198, 26));
+        menuBar->setGeometry(QRect(0, 0, 1198, 21));
         AriadneClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(AriadneClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -335,7 +366,7 @@ public:
     void retranslateUi(QMainWindow *AriadneClass)
     {
         AriadneClass->setWindowTitle(QApplication::translate("AriadneClass", "Ariadne", nullptr));
-        groupBox->setTitle(QApplication::translate("AriadneClass", "GroupBox", nullptr));
+        groupBox->setTitle(QApplication::translate("AriadneClass", "Sensor Connect Status", nullptr));
         pushButton_2->setText(QApplication::translate("AriadneClass", "\354\204\274\354\204\234 \355\206\265\354\213\240", nullptr));
         label_9->setText(QApplication::translate("AriadneClass", "Platform", nullptr));
         label_12->setText(QApplication::translate("AriadneClass", "GPS", nullptr));
@@ -349,7 +380,6 @@ public:
         Btn_yolo_restart->setText(QApplication::translate("AriadneClass", "RESTART", nullptr));
         Btn_scnn_stop->setText(QApplication::translate("AriadneClass", "STOP", nullptr));
         Btn_scnn_restart->setText(QApplication::translate("AriadneClass", "RESTART", nullptr));
-        groupBox_2->setTitle(QApplication::translate("AriadneClass", "GroupBox", nullptr));
         groupBox_3->setTitle(QApplication::translate("AriadneClass", "Mission", nullptr));
         Btn_Mission0->setText(QApplication::translate("AriadneClass", "Mission0", nullptr));
         Btn_mission1->setText(QApplication::translate("AriadneClass", "Mission1", nullptr));
@@ -361,20 +391,14 @@ public:
         Btn_mission4->setText(QApplication::translate("AriadneClass", "Mission4", nullptr));
         Btn_mission9->setText(QApplication::translate("AriadneClass", "Mission9", nullptr));
         Btn_mission5->setText(QApplication::translate("AriadneClass", "Mission5", nullptr));
+        Btn_mission9_2->setText(QApplication::translate("AriadneClass", "Mission10", nullptr));
+        Btn_mission9_3->setText(QApplication::translate("AriadneClass", "Mission11", nullptr));
         Btn_up->setText(QApplication::translate("AriadneClass", "\342\226\262", nullptr));
         Btn_down->setText(QApplication::translate("AriadneClass", "\342\226\274", nullptr));
         Btn_right->setText(QApplication::translate("AriadneClass", "\342\226\266", nullptr));
         Btn_left->setText(QApplication::translate("AriadneClass", "\342\227\200", nullptr));
         Btn_gearInput->setText(QApplication::translate("AriadneClass", "gear input", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("AriadneClass", "PC Con", nullptr));
-        textBrowser->setHtml(QApplication::translate("AriadneClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:'Gulim'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">\354\241\260\354\242\205\352\270\260\353\241\234 \354\241\260\354\242\205\355\225\230\353\212\224 \353\252\250\353\223\234\353\213\271!</p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">\354\227\254\352\270\260 \353\255\220 \353\204\243\354\235\204\354\247\200 \353\252\250\353\245\264\352\262\240\353\213\271!!</p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">\352\267\270\353\246\254\352\263\240 \354\227\254\352"
-                        "\270\260 \354\225\204\354\247\201 \355\225\250\354\210\230 \354\225\210\353\247\214\353\223\244\354\227\210\353\213\271!!!</p></body></html>", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("AriadneClass", "remoteCon", nullptr));
         pushButton->setText(QApplication::translate("AriadneClass", "E-Stop", nullptr));
         groupBox_4->setTitle(QApplication::translate("AriadneClass", "SensorStatus", nullptr));
@@ -387,10 +411,13 @@ public:
         label_8->setText(QApplication::translate("AriadneClass", "SPEED", nullptr));
         label_5->setText(QApplication::translate("AriadneClass", "Latitude", nullptr));
         label_14->setText(QApplication::translate("AriadneClass", "Longitude", nullptr));
-        label_15->setText(QApplication::translate("AriadneClass", "Destination lattitude(m)", nullptr));
-        label_16->setText(QApplication::translate("AriadneClass", "longitude", nullptr));
-        Btn_Go->setText(QApplication::translate("AriadneClass", "GO", nullptr));
-        label_17->setText(QApplication::translate("AriadneClass", "heading(degree)", nullptr));
+        label_15->setText(QApplication::translate("AriadneClass", "Heading", nullptr));
+        label_16->setText(QApplication::translate("AriadneClass", "LeftLeftLine", nullptr));
+        label_17->setText(QApplication::translate("AriadneClass", "LeftLine", nullptr));
+        label_18->setText(QApplication::translate("AriadneClass", "RightLine", nullptr));
+        label_19->setText(QApplication::translate("AriadneClass", "RightRightLine", nullptr));
+        groupBox_5->setTitle(QApplication::translate("AriadneClass", "YOLO", nullptr));
+        AriadneLogo->setText(QString());
     } // retranslateUi
 
 };

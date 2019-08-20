@@ -36,7 +36,7 @@ Mat Driving::getLaneData(int scorestep)
 			else {
 				endUp = Point(0, 0);
 				endDown = Point(0, bufferImg.rows);
-				vector<Point2i> lineContour1, lineContour2, lineContour3, lineContour4, lineContour5, lineContour6, lineContour7, lineContour8;
+				vector<Point2i> lineContour1, lineContour2, lineContour3, lineContour4, lineContour5, lineContour6, lineContour7, lineContour8, lineContour9;
 				lineContour1.push_back(endDown);
 				lineContour2.push_back(endDown);
 				lineContour3.push_back(endDown);
@@ -45,6 +45,7 @@ Mat Driving::getLaneData(int scorestep)
 				lineContour6.push_back(endDown);
 				lineContour7.push_back(endDown);
 				lineContour8.push_back(endDown);
+				lineContour9.push_back(endDown);
 				for (int j = 0; j < Lanes.at(i).size(); j++)
 				{
 					lineContour1.push_back(Lanes.at(i).at(j));
@@ -55,6 +56,8 @@ Mat Driving::getLaneData(int scorestep)
 					lineContour6.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 5, Lanes.at(i).at(j).y));
 					lineContour7.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 6, Lanes.at(i).at(j).y));
 					lineContour8.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 7, Lanes.at(i).at(j).y));
+					lineContour9.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 7, Lanes.at(i).at(j).y));
+
 				}
 				lineContour1.push_back(endUp);
 				lineContour2.push_back(endUp);
@@ -64,6 +67,7 @@ Mat Driving::getLaneData(int scorestep)
 				lineContour6.push_back(endUp);
 				lineContour7.push_back(endUp);
 				lineContour8.push_back(endUp);
+				lineContour9.push_back(endUp);
 
 				const Point2i *pts1 = (const Point2i*)Mat(lineContour1).data;
 				const Point2i *pts2 = (const Point2i*)Mat(lineContour2).data;
@@ -73,17 +77,18 @@ Mat Driving::getLaneData(int scorestep)
 				const Point2i *pts6 = (const Point2i*)Mat(lineContour6).data;
 				const Point2i *pts7 = (const Point2i*)Mat(lineContour7).data;
 				const Point2i *pts8 = (const Point2i*)Mat(lineContour8).data;
+				const Point2i *pts9 = (const Point2i*)Mat(lineContour9).data;
 
 				int ptNum = Mat(lineContour1).rows;
-
-				fillPoly(bufferImgL, &pts8, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
-				fillPoly(bufferImgL, &pts7, &ptNum, 1, Scalar(scorestep * 1, scorestep * 1, scorestep * 1));
+				fillPoly(bufferImgL, &pts9, &ptNum, 1, Scalar(scorestep * 3, scorestep * 3, scorestep * 3));
+				fillPoly(bufferImgL, &pts8, &ptNum, 1, Scalar(scorestep *2, scorestep *2, scorestep *2));
+				fillPoly(bufferImgL, &pts7, &ptNum, 1, Scalar(scorestep*1, scorestep *1, scorestep *1));
 				fillPoly(bufferImgL, &pts6, &ptNum, 1, Scalar(scorestep * 0, scorestep * 0, scorestep * 0));
-				fillPoly(bufferImgL, &pts5, &ptNum, 1, Scalar(scorestep * 1, scorestep * 1, scorestep * 1));
-				fillPoly(bufferImgL, &pts4, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
-				fillPoly(bufferImgL, &pts3, &ptNum, 1, Scalar(scorestep * 3, scorestep * 3, scorestep * 3));
-				fillPoly(bufferImgL, &pts2, &ptNum, 1, Scalar(scorestep * 4, scorestep * 4, scorestep * 4));
-				fillPoly(bufferImgL, &pts1, &ptNum, 1, Scalar(scorestep*5, scorestep*5, scorestep*5));
+				fillPoly(bufferImgL, &pts5, &ptNum, 1, Scalar(scorestep *2, scorestep *2, scorestep *2));
+				fillPoly(bufferImgL, &pts4, &ptNum, 1, Scalar(scorestep * 4, scorestep * 4, scorestep * 4));
+				fillPoly(bufferImgL, &pts3, &ptNum, 1, Scalar(scorestep * 6, scorestep * 6, scorestep * 6));
+				fillPoly(bufferImgL, &pts2, &ptNum, 1, Scalar(scorestep * 8, scorestep * 8, scorestep * 8));
+				fillPoly(bufferImgL, &pts1, &ptNum, 1, Scalar(scorestep*10, scorestep*10, scorestep*10));
 				break;
 			}
 		}
@@ -93,7 +98,7 @@ Mat Driving::getLaneData(int scorestep)
 			else {
 				endUp = Point(bufferImg.cols, 0);
 				endDown = Point(bufferImg.cols, bufferImg.rows);
-				vector<Point2i> lineContour1, lineContour2, lineContour3, lineContour4, lineContour5, lineContour6, lineContour7, lineContour8;
+				vector<Point2i> lineContour1, lineContour2, lineContour3, lineContour4, lineContour5, lineContour6, lineContour7, lineContour8, lineContour9;
 				lineContour1.push_back(endDown);
 				lineContour2.push_back(endDown);
 				lineContour3.push_back(endDown);
@@ -102,6 +107,8 @@ Mat Driving::getLaneData(int scorestep)
 				lineContour6.push_back(endDown);
 				lineContour7.push_back(endDown);
 				lineContour8.push_back(endDown);
+				lineContour9.push_back(endDown);
+
 				for (int j = 0; j < Lanes.at(i).size(); j++)
 				{
 
@@ -113,6 +120,8 @@ Mat Driving::getLaneData(int scorestep)
 					lineContour6.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 5, Lanes.at(i).at(j).y));
 					lineContour7.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 6, Lanes.at(i).at(j).y));
 					lineContour8.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 7, Lanes.at(i).at(j).y));
+					lineContour9.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 7, Lanes.at(i).at(j).y));
+
 				}
 				lineContour1.push_back(endUp);
 				lineContour2.push_back(endUp);
@@ -122,6 +131,8 @@ Mat Driving::getLaneData(int scorestep)
 				lineContour6.push_back(endUp);
 				lineContour7.push_back(endUp);
 				lineContour8.push_back(endUp);
+				lineContour9.push_back(endUp);
+
 
 				const Point2i *pts1 = (const Point2i*)Mat(lineContour1).data;
 				const Point2i *pts2 = (const Point2i*)Mat(lineContour2).data;
@@ -131,17 +142,29 @@ Mat Driving::getLaneData(int scorestep)
 				const Point2i *pts6 = (const Point2i*)Mat(lineContour6).data;
 				const Point2i *pts7 = (const Point2i*)Mat(lineContour7).data;
 				const Point2i *pts8 = (const Point2i*)Mat(lineContour8).data;
+				const Point2i *pts9 = (const Point2i*)Mat(lineContour9).data;
 
 				int ptNum = Mat(lineContour1).rows;
 
-				fillPoly(bufferImgR, &pts8, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
+				//fillPoly(bufferImgR, &pts9, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
+				//fillPoly(bufferImgR, &pts8, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
+				//fillPoly(bufferImgR, &pts7, &ptNum, 1, Scalar(scorestep * 1, scorestep * 1, scorestep * 1));
+				//fillPoly(bufferImgR, &pts6, &ptNum, 1, Scalar(scorestep * 0, scorestep * 0, scorestep * 0));
+				//fillPoly(bufferImgR, &pts5, &ptNum, 1, Scalar(scorestep * 1, scorestep * 1, scorestep * 1));
+				//fillPoly(bufferImgR, &pts4, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
+				//fillPoly(bufferImgR, &pts3, &ptNum, 1, Scalar(scorestep * 3, scorestep * 3, scorestep * 3));
+				//fillPoly(bufferImgR, &pts2, &ptNum, 1, Scalar(scorestep * 4, scorestep * 4, scorestep * 4));
+				//fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar(scorestep*5, scorestep*5, scorestep*5));
+				
+				fillPoly(bufferImgR, &pts9, &ptNum, 1, Scalar(scorestep * 3, scorestep * 3, scorestep * 3));
+				fillPoly(bufferImgR, &pts8, &ptNum, 1, Scalar(scorestep *2, scorestep *2, scorestep *2));
 				fillPoly(bufferImgR, &pts7, &ptNum, 1, Scalar(scorestep * 1, scorestep * 1, scorestep * 1));
 				fillPoly(bufferImgR, &pts6, &ptNum, 1, Scalar(scorestep * 0, scorestep * 0, scorestep * 0));
-				fillPoly(bufferImgR, &pts5, &ptNum, 1, Scalar(scorestep * 1, scorestep * 1, scorestep * 1));
-				fillPoly(bufferImgR, &pts4, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
-				fillPoly(bufferImgR, &pts3, &ptNum, 1, Scalar(scorestep * 3, scorestep * 3, scorestep * 3));
-				fillPoly(bufferImgR, &pts2, &ptNum, 1, Scalar(scorestep * 4, scorestep * 4, scorestep * 4));
-				fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar(scorestep*5, scorestep*5, scorestep*5));
+				fillPoly(bufferImgR, &pts5, &ptNum, 1, Scalar(scorestep *2, scorestep *2, scorestep *2));
+				fillPoly(bufferImgR, &pts4, &ptNum, 1, Scalar(scorestep * 4, scorestep * 4, scorestep * 4));
+				fillPoly(bufferImgR, &pts3, &ptNum, 1, Scalar(scorestep * 6, scorestep * 6, scorestep * 6));
+				fillPoly(bufferImgR, &pts2, &ptNum, 1, Scalar(scorestep * 8, scorestep * 8, scorestep * 8));
+				fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar(scorestep * 10, scorestep *10, scorestep *10));
 				break;
 			}
 		}
@@ -152,12 +175,14 @@ Mat Driving::getLaneData(int scorestep)
 
 	}
 	bufferImg = bufferImgR + bufferImgL;
+	//imshow("R", bufferImgR);
+	//imshow("L", bufferImgL);
 	//imshow("total lane image", bufferImg);
 	bufferImg = bufferImg(Range(800 - 400, 800), Range(400 - 200, 400 + 200));
 	//threshold(bufferImg, bufferImg, 2, 10, THRESH_BINARY);
 	//imshow("CROP", bufferImg);
 	resize(bufferImg, bufferImg, Size(600, 600), 0, 0, CV_INTER_NN);	//resize the image for be same the size of lidar data
-	//imshow("buffer", bufferImg);
+	imshow("buffer", bufferImg);
 	return bufferImg;
 
 }
@@ -276,8 +301,8 @@ void Driving::Basic() {
 			////////////////////////////////////
 
 		cv::cvtColor(imgPath, imgPath, CV_BGR2GRAY);
-		threshold(imgPath, imgPath, 1, 10, THRESH_BINARY_INV);
-		threshold(scoreMap, scoreMap, 1, 10, THRESH_BINARY_INV);
+		threshold(imgPath, imgPath, 1, 25, THRESH_BINARY_INV);
+		threshold(scoreMap, scoreMap, 1, 25, THRESH_BINARY_INV);
 
 		//MAKING VORNOI FIELD
 		int kerSize;
@@ -286,7 +311,7 @@ void Driving::Basic() {
 		Mat stepVot2 = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
 		for (int i = 1; i < 4; i++)
 		{
-			kerSize = 15 * i;
+			kerSize = 20 * i;
 			kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
 			morphologyEx(scoreMap, stepVot2, MORPH_ERODE, kernel);
 			morphologyEx(imgPath, stepVot, MORPH_ERODE, kernel);
@@ -296,8 +321,8 @@ void Driving::Basic() {
 
 		//Apply the lane data to the lidar data
 		Mat buf = Mat::zeros(600, 600, CV_8UC1);
-		Mat laneImg = getLaneData(10);
-		imshow("LaneMap", laneImg);
+		Mat laneImg = getLaneData(20);
+		//imshow("LaneMap", laneImg);
 		scoreMap -= laneImg;
 		imgPath -= laneImg;
 
@@ -453,6 +478,8 @@ void Driving::Basic() {
 		if (objdist.size() == 0) {
 			cout << "do nothing" << endl;
 			//cv::arrowedLine(imgPath, center, pntF, CV_RGB(255, 255, 25), 5);
+			cv::arrowedLine(imgPath, center, pntF, CV_RGB(200, 200, 200), 2);
+
 		}
 		else {
 			//stop condition
@@ -476,14 +503,14 @@ void Driving::Basic() {
 
 		/*cout << "desired_speed = " << desired_speed << endl;
 		cout << "desired_steer = " << desired_steering << endl;*/
-		imshow("Map", scoreMap);
+		//imshow("Map", scoreMap);
 		imshow("Path", imgPath);
 
 			//////////////////////////////////////////////////
 			////Final Control the steering angle and speed////
 			//////////////////////////////////////////////////
-		//dataContainer->setValue_UtoP_STEER(desired_steering);
-		//dataContainer->setValue_UtoP_SPEED(desired_speed);
+		dataContainer->setValue_UtoP_STEER(desired_steering);
+		dataContainer->setValue_UtoP_SPEED(desired_speed);
 		
 		end = clock();
 		cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl ;

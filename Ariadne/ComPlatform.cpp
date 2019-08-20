@@ -108,16 +108,21 @@ void ComPlatform::setWritePram(BYTE* writeBuffer)
 	writeBuffer[13] = 0x0a;
 }
 
-#define steeringKP 0.75
-#define speedKP		1.5
+#define steeringKP  0.3
+#define speedKP		1.0
 #define steerRatio  1.0
 
 int ComPlatform::setData_steering(int desired_steering)
 {
 	int present_steering = dataContainer->getValue_PtoU_STEER(); //-2000~2000
 	desired_steering *= -71;
-
-	desired_steering = (desired_steering - present_steering) *steeringKP + present_steering;
+	int dif = desired_steering - present_steering;
+	if (abs(dif) < 100)
+	{
+		dif = 0;
+	}
+	//present_steering = (desired_steering + present_steering) / 2;
+	desired_steering = (double)desired_steering*steeringKP;//((double)dif)*steeringKP;//+ present_steering;
 
 	if (desired_steering > 2000) {
 		desired_steering = 2000;
@@ -134,7 +139,7 @@ int ComPlatform::setData_speed(int desired_speed)
 	int present_speed = dataContainer->getValue_PtoU_SPEED(); //0~200
 	desired_speed *= 10;
 
-	desired_speed = (desired_speed - present_speed) *speedKP + present_speed;
+	desired_speed = (double)desired_speed*speedKP;
 
 	if (desired_speed > 200) {
 		desired_speed = 200;

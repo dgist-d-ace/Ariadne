@@ -3,10 +3,10 @@
 #include "Planner.hpp"
 #include <iostream>
 
-#define steeringKP 0.75
+#define steeringKP 0.5
 #define speedKP		1.5
 #define steerRatio  1.0
-#define speedHigh	10
+#define speedHigh	12
 #define speedLow	4
 class Driving : public QObject
 {

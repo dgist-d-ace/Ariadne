@@ -20,6 +20,9 @@ Ariadne::Ariadne(QWidget *parent)
 
     dataContainer = DataContainer::getInstance();
 
+	QPixmap pix("C:/Users/D-Ace/Documents/DYibre/temp.png");
+	ui->AriadneLogo->setPixmap(pix);
+
 	//  -------------------  Sensor Thread control ------------------------- //
 
     platformCom = new PlatformCom;
