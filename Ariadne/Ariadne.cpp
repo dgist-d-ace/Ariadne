@@ -61,7 +61,7 @@ Ariadne::Ariadne(QWidget *parent)
 
 	//SWITCH LIDAR CONTROLING.
 	connect(drivingThread, SIGNAL(started()), driving, SLOT(Basic()));
-	connect(drivingThread, SIGNAL(started()), driving, SLOT(Mission6()));
+	//connect(drivingThread, SIGNAL(started()), driving, SLOT(Mission6()));
 	//connect(drivingThread, SIGNAL(started()), driving, SLOT(LOS()));
 
     //  -------------------  UI control ------------------------- //
