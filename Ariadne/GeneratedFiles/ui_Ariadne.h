@@ -10,6 +10,7 @@
 #define UI_ARIADNE_H
 
 #include <QtCore/QVariant>
+#include <QtGui/QIcon>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>
@@ -55,12 +56,12 @@ public:
     QPushButton *Btn_mission3;
     QPushButton *Btn_mission6;
     QPushButton *Btn_mission7;
-    QPushButton *Btn_mission8;
     QPushButton *Btn_mission4;
-    QPushButton *Btn_mission9;
     QPushButton *Btn_mission5;
-    QPushButton *Btn_mission9_2;
-    QPushButton *Btn_mission9_3;
+    QPushButton *Btn_kidsafe;
+    QPushButton *Btn_kidsafe_2;
+    QLabel *label_20;
+    QLabel *label_21;
     QPlainTextEdit *plainTextEdit;
     QTabWidget *tabWidget;
     QWidget *tab;
@@ -114,7 +115,7 @@ public:
     {
         if (AriadneClass->objectName().isEmpty())
             AriadneClass->setObjectName(QString::fromUtf8("AriadneClass"));
-        AriadneClass->resize(1198, 859);
+        AriadneClass->resize(1179, 859);
         centralWidget = new QWidget(AriadneClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         groupBox = new QGroupBox(centralWidget);
@@ -182,28 +183,37 @@ public:
         Btn_mission3->setGeometry(QRect(10, 140, 101, 31));
         Btn_mission6 = new QPushButton(groupBox_3);
         Btn_mission6->setObjectName(QString::fromUtf8("Btn_mission6"));
-        Btn_mission6->setGeometry(QRect(130, 20, 101, 31));
+        Btn_mission6->setGeometry(QRect(130, 100, 101, 31));
         Btn_mission7 = new QPushButton(groupBox_3);
         Btn_mission7->setObjectName(QString::fromUtf8("Btn_mission7"));
-        Btn_mission7->setGeometry(QRect(130, 60, 101, 31));
-        Btn_mission8 = new QPushButton(groupBox_3);
-        Btn_mission8->setObjectName(QString::fromUtf8("Btn_mission8"));
-        Btn_mission8->setGeometry(QRect(130, 100, 101, 31));
+        Btn_mission7->setGeometry(QRect(130, 140, 101, 31));
         Btn_mission4 = new QPushButton(groupBox_3);
         Btn_mission4->setObjectName(QString::fromUtf8("Btn_mission4"));
-        Btn_mission4->setGeometry(QRect(10, 180, 101, 31));
-        Btn_mission9 = new QPushButton(groupBox_3);
-        Btn_mission9->setObjectName(QString::fromUtf8("Btn_mission9"));
-        Btn_mission9->setGeometry(QRect(130, 140, 101, 31));
+        Btn_mission4->setGeometry(QRect(130, 20, 101, 31));
         Btn_mission5 = new QPushButton(groupBox_3);
         Btn_mission5->setObjectName(QString::fromUtf8("Btn_mission5"));
-        Btn_mission5->setGeometry(QRect(10, 220, 101, 31));
-        Btn_mission9_2 = new QPushButton(groupBox_3);
-        Btn_mission9_2->setObjectName(QString::fromUtf8("Btn_mission9_2"));
-        Btn_mission9_2->setGeometry(QRect(130, 180, 101, 31));
-        Btn_mission9_3 = new QPushButton(groupBox_3);
-        Btn_mission9_3->setObjectName(QString::fromUtf8("Btn_mission9_3"));
-        Btn_mission9_3->setGeometry(QRect(130, 220, 101, 31));
+        Btn_mission5->setGeometry(QRect(130, 60, 101, 31));
+        Btn_kidsafe = new QPushButton(groupBox_3);
+        Btn_kidsafe->setObjectName(QString::fromUtf8("Btn_kidsafe"));
+        Btn_kidsafe->setGeometry(QRect(130, 180, 101, 31));
+        QIcon icon;
+        icon.addFile(QString::fromUtf8("../../DYibre/Checkbox_Off.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon.addFile(QString::fromUtf8("../../DYibre/Checkbox_On.png"), QSize(), QIcon::Normal, QIcon::On);
+        Btn_kidsafe->setIcon(icon);
+        Btn_kidsafe->setIconSize(QSize(100, 40));
+        Btn_kidsafe->setCheckable(true);
+        Btn_kidsafe_2 = new QPushButton(groupBox_3);
+        Btn_kidsafe_2->setObjectName(QString::fromUtf8("Btn_kidsafe_2"));
+        Btn_kidsafe_2->setGeometry(QRect(130, 220, 101, 31));
+        Btn_kidsafe_2->setIcon(icon);
+        Btn_kidsafe_2->setIconSize(QSize(100, 40));
+        Btn_kidsafe_2->setCheckable(true);
+        label_20 = new QLabel(groupBox_3);
+        label_20->setObjectName(QString::fromUtf8("label_20"));
+        label_20->setGeometry(QRect(40, 190, 56, 12));
+        label_21 = new QLabel(groupBox_3);
+        label_21->setObjectName(QString::fromUtf8("label_21"));
+        label_21->setGeometry(QRect(40, 230, 56, 12));
         plainTextEdit = new QPlainTextEdit(centralWidget);
         plainTextEdit->setObjectName(QString::fromUtf8("plainTextEdit"));
         plainTextEdit->setGeometry(QRect(270, 680, 691, 101));
@@ -342,11 +352,11 @@ public:
         groupBox_5->setGeometry(QRect(10, 580, 241, 201));
         AriadneLogo = new QLabel(centralWidget);
         AriadneLogo->setObjectName(QString::fromUtf8("AriadneLogo"));
-        AriadneLogo->setGeometry(QRect(10, 20, 241, 71));
+        AriadneLogo->setGeometry(QRect(30, 20, 241, 71));
         AriadneClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AriadneClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1198, 21));
+        menuBar->setGeometry(QRect(0, 0, 1179, 21));
         AriadneClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(AriadneClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -381,18 +391,18 @@ public:
         Btn_scnn_stop->setText(QApplication::translate("AriadneClass", "STOP", nullptr));
         Btn_scnn_restart->setText(QApplication::translate("AriadneClass", "RESTART", nullptr));
         groupBox_3->setTitle(QApplication::translate("AriadneClass", "Mission", nullptr));
-        Btn_Mission0->setText(QApplication::translate("AriadneClass", "Mission0", nullptr));
-        Btn_mission1->setText(QApplication::translate("AriadneClass", "Mission1", nullptr));
-        Btn_mission2->setText(QApplication::translate("AriadneClass", "Mission2", nullptr));
-        Btn_mission3->setText(QApplication::translate("AriadneClass", "Mission3", nullptr));
-        Btn_mission6->setText(QApplication::translate("AriadneClass", "Mission6", nullptr));
-        Btn_mission7->setText(QApplication::translate("AriadneClass", "Mission7", nullptr));
-        Btn_mission8->setText(QApplication::translate("AriadneClass", "Mission8", nullptr));
-        Btn_mission4->setText(QApplication::translate("AriadneClass", "Mission4", nullptr));
-        Btn_mission9->setText(QApplication::translate("AriadneClass", "Mission9", nullptr));
-        Btn_mission5->setText(QApplication::translate("AriadneClass", "Mission5", nullptr));
-        Btn_mission9_2->setText(QApplication::translate("AriadneClass", "Mission10", nullptr));
-        Btn_mission9_3->setText(QApplication::translate("AriadneClass", "Mission11", nullptr));
+        Btn_Mission0->setText(QApplication::translate("AriadneClass", "0. Parking", nullptr));
+        Btn_mission1->setText(QApplication::translate("AriadneClass", "1. InterReady", nullptr));
+        Btn_mission2->setText(QApplication::translate("AriadneClass", "2. InterLeft", nullptr));
+        Btn_mission3->setText(QApplication::translate("AriadneClass", "3. InterRight", nullptr));
+        Btn_mission6->setText(QApplication::translate("AriadneClass", "6. DynamicOb", nullptr));
+        Btn_mission7->setText(QApplication::translate("AriadneClass", "7. sdf", nullptr));
+        Btn_mission4->setText(QApplication::translate("AriadneClass", "4. InterStop ", nullptr));
+        Btn_mission5->setText(QApplication::translate("AriadneClass", "5. StaticOb", nullptr));
+        Btn_kidsafe->setText(QString());
+        Btn_kidsafe_2->setText(QString());
+        label_20->setText(QApplication::translate("AriadneClass", "KidSafe", nullptr));
+        label_21->setText(QApplication::translate("AriadneClass", "Bust", nullptr));
         Btn_up->setText(QApplication::translate("AriadneClass", "\342\226\262", nullptr));
         Btn_down->setText(QApplication::translate("AriadneClass", "\342\226\274", nullptr));
         Btn_right->setText(QApplication::translate("AriadneClass", "\342\226\266", nullptr));

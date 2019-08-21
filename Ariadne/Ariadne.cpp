@@ -76,6 +76,9 @@ Ariadne::Ariadne(QWidget *parent)
     // --------------------- Platform control Using UI ---------------------------------//
 
     QObject::connect(ui->Btn_Mission0, SIGNAL(clicked()), this, SLOT(clicked_btn_mission0()));
+	QObject::connect(ui->Btn_mission5, SIGNAL(clicked()), this, SLOT(clicked_btn_mission5()));
+	QObject::connect(ui->Btn_mission6, SIGNAL(clicked()), this, SLOT(clicked_btn_mission6()));
+
     QObject::connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_btn_sensor()));
 	QObject::connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(clicked_btn_driving()));
     QObject::connect(ui->Btn_gearInput, SIGNAL(clicked()), this, SLOT(gear_input()));
@@ -84,7 +87,7 @@ Ariadne::Ariadne(QWidget *parent)
     QObject::connect(ui->Btn_left, SIGNAL(clicked()), this, SLOT(clicked_steer_left()));
     QObject::connect(ui->Btn_right, SIGNAL(clicked()), this, SLOT(clicked_steer_right()));
     QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_E_stop()));
-    //QObject::connect(ui->Btn_Go, SIGNAL(clicked()), this, SLOT(gotoGPSdestination()));
+    //QObject::connect(ui->Btn_Go, SIGNAL(clicked()), this, SLOT(gotoGPSdestination()));sdss
 
     QObject::connect(ui->Btn_lidar_stop, SIGNAL(clicked()), this, SLOT(clicked_lidar_stop()));
     QObject::connect(ui->Btn_lidar_restart, SIGNAL(clicked()), this, SLOT(clicked_lidar_restart()));
@@ -92,6 +95,7 @@ Ariadne::Ariadne(QWidget *parent)
     QObject::connect(ui->Btn_yolo_restart, SIGNAL(clicked()), this, SLOT(clicked_yolo_restart()));
     QObject::connect(ui->Btn_scnn_stop, SIGNAL(clicked()), this, SLOT(clicked_scnn_stop()));
     QObject::connect(ui->Btn_scnn_restart, SIGNAL(clicked()), this, SLOT(clicked_scnn_restart()));
+
 
     // ------------------- UI update for Platform & GPS status ----------------------//
 
@@ -184,6 +188,19 @@ void Ariadne::clicked_btn_driving() {
 
 void Ariadne::clicked_btn_mission0() {
 	AutoPortFinder();
+	/// 0821 DY 추가
+	driving->Mission1();
+	ui->plainTextEdit->appendPlainText("Parking Mission Start");
+}
+
+void Ariadne::clicked_btn_mission5() {
+	driving->Mission5();
+	ui->plainTextEdit->appendPlainText("Static Obstacle Mission Start");
+}
+
+void Ariadne::clicked_btn_mission6() {
+	driving->Mission6();
+	ui->plainTextEdit->appendPlainText("Dynamic Obstacle Mission Start");
 }
 
 // These functions is to control gplatform
@@ -338,7 +355,7 @@ void Ariadne::updateSensorStatus()
 	dataContainer->setValue_lidar_status(0);
 
 	// GPS communication code
-	if (dataContainer->getValue_gps_status() > 5)
+	if (dataContainer->getValue_gps_status() > 5)  
 	{
 		ui->label_12->setStyleSheet("background-color: rgb(144, 198, 241)");
 	}

@@ -656,26 +656,45 @@ void Driving::LOS() {
 
 void Driving::Mission1() {
 	//
-	// To do : Implement Basic Driving Algorithm
+	// Parking
 	//
-
+	cout << "parking start" << endl;
 }
 
 void Driving::Mission2() {
-
+	
 }
 
 void Driving::Mission3() {
-
-
+	
 }
 
 void Driving::Mission4() {
 
 }
 
-void Driving::Mission5() {}
+void Driving::Mission5() {
+	//
+	// 정적 장애물 미션
+	//
+	cout << "정적 장애물 시작" << endl;
+}
+
+void Driving::Mission6() {
+	//
+	// 동적 장애물 미션
+	//
+	cout << "동적 장애물 시작" << endl;
+}
 
 /// functions which switch radian and degree
 double Driving::rad2deg(double radian) { return radian * 180 / PI; }
 double Driving::deg2rad(double degree) { return degree * PI / 180; }
+
+SpeedControl::SpeedControl() {
+	dataContainer = DataContainer::getInstance();
+}
+
+void SpeedControl::ControlbySituation() {
+	
+}

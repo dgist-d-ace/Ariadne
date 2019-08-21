@@ -161,7 +161,7 @@ int Scnn::boostScnn() {
 
 	//py::exec("import simple", main_namespace);
 	py::exec("import scnn_c_implementation_v2", main_namespace);
-	
+	 
 	py::object scnn = py::import("scnn_c_implementation_v2");
 	
 	

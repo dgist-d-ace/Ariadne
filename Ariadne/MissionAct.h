@@ -29,11 +29,24 @@ public slots:
 	void Basic();
 	Mat getLaneData(int scorestep);
 
-	void Mission1();
+	void Mission1(); // 주차
     void Mission2();
     void Mission3();
     void Mission4();
-    void Mission5();
+    void Mission5(); // 정적장애물
+	void Mission6(); // 동적장애물
 
 };
 
+class SpeedControl : public QObject
+{
+	Q_OBJECT
+protected:
+
+public:
+	DataContainer *dataContainer;
+	SpeedControl();
+
+public slots:
+	void ControlbySituation();
+};

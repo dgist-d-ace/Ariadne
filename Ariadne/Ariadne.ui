@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1198</width>
+    <width>1179</width>
     <height>859</height>
    </rect>
   </property>
@@ -238,7 +238,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Mission0</string>
+      <string>0. Parking</string>
      </property>
     </widget>
     <widget class="QPushButton" name="Btn_mission1">
@@ -251,7 +251,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Mission1</string>
+      <string>1. InterReady</string>
      </property>
     </widget>
     <widget class="QPushButton" name="Btn_mission2">
@@ -264,7 +264,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Mission2</string>
+      <string>2. InterLeft</string>
      </property>
     </widget>
     <widget class="QPushButton" name="Btn_mission3">
@@ -277,36 +277,10 @@
       </rect>
      </property>
      <property name="text">
-      <string>Mission3</string>
+      <string>3. InterRight</string>
      </property>
     </widget>
     <widget class="QPushButton" name="Btn_mission6">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>20</y>
-       <width>101</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Mission6</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="Btn_mission7">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>60</y>
-       <width>101</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Mission7</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="Btn_mission8">
      <property name="geometry">
       <rect>
        <x>130</x>
@@ -316,23 +290,10 @@
       </rect>
      </property>
      <property name="text">
-      <string>Mission8</string>
+      <string>6. DynamicOb</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="Btn_mission4">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>180</y>
-       <width>101</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Mission4</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="Btn_mission9">
+    <widget class="QPushButton" name="Btn_mission7">
      <property name="geometry">
       <rect>
        <x>130</x>
@@ -342,23 +303,36 @@
       </rect>
      </property>
      <property name="text">
-      <string>Mission9</string>
+      <string>7. sdf</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="Btn_mission5">
+    <widget class="QPushButton" name="Btn_mission4">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>220</y>
+       <x>130</x>
+       <y>20</y>
        <width>101</width>
        <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string>Mission5</string>
+      <string>4. InterStop </string>
      </property>
     </widget>
-    <widget class="QPushButton" name="Btn_mission9_2">
+    <widget class="QPushButton" name="Btn_mission5">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>60</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>5. StaticOb</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Btn_kidsafe">
      <property name="geometry">
       <rect>
        <x>130</x>
@@ -368,10 +342,24 @@
       </rect>
      </property>
      <property name="text">
-      <string>Mission10</string>
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../../DYibre/Checkbox_Off.png</normaloff>
+       <normalon>../../DYibre/Checkbox_On.png</normalon>../../DYibre/Checkbox_Off.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>100</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
      </property>
     </widget>
-    <widget class="QPushButton" name="Btn_mission9_3">
+    <widget class="QPushButton" name="Btn_kidsafe_2">
      <property name="geometry">
       <rect>
        <x>130</x>
@@ -381,7 +369,47 @@
       </rect>
      </property>
      <property name="text">
-      <string>Mission11</string>
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../../DYibre/Checkbox_Off.png</normaloff>
+       <normalon>../../DYibre/Checkbox_On.png</normalon>../../DYibre/Checkbox_Off.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>100</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_20">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>190</y>
+       <width>56</width>
+       <height>12</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>KidSafe</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_21">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>230</y>
+       <width>56</width>
+       <height>12</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Bust</string>
      </property>
     </widget>
    </widget>
@@ -893,7 +921,7 @@
    <widget class="QLabel" name="AriadneLogo">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>30</x>
       <y>20</y>
       <width>241</width>
       <height>71</height>
@@ -909,7 +937,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1198</width>
+     <width>1179</width>
      <height>21</height>
     </rect>
    </property>

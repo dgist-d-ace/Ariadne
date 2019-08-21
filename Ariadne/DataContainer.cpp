@@ -152,6 +152,8 @@ void DataContainer::show_PtoU()
 	cout << " ]" << endl;
 }
 
+void DataContainer::setValue_speed_ratio(double temp) { mtx_Speed_Ratio.lock(); temp = m_speed_ratio; mtx_Speed_Ratio.unlock(); }
+
 //
 //	¶óÀÌ´Ù				???????½Èºñ???????
 //
@@ -175,6 +177,14 @@ void setData_lidar_object(object* objL, int num){}
 void getData_lidar_object(object* objM){}
 void deleteData_lidar_object(){}
 */
+
+
+//
+// YOLO mission
+//
+
+//map<string, int> DataContainer::getValue_yolo_missions();
+//void DataContainer::setValue_yolo_missions(map<string, int>);
 
 //
 // SCNN

@@ -128,6 +128,11 @@ private:
 
 public slots:
     void clicked_btn_mission0();
+	//void clicked_btn_mission2();
+	//void clicked_btn_mission3();
+	void clicked_btn_mission5();
+	void clicked_btn_mission6();
+
     void clicked_btn_sensor();
 	void clicked_btn_driving();
 

@@ -56,6 +56,13 @@ private:
 	QMutex mtx_PtoU_ALIVE;
 
 	//
+	// 상황에 따른 Speed Ratio 결정
+	//
+	double m_speed_ratio = 1;
+
+	QMutex mtx_Speed_Ratio;
+
+	//
 	// 센서 및 플랫폼 연결 상태 정보
 	//
 
@@ -100,8 +107,11 @@ private:
 	QMutex mtx_scnn_existLanes;
 
 	//
-	//카메라2: 미정 (주차용) 
+	//카메라2: YOLO용
 	//
+	map<string, int> m_mission_map;
+	
+	QMutex mtx_mission_map;
 
 	//
 	//gps:
@@ -244,6 +254,11 @@ public:
 	void show_PtoU();
 
 	//
+	// SpeedRatio 조절
+	//
+	void setValue_speed_ratio(double);
+
+	//
 	//	라이다
 	//
 
@@ -274,6 +289,12 @@ public:
 	void setValue_scnn_existLanes(vector<int> existLanes);
 	
 	
+	//
+	// 카메라 2 YOLO용
+	//
+	map<string, int> getValue_yolo_missions();
+	void setValue_yolo_missions(map<string, int>);
+
 	//
 	//	GPS
 	//
