@@ -26,7 +26,7 @@ Mat Driving::getLaneData(int scorestep)
 	vector<vector<Point2i>> Lanes = dataContainer->getValue_scnn_lanes();
 	Mat bufferImgR = Mat::zeros(800, 800, CV_8UC1);
 	Mat bufferImgL = Mat::zeros(800, 800, CV_8UC1);
-	cout << idLane[0] << idLane[1] << idLane[2] << idLane[3] << endl;
+	//cout << idLane[0] << idLane[1] << idLane[2] << idLane[3] << endl;
 	if (idLane[0] == 0 && idLane[1] == 0 && idLane[2] == 0 && idLane[3] == 0) {
 		//cout<< "there is no lane!!!!!" <<endl;
 	}
@@ -188,8 +188,8 @@ Mat Driving::getLaneData(int scorestep)
 
 //PASIV (Pointcloud-based Auto-driving with Score Implemented Voronoi field)
 void Driving::Basic() {
+	cout << "PASIV driving" << endl;
 	dataContainer->setValue_UtoP_AorM(1);
-	
 		////////////////////
 		////INITIALIZING////
 		////////////////////
@@ -226,9 +226,17 @@ void Driving::Basic() {
 	}
 
 	clock_t start, end;
-	while (1)
-	{
-		//cout << "FUCK COME IN while" << endl;
+	while (1){
+		///////////////////////////////////////////
+		////Break the PASIV for another mission////
+		///////////////////////////////////////////
+
+		if (dataContainer->missionID != 0)
+			break;
+
+		//////////////////////////////////////////////////////////////////////////////////////
+
+		cout << "FUCK IN PASIV" << endl;
 		start = clock();
 		imgPath = cv::Mat::zeros(600, 600, CV_8UC3); 
 		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
@@ -418,7 +426,7 @@ void Driving::Basic() {
 			////!!!!!!EMERGENCY!!!!!!////
 			/////////////////////////////
 		if (objdist.size() == 0) {
-			cout << "do nothing" << endl;
+			//cout << "do nothing" << endl;
 			//cv::arrowedLine(imgPath, center, pntF, CV_RGB(255, 255, 25), 5);
 			cv::arrowedLine(imgPath, center, pntF, CV_RGB(200, 200, 200), 2);
 
@@ -454,14 +462,18 @@ void Driving::Basic() {
 		dataContainer->setValue_UtoP_STEER(desired_steering);
 		dataContainer->setValue_UtoP_SPEED(desired_speed);
 		
+
+
+
 		end = clock();
-		cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl ;
+		//cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl ;
 		int key = cv::waitKey(1);
 
 		if (key == 27) {
 			break;
 		}
 	}
+
 }
 
 void Driving::DrawData()
@@ -677,24 +689,213 @@ void Driving::Mission5() {
 	//
 	// 정적 장애물 미션
 	//
-	cout << "정적 장애물 시작" << endl;
+	//Use only PASIV
+	Basic();
 }
 
 void Driving::Mission6() {
 	//
+	dataContainer->setValue_UtoP_AorM(1);
+	cout << "Dynamic Obstacle Mission" << endl;
 	// 동적 장애물 미션
 	//
-	cout << "동적 장애물 시작" << endl;
+	// PASIV for Dynamic Obstacle Mission
+	imgPath = Mat::zeros(600, 600, CV_8UC1);
+	double cenX = imgPath.cols * 0.5, cenY = imgPath.rows *0.99; //the location of LiDAR in the map.
+	double scale = cenY / (SICK_SCAN_ROI_Y + 50);				  //obj_Data => imgPath
+	//Car size in map
+	double carW = CAR_WEITH * scale;
+	double carH = CAR_HEIGH * scale;
+	//vector<int> checkTheta = { 0, -2,2, -4, 4, -6, 6, -8, 8, -10,10, -12,12, -14, 14, -16,16,-18,18, -20, 20, -22,22,-24,24,-26, 26 };//The steering angle candidates
+	//vector<int> checkTheta = { 0, -5,5,-10,10,-15,15,-20,20,-25,25,-30,30 };//The steering angle candidates
+	vector<int> checkTheta = { 0, -3,3,-6,6,-9,9,-12,12,-15,15,-18,18,-21,21,-24,24,-27,27 };
+	vector<int> checkTheta2 = { 0,-6,6,-12,12,-18,18,-24,24 };
+	uchar onestep = (CAR_HEIGH)* scale;
+	Mat cirGray, cirGray2, buffer;
+	uint Theta, Theta2;
+	vector<Mat> checkImgs;
+	for (int i = 0; i < checkTheta.size(); i++) {
+		cirGray = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
+		Theta = 90 + checkTheta.at(i);
+		Point2d step1(cenX + onestep * cos(CV_PI*Theta / 180), cenY - onestep * sin(CV_PI*Theta / 180));
+		circle(cirGray, step1, (onestep / 2) - 5, CV_RGB(10, 10, 10), -1, CV_AA, 0);
+
+		for (int j = 0; j < checkTheta2.size(); j++)
+		{
+			cirGray2 = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
+			Theta2 = 90 + checkTheta2.at(j);
+			Point2d step2(step1.x + onestep * cos(CV_PI*Theta2 / 180), step1.y - onestep * sin(CV_PI*Theta2 / 180));
+			circle(cirGray2, step2, (onestep / 2) - 5, CV_RGB(10, 10, 10), -1, CV_AA, 0);
+			cirGray2 += cirGray;
+			buffer = cirGray2.clone();
+			checkImgs.push_back(buffer);
+		}
+	}
+	uint objflag = 0;
+
+	while (1) {
+		if (dataContainer->missionID != 6)
+			break;
+
+		cout << "FUCK IN DYNAMIC" << endl;
+		imgPath = cv::Mat::zeros(600, 600, CV_8UC3);
+		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
+		vector<Point2d> vecXYDraw;
+		double cenX = imgPath.cols * 0.5, cenY = imgPath.rows *0.99; //the location of LiDAR in the map.
+		double scale = cenY / (SICK_SCAN_ROI_Y + 50);				  //obj_Data => imgPath
+		//ROI AREA
+		double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
+		double rightEndX = cenX + SICK_SCAN_ROI_X * scale;
+		double topEndY = cenY - SICK_SCAN_ROI_Y * scale;
+		double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
+		//Localization of LiDAR in the ROI
+		Point2d center(cenX, cenY);
+
+		//////////////////////////////////////////////////////////////////
+		////Because Of Obstacles, Fill the Regions where cannot go in.////
+		//////////////////////////////////////////////////////////////////
+		for (int i = 0; i < vecXY.size(); ++i) {
+			double xyDrawX = center.x + vecXY[i].x * scale;
+			double xyDrawY = center.y - vecXY[i].y * scale;
+
+			Point2d xyDraw(xyDrawX, xyDrawY);
+			vecXYDraw.push_back(xyDraw);
+		}
+		for (int i = 0; i < vecXYDraw.size() - 1; ++i) {
+			double dist = sqrt(pow(vecXYDraw[i].x - vecXYDraw[i + 1].x, 2) + pow(vecXYDraw[i].y - vecXYDraw[i + 1].y, 2));
+
+			if (dist <= SICK_SCAN_DIST_OBJECT * scale) {
+				if (vecXYDraw[i].x < rightEndX && vecXYDraw[i].x > leftEndX && vecXYDraw[i].y > topEndY) {
+					line(imgPath, vecXYDraw[i], vecXYDraw[i + 1], CV_RGB(0, 255, 0), 2);
+				}
+			}
+		}
+
+		vector<vector<double> > objDataSet = dataContainer->getValue_lidar_Data().back();
+		double cirCenX, cirCenY, cirCenR;
+		double cenDist;
+		vector<double>objdist;
+		for (int i = 0; i < objDataSet.size(); i++) {
+			cirCenX = center.x + objDataSet[i][0] * scale;
+			cirCenY = center.y - objDataSet[i][1] * scale;
+			cirCenR = objDataSet[i][2] * scale;
+			Point2d cirCen(cirCenX, cirCenY); //center of objs.
+			cenDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2));
+			objdist.push_back(cenDist - cirCenR);
+
+			circle(imgPath, cirCen, cirCenR, CV_RGB(255, 0, 0), -1, CV_AA);
+		}
+		cv::cvtColor(imgPath, imgPath, CV_BGR2GRAY);
+		threshold(imgPath, imgPath, 1, 150, THRESH_BINARY_INV);
+
+		Mat imgLane = getLaneData(5);
+		imgPath -= imgLane;
+
+		//////////////////////////////////////////////////////////////////////////////
+		////Determine the desired Steering Angle in Score System with Vornoi Field////
+		//////////////////////////////////////////////////////////////////////////////
+		//REGION OF WORKABLE ANGLE: 60 ~ 120, with interval=5 degrees
+		vector<uint> score[361]; //include the scores at [90,85, 95, 80, 100, 75, 105, 70, 110, 65, 115, 60, 120]degrees
+		Mat scresult;
+		uint sum;
+		for (int i = 0; i < checkImgs.size(); i++) {
+			//cout << "CHECKING" << endl;
+			//cout << i << endl;
+			//imshow("checkImgs", checkImgs[i]);
+			//imshow("imgPath", imgPath);
+
+			scresult = checkImgs[i].mul(imgPath);
+			uchar *sumData = scresult.data;
+			int scHeight = scresult.rows;
+			int scWidth = scresult.cols;
+			sum = 0;
+			for (int h = 0; h < scHeight; h++) {
+				for (int w = 0; w < scWidth; w++) {
+					sum += sumData[w*scHeight + h];
+				}
+			}
+			score->push_back(sum);
+			//cout << "sum" << endl;
+			//waitKey(1);
+		}
+		uint scoreMax = distance(score->begin(), max_element(score->begin(), score->end()));
+		int goTheta1 = checkTheta.at(scoreMax / checkTheta2.size());
+		int goTheta2 = checkTheta2.at(scoreMax % checkTheta2.size());
+
+		Point2d stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1) / 180)));
+		Point2d stepSecond(stepFirst.x + onestep * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*sin(CV_PI*(90 + goTheta2) / 180)));
+
+		double desired_steering = goTheta1 * steerRatio + goTheta2 * (1 - steerRatio);
+		Point2d pntF(cenX + onestep * 1.5 * cos(CV_PI*(90 + desired_steering) / 180), cenY - onestep * 1.5*sin(CV_PI*(90 + desired_steering) / 180));
+
+		arrowedLine(imgPath, center, stepFirst, CV_RGB(50, 50, 50), 5);
+		arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(50, 50, 50), 5);
+		
+		int desired_speed = DynamicMissionSpeed;
+		int thDist = stopDist * scale;
+		double objClose ;
+		if (objdist.size() == 0){
+			cv::arrowedLine(imgPath, center, pntF, CV_RGB(255, 255, 255), 2);
+		}
+		else{
+			double objClose = objdist.at(distance(objdist.begin(), min_element(objdist.begin(), objdist.end())));
+			if (objClose < thDist){
+				desired_speed = 0;
+				dataContainer->setValue_UtoP_BRAKE(100);
+				objflag = 1;
+				cout << "FUCKING STOP!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+			}
+			else{
+				cv::arrowedLine(imgPath, center, pntF, CV_RGB(255, 255, 255), 2);
+			}
+		}
+
+		//////////////////////////////////////////////////
+		////Final Control the steering angle and speed////
+		//////////////////////////////////////////////////
+		imshow("Map during the Dynamic Obstacle Mission", imgPath);
+		dataContainer->setValue_UtoP_STEER(desired_steering);
+		dataContainer->setValue_UtoP_SPEED(desired_speed);
+
+		///////////////////////////////////////////////////////
+		////Trigger for ending the Dynamic Obstacle Mission////
+		///////////////////////////////////////////////////////
+		if (objflag == 1){
+			if (objClose > thDist || objdist.size()==0) {
+				dataContainer->missionID = 0;
+				objflag = 0;
+				break;
+			}
+		}
+
+		///////////////////////////////////////////////////////
+
+
+
+		int key = cv::waitKey(1);
+
+		if (key == 27) {
+			break;
+		}
+	}
 }
 
 /// functions which switch radian and degree
 double Driving::rad2deg(double radian) { return radian * 180 / PI; }
 double Driving::deg2rad(double degree) { return degree * PI / 180; }
 
+
 SpeedControl::SpeedControl() {
 	dataContainer = DataContainer::getInstance();
+
 }
 
 void SpeedControl::ControlbySituation() {
 	
+	//There is Speed-dump(Bust)
+	//There is Child Protection Zone
+	//
+
+	int speedLock;
+
 }

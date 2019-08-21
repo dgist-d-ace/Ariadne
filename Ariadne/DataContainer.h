@@ -257,7 +257,7 @@ public:
 	// SpeedRatio 조절
 	//
 	void setValue_speed_ratio(double);
-
+	int missionID = 0;
 	//
 	//	라이다
 	//
