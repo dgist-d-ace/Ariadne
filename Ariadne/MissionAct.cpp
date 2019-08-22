@@ -672,30 +672,74 @@ void Driving::LOS() {
 }
 
 void Driving::MissionParking() {
-	//
-	// Parking
-	//
 	cout << "parking start" << endl;
+
+	//
+	//	mission code
+	//
+
+	if(dataContainer->getValue_yolo_missionID() == PARKING || dataContainer->getValue_yolo_missionID()== BASIC)
+		dataContainer->setValue_yolo_missionID(BASIC);
 }
 
 void Driving::MissionIntReady() {
 	cout << "mission 2" << endl;
+	
+	//
+	//mission code
+	//
+
+	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
+	if (dataContainer->getValue_yolo_missionID()== INTER_READY || dataContainer->getValue_yolo_missionID()== BASIC)
+		dataContainer->setValue_yolo_missionID(BASIC);
 }
 
 void Driving::MissionIntLeft() {
 	cout << "mission 3" << endl;
+
+	//
+	//mission code
+	//
+
+	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
+	if (dataContainer->getValue_yolo_missionID()== INTER_LEFT || dataContainer->getValue_yolo_missionID()== BASIC)
+		dataContainer->setValue_yolo_missionID(BASIC);
 }
 
 void Driving::MissionIntRight() {
 	cout << "mission 4" << endl;
+
+	//
+	//mission code
+	//
+
+	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
+	if (dataContainer->getValue_yolo_missionID()== INTER_RIGHT || dataContainer->getValue_yolo_missionID()== BASIC)
+		dataContainer->setValue_yolo_missionID(BASIC);
 }
 
 void Driving::MissionIntStraight() {
 	cout << "mission 5" << endl;
+
+	//
+	//mission code
+	//
+
+	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
+	if (dataContainer->getValue_yolo_missionID()== INTER_STRAIGHT || dataContainer->getValue_yolo_missionID()== BASIC)
+		dataContainer->setValue_yolo_missionID(BASIC);
 }
 
 void Driving::MissionIntStop() {
 	cout << "misison 6" << endl;
+
+	//
+	//mission code
+	//
+
+	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
+	if (dataContainer->getValue_yolo_missionID()== INTER_STOP || dataContainer->getValue_yolo_missionID()== BASIC)
+		dataContainer->setValue_yolo_missionID(BASIC);
 }
 
 void Driving::MissionStaticObs() {
@@ -726,6 +770,7 @@ void Driving::MissionDynamicObs() {
 
 
 	while (1) {
+		//dynamic obstacle 미션 중 yolo에서 다른 mission trigger가 들어오면 그 mission으로 넘어감
 		if (dataContainer->getValue_yolo_missionID() != 8)
 		{
 			cout << "mission 8 was called but ended long mission ID : " << dataContainer->getValue_yolo_missionID() << endl;
