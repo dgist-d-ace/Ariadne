@@ -4,6 +4,8 @@
 #include "qevent.h"
 #include <codecvt>
 #include <string>
+#include <QPalette>
+#include <QtGui>
 
 using utf8_str = std::string;
 using u16_str = std::wstring;
@@ -124,30 +126,6 @@ Ariadne::Ariadne(QWidget *parent)
     connect(gpsCom, SIGNAL(latitudeChanged(double)), this, SLOT(onLatitudeChanged(double)));
     connect(gpsCom, SIGNAL(longitudeChanged(double)), this, SLOT(onLongitudeChanged(double)));
 	
-	gpsGuid.Data1 = 1295444344;
-	gpsGuid.Data2 = 58149;
-	gpsGuid.Data3 = 4558;
-	gpsGuid.Data4[0] = (unsigned char)191;
-	gpsGuid.Data4[1] = (unsigned char)193;
-	gpsGuid.Data4[2] = (unsigned char)8;
-	gpsGuid.Data4[3] = (unsigned char)0;
-	gpsGuid.Data4[4] = (unsigned char)43;
-	gpsGuid.Data4[5] = (unsigned char)225;
-	gpsGuid.Data4[6] = (unsigned char)3;
-	gpsGuid.Data4[7] = (unsigned char)24;
-
-	platformGuid.Data1 = 1295444344;
-	platformGuid.Data2 = 58149;
-	platformGuid.Data3 = 4558;
-	platformGuid.Data4[0] = (unsigned char)191;
-	platformGuid.Data4[1] = (unsigned char)193;
-	platformGuid.Data4[2] = (unsigned char)8;
-	platformGuid.Data4[3] = (unsigned char)0;
-	platformGuid.Data4[4] = (unsigned char)43;
-	platformGuid.Data4[5] = (unsigned char)225;
-	platformGuid.Data4[6] = (unsigned char)3;
-	platformGuid.Data4[7] = (unsigned char)24;
-
  }
 
 // This function is to change comport numbers from CString to QString.
