@@ -8,7 +8,7 @@
 #define speedLow	4.0
 
 #define stopDist 2000 //for Dynamic Obstacle mission
-#define DynamicMissionSpeed 10.0
+#define DynamicMaxSpeed 8.0
 
 class Driving : public QObject
 {
@@ -29,7 +29,7 @@ public:
 	//vector<int> checkTheta = { 0, -5,5,-10,10,-15,15,-20,20,-25,25,-30,30 };//The steering angle candidates
 	vector<int> checkTheta = { 0, -3,3,-6,6,-9,9,-12,12,-15,15,-18,18,-21,21,-24,24,-27,27 };
 	vector<int> checkTheta2 = { 0,-6,6,-12,12,-18,18,-24,24 };
-
+	vector<vector<double>> gpsWayPoint;
 
 	Planner *aster;
 signals:
@@ -41,8 +41,8 @@ public slots:
 
 	void autoMode();
 
-	void Basic();
-
+	void Basic(int missionId);
+	void BasicGPS(int missionId);
 	void MissionParking(); // ÁÖÂ÷
     void MissionIntReady(); // intersection ready
     void MissionIntLeft(); // intersectin left
