@@ -60,9 +60,16 @@ Ariadne::Ariadne(QWidget *parent)
 	driving->moveToThread(drivingThread);
 
 	//SWITCH LIDAR CONTROLING.
-	connect(drivingThread, SIGNAL(started()), driving, SLOT(Basic()));
-	//connect(drivingThread, SIGNAL(started()), driving, SLOT(Mission6()));
+	connect(drivingThread, SIGNAL(started()), driving, SLOT(autoMode()));
 	//connect(drivingThread, SIGNAL(started()), driving, SLOT(LOS()));
+
+	missionUpdate = new MissionUpdate;
+	missionUpdateThread = new QThread;
+	missionUpdate->moveToThread(missionUpdateThread);
+	connect(missionUpdateThread, SIGNAL(started()), missionUpdate, SLOT(MissionIDUpdate()));
+
+	view = new View;
+	connect(driving, SIGNAL(send2View(int)), view, SLOT(comView(int)));
 
     //  -------------------  UI control ------------------------- //
 
@@ -76,9 +83,15 @@ Ariadne::Ariadne(QWidget *parent)
 
     // --------------------- Platform control Using UI ---------------------------------//
 
-    QObject::connect(ui->Btn_Mission0, SIGNAL(clicked()), this, SLOT(clicked_btn_mission0()));
+    QObject::connect(ui->Btn_Mission1, SIGNAL(clicked()), this, SLOT(clicked_btn_mission1()));
+	QObject::connect(ui->Btn_mission2, SIGNAL(clicked()), this, SLOT(clicked_btn_mission2()));
+	QObject::connect(ui->Btn_mission3, SIGNAL(clicked()), this, SLOT(clicked_btn_mission3()));
+	QObject::connect(ui->Btn_mission4, SIGNAL(clicked()), this, SLOT(clicked_btn_mission4()));
 	QObject::connect(ui->Btn_mission5, SIGNAL(clicked()), this, SLOT(clicked_btn_mission5()));
 	QObject::connect(ui->Btn_mission6, SIGNAL(clicked()), this, SLOT(clicked_btn_mission6()));
+	QObject::connect(ui->Btn_mission7, SIGNAL(clicked()), this, SLOT(clicked_btn_mission7()));
+	QObject::connect(ui->Btn_mission8, SIGNAL(clicked()), this, SLOT(clicked_btn_mission8()));
+	QObject::connect(ui->Btn_mission9, SIGNAL(clicked()), this, SLOT(clicked_btn_mission9()));
 
     QObject::connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_btn_sensor()));
 	QObject::connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(clicked_btn_driving()));
@@ -96,7 +109,6 @@ Ariadne::Ariadne(QWidget *parent)
     QObject::connect(ui->Btn_yolo_restart, SIGNAL(clicked()), this, SLOT(clicked_yolo_restart()));
     QObject::connect(ui->Btn_scnn_stop, SIGNAL(clicked()), this, SLOT(clicked_scnn_stop()));
     QObject::connect(ui->Btn_scnn_restart, SIGNAL(clicked()), this, SLOT(clicked_scnn_restart()));
-
 
     // ------------------- UI update for Platform & GPS status ----------------------//
 
@@ -187,22 +199,52 @@ void Ariadne::clicked_btn_driving() {
 		drivingThread->start();
 }
 
-void Ariadne::clicked_btn_mission0() {
+void Ariadne::clicked_btn_mission1() {
 	AutoPortFinder();
-	/// 0821 DY 추가
-	driving->Mission1();
+	dataContainer->setValue_yolo_missionID(1);
 	ui->plainTextEdit->appendPlainText("Parking Mission Start");
 }
 
+void Ariadne::clicked_btn_mission2() {
+	dataContainer->setValue_yolo_missionID(2);
+	ui->plainTextEdit->appendPlainText("Intersection Ready mission start");
+}
+
+void Ariadne::clicked_btn_mission3() {
+	dataContainer->setValue_yolo_missionID(3);
+	ui->plainTextEdit->appendPlainText("Intersection left mission start");
+}
+
+void Ariadne::clicked_btn_mission4() {
+	dataContainer->setValue_yolo_missionID(4);
+	ui->plainTextEdit->appendPlainText("Intersection right mission start");
+}
+
 void Ariadne::clicked_btn_mission5() {
-	driving->Mission5();
-	ui->plainTextEdit->appendPlainText("Static Obstacle Mission Start");
+	dataContainer->setValue_yolo_missionID(5) ;
+	ui->plainTextEdit->appendPlainText("intersection straight mission start");
 }
 
 void Ariadne::clicked_btn_mission6() {
-	dataContainer->missionID = 6;
-	driving->Mission6();
+	dataContainer->setValue_yolo_missionID(6);
+	ui->plainTextEdit->appendPlainText("intersection stop mission start");
+}
+
+void Ariadne::clicked_btn_mission7() {
+	dataContainer->setValue_yolo_missionID(7);
+	cout << dataContainer->getValue_yolo_missionID() << endl;
+	cout << "btn mission 7 function is called" << endl;
+	ui->plainTextEdit->appendPlainText("Static Obstacle Mission Start");
+}
+
+void Ariadne::clicked_btn_mission8() {
+	dataContainer->setValue_yolo_missionID(8);
 	ui->plainTextEdit->appendPlainText("Dynamic Obstacle Mission Start");
+}
+
+void Ariadne::clicked_btn_mission9() {
+	dataContainer->setValue_yolo_missionID(9);
+	ui->plainTextEdit->appendPlainText("Basic PASIV algorithm start");
 }
 
 // These functions is to control gplatform
@@ -328,77 +370,47 @@ void Ariadne::updateSensorStatus()
 
 	// Platform communication
 	if (dataContainer->getValue_platform_status() > 5)
-	{
-		ui->label_9->setStyleSheet("background-color: rgb(144, 198, 241)");
-	}
+	{ ui->label_9->setStyleSheet("background-color: rgb(144, 198, 241)"); }
 	else if (dataContainer->getValue_platform_status() > 0)
-	{
-		ui->label_9->setStyleSheet("background-color: rgb(255, 212, 57)");
-	}
+	{ ui->label_9->setStyleSheet("background-color: rgb(255, 212, 57)"); }
 	else if (dataContainer->getValue_platform_status() == 0)
-	{
-		ui->label_9->setStyleSheet("background-color: rgb(255, 82, 66)");
-	}
+	{ ui->label_9->setStyleSheet("background-color: rgb(255, 82, 66)"); }
 	dataContainer->setValue_platform_status(0);
 
 	// LiDAR communication code
 	if (dataContainer->getValue_lidar_status() > 5)
-	{
-		ui->label_13->setStyleSheet("background-color: rgb(144, 198, 241)");
-	}
+	{ ui->label_13->setStyleSheet("background-color: rgb(144, 198, 241)"); }
 	else if (dataContainer->getValue_lidar_status() > 0)
-	{
-		ui->label_13->setStyleSheet("background-color: rgb(255, 212, 57)");
-	}
+	{ ui->label_13->setStyleSheet("background-color: rgb(255, 212, 57)"); }
 	else if (dataContainer->getValue_lidar_status() == 0)
-	{
-		ui->label_13->setStyleSheet("background-color: rgb(255, 82, 66)");
-	}
+	{ ui->label_13->setStyleSheet("background-color: rgb(255, 82, 66)"); }
 	dataContainer->setValue_lidar_status(0);
 
 	// GPS communication code
 	if (dataContainer->getValue_gps_status() > 5)  
-	{
-		ui->label_12->setStyleSheet("background-color: rgb(144, 198, 241)");
-	}
+	{ ui->label_12->setStyleSheet("background-color: rgb(144, 198, 241)"); }
 	else if (dataContainer->getValue_gps_status() > 0)
-	{
-		ui->label_12->setStyleSheet("background-color: rgb(255, 212, 57)");
-	}
+	{ ui->label_12->setStyleSheet("background-color: rgb(255, 212, 57)"); }
 	else if (dataContainer->getValue_gps_status() == 0)
-	{
-		ui->label_12->setStyleSheet("background-color: rgb(255, 82, 66)");
-	}
+	{ ui->label_12->setStyleSheet("background-color: rgb(255, 82, 66)"); }
 	dataContainer->setValue_gps_status(0);
 
 	// scnn communication code
 	if (dataContainer->getValue_scnn_status() > 5)
-	{
-		ui->label_11->setStyleSheet("background-color: rgb(144, 198, 241)");
-	}
+	{ ui->label_11->setStyleSheet("background-color: rgb(144, 198, 241)");}
 	else if (dataContainer->getValue_scnn_status() > 0)
-	{
-		ui->label_11->setStyleSheet("background-color: rgb(255, 212, 57)");
-	}
+	{ ui->label_11->setStyleSheet("background-color: rgb(255, 212, 57)"); }
 	else if (dataContainer->getValue_scnn_status() == 0)
-	{
-		ui->label_11->setStyleSheet("background-color: rgb(255, 82, 66)");
-	}
+	{ ui->label_11->setStyleSheet("background-color: rgb(255, 82, 66)"); }
 	dataContainer->setValue_scnn_status(0);
 
 	// yolo communication code
 	if (dataContainer->getValue_yolo_status() > 5)
-	{
-		ui->label_10->setStyleSheet("background-color: rgb(144, 198, 241)");
-	}
+	{ ui->label_10->setStyleSheet("background-color: rgb(144, 198, 241)"); }
 	else if (dataContainer->getValue_yolo_status() > 0)
-	{
-		ui->label_10->setStyleSheet("background-color: rgb(255, 212, 57)");
-	}
+	{ ui->label_10->setStyleSheet("background-color: rgb(255, 212, 57)"); }
 	else if (dataContainer->getValue_yolo_status() == 0)
-	{
-		ui->label_10->setStyleSheet("background-color: rgb(255, 82, 66)");
-	}
+	{ ui->label_10->setStyleSheet("background-color: rgb(255, 82, 66)"); }
 	dataContainer->setValue_yolo_status(0);
 
 }

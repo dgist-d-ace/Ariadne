@@ -103,6 +103,7 @@ public:
     GPSCom* gpsCom;
     Scnn* scnn;
 	Yolo* yolo;
+	View* view;
 
 	GUID gpsGuid;
 	GUID platformGuid;
@@ -116,6 +117,9 @@ public:
 	Driving* driving;
 	QThread* drivingThread;
 
+	MissionUpdate* missionUpdate;
+	QThread* missionUpdateThread;
+
     DataContainer* dataContainer;
 
     QTimer* TimerSensorStatus;
@@ -127,11 +131,15 @@ private:
     void keyPressEvent(QKeyEvent *);	
 
 public slots:
-    void clicked_btn_mission0();
-	//void clicked_btn_mission2();
-	//void clicked_btn_mission3();
+    void clicked_btn_mission1();
+	void clicked_btn_mission2();
+	void clicked_btn_mission3();
+	void clicked_btn_mission4();
 	void clicked_btn_mission5();
 	void clicked_btn_mission6();
+	void clicked_btn_mission7();
+	void clicked_btn_mission8();
+	void clicked_btn_mission9();
 
     void clicked_btn_sensor();
 	void clicked_btn_driving();

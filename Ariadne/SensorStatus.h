@@ -109,7 +109,7 @@ public:
 private:
 
 public slots:
-    void comView();
+    void comView(int id);
     void SuspendView();
     void ResumeView();
 

@@ -9,6 +9,7 @@
 
 #define stopDist 2000 //for Dynamic Obstacle mission
 #define DynamicMissionSpeed 10
+
 class Driving : public QObject
 {
 	Q_OBJECT
@@ -31,31 +32,37 @@ public:
 
 
 	Planner *aster;
+signals:
+	void send2View(int id);
 
 public slots:
 	void DrawData();
 	void LOS();
 
+	void autoMode();
+
 	void Basic();
 
-	void Mission1(); // 주차
-    void Mission2(); 
-    void Mission3();
-    void Mission4();
-    void Mission5(); // 정적장애물
-	void Mission6(); // 동적장애물
-
+	void MissionParking(); // 주차
+    void MissionIntReady(); // intersection ready
+    void MissionIntLeft(); // intersectin left
+    void MissionIntRight(); // intersection right
+    void MissionIntStraight(); // intersection straight
+	void MissionIntStop(); // intersection stop
+	void MissionStaticObs(); // static obstacle
+	void MissionDynamicObs(); // dynamic obstacle
+	
 };
 
-class SpeedControl : public QObject
+class MissionUpdate : public QObject
 {
 	Q_OBJECT
 protected:
 
 public:
 	DataContainer *dataContainer;
-	SpeedControl();
+	MissionUpdate();
 
 public slots:
-	void ControlbySituation();
+	void MissionIDUpdate();
 };

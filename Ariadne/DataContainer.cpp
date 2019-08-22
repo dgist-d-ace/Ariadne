@@ -152,8 +152,6 @@ void DataContainer::show_PtoU()
 	cout << " ]" << endl;
 }
 
-void DataContainer::setValue_speed_ratio(double temp) { mtx_Speed_Ratio.lock(); temp = m_speed_ratio; mtx_Speed_Ratio.unlock(); }
-
 //
 //	¶óÀÌ´Ù				???????½Èºñ???????
 //
@@ -183,9 +181,14 @@ void deleteData_lidar_object(){}
 // YOLO mission
 //
 
-//map<string, int> DataContainer::getValue_yolo_missions();
-//void DataContainer::setValue_yolo_missions(map<string, int>);
+map<string, int> DataContainer::getValue_yolo_missions() {	mtx_yolo_mission_map.lock(); map<string, int> temp = m_yolo_mission_map; mtx_yolo_mission_map.unlock(); }
+void DataContainer::setValue_yolo_missions(map<string, int> temp) { mtx_yolo_mission_map.lock(); m_yolo_mission_map = temp; mtx_yolo_mission_map.unlock(); }
 
+double DataContainer::getValue_yolo_speed_ratio() { mtx_yolo_speed_ratio.lock(); double temp = m_yolo_speed_ratio; mtx_yolo_speed_ratio.unlock(); return temp; }
+void DataContainer::setValue_yolo_speed_ratio(double temp) { mtx_yolo_speed_ratio.unlock(); m_yolo_speed_ratio = temp; mtx_yolo_speed_ratio.unlock(); }
+
+int DataContainer::getValue_yolo_missionID() { mtx_yolo_missionID.lock(); int temp = m_yolo_missionID; mtx_yolo_missionID.unlock(); return temp; }
+void DataContainer::setValue_yolo_missionID(int ID) { mtx_yolo_missionID.lock(); m_yolo_missionID = ID; mtx_yolo_missionID.unlock(); }
 //
 // SCNN
 //

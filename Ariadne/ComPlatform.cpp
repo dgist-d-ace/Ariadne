@@ -133,9 +133,10 @@ int ComPlatform::setData_steering(int desired_steering)
 int ComPlatform::setData_speed(int desired_speed)
 {
 	int present_speed = dataContainer->getValue_PtoU_SPEED(); //0~200
+	double speedratio = dataContainer->getValue_yolo_speed_ratio();
 	desired_speed *= 10;
 	
-	desired_speed = (double)desired_speed*speedKP;
+	desired_speed = (double)desired_speed*speedKP*speedratio;
 
 	if (desired_speed > 200) {
 		desired_speed = 200;

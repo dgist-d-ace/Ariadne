@@ -5,6 +5,18 @@
 #include <QMutex>
 #include "LidarFunc.h"
 
+
+#define PARKING 1
+#define INTER_READY 2
+#define INTER_LEFT 3
+#define INTER_RIGHT 4
+#define INTER_STRAIGHT 5
+#define INTER_STOP 6
+#define STATIC_OBSTACLE 7
+#define DYNAMIC_OBSTACLE 8
+#define BASIC 9
+
+
 class DataContainer {
 private:
 
@@ -109,10 +121,13 @@ private:
 	//
 	//카메라2: YOLO용
 	//
-	map<string, int> m_mission_map;
-	
-	QMutex mtx_mission_map;
+	map<string, int> m_yolo_mission_map;
+	double m_yolo_speed_ratio;
+	int m_yolo_missionID = 9;
 
+	QMutex mtx_yolo_mission_map;
+	QMutex mtx_yolo_speed_ratio;
+	QMutex mtx_yolo_missionID;
 	//
 	//gps:
 	//
@@ -253,11 +268,7 @@ public:
 	void show_UtoP();
 	void show_PtoU();
 
-	//
-	// SpeedRatio 조절
-	//
-	void setValue_speed_ratio(double);
-	int missionID = 0;
+	
 	//
 	//	라이다
 	//
@@ -294,6 +305,13 @@ public:
 	//
 	map<string, int> getValue_yolo_missions();
 	void setValue_yolo_missions(map<string, int>);
+
+	// SpeedRatio 조절 및 미션 넘버 조절 in yolo thread
+	void setValue_yolo_speed_ratio(double);
+	double getValue_yolo_speed_ratio();
+
+	int getValue_yolo_missionID();
+	void setValue_yolo_missionID(int ID);
 
 	//
 	//	GPS

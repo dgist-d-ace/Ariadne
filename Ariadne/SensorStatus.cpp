@@ -404,7 +404,6 @@ void Yolo::comYolo() {
 		}
 		trigger.update();
 		trigger.showObjects(1);
-
 	}
 
 	closesocket(client);
@@ -460,8 +459,14 @@ View::View() {
         cout << "View listening fail\n"; /// 바인드: 포트를 잡아놓음 리슨: 포트를 듣겠다
 }
 
-void View::comView() {
-
+void View::comView(int id){
+	/*
+	client = accept(server, NULL, NULL);
+	if (client == INVALID_SOCKET)
+		cout << "invalid socket\n";
+	else cout << "valid socket\n";
+	send(client, (char*)id, sizeof(id), 0);
+	*/
 }
 
 void View::SuspendView() {
@@ -470,59 +475,6 @@ void View::SuspendView() {
 
 void View::ResumeView() {
     ResumeThread(tid);
-}
-
-int ConnectClient(HANDLE hNamePipe)
-{
-	TCHAR recvMessage[100];
-	TCHAR sendMessage[100];
-	DWORD recvSize;
-	DWORD sendSize;
-
-	while (1)
-	{
-		_tprintf(_T("Input Send Message : "));
-        _tscanf(_T("%s"), sendMessage);
-
-		//sendSize -> NULL 포함한 바이트 수
-
-		if (!(WriteFile(
-
-			hNamePipe,
-            sendMessage,
-            (_tcslen(sendMessage) + 1) * sizeof(TCHAR),
-            &sendSize,
-            NULL
-
-		)))          // 
-
-		{
-            _tprintf(_T("WriteFile error! \n"));
-            return -1;
-        }
-
-		FlushFileBuffers(hNamePipe);
-        
-		//recvSize -> NULL 포함한 바이트 수
-
-		if (!(ReadFile(
-            hNamePipe,
-			recvMessage,
-			sizeof(recvMessage) - sizeof(TCHAR) * 1,
-			&recvSize,
-			NULL
-		)))
-
-		{
-			printf("ReadFile error! \n");
-			return -1;
-		}
-
-		recvMessage[recvSize / sizeof(TCHAR) - 1] = _T('\x00');
-		_tprintf(_T("Recv Message : %s \n"), recvMessage);
-	}
-
-	return 1;
 }
 
 /// ///// 통합 프로그램 작성자 최도연

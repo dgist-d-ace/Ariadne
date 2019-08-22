@@ -197,7 +197,6 @@ void Driving::getGpsData(int scorestep)
 void Driving::Basic() {
 	cout << "PASIV driving" << endl;
 	dataContainer->setValue_UtoP_AorM(1);
-
 		////////////////////
 		////INITIALIZING////
 		////////////////////
@@ -210,6 +209,7 @@ void Driving::Basic() {
 	uchar onestep = (CAR_HEIGH)* scale;
 	Mat cirGray, cirGray2, buffer;
 	uint Theta, Theta2;
+	namedWindow("Path", CV_WINDOW_AUTOSIZE);
 
 	for (int i = 0; i < checkTheta.size(); i++) {
 		cirGray = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
@@ -234,8 +234,14 @@ void Driving::Basic() {
 		///////////////////////////////////////////
 		////Break the PASIV for another mission////
 		///////////////////////////////////////////
-		if (dataContainer->missionID != 0)
+		int MI = dataContainer->getValue_yolo_missionID();
+		if (MI == 1 || MI == 2 || MI == 3 || MI == 4 || MI == 5 || MI == 6 || MI == 8)
+		{
+			cout << "called in PASIV but wrong mission ID : " << MI << endl;
 			break;
+		}
+		
+		cout << "I'm in while roop " << endl;
 		//////////////////////////////////////////////////////////////////////////////////////
 		start = clock();
 		imgPath = cv::Mat::zeros(600, 600, CV_8UC3);
@@ -402,6 +408,8 @@ void Driving::Basic() {
 		double scoreofPath = 0;//total sum of imgPath
 		double desired_speed;
 
+		cout << " PASIV 2 " << endl;
+
 		uchar *map = scoreMap.data;
 		uchar *path = imgPath.data;
 		int mapH = imgPath.rows;
@@ -415,6 +423,9 @@ void Driving::Basic() {
 		//compare the scoreofMap and scoreofPath
 		desired_speed = speedHigh * scoreofPath / scoreofMap;
 		//cout << "ratio: " << ((double)scoreofPath / scoreofMap) << endl;
+
+
+		cout << " PASIV 3 " << endl;
 
 			///////////////////////
 			////Extra Condition////
@@ -444,8 +455,13 @@ void Driving::Basic() {
 				cv::arrowedLine(imgPath, center, pntF, CV_RGB(200, 200, 200), 2);
 			}
 		}
+
+		cout << " PASIV 4 " << endl;
+
 		//imshow("Map", scoreMap);
 		imshow("Path", imgPath);
+
+		cout << " PASIV 5 " << endl;
 
 		//////////////////////////////////////////////////
 		////Final Control the steering angle and speed////
@@ -453,14 +469,16 @@ void Driving::Basic() {
 		dataContainer->setValue_UtoP_STEER(desired_steering);
 		dataContainer->setValue_UtoP_SPEED(desired_speed);
 
+		cout << " PASIV 6 " << endl;
+
 		end = clock();
-		cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl ;
+		/// cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl ;
 		int key = cv::waitKey(1);
 		if (key == 27) {
 			break;
 		}
 	}
-	cvDestroyAllWindows();
+	//cvDestroyWindow("Path");
 }
 
 void Driving::DrawData()
@@ -653,34 +671,45 @@ void Driving::LOS() {
 	*/
 }
 
-void Driving::Mission1() {
+void Driving::MissionParking() {
 	//
 	// Parking
 	//
 	cout << "parking start" << endl;
 }
 
-void Driving::Mission2() {
-	
+void Driving::MissionIntReady() {
+	cout << "mission 2" << endl;
 }
 
-void Driving::Mission3() {
-	
+void Driving::MissionIntLeft() {
+	cout << "mission 3" << endl;
 }
 
-void Driving::Mission4() {
-
+void Driving::MissionIntRight() {
+	cout << "mission 4" << endl;
 }
 
-void Driving::Mission5() {
+void Driving::MissionIntStraight() {
+	cout << "mission 5" << endl;
+}
+
+void Driving::MissionIntStop() {
+	cout << "misison 6" << endl;
+}
+
+void Driving::MissionStaticObs() {
 	//
 	// 정적 장애물 미션
 	//
 	//Use only PASIV
+
+	cout << "basic start" << endl;
 	Basic();
+	
 }
 
-void Driving::Mission6() {
+void Driving::MissionDynamicObs() {
 	//
 	dataContainer->setValue_UtoP_AorM(1);
 	cout << "Dynamic Obstacle Mission" << endl;
@@ -695,9 +724,13 @@ void Driving::Mission6() {
 	uchar onestep = (CAR_HEIGH)* scale;
 	uint objflag = 0;
 
+
 	while (1) {
-		if (dataContainer->missionID != 6)
+		if (dataContainer->getValue_yolo_missionID() != 8)
+		{
+			cout << "mission 8 was called but ended long mission ID : " << dataContainer->getValue_yolo_missionID() << endl;
 			break;
+		}			
 
 		cout << "FUCK IN DYNAMIC" << endl;
 		imgPath = cv::Mat::zeros(600, 600, CV_8UC3);
@@ -733,6 +766,8 @@ void Driving::Mission6() {
 			}
 		}
 
+		cout << "Mission8 2 " << endl; 
+
 		vector<vector<double>> objDataSet = dataContainer->getValue_lidar_Data().back();
 		double cirCenX, cirCenY, cirCenR;
 		double cenDist;
@@ -752,6 +787,8 @@ void Driving::Mission6() {
 
 		Mat imgLane = getLaneData(scoreStep);
 		imgPath -= imgLane;
+
+		cout << "Mission8 3" << endl;
 
 		//////////////////////////////////////////////////////////////////////////////
 		////Determine the desired Steering Angle in Score System with Vornoi Field////
@@ -793,6 +830,8 @@ void Driving::Mission6() {
 		arrowedLine(imgPath, center, stepFirst, CV_RGB(50, 50, 50), 5);
 		arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(50, 50, 50), 5);
 		
+		cout << "Mission8 4" << endl;
+
 		int desired_speed = DynamicMissionSpeed;
 		int thDist = stopDist * scale;
 		double objClose ;
@@ -812,10 +851,12 @@ void Driving::Mission6() {
 			}
 		}
 
+		cout << "Mission8 5" << endl;
+
 		//////////////////////////////////////////////////
 		////Final Control the steering angle and speed////
 		//////////////////////////////////////////////////
-		imshow("Map during the Dynamic Obstacle Mission", imgPath);
+		imshow("Path", imgPath);
 		dataContainer->setValue_UtoP_STEER(desired_steering);
 		dataContainer->setValue_UtoP_SPEED(desired_speed);
 
@@ -824,15 +865,15 @@ void Driving::Mission6() {
 		///////////////////////////////////////////////////////
 		if (objflag == 1){
 			if (objClose > thDist || objdist.size()==0) {
-				dataContainer->missionID = 0;
+				dataContainer->setValue_yolo_missionID(BASIC);
 				objflag = 0;
 				break;
 			}
 		}
 
+		cout << "Mission8 6" << endl;
+
 		///////////////////////////////////////////////////////
-
-
 
 		int key = cv::waitKey(1);
 
@@ -840,25 +881,69 @@ void Driving::Mission6() {
 			break;
 		}
 	}
-	cvDestroyAllWindows();
 }
 
 /// functions which switch radian and degree
 double Driving::rad2deg(double radian) { return radian * 180 / PI; }
 double Driving::deg2rad(double degree) { return degree * PI / 180; }
 
-
-SpeedControl::SpeedControl() {
-	dataContainer = DataContainer::getInstance();
-
+void Driving::autoMode() {
+	emit(send2View(7));
+	while (1) {
+		cout << "automode function called" << endl;
+		cout << dataContainer->getValue_yolo_missionID() << endl;
+		if (dataContainer->getValue_yolo_missionID() == PARKING) {  MissionParking(); }
+		else if (dataContainer->getValue_yolo_missionID() == INTER_READY) { MissionIntReady(); }
+		else if (dataContainer->getValue_yolo_missionID() == INTER_LEFT) { emit(send2View(2)); MissionIntLeft(); }
+		else if (dataContainer->getValue_yolo_missionID() == INTER_RIGHT) { emit(send2View(3)); MissionIntRight(); }
+		else if (dataContainer->getValue_yolo_missionID() == INTER_STRAIGHT) { MissionIntStraight(); }
+		else if (dataContainer->getValue_yolo_missionID() == STATIC_OBSTACLE) { MissionStaticObs(); }
+		else if (dataContainer->getValue_yolo_missionID() == DYNAMIC_OBSTACLE) { MissionDynamicObs();}
+		else if (dataContainer->getValue_yolo_missionID() == INTER_STOP) { MissionIntStop();}
+		else { emit(send2View(1)); Basic(); }
+	}
 }
 
-void SpeedControl::ControlbySituation() {
-	
-	//There is Speed-dump(Bust)
-	//There is Child Protection Zone
-	//
 
-	int speedLock;
+MissionUpdate::MissionUpdate() {
+	dataContainer = DataContainer::getInstance();
+}
+
+void MissionUpdate::MissionIDUpdate() {
+	
+	/// dataContainer의 yolo map을 받아서 mission number를 업데이트 하는 함수
+	//map 대신 array나 datacontainer에 각 미션 위험도를 int type으로 만들어서 바꾸자
+	int mission = 0;
+	map<string, int> temp = dataContainer->getValue_yolo_missions();
+	if (temp.find("parking")->second = 3) { 
+		dataContainer->setValue_yolo_missionID(PARKING);
+	}
+	else if (temp.find("intersectionLeft")->second == 3) { 
+		dataContainer->setValue_yolo_missionID(INTER_LEFT);
+	}
+	else if (temp.find("intersectionRight")->second == 3) { 
+		dataContainer->setValue_yolo_missionID(INTER_RIGHT);
+	}
+	else if (temp.find("intersectionStraight")->second == 3) {
+		dataContainer->setValue_yolo_missionID(INTER_STRAIGHT);}
+	else if (temp.find("staticObstacle")->second == 3) { 	
+		dataContainer->setValue_yolo_missionID(STATIC_OBSTACLE);
+	}
+	else if (temp.find("dynamicObstacle")->second == 3) { 
+		dataContainer->setValue_yolo_missionID(DYNAMIC_OBSTACLE);
+	}
+	else if (temp.find("intersectionStop")->second == 3) { 
+		dataContainer->setValue_yolo_missionID(INTER_STOP); 
+	}
+	else if (temp.find("intersectionReady")->second == 3) { 
+		dataContainer->setValue_yolo_missionID(INTER_READY);
+	}
+	/// kidSafe나 bust는 mission number에 병렬적으로 들어올 수 있으므로 이에 따라 속도 비율을 조정한다.
+	
+	if (temp.find("kidSafe")->second = 3) { dataContainer->setValue_yolo_speed_ratio(0.9); }
+	else { dataContainer->setValue_yolo_speed_ratio(1); } /// 지나간 후에는 다시 원상복귀한다. 이 때 원상복귀할때까지 시간 조절이 필요할 수 있음.
+
+	if (temp.find("bust")->second = 3) { dataContainer->setValue_yolo_speed_ratio(0.9); }
+	else { dataContainer->setValue_yolo_speed_ratio(1); }
 
 }

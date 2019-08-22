@@ -222,13 +222,13 @@
       <x>10</x>
       <y>310</y>
       <width>241</width>
-      <height>261</height>
+      <height>301</height>
      </rect>
     </property>
     <property name="title">
      <string>Mission</string>
     </property>
-    <widget class="QPushButton" name="Btn_Mission0">
+    <widget class="QPushButton" name="Btn_Mission1">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -238,36 +238,36 @@
       </rect>
      </property>
      <property name="text">
-      <string>0. Parking</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="Btn_mission1">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>60</y>
-       <width>101</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>1. InterReady</string>
+      <string>1. Parking</string>
      </property>
     </widget>
     <widget class="QPushButton" name="Btn_mission2">
      <property name="geometry">
       <rect>
        <x>10</x>
+       <y>60</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>2. InterReady</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Btn_mission3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
        <y>100</y>
        <width>101</width>
        <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string>2. InterLeft</string>
+      <string>3. InterLeft</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="Btn_mission3">
+    <widget class="QPushButton" name="Btn_mission4">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -277,23 +277,10 @@
       </rect>
      </property>
      <property name="text">
-      <string>3. InterRight</string>
+      <string>4. InterRight</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="Btn_mission6">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>100</y>
-       <width>101</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>6. DynamicOb</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="Btn_mission7">
+    <widget class="QPushButton" name="Btn_mission8">
      <property name="geometry">
       <rect>
        <x>130</x>
@@ -303,23 +290,10 @@
       </rect>
      </property>
      <property name="text">
-      <string>7. sdf</string>
+      <string>8. DynamicOb</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="Btn_mission4">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>20</y>
-       <width>101</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>4. InterStop </string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="Btn_mission5">
+    <widget class="QPushButton" name="Btn_mission6">
      <property name="geometry">
       <rect>
        <x>130</x>
@@ -329,37 +303,36 @@
       </rect>
      </property>
      <property name="text">
-      <string>5. StaticOb</string>
+      <string>6. InterStop</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="Btn_kidsafe">
+    <widget class="QPushButton" name="Btn_mission5">
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>180</y>
+       <y>20</y>
        <width>101</width>
        <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset>
-       <normaloff>../../DYibre/Checkbox_Off.png</normaloff>
-       <normalon>../../DYibre/Checkbox_On.png</normalon>../../DYibre/Checkbox_Off.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>100</width>
-       <height>40</height>
-      </size>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
+      <string>5. InterStraight</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="Btn_kidsafe_2">
+    <widget class="QPushButton" name="Btn_mission7">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>100</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>7. StaticOb</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Btn_kidsafe">
      <property name="geometry">
       <rect>
        <x>130</x>
@@ -386,11 +359,38 @@
       <bool>true</bool>
      </property>
     </widget>
+    <widget class="QPushButton" name="Btn_Bust">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>260</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../../DYibre/Checkbox_Off.png</normaloff>
+       <normalon>../../DYibre/Checkbox_On.png</normalon>../../DYibre/Checkbox_Off.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>100</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
     <widget class="QLabel" name="label_20">
      <property name="geometry">
       <rect>
-       <x>40</x>
-       <y>190</y>
+       <x>30</x>
+       <y>230</y>
        <width>56</width>
        <height>12</height>
       </rect>
@@ -403,13 +403,26 @@
      <property name="geometry">
       <rect>
        <x>40</x>
-       <y>230</y>
+       <y>270</y>
        <width>56</width>
        <height>12</height>
       </rect>
      </property>
      <property name="text">
       <string>Bust</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Btn_mission9">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>180</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>9. Basic</string>
      </property>
     </widget>
    </widget>
@@ -909,9 +922,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>580</y>
+      <y>620</y>
       <width>241</width>
-      <height>201</height>
+      <height>161</height>
      </rect>
     </property>
     <property name="title">
