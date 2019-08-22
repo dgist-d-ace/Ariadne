@@ -187,7 +187,6 @@ Mat Driving::getLaneData(int scorestep)
 	return bufferImg;
 }
 
-
 void Driving::getGpsData(int scorestep)
 {
 
@@ -209,9 +208,10 @@ void Driving::Basic() {
 	uchar onestep = (CAR_HEIGH)* scale;
 	Mat cirGray, cirGray2, buffer;
 	uint Theta, Theta2;
-	namedWindow("Path", CV_WINDOW_AUTOSIZE);
+	cout << "PASIV driving2" << endl;
 
 	for (int i = 0; i < checkTheta.size(); i++) {
+		cout << "PASIV driving3" << endl;
 		cirGray = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 		Theta = 90 + checkTheta.at(i);
 		Point2d step1(cenX + onestep * cos(CV_PI*Theta / 180), cenY - onestep * sin(CV_PI*Theta / 180));
@@ -228,6 +228,7 @@ void Driving::Basic() {
 			checkImgs.push_back(buffer);
 		}
 	}
+	
 
 	clock_t start, end;
 	while (1) {
@@ -240,13 +241,12 @@ void Driving::Basic() {
 			cout << "called in PASIV but wrong mission ID : " << MI << endl;
 			break;
 		}
-		
-		cout << "I'm in while roop " << endl;
 		//////////////////////////////////////////////////////////////////////////////////////
 		start = clock();
 		imgPath = cv::Mat::zeros(600, 600, CV_8UC3);
 		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
 		vector<Point2d> vecXYDraw;
+		cout << "PASIV driving4" << endl;
 
 		//ROI AREA
 		double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
@@ -259,7 +259,7 @@ void Driving::Basic() {
 		////////////////////////////////////////////////////////////////////////////////////
 		////Fill the Regions where cannot go in, because of max value of steering angle.////
 		////////////////////////////////////////////////////////////////////////////////////
-	//Left area where platform can not go (left 60degrees)
+		//Left area where platform can not go (left 60degrees)
 		Point points[1][4];
 		points[0][0] = Point(cenX - carW, center.y);
 		points[0][1] = Point(leftEndX, center.y);
@@ -408,8 +408,6 @@ void Driving::Basic() {
 		double scoreofPath = 0;//total sum of imgPath
 		double desired_speed;
 
-		cout << " PASIV 2 " << endl;
-
 		uchar *map = scoreMap.data;
 		uchar *path = imgPath.data;
 		int mapH = imgPath.rows;
@@ -423,9 +421,6 @@ void Driving::Basic() {
 		//compare the scoreofMap and scoreofPath
 		desired_speed = speedHigh * scoreofPath / scoreofMap;
 		//cout << "ratio: " << ((double)scoreofPath / scoreofMap) << endl;
-
-
-		cout << " PASIV 3 " << endl;
 
 			///////////////////////
 			////Extra Condition////
@@ -456,20 +451,14 @@ void Driving::Basic() {
 			}
 		}
 
-		cout << " PASIV 4 " << endl;
-
 		//imshow("Map", scoreMap);
 		imshow("Path", imgPath);
-
-		cout << " PASIV 5 " << endl;
 
 		//////////////////////////////////////////////////
 		////Final Control the steering angle and speed////
 		//////////////////////////////////////////////////
 		dataContainer->setValue_UtoP_STEER(desired_steering);
 		dataContainer->setValue_UtoP_SPEED(desired_speed);
-
-		cout << " PASIV 6 " << endl;
 
 		end = clock();
 		/// cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl ;
@@ -480,6 +469,285 @@ void Driving::Basic() {
 	}
 	//cvDestroyWindow("Path");
 }
+
+//Mission No.1: Parking
+void Driving::MissionParking() {
+	cout << "parking start" << endl;
+
+	//
+	//	mission code
+	//
+
+	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
+	if(dataContainer->getValue_yolo_missionID() == PARKING || dataContainer->getValue_yolo_missionID()== BASIC)
+		dataContainer->setValue_yolo_missionID(BASIC);
+}
+
+//Mission No.2: Intersection Ready
+void Driving::MissionIntReady() {
+	cout << "mission 2" << endl;
+
+	//
+	//mission code
+	//
+
+	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
+	if (dataContainer->getValue_yolo_missionID()== INTER_READY || dataContainer->getValue_yolo_missionID()== BASIC)
+		dataContainer->setValue_yolo_missionID(BASIC);
+}
+
+//Mission No.3: Intersection->Turn Left
+void Driving::MissionIntLeft() {
+	cout << "mission 3" << endl;
+
+	Sleep(5000);
+	//
+	//mission code
+	//
+
+	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
+	if (dataContainer->getValue_yolo_missionID()== INTER_LEFT || dataContainer->getValue_yolo_missionID()== BASIC)
+		dataContainer->setValue_yolo_missionID(BASIC);
+}
+
+//Mission No.4: Intersection->Turn Right
+void Driving::MissionIntRight() {
+	cout << "mission 4" << endl;
+
+	Sleep(5000);
+
+	//
+	//mission code
+	//
+
+	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
+	if (dataContainer->getValue_yolo_missionID()== INTER_RIGHT || dataContainer->getValue_yolo_missionID()== BASIC)
+		dataContainer->setValue_yolo_missionID(BASIC);
+}
+
+//Mission No.5: Intersection->Go Straight
+void Driving::MissionIntStraight() {
+	cout << "mission 5" << endl;
+
+	//
+	//mission code
+	//
+
+	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
+	if (dataContainer->getValue_yolo_missionID()== INTER_STRAIGHT || dataContainer->getValue_yolo_missionID()== BASIC)
+		dataContainer->setValue_yolo_missionID(BASIC);
+}
+
+//Mission No.6: Intersection->Intersection Stop
+void Driving::MissionIntStop() {
+	cout << "misison 6" << endl;
+
+	//
+	//mission code
+	//
+
+	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
+	if (dataContainer->getValue_yolo_missionID()== INTER_STOP || dataContainer->getValue_yolo_missionID()== BASIC)
+		dataContainer->setValue_yolo_missionID(BASIC);
+}
+
+//Mission No.7: Static Obstacle Mission
+void Driving::MissionStaticObs() {
+	//
+	// 정적 장애물 미션
+	//
+	//Use only PASIV
+
+	cout << "basic start" << endl;
+	Basic();
+}
+
+//Mission No.8: Dynamic Obstacle Mission
+void Driving::MissionDynamicObs() {
+	//
+	dataContainer->setValue_UtoP_AorM(1);
+	cout << "Dynamic Obstacle Mission" << endl;
+	// 동적 장애물 미션
+	// PASIV for Dynamic Obstacle Mission
+	double cenX = imgPath.cols * 0.5, cenY = imgPath.rows *0.99; //the location of LiDAR in the map.
+	double scale = cenY / (SICK_SCAN_ROI_Y + 50);				  //obj_Data => imgPath
+	//Car size in map
+	double carW = CAR_WEITH * scale;
+	double carH = CAR_HEIGH * scale;
+
+	uchar onestep = (CAR_HEIGH)* scale;
+	uint objflag = 0;
+
+
+	while (1) {
+		//dynamic obstacle 미션 중 yolo에서 다른 mission trigger가 들어오면 그 mission으로 넘어감
+		if (dataContainer->getValue_yolo_missionID() != 8)
+		{
+			cout << "mission 8 was called but ended long mission ID : " << dataContainer->getValue_yolo_missionID() << endl;
+			break;
+		}			
+
+		imgPath = cv::Mat::zeros(600, 600, CV_8UC3);
+		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
+		vector<Point2d> vecXYDraw;
+		double cenX = imgPath.cols * 0.5, cenY = imgPath.rows *0.99; //the location of LiDAR in the map.
+		double scale = cenY / (SICK_SCAN_ROI_Y + 50);				  //obj_Data => imgPath
+		//ROI AREA
+		double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
+		double rightEndX = cenX + SICK_SCAN_ROI_X * scale;
+		double topEndY = cenY - SICK_SCAN_ROI_Y * scale;
+		double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
+		//Localization of LiDAR in the ROI
+		Point2d center(cenX, cenY);
+
+		//////////////////////////////////////////////////////////////////
+		////Because Of Obstacles, Fill the Regions where cannot go in.////
+		//////////////////////////////////////////////////////////////////
+		for (int i = 0; i < vecXY.size(); ++i) {
+			double xyDrawX = center.x + vecXY[i].x * scale;
+			double xyDrawY = center.y - vecXY[i].y * scale;
+
+			Point2d xyDraw(xyDrawX, xyDrawY);
+			vecXYDraw.push_back(xyDraw);
+		}
+		for (int i = 0; i < vecXYDraw.size() - 1; ++i) {
+			double dist = sqrt(pow(vecXYDraw[i].x - vecXYDraw[i + 1].x, 2) + pow(vecXYDraw[i].y - vecXYDraw[i + 1].y, 2));
+
+			if (dist <= SICK_SCAN_DIST_OBJECT * scale) {
+				if (vecXYDraw[i].x < rightEndX && vecXYDraw[i].x > leftEndX && vecXYDraw[i].y > topEndY) {
+					line(imgPath, vecXYDraw[i], vecXYDraw[i + 1], CV_RGB(0, 255, 0), 2);
+				}
+			}
+		}
+
+		vector<vector<double>> objDataSet = dataContainer->getValue_lidar_Data().back();
+		double cirCenX, cirCenY, cirCenR;
+		double cenDist;
+		vector<double>objdist;
+		for (int i = 0; i < objDataSet.size(); i++) {
+			cirCenX = center.x + objDataSet[i][0] * scale;
+			cirCenY = center.y - objDataSet[i][1] * scale;
+			cirCenR = objDataSet[i][2] * scale;
+			Point2d cirCen(cirCenX, cirCenY); //center of objs.
+			cenDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2));
+			objdist.push_back(cenDist - cirCenR);
+
+			circle(imgPath, cirCen, cirCenR, CV_RGB(255, 0, 0), -1, CV_AA);
+		}
+		cv::cvtColor(imgPath, imgPath, CV_BGR2GRAY);
+		threshold(imgPath, imgPath, 1, 150, THRESH_BINARY_INV);
+
+		Mat imgLane = getLaneData(scoreStep);
+		imgPath -= imgLane;
+
+		//////////////////////////////////////////////////////////////////////////////
+		////Determine the desired Steering Angle in Score System with Vornoi Field////
+		//////////////////////////////////////////////////////////////////////////////
+		//REGION OF WORKABLE ANGLE: 60 ~ 120, with interval=5 degrees
+		vector<uint> score[171]; //include the scores at [90,85, 95, 80, 100, 75, 105, 70, 110, 65, 115, 60, 120]degrees
+		Mat scresult;
+		uint sum;
+		for (int i = 0; i < checkImgs.size(); i++) {
+			//cout << "CHECKING" << endl;
+			//cout << i << endl;
+			//imshow("checkImgs", checkImgs[i]);
+			//imshow("imgPath", imgPath);
+
+			scresult = checkImgs[i].mul(imgPath);
+			uchar *sumData = scresult.data;
+			int scHeight = scresult.rows;
+			int scWidth = scresult.cols;
+			sum = 0;
+			for (int h = 0; h < scHeight; h++) {
+				for (int w = 0; w < scWidth; w++) {
+					sum += sumData[w*scHeight + h];
+				}
+			}
+			score->push_back(sum);
+			//cout << "sum" << endl;
+			//waitKey(1);
+		}
+		uint scoreMax = distance(score->begin(), max_element(score->begin(), score->end()));
+		int goTheta1 = checkTheta.at(scoreMax / checkTheta2.size());
+		int goTheta2 = checkTheta2.at(scoreMax % checkTheta2.size());
+
+		Point2d stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1) / 180)));
+		Point2d stepSecond(stepFirst.x + onestep * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*sin(CV_PI*(90 + goTheta2) / 180)));
+
+		double desired_steering = goTheta1 * steerRatio + goTheta2 * (1 - steerRatio);
+		Point2d pntF(cenX + onestep * 1.5 * cos(CV_PI*(90 + desired_steering) / 180), cenY - onestep * 1.5*sin(CV_PI*(90 + desired_steering) / 180));
+
+		arrowedLine(imgPath, center, stepFirst, CV_RGB(50, 50, 50), 5);
+		arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(50, 50, 50), 5);
+		
+		int desired_speed = DynamicMissionSpeed;
+		int thDist = stopDist * scale;
+		double objClose ;
+		if (objdist.size() == 0){
+			cv::arrowedLine(imgPath, center, pntF, CV_RGB(255, 255, 255), 2);
+		}
+		else{
+			double objClose = objdist.at(distance(objdist.begin(), min_element(objdist.begin(), objdist.end())));
+			if (objClose < thDist){
+				desired_speed = 0;
+				dataContainer->setValue_UtoP_BRAKE(100);
+				objflag = 1;
+				cout << "STOP!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+			}
+			else{
+				cv::arrowedLine(imgPath, center, pntF, CV_RGB(255, 255, 255), 2);
+			}
+		}
+
+		//////////////////////////////////////////////////
+		////Final Control the steering angle and speed////
+		//////////////////////////////////////////////////
+		imshow("Path", imgPath);
+		dataContainer->setValue_UtoP_STEER(desired_steering);
+		dataContainer->setValue_UtoP_SPEED(desired_speed);
+
+		///////////////////////////////////////////////////////
+		////Trigger for ending the Dynamic Obstacle Mission////
+		///////////////////////////////////////////////////////
+		if (objflag == 1){
+			if (objClose > thDist || objdist.size()==0) {
+				dataContainer->setValue_yolo_missionID(BASIC);
+				objflag = 0;
+				break;
+			}
+		}
+
+		///////////////////////////////////////////////////////
+
+		int key = cv::waitKey(1);
+
+		if (key == 27) {
+			break;
+		}
+	}
+}
+
+//// functions which switch radian and degree
+double Driving::rad2deg(double radian) { return radian * 180 / PI; }
+double Driving::deg2rad(double degree) { return degree * PI / 180; }
+
+void Driving::autoMode() {
+	//emit(send2View(7));
+	while (1) {
+		cout << "automode function called" << endl;
+		cout << dataContainer->getValue_yolo_missionID() << endl;
+		if (dataContainer->getValue_yolo_missionID() == PARKING) {  MissionParking(); }
+		else if (dataContainer->getValue_yolo_missionID() == INTER_READY) { MissionIntReady(); }
+		else if (dataContainer->getValue_yolo_missionID() == INTER_LEFT) { emit(send2View(2)); MissionIntLeft(); }
+		else if (dataContainer->getValue_yolo_missionID() == INTER_RIGHT) { emit(send2View(3)); MissionIntRight(); }
+		else if (dataContainer->getValue_yolo_missionID() == INTER_STRAIGHT) { MissionIntStraight(); }
+		else if (dataContainer->getValue_yolo_missionID() == STATIC_OBSTACLE) { MissionStaticObs(); }
+		else if (dataContainer->getValue_yolo_missionID() == DYNAMIC_OBSTACLE) { MissionDynamicObs(); }
+		else if (dataContainer->getValue_yolo_missionID() == INTER_STOP) { MissionIntStop(); }
+		else { emit(send2View(1)); Basic(); }
+	}
+}
+
 
 void Driving::DrawData()
 {
@@ -671,284 +939,11 @@ void Driving::LOS() {
 	*/
 }
 
-void Driving::MissionParking() {
-	cout << "parking start" << endl;
-
-	//
-	//	mission code
-	//
-
-	if(dataContainer->getValue_yolo_missionID() == PARKING || dataContainer->getValue_yolo_missionID()== BASIC)
-		dataContainer->setValue_yolo_missionID(BASIC);
-}
-
-void Driving::MissionIntReady() {
-	cout << "mission 2" << endl;
-	
-	//
-	//mission code
-	//
-
-	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
-	if (dataContainer->getValue_yolo_missionID()== INTER_READY || dataContainer->getValue_yolo_missionID()== BASIC)
-		dataContainer->setValue_yolo_missionID(BASIC);
-}
-
-void Driving::MissionIntLeft() {
-	cout << "mission 3" << endl;
-
-	//
-	//mission code
-	//
-
-	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
-	if (dataContainer->getValue_yolo_missionID()== INTER_LEFT || dataContainer->getValue_yolo_missionID()== BASIC)
-		dataContainer->setValue_yolo_missionID(BASIC);
-}
-
-void Driving::MissionIntRight() {
-	cout << "mission 4" << endl;
-
-	//
-	//mission code
-	//
-
-	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
-	if (dataContainer->getValue_yolo_missionID()== INTER_RIGHT || dataContainer->getValue_yolo_missionID()== BASIC)
-		dataContainer->setValue_yolo_missionID(BASIC);
-}
-
-void Driving::MissionIntStraight() {
-	cout << "mission 5" << endl;
-
-	//
-	//mission code
-	//
-
-	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
-	if (dataContainer->getValue_yolo_missionID()== INTER_STRAIGHT || dataContainer->getValue_yolo_missionID()== BASIC)
-		dataContainer->setValue_yolo_missionID(BASIC);
-}
-
-void Driving::MissionIntStop() {
-	cout << "misison 6" << endl;
-
-	//
-	//mission code
-	//
-
-	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
-	if (dataContainer->getValue_yolo_missionID()== INTER_STOP || dataContainer->getValue_yolo_missionID()== BASIC)
-		dataContainer->setValue_yolo_missionID(BASIC);
-}
-
-void Driving::MissionStaticObs() {
-	//
-	// 정적 장애물 미션
-	//
-	//Use only PASIV
-
-	cout << "basic start" << endl;
-	Basic();
-	
-}
-
-void Driving::MissionDynamicObs() {
-	//
-	dataContainer->setValue_UtoP_AorM(1);
-	cout << "Dynamic Obstacle Mission" << endl;
-	// 동적 장애물 미션
-	// PASIV for Dynamic Obstacle Mission
-	double cenX = imgPath.cols * 0.5, cenY = imgPath.rows *0.99; //the location of LiDAR in the map.
-	double scale = cenY / (SICK_SCAN_ROI_Y + 50);				  //obj_Data => imgPath
-	//Car size in map
-	double carW = CAR_WEITH * scale;
-	double carH = CAR_HEIGH * scale;
-
-	uchar onestep = (CAR_HEIGH)* scale;
-	uint objflag = 0;
 
 
-	while (1) {
-		//dynamic obstacle 미션 중 yolo에서 다른 mission trigger가 들어오면 그 mission으로 넘어감
-		if (dataContainer->getValue_yolo_missionID() != 8)
-		{
-			cout << "mission 8 was called but ended long mission ID : " << dataContainer->getValue_yolo_missionID() << endl;
-			break;
-		}			
-
-		cout << "FUCK IN DYNAMIC" << endl;
-		imgPath = cv::Mat::zeros(600, 600, CV_8UC3);
-		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
-		vector<Point2d> vecXYDraw;
-		double cenX = imgPath.cols * 0.5, cenY = imgPath.rows *0.99; //the location of LiDAR in the map.
-		double scale = cenY / (SICK_SCAN_ROI_Y + 50);				  //obj_Data => imgPath
-		//ROI AREA
-		double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
-		double rightEndX = cenX + SICK_SCAN_ROI_X * scale;
-		double topEndY = cenY - SICK_SCAN_ROI_Y * scale;
-		double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
-		//Localization of LiDAR in the ROI
-		Point2d center(cenX, cenY);
-
-		//////////////////////////////////////////////////////////////////
-		////Because Of Obstacles, Fill the Regions where cannot go in.////
-		//////////////////////////////////////////////////////////////////
-		for (int i = 0; i < vecXY.size(); ++i) {
-			double xyDrawX = center.x + vecXY[i].x * scale;
-			double xyDrawY = center.y - vecXY[i].y * scale;
-
-			Point2d xyDraw(xyDrawX, xyDrawY);
-			vecXYDraw.push_back(xyDraw);
-		}
-		for (int i = 0; i < vecXYDraw.size() - 1; ++i) {
-			double dist = sqrt(pow(vecXYDraw[i].x - vecXYDraw[i + 1].x, 2) + pow(vecXYDraw[i].y - vecXYDraw[i + 1].y, 2));
-
-			if (dist <= SICK_SCAN_DIST_OBJECT * scale) {
-				if (vecXYDraw[i].x < rightEndX && vecXYDraw[i].x > leftEndX && vecXYDraw[i].y > topEndY) {
-					line(imgPath, vecXYDraw[i], vecXYDraw[i + 1], CV_RGB(0, 255, 0), 2);
-				}
-			}
-		}
-
-		cout << "Mission8 2 " << endl; 
-
-		vector<vector<double>> objDataSet = dataContainer->getValue_lidar_Data().back();
-		double cirCenX, cirCenY, cirCenR;
-		double cenDist;
-		vector<double>objdist;
-		for (int i = 0; i < objDataSet.size(); i++) {
-			cirCenX = center.x + objDataSet[i][0] * scale;
-			cirCenY = center.y - objDataSet[i][1] * scale;
-			cirCenR = objDataSet[i][2] * scale;
-			Point2d cirCen(cirCenX, cirCenY); //center of objs.
-			cenDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2));
-			objdist.push_back(cenDist - cirCenR);
-
-			circle(imgPath, cirCen, cirCenR, CV_RGB(255, 0, 0), -1, CV_AA);
-		}
-		cv::cvtColor(imgPath, imgPath, CV_BGR2GRAY);
-		threshold(imgPath, imgPath, 1, 150, THRESH_BINARY_INV);
-
-		Mat imgLane = getLaneData(scoreStep);
-		imgPath -= imgLane;
-
-		cout << "Mission8 3" << endl;
-
-		//////////////////////////////////////////////////////////////////////////////
-		////Determine the desired Steering Angle in Score System with Vornoi Field////
-		//////////////////////////////////////////////////////////////////////////////
-		//REGION OF WORKABLE ANGLE: 60 ~ 120, with interval=5 degrees
-		vector<uint> score[171]; //include the scores at [90,85, 95, 80, 100, 75, 105, 70, 110, 65, 115, 60, 120]degrees
-		Mat scresult;
-		uint sum;
-		for (int i = 0; i < checkImgs.size(); i++) {
-			//cout << "CHECKING" << endl;
-			//cout << i << endl;
-			//imshow("checkImgs", checkImgs[i]);
-			//imshow("imgPath", imgPath);
-
-			scresult = checkImgs[i].mul(imgPath);
-			uchar *sumData = scresult.data;
-			int scHeight = scresult.rows;
-			int scWidth = scresult.cols;
-			sum = 0;
-			for (int h = 0; h < scHeight; h++) {
-				for (int w = 0; w < scWidth; w++) {
-					sum += sumData[w*scHeight + h];
-				}
-			}
-			score->push_back(sum);
-			//cout << "sum" << endl;
-			//waitKey(1);
-		}
-		uint scoreMax = distance(score->begin(), max_element(score->begin(), score->end()));
-		int goTheta1 = checkTheta.at(scoreMax / checkTheta2.size());
-		int goTheta2 = checkTheta2.at(scoreMax % checkTheta2.size());
-
-		Point2d stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1) / 180)));
-		Point2d stepSecond(stepFirst.x + onestep * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*sin(CV_PI*(90 + goTheta2) / 180)));
-
-		double desired_steering = goTheta1 * steerRatio + goTheta2 * (1 - steerRatio);
-		Point2d pntF(cenX + onestep * 1.5 * cos(CV_PI*(90 + desired_steering) / 180), cenY - onestep * 1.5*sin(CV_PI*(90 + desired_steering) / 180));
-
-		arrowedLine(imgPath, center, stepFirst, CV_RGB(50, 50, 50), 5);
-		arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(50, 50, 50), 5);
-		
-		cout << "Mission8 4" << endl;
-
-		int desired_speed = DynamicMissionSpeed;
-		int thDist = stopDist * scale;
-		double objClose ;
-		if (objdist.size() == 0){
-			cv::arrowedLine(imgPath, center, pntF, CV_RGB(255, 255, 255), 2);
-		}
-		else{
-			double objClose = objdist.at(distance(objdist.begin(), min_element(objdist.begin(), objdist.end())));
-			if (objClose < thDist){
-				desired_speed = 0;
-				dataContainer->setValue_UtoP_BRAKE(100);
-				objflag = 1;
-				cout << "FUCKING STOP!!!!!!!!!!!!!!!!!!!!!!!" << endl;
-			}
-			else{
-				cv::arrowedLine(imgPath, center, pntF, CV_RGB(255, 255, 255), 2);
-			}
-		}
-
-		cout << "Mission8 5" << endl;
-
-		//////////////////////////////////////////////////
-		////Final Control the steering angle and speed////
-		//////////////////////////////////////////////////
-		imshow("Path", imgPath);
-		dataContainer->setValue_UtoP_STEER(desired_steering);
-		dataContainer->setValue_UtoP_SPEED(desired_speed);
-
-		///////////////////////////////////////////////////////
-		////Trigger for ending the Dynamic Obstacle Mission////
-		///////////////////////////////////////////////////////
-		if (objflag == 1){
-			if (objClose > thDist || objdist.size()==0) {
-				dataContainer->setValue_yolo_missionID(BASIC);
-				objflag = 0;
-				break;
-			}
-		}
-
-		cout << "Mission8 6" << endl;
-
-		///////////////////////////////////////////////////////
-
-		int key = cv::waitKey(1);
-
-		if (key == 27) {
-			break;
-		}
-	}
-}
-
-/// functions which switch radian and degree
-double Driving::rad2deg(double radian) { return radian * 180 / PI; }
-double Driving::deg2rad(double degree) { return degree * PI / 180; }
-
-void Driving::autoMode() {
-	emit(send2View(7));
-	while (1) {
-		cout << "automode function called" << endl;
-		cout << dataContainer->getValue_yolo_missionID() << endl;
-		if (dataContainer->getValue_yolo_missionID() == PARKING) {  MissionParking(); }
-		else if (dataContainer->getValue_yolo_missionID() == INTER_READY) { MissionIntReady(); }
-		else if (dataContainer->getValue_yolo_missionID() == INTER_LEFT) { emit(send2View(2)); MissionIntLeft(); }
-		else if (dataContainer->getValue_yolo_missionID() == INTER_RIGHT) { emit(send2View(3)); MissionIntRight(); }
-		else if (dataContainer->getValue_yolo_missionID() == INTER_STRAIGHT) { MissionIntStraight(); }
-		else if (dataContainer->getValue_yolo_missionID() == STATIC_OBSTACLE) { MissionStaticObs(); }
-		else if (dataContainer->getValue_yolo_missionID() == DYNAMIC_OBSTACLE) { MissionDynamicObs();}
-		else if (dataContainer->getValue_yolo_missionID() == INTER_STOP) { MissionIntStop();}
-		else { emit(send2View(1)); Basic(); }
-	}
-}
-
+	///////////////////////
+	////Mission Control////
+	///////////////////////
 
 MissionUpdate::MissionUpdate() {
 	dataContainer = DataContainer::getInstance();
@@ -960,7 +955,7 @@ void MissionUpdate::MissionIDUpdate() {
 	//map 대신 array나 datacontainer에 각 미션 위험도를 int type으로 만들어서 바꾸자
 	int mission = 0;
 	map<string, int> temp = dataContainer->getValue_yolo_missions();
-	if (temp.find("parking")->second = 3) { 
+	if (temp.find("parking")->second == 3) { 
 		dataContainer->setValue_yolo_missionID(PARKING);
 	}
 	else if (temp.find("intersectionLeft")->second == 3) { 
@@ -985,10 +980,10 @@ void MissionUpdate::MissionIDUpdate() {
 	}
 	/// kidSafe나 bust는 mission number에 병렬적으로 들어올 수 있으므로 이에 따라 속도 비율을 조정한다.
 	
-	if (temp.find("kidSafe")->second = 3) { dataContainer->setValue_yolo_speed_ratio(0.9); }
+	if (temp.find("kidSafe")->second == 3) { dataContainer->setValue_yolo_speed_ratio(0.9); }
 	else { dataContainer->setValue_yolo_speed_ratio(1); } /// 지나간 후에는 다시 원상복귀한다. 이 때 원상복귀할때까지 시간 조절이 필요할 수 있음.
 
-	if (temp.find("bust")->second = 3) { dataContainer->setValue_yolo_speed_ratio(0.9); }
+	if (temp.find("bust")->second == 3) { dataContainer->setValue_yolo_speed_ratio(0.9); }
 	else { dataContainer->setValue_yolo_speed_ratio(1); }
 
 }

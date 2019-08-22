@@ -123,7 +123,7 @@ private:
 	//
 	map<string, int> m_yolo_mission_map;
 	double m_yolo_speed_ratio;
-	int m_yolo_missionID = 9;
+	int m_yolo_missionID = BASIC;
 
 	QMutex mtx_yolo_mission_map;
 	QMutex mtx_yolo_speed_ratio;

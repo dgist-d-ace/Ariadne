@@ -452,21 +452,22 @@ View::View() {
     addr.sin_addr.s_addr = inet_addr("127.0.0.1"); /// local host의 번호(무조건 이거)
     addr.sin_port = htons(8888); // 내부 포트 번호
 
-    if (::bind(server, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR)
-        cout << "View binding fail\n";
+	if (::connect(server, (SOCKADDR*)&addr, sizeof(addr)) == -1) {
+		cout << "Connent error!!" << endl;
+	}
+}
 
-    if (listen(server, SOMAXCONN) == SOCKET_ERROR)
-        cout << "View listening fail\n"; /// 바인드: 포트를 잡아놓음 리슨: 포트를 듣겠다
+View::~View() {
+	close(server);
 }
 
 void View::comView(int id){
-	/*
-	client = accept(server, NULL, NULL);
-	if (client == INVALID_SOCKET)
-		cout << "invalid socket\n";
-	else cout << "valid socket\n";
-	send(client, (char*)id, sizeof(id), 0);
-	*/
+	//char* c;            
+	//sprintf(c, "%d", id);
+	std::string s = std::to_string(id);
+	char const *pchar = s.c_str();
+	int n = send(server, pchar, sizeof(pchar), 0);
+	printf("send to view %s \n", pchar);
 }
 
 void View::SuspendView() {

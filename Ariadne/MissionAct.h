@@ -8,7 +8,7 @@
 #define speedLow	4.0
 
 #define stopDist 2000 //for Dynamic Obstacle mission
-#define DynamicMissionSpeed 10
+#define DynamicMissionSpeed 10.0
 
 class Driving : public QObject
 {

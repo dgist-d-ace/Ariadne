@@ -105,7 +105,7 @@ public:
     SOCKET server;
     SOCKET client;
     View();
-
+	~View();
 private:
 
 public slots:
