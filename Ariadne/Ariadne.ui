@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1179</width>
-    <height>859</height>
+    <width>1198</width>
+    <height>844</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -284,7 +284,7 @@
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>140</y>
+       <y>100</y>
        <width>101</width>
        <height>31</height>
       </rect>
@@ -297,7 +297,7 @@
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>60</y>
+       <y>20</y>
        <width>101</width>
        <height>31</height>
       </rect>
@@ -309,8 +309,8 @@
     <widget class="QPushButton" name="Btn_mission5">
      <property name="geometry">
       <rect>
-       <x>130</x>
-       <y>20</y>
+       <x>10</x>
+       <y>180</y>
        <width>101</width>
        <height>31</height>
       </rect>
@@ -323,7 +323,7 @@
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>100</y>
+       <y>60</y>
        <width>101</width>
        <height>31</height>
       </rect>
@@ -416,7 +416,7 @@
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>180</y>
+       <y>140</y>
        <width>101</width>
        <height>31</height>
       </rect>
@@ -425,14 +425,41 @@
       <string>9. Basic</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="Btn_Traffic">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>180</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../../DYibre/Checkbox_Off.png</normaloff>
+       <normalon>../../DYibre/Checkbox_On.png</normalon>../../DYibre/Checkbox_Off.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>100</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
    <widget class="QPlainTextEdit" name="plainTextEdit">
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>680</y>
+      <y>660</y>
       <width>691</width>
-      <height>101</height>
+      <height>121</height>
      </rect>
     </property>
    </widget>
@@ -634,7 +661,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>BREAK</string>
+      <string>BRAKE</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_8">
@@ -1010,7 +1037,7 @@
       <x>269</x>
       <y>19</y>
       <width>691</width>
-      <height>651</height>
+      <height>631</height>
      </rect>
     </property>
    </widget>
@@ -1046,7 +1073,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1179</width>
+     <width>1198</width>
      <height>21</height>
     </rect>
    </property>

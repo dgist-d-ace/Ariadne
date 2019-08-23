@@ -124,10 +124,13 @@ private:
 	map<string, int> m_yolo_mission_map;
 	double m_yolo_speed_ratio;
 	int m_yolo_missionID = BASIC;
+	bool m_yolo_goStop = true; /// if true, go sign
 
 	QMutex mtx_yolo_mission_map;
 	QMutex mtx_yolo_speed_ratio;
 	QMutex mtx_yolo_missionID;
+	QMutex mtx_yolo_goStop;
+
 	//
 	//gps:
 	//
@@ -312,6 +315,9 @@ public:
 
 	int getValue_yolo_missionID();
 	void setValue_yolo_missionID(int ID);
+
+	void setValue_yolo_go(bool);
+	bool getValue_yolo_go();
 
 	//
 	//	GPS

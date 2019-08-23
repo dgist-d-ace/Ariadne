@@ -108,7 +108,7 @@ void ComPlatform::setWritePram(BYTE* writeBuffer)
 	writeBuffer[13] = 0x0a;
 }
 
-#define steeringKP  0.3
+#define steeringKP  1.0
 #define speedKP		1.0
 #define steerRatio  1.0
 
@@ -137,7 +137,8 @@ int ComPlatform::setData_speed(double desired_speed)
 	double speedratio = dataContainer->getValue_yolo_speed_ratio();
 	desired_speed *= 10;
 	
-	desired_speed = (double)desired_speed*speedKP*speedratio;
+	//desired_speed = (double)desired_speed*speedKP*speedratio;
+	desired_speed = (double)desired_speed*speedKP;
 
 	if (desired_speed > 200) {
 		desired_speed = 200;

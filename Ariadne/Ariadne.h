@@ -140,6 +140,7 @@ public slots:
 	void clicked_btn_mission7();
 	void clicked_btn_mission8();
 	void clicked_btn_mission9();
+	void clicked_btn_traffic(bool);
 
     void clicked_btn_sensor();
 	void clicked_btn_driving();
@@ -150,8 +151,6 @@ public slots:
     void clicked_steer_right();
     void gear_input();
     void clicked_E_stop();
-
-    //int gotoGPSdestination();
 
     void clicked_lidar_stop();
     void clicked_lidar_restart();
@@ -170,6 +169,8 @@ public slots:
 
     void onLatitudeChanged(double);
     void onLongitudeChanged(double);
+
+	void onGreenLight(bool);
 
     /// DY: 0802
     void onLidarExit();

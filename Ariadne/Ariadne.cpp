@@ -103,7 +103,8 @@ Ariadne::Ariadne(QWidget *parent)
     QObject::connect(ui->Btn_left, SIGNAL(clicked()), this, SLOT(clicked_steer_left()));
     QObject::connect(ui->Btn_right, SIGNAL(clicked()), this, SLOT(clicked_steer_right()));
     QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_E_stop()));
-    //QObject::connect(ui->Btn_Go, SIGNAL(clicked()), this, SLOT(gotoGPSdestination()));sdss
+
+	QObject::connect(ui->Btn_Traffic, SIGNAL(clicked(bool)), this, SLOT(clicked_btn_traffic(bool)));
 
     QObject::connect(ui->Btn_lidar_stop, SIGNAL(clicked()), this, SLOT(clicked_lidar_stop()));
     QObject::connect(ui->Btn_lidar_restart, SIGNAL(clicked()), this, SLOT(clicked_lidar_restart()));
@@ -125,6 +126,8 @@ Ariadne::Ariadne(QWidget *parent)
 
     connect(gpsCom, SIGNAL(latitudeChanged(double)), this, SLOT(onLatitudeChanged(double)));
     connect(gpsCom, SIGNAL(longitudeChanged(double)), this, SLOT(onLongitudeChanged(double)));
+
+	connect(missionUpdate, SIGNAL(greenLight(bool)), this, SLOT(onGreenLight(bool)));
 	
  }
 
@@ -163,8 +166,8 @@ void Ariadne::onLidarExit()
 
 }
 
-void Ariadne::clicked_lidar_restart() {cout << "you clicked lidar restart" << endl;}
-void Ariadne::clicked_lidar_stop() { cout << "you clicked lidar stop" << endl; }
+void Ariadne::clicked_lidar_restart() {cout << "no function here" << endl;}
+void Ariadne::clicked_lidar_stop() { cout << "no functions here" << endl; }
 void Ariadne::clicked_yolo_restart() { yolo->ResumeYolo(); }
 void Ariadne::clicked_yolo_stop() { yolo->SuspendYolo(); }
 void Ariadne::clicked_scnn_restart() { scnn->ResumeScnn(); }
@@ -175,6 +178,9 @@ void Ariadne::clicked_scnn_stop() { scnn->SuspendScnn(); }
 void Ariadne::clicked_btn_driving() {
 	if (!drivingThread->isRunning())
 		drivingThread->start();
+
+	//if (!missionUpdateThread->isRunning())
+	//	missionUpdateThread->start();
 }
 
 void Ariadne::clicked_btn_mission1() {
@@ -211,7 +217,6 @@ void Ariadne::clicked_btn_mission6() {
 void Ariadne::clicked_btn_mission7() {
 	dataContainer->setValue_yolo_missionID(7);
 	cout << dataContainer->getValue_yolo_missionID() << endl;
-	cout << "btn mission 7 function is called" << endl;
 	ui->plainTextEdit->appendPlainText("Static Obstacle Mission Start");
 }
 
@@ -223,6 +228,12 @@ void Ariadne::clicked_btn_mission8() {
 void Ariadne::clicked_btn_mission9() {
 	dataContainer->setValue_yolo_missionID(9);
 	ui->plainTextEdit->appendPlainText("Basic PASIV algorithm start");
+}
+
+void Ariadne::clicked_btn_traffic(bool light)
+{
+	dataContainer->setValue_yolo_go(light);
+	cout << "light is on! light :  " << light << endl;
 }
 
 // These functions is to control gplatform
@@ -270,6 +281,10 @@ void Ariadne::onBreakChanged(int Number) { ui->lcdNumber_6->display(Number); }
 void Ariadne::onEncChanged(int Number) { ui->lcdNumber_7->display(Number); }
 void Ariadne::onLatitudeChanged(double Number) { ui->lcdNumber_8->display(Number); }
 void Ariadne::onLongitudeChanged(double Number) { ui->lcdNumber_9->display(Number); }
+void Ariadne::onGreenLight(bool light) 
+{
+	/// TODO: 여기서 true가 나오면 ui 버튼도 업데이트할 것.
+}
 
 void Ariadne::AutoPortFinder() {
 
@@ -406,8 +421,9 @@ PlatformCom::PlatformCom()
 
 void PlatformCom::comPlatform() {
     cout << "platform start" << endl;
-	//dataContainer->getValue_platform_port();
-    if (_platform.OpenPort(dataContainer->getValue_platform_port())) ////////////  @@@@@@  막 바꾸지 맙시다  @@@@@@  ////////////
+	
+	/// dataContainer->getValue_platform_port()
+    if (_platform.OpenPort(dataContainer->getValue_platform_port()))
     {
         _platform.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
         _platform.SetCommunicationTimeouts(0, 0, 0, 0, 0);
@@ -785,45 +801,3 @@ bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double headin
         return false;
     }
 }
-
-
-//int Ariadne::gotoGPSdestination()
-//{
-//
-//    //double Currentlat = dataContainer->getValue_gps_latitude();
-//    //double Currentlng = dataContainer->getValue_gps_longitude();
-//    double x = ui->lineEdit->text().toDouble(); /// unit : meter, relative x coordinate from now to destination
-//    double y = ui->lineEdit_2->text().toDouble(); /// unit : meter, relative y coordinate from now to destination
-//    double heading = deg2rad(ui->lineEdit_3->text().toDouble()); /// input unit: radian, the target heading degree when the destination coordinates are reached.
-//
-//    double turningR = abs(x + y / tan(-(heading))); /// Turning Radius
-//    if (turningR < 0.8)
-//    {
-//        if (x > 0) { return 2000; }
-//        else { return -2000; }
-//    }
-//    double steerRad;
-//    if (x > 0) { steerRad = atan(pow(0.8, 2) / sqrt(pow(turningR, 2) - 0.64)); }
-//    else { steerRad = -atan(pow(0.8, 2) / sqrt(pow(turningR, 2) - 0.64)); } /// Steer Radian
-//    cout << "turningRadius: " << turningR << endl;
-//    cout << "steerRadian: " << steerRad << endl;
-//    double steerDegree = rad2deg(steerRad); /// convert Radian to Degree
-//
-//    cout << "arctan: " << atan(abs(y) / abs(x)) << endl;
-//
-//    cout << "steerDeg: " << steerDegree << endl;
-//
-//    if (-27 < steerDegree && steerDegree < 27) {
-//        return steerDegree * 71;
-//        /// Because of the steer value set, can't be over than 2000 : it means the maximum steer degree is 28.16
-//    }
-//    else
-//    {
-//        if (steerDegree > 0) { return 2000; } ///set steer maximum value
-//        else { return -2000; }
-//    }
-//}
-//
-//double rad2deg(double radian) { return radian * 180 / PI;}
-//double deg2rad(double degree) { return degree * PI / 180; }
-
