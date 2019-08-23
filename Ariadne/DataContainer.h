@@ -122,7 +122,7 @@ private:
 	//카메라2: YOLO용
 	//
 	map<string, int> m_yolo_mission_map;
-	double m_yolo_speed_ratio;
+	double m_yolo_speed_ratio = 1;
 	int m_yolo_missionID = BASIC;
 	bool m_yolo_goStop = true; /// if true, go sign
 

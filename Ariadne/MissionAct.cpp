@@ -17,8 +17,6 @@ using namespace cv;
 Driving::Driving() {
 	dataContainer = DataContainer::getInstance();
 
-	//imgPath = Mat::zeros(600, 600, CV_8UC1);
-	//Car size in map
 	Mat cirGray, cirGray2, buffer;
 	uint Theta, Theta2;
 
@@ -26,14 +24,14 @@ Driving::Driving() {
 		cirGray = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 		Theta = 90 + checkTheta.at(i);
 		Point2d step1(cenX + onestep * cos(CV_PI*Theta / 180), cenY - onestep * sin(CV_PI*Theta / 180));
-		circle(cirGray, step1, (onestep*0.9), Scalar::all(10), -1, CV_AA, 0);
+		circle(cirGray, step1, (onestep*0.8), Scalar::all(2), -1, CV_AA, 0);
 
 		for (int j = 0; j < checkTheta2.size(); j++)
 		{
 			cirGray2 = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 			Theta2 = 90 + checkTheta2.at(j);
 			Point2d step2(step1.x + onestep * cos(CV_PI*Theta2 / 180), step1.y - onestep * sin(CV_PI*Theta2 / 180));
-			circle(cirGray2, step2, (onestep*0.6), Scalar::all(10), -1, CV_AA, 0);
+			circle(cirGray2, step2, (onestep*0.6), Scalar::all(1), -1, CV_AA, 0);
 			cirGray2 += cirGray;
 			buffer = cirGray2.clone();
 			checkImgs.push_back(buffer);
@@ -42,10 +40,38 @@ Driving::Driving() {
 		}
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////
+	////Fill the Regions where cannot go in, because of max value of steering angle.////
+	////////////////////////////////////////////////////////////////////////////////////
+	double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
+	double rightEndX = cenX + SICK_SCAN_ROI_X * scale;
+	double topEndY = cenY - SICK_SCAN_ROI_Y * scale;
+	double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
+	int npt2[] = { 4 };
+	//Left area where platform can not go (left 60degrees)
+	Point points[1][4];
+	points[0][0] = Point(cenX - carW, cenY);
+	points[0][1] = Point(leftEndX, cenY);
+	points[0][2] = Point(leftEndX, cenY - (SICK_SCAN_ROI_X*scale - carW) * sqrt(3) / 2);
+	points[0][3] = Point(cenX - (SICK_SCAN_ROI_X*scale + carW) / 2, cenY - (SICK_SCAN_ROI_X*scale - carW) * sqrt(3) / 2);
+	const Point* pnts[1] = { points[0] };
+
+	//Right area where platform can not go (right 60degrees)
+	Point points2[1][4];
+	points2[0][0] = Point(cenX + carW, cenY);
+	points2[0][1] = Point(rightEndX, cenY);
+	points2[0][2] = Point(rightEndX, cenY - (SICK_SCAN_ROI_X*scale - carW) * sqrt(3) / 2);
+	points2[0][3] = Point(cenX + (SICK_SCAN_ROI_X*scale + carW) / 2, cenY - (SICK_SCAN_ROI_X*scale - carW) * sqrt(3) / 2);
+	const Point* pnts2[1] = { points2[0] };
+
+	//Drawing
+	fillPoly(outRange, pnts, npt2, 1, Scalar::all(255));
+	fillPoly(outRange, pnts2, npt2, 1, Scalar::all(255));
+
 }
 
 #define scoreStep 5
-#define itvLane	15
+#define itvLane	15 //tuning with real scale ratio with Bae
 //Input: lane data from scnn
 //output: 600x600 Mat image
 //Make the scored lane map 
@@ -235,6 +261,19 @@ void Driving::getGpsData(int scorestep)
 
 }
 
+void Driving::PASIVcontrol(int desired_speed, int desired_steering, int brake) 
+{
+
+
+
+
+	//Return
+	dataContainer->setValue_UtoP_SPEED(desired_speed);
+	dataContainer->setValue_UtoP_STEER(desired_steering);
+	dataContainer->setValue_UtoP_BRAKE(brake);
+
+}
+
 //PASIV (Pointcloud-based Auto-driving with Score Implemented Voronoi field)
 void Driving::Basic(int missionId) {
 	cout << "PASIV driving" << endl;
@@ -243,6 +282,7 @@ void Driving::Basic(int missionId) {
 	clock_t start, end;
 	dataContainer->setValue_UtoP_BRAKE(0);
 	while (1) {
+		start = clock();
 		///////////////////////////////////////////
 		////Break the PASIV for another mission////
 		///////////////////////////////////////////
@@ -253,8 +293,10 @@ void Driving::Basic(int missionId) {
 			break;
 		}
 		//////////////////////////////////////////////////////////////////////////////////////
-		start = clock();
+
 		imgPath = cv::Mat::zeros(600, 600, CV_8UC3);
+		scoreMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
+
 		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
 		vector<Point2d> vecXYDraw;
 
@@ -266,28 +308,7 @@ void Driving::Basic(int missionId) {
 		//Localization of LiDAR in the ROI
 		Point2d center(cenX, cenY);
 
-		////////////////////////////////////////////////////////////////////////////////////
-		////Fill the Regions where cannot go in, because of max value of steering angle.////
-		////////////////////////////////////////////////////////////////////////////////////
-		//Left area where platform can not go (left 60degrees)
-		Point points[1][4];
-		points[0][0] = Point(cenX - carH, center.y);
-		points[0][1] = Point(leftEndX, center.y);
-		points[0][2] = Point(leftEndX, center.y - (SICK_SCAN_ROI_X*scale - carH)/sqrt(3));
-		points[0][3] = Point(cenX - (SICK_SCAN_ROI_X*scale + carH) / 2, center.y - (SICK_SCAN_ROI_X*scale - carH) / sqrt(3));
-		const Point* pnts[1] = { points[0] };
-		int npt2[] = { 4 };
-		//Right area where platform can not go (right 60degrees)
-		Point points2[1][4];
-		points2[0][0] = Point(center.x + carH, center.y);
-		points2[0][1] = Point(rightEndX, center.y);
-		points2[0][2] = Point(rightEndX, center.y - (SICK_SCAN_ROI_X*scale - carH) / sqrt(3));
-		points2[0][3] = Point(cenX + (SICK_SCAN_ROI_X*scale + carH) / 2, center.y - (SICK_SCAN_ROI_X*scale - carH) / sqrt(3));
-		const Point* pnts2[1] = { points2[0] };
-		//Drawing
-		fillPoly(imgPath, pnts, npt2, 1, CV_RGB(150, 0, 0));
-		fillPoly(imgPath, pnts2, npt2, 1, CV_RGB(150, 0, 0));
-		cv::cvtColor(imgPath, scoreMap, CV_BGR2GRAY);
+		cv::cvtColor(imgPath, imgPath, CV_BGR2GRAY);
 
 		//////////////////////////////////////////////////////////////////
 		////Because Of Obstacles, Fill the Regions where cannot go in.////
@@ -304,7 +325,7 @@ void Driving::Basic(int missionId) {
 
 			if (dist <= SICK_SCAN_DIST_OBJECT * scale) {
 				if (vecXYDraw[i].x < rightEndX && vecXYDraw[i].x > leftEndX && vecXYDraw[i].y > topEndY) {
-					line(imgPath, vecXYDraw[i], vecXYDraw[i + 1], CV_RGB(0, 255, 0), 2);
+					line(imgPath, vecXYDraw[i], vecXYDraw[i + 1], CV_RGB(255, 255, 255), 2);
 				}
 			}
 		}
@@ -346,20 +367,21 @@ void Driving::Basic(int missionId) {
 			polypts[0][3] = Point(polyX4, polyY4);
 			const Point* ppt[1] = { polypts[0] };
 			int npt[] = { 4 };
-			fillPoly(imgPath, ppt, npt, 1, CV_RGB(200, 200, 0));
-			circle(imgPath, cirCen, cirCenR, CV_RGB(255, 0, 0), -1, CV_AA);
+			fillPoly(imgPath, ppt, npt, 1, CV_RGB(200, 200, 200));
+			circle(imgPath, cirCen, cirCenR, CV_RGB(255, 255, 255), -1, CV_AA);
 		}
 
-		////////////////////////////////////
-		////Make the image to Score map.////
-		////////////////////////////////////
-		cv::cvtColor(imgPath, imgPath, CV_BGR2GRAY);
-		threshold(imgPath, imgPath, 1, 30, THRESH_BINARY_INV);
-		threshold(scoreMap, scoreMap, 1, 30, THRESH_BINARY_INV);
+		///////////////////////////////////////			
+		////Make the Score Implemented map.////
+		///////////////////////////////////////		//BIG change 0823
+		//cv::cvtColor(imgPath, imgPath, CV_BGR2GRAY);
+		threshold(imgPath, imgPath, 1, 20, THRESH_BINARY_INV);
+		//threshold(scoreMap, scoreMap, 1, 20, THRESH_BINARY_INV);
 
-		Mat _window = Mat::ones(30, 30, CV_8UC1);
-		morphologyEx(scoreMap, scoreMap, MORPH_ERODE, _window);
+		Mat _window = Mat::ones(15, 15, CV_8UC1);
 		morphologyEx(imgPath, imgPath, MORPH_ERODE, _window);
+		//morphologyEx(scoreMap, scoreMap, MORPH_ERODE, _window);
+
 		//SCORE IMPLEMENTED VORONOI FIELD
 		int kerSize;
 		Mat kernel;
@@ -369,23 +391,27 @@ void Driving::Basic(int missionId) {
 		{
 			kerSize = 20 * i;
 			kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
-			morphologyEx(scoreMap, stepVot2, MORPH_ERODE, kernel);
+			//morphologyEx(scoreMap, stepVot2, MORPH_ERODE, kernel);
 			morphologyEx(imgPath, stepVot, MORPH_ERODE, kernel);
 			imgPath += stepVot;
-			scoreMap += stepVot2;
+			//scoreMap += stepVot2;
 		}
+		//cout << imgPath.col(300) << endl;
+		scoreMap = Scalar::all(160);
 
 		////Apply the lane data to the lidar data
 		Mat laneImg = getLaneData(scoreStep);
 		scoreMap -= laneImg;
 		imgPath -= laneImg;
 
+		////Apply the out of range of steering angle
+		scoreMap -= outRange;
+		imgPath -= outRange;
 
 		//////////////////////////////////////////////////////////////////////////////
 		////Determine the desired Steering Angle in Score System with Vornoi Field////
 		//////////////////////////////////////////////////////////////////////////////
-		//REGION OF WORKABLE ANGLE: 60 ~ 120, with interval=5 degrees
-		vector<uint> score[171];
+		vector<uint> score[189];
 		Mat scresult;
 		uint sum;
 		for (int i = 0; i < checkImgs.size(); i++) {
@@ -411,8 +437,8 @@ void Driving::Basic(int missionId) {
 		double desired_steering = goTheta1 * steerRatio + goTheta2 * (1 - steerRatio);
 		Point2d pntF(cenX + onestep * 1.5 * cos(CV_PI*(90 + desired_steering) / 180), cenY - onestep * 1.5*sin(CV_PI*(90 + desired_steering) / 180));
 
-		arrowedLine(imgPath, center, stepFirst, CV_RGB(50, 50, 50), 5);
-		arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(50, 50, 50), 5);
+		arrowedLine(imgPath, center, stepFirst,Scalar::all(50), 5);
+		arrowedLine(imgPath, stepFirst, stepSecond, Scalar::all(50), 5);
 
 		/////////////////////////////////////////////////////////////////////
 		////Determine the desired Speed in Score System with Vornoi Field////
@@ -420,8 +446,6 @@ void Driving::Basic(int missionId) {
 		//Add the line data in the scoreMap and img Path.
 		double scoreofMap = 0; //total sum of scoreMap
 		double scoreofPath = 0;//total sum of imgPath
-		double desired_speed;
-
 		uchar *map = scoreMap.data;
 		uchar *path = imgPath.data;
 		int mapH = imgPath.rows;
@@ -432,17 +456,17 @@ void Driving::Basic(int missionId) {
 				scoreofPath += path[i*mapW + j];
 			}
 		}
-		//compare the scoreofMap and scoreofPath
-		desired_speed = speedHigh * scoreofPath / scoreofMap;
-		//cout << "ratio: " << ((double)scoreofPath / scoreofMap) << endl;
+
+		double desired_speed = speedHigh * scoreofPath / scoreofMap;
 
 			///////////////////////
 			////Extra Condition////
 			///////////////////////
+		double desired_brake;
 		if (objdist.size() == 0) {
 			//There is no obstacles.
-			dataContainer->setValue_UtoP_BRAKE(0);
-			cv::arrowedLine(imgPath, center, pntF, CV_RGB(200, 200, 200), 2);
+			desired_brake=0;
+			cv::arrowedLine(imgPath, center, pntF, Scalar::all(200), 2);
 		}
 		else {
 			//stop condition
@@ -452,19 +476,19 @@ void Driving::Basic(int missionId) {
 			if (objClose < 550 * scale) {
 				//similary to Emergency Stop
 				desired_speed = 0;
-				dataContainer->setValue_UtoP_BRAKE(200);
+				desired_brake = 200;
 				cout << "STOP!!!!!!!TOO CLOSE!!!!" << endl;
 			}
 			else if (desired_speed < speedLow) {
 				//limit the speed
-				dataContainer->setValue_UtoP_BRAKE(0);
+				desired_brake = 0;
 				desired_speed = speedLow; cout << "LOW SCORE!!" << endl;
-				cv::arrowedLine(imgPath, center, pntF, CV_RGB(200, 200, 200), 2);
+				cv::arrowedLine(imgPath, center, pntF, Scalar::all(200), 2);
 			}
 			else {
-				dataContainer->setValue_UtoP_BRAKE(0);
+				desired_brake = 0;
 				desired_speed = desired_speed;
-				cv::arrowedLine(imgPath, center, pntF, CV_RGB(200, 200, 200), 2);
+				cv::arrowedLine(imgPath, center, pntF, Scalar::all(200), 2);
 			}
 		}
 		//cout << "ordered speed: " << desired_speed << endl;
@@ -474,11 +498,10 @@ void Driving::Basic(int missionId) {
 		//////////////////////////////////////////////////
 		////Final Control the steering angle and speed////
 		//////////////////////////////////////////////////
-		dataContainer->setValue_UtoP_STEER(desired_steering);
-		dataContainer->setValue_UtoP_SPEED(desired_speed);
+		PASIVcontrol(desired_speed, desired_steering, desired_brake);
 
 		end = clock();
-		//cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl ;
+		cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl ;
 		int key = cv::waitKey(1);
 		if (key == 27) {
 			break;
@@ -1030,6 +1053,7 @@ void Driving::MissionDynamicObs() {
 		//////////////////////////////////////////////////
 		//imshow("Map", LaneMap);
 		imshow("Path", imgPath);
+		//PASIVcontrol(desired_speed, desired_steering, desired_brake);
 		dataContainer->setValue_UtoP_STEER(desired_steering);
 		dataContainer->setValue_UtoP_SPEED(desired_speed);
 
@@ -1322,12 +1346,14 @@ void MissionUpdate::MissionIDUpdate() {
 
 	*/
 	
+
 		/// 신호등에 따라 갈지 말지를 결정하는 함수
 		/// ISSUE: BRAKE 정도가 PASIV와 충돌할 가능성은? PASIV에서 주행 명령을 내리면 다시 가버릴 수 있음.
 		bool goStop = dataContainer->getValue_yolo_go();
 		int originspeed = dataContainer->getValue_PtoU_SPEED();
 		if (!goStop) /// red light
 		{
+			dataContainer->setValue_UtoP_SPEED(0);
 			dataContainer->setValue_UtoP_BRAKE(50);
 			Sleep(100);
 			dataContainer->setValue_UtoP_BRAKE(100);
@@ -1341,9 +1367,6 @@ void MissionUpdate::MissionIDUpdate() {
 			emit(greenRight(true));
 			dataContainer->setValue_UtoP_BRAKE(0); /// 브레이크 해제
 			dataContainer->setValue_UtoP_SPEED(originspeed); /// 신호를 받기 전으로 원상복귀
-
 		}
 	}
-
-	
 }
