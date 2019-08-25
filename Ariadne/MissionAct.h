@@ -30,10 +30,10 @@ protected:
 	vector<Mat> checkImgs;
 	//vector<int> checkTheta = { 0, -2,2, -4, 4, -6, 6, -8, 8, -10,10, -12,12, -14, 14, -16,16,-18,18, -20, 20, -22,22,-24,24,-26, 26 };//The steering angle candidates
 	//vector<int> checkTheta = { 0, -5,5,-10,10,-15,15,-20,20,-25,25,-30,30 };//The steering angle candidates
-	//vector<int> checkTheta = { 0, -3,3,-6,6,-9,9,-12,12,-15,15,-18,18,-21,21,-24,24,-27,27 };
-	//vector<int> checkTheta2 = { 0,-6,6,-12,12,-18,18,-24,24 };
-	vector<int> checkTheta = { 0, -4,4,-2,2,-8,8,-6,6,-12,12,-10,10,-18,18,-14,14, -26,26,-22,22};
-	vector<int> checkTheta2 = { 0,-4,4,-8,8,-12,12,-16,16 };
+	//vector<int> checkTheta = { 0, -3,3,-6,6,-9,9,-12,12,-15,15,-18,18,-21,21,-24,24,-27,27 }; //19
+	//vector<int> checkTheta2 = { 0,-6,6,-12,12,-18,18,-24,24 }; //9
+	vector<int> checkTheta = { 0, -4,4,-2,2,-8,8,-6,6,-12,12,-10,10,-18,18,-14,14, -26,26,-22,22}; //21
+	vector<int> checkTheta2= { 0, -4,4,     -8,8,     -12,12,       -16,16 }; //9
 
 	//////////////////////////////////////////////
 	//////////////////////////////////////////////
@@ -44,7 +44,7 @@ public:
     double rad2deg(double);
     double deg2rad(double);
 	
-	void PASIVcontrol(int desired_speed, int desired_steering, int brake = 0);
+	void PASIVcontrol(double desired_speed, double desired_steering, double desired_brake = 0);
 
 
 	vector<vector<double>> gpsWayPoint;

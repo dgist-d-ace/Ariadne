@@ -114,9 +114,9 @@ void ComPlatform::setWritePram(BYTE* writeBuffer)
 
 int ComPlatform::setData_steering(double desired_steering)
 {
-	int present_steering = dataContainer->getValue_PtoU_STEER(); //-2000~2000
+	double present_steering = dataContainer->getValue_PtoU_STEER(); //-2000~2000
 	desired_steering *= -71;
-	int dif = desired_steering - present_steering;
+	double dif = desired_steering - present_steering;
 
 	desired_steering = (double)desired_steering*steeringKP;
 
@@ -133,7 +133,7 @@ int ComPlatform::setData_steering(double desired_steering)
 
 int ComPlatform::setData_speed(double desired_speed)
 {
-	int present_speed = dataContainer->getValue_PtoU_SPEED(); //0~200
+	double present_speed = dataContainer->getValue_PtoU_SPEED(); //0~200
 	double speedratio = dataContainer->getValue_yolo_speed_ratio();
 	desired_speed *= 10;
 	

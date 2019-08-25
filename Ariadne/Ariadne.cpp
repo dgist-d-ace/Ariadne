@@ -131,14 +131,14 @@ void Ariadne::clicked_btn_sensor() {
 
 	AutoPortFinder();
 
-	//if (!scnnThread->isRunning()) { scnnThread->start(); }
+	if (!scnnThread->isRunning()) { scnnThread->start(); }
 
-	if (!yoloThread->isRunning()){ yoloThread->start(); }
+	//if (!yoloThread->isRunning()){ yoloThread->start(); }
 
 	//if(!platformThread->isRunning()) { platformThread->start(); }
 	//dataContainer->setValue_UtoP_AorM(1);
 
-	//if (!lidarThread->isRunning()) { lidarThread->start(); }
+	if (!lidarThread->isRunning()) { lidarThread->start(); }
 
     
 	//if (!gpsThread->isRunning()) { gpsThread->start(); }
@@ -165,8 +165,8 @@ void Ariadne::clicked_scnn_stop() { scnn->SuspendScnn(); }
 
 // This function is to start driving
 void Ariadne::clicked_btn_driving() {
-	//if (!drivingThread->isRunning())
-	//	drivingThread->start();
+	if (!drivingThread->isRunning())
+		drivingThread->start();
 
 	//if (!missionUpdateThread->isRunning())
 	//	missionUpdateThread->start();
