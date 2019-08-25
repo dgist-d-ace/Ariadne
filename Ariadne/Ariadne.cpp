@@ -122,7 +122,7 @@ Ariadne::Ariadne(QWidget *parent)
 
 	// ------------------- UI update for Mission ----------------------//
 
-	QObject::connect(missionUpdate, SIGNAL(currentMission(int)), this, SLOT(onCurrentMission(int)));
+	QObject::connect(driving, SIGNAL(currentMission(int)), this, SLOT(onCurrentMission(int)));
 	///connect(missionUpdate, SIGNAL(greenLight(bool)), this, SLOT(onGreenLight(bool)));
 
  }
@@ -136,7 +136,15 @@ CString ConvertQstringtoCString(QString qs)
 }
 
 void Ariadne::onCurrentMission(int id) {
-	ui->groupBox_3->setEnabled(true);
+	ui->Btn_mission1->setEnabled(true);
+	ui->Btn_mission3->setEnabled(true);
+	ui->Btn_mission4->setEnabled(true);
+	ui->Btn_mission5->setEnabled(true);
+	ui->Btn_mission6->setEnabled(true);
+	ui->Btn_mission7->setEnabled(true);
+	ui->Btn_mission8->setEnabled(true);
+	ui->Btn_mission9->setEnabled(true);
+
 	switch (id) {
 		case PARKING:
 			//ui->Btn_mission1->setStyleSheet("background-color: rgb()");
@@ -162,6 +170,7 @@ void Ariadne::onCurrentMission(int id) {
 			break;
 		case BASIC:
 			ui->Btn_mission9->setEnabled(false);
+			cout << "basic enabled false set"<<endl;
 			break;
 	}
 
