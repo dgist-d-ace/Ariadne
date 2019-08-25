@@ -242,6 +242,9 @@
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_3">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -254,6 +257,9 @@
      <string>Mission</string>
     </property>
     <widget class="QPushButton" name="Btn_mission1">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -1099,6 +1105,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_3">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -1118,7 +1127,7 @@
      <x>0</x>
      <y>0</y>
      <width>1198</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

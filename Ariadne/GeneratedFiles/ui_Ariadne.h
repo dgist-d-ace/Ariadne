@@ -174,9 +174,11 @@ public:
         statusScnn->setTextFormat(Qt::AutoText);
         groupBox_3 = new QGroupBox(centralWidget);
         groupBox_3->setObjectName(QString::fromUtf8("groupBox_3"));
+        groupBox_3->setEnabled(true);
         groupBox_3->setGeometry(QRect(10, 310, 241, 301));
         Btn_mission1 = new QPushButton(groupBox_3);
         Btn_mission1->setObjectName(QString::fromUtf8("Btn_mission1"));
+        Btn_mission1->setEnabled(true);
         Btn_mission1->setGeometry(QRect(10, 20, 101, 31));
         Btn_mission3 = new QPushButton(groupBox_3);
         Btn_mission3->setObjectName(QString::fromUtf8("Btn_mission3"));
@@ -402,11 +404,12 @@ public:
         pushButton_2->setGeometry(QRect(150, 210, 101, 28));
         pushButton_3 = new QPushButton(centralWidget);
         pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
+        pushButton_3->setEnabled(true);
         pushButton_3->setGeometry(QRect(150, 250, 101, 28));
         AriadneClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AriadneClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1198, 26));
+        menuBar->setGeometry(QRect(0, 0, 1198, 21));
         AriadneClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(AriadneClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));

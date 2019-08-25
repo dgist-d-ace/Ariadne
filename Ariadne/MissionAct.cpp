@@ -17,26 +17,33 @@ using namespace cv;
 Driving::Driving() {
 	dataContainer = DataContainer::getInstance();
 
-	Mat cirGray, cirGray2, buffer;
+	Mat cirGray, cirGray2, temp, buffer;
 	uint Theta, Theta2;
 
 	for (int i = 0; i < checkTheta.size(); i++) {
 		cirGray = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 		Theta = 90 + checkTheta.at(i);
+		Point2d center(cenX, cenY);
 		Point2d step1(cenX + onestep * cos(CV_PI*Theta / 180), cenY - onestep * sin(CV_PI*Theta / 180));
-		circle(cirGray, step1, (onestep*0.8), Scalar::all(2), -1, CV_AA, 0);
-
+		//Point2d step15(cenX + onestep*1.5 * cos(CV_PI*Theta / 180), cenY - onestep*1.5 * sin(CV_PI*Theta / 180));
+		Point2d step05(cenX + onestep * cos(CV_PI*Theta / 180) / 2, cenY - onestep * sin(CV_PI*Theta / 180) / 2);
+		circle(cirGray, step1, (onestep*0.8), Scalar::all(40), -1, CV_AA, 0);
 		for (int j = 0; j < checkTheta2.size(); j++)
 		{
+			temp = cirGray.clone();
 			cirGray2 = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 			Theta2 = 90 + checkTheta2.at(j);
 			Point2d step2(step1.x + onestep * cos(CV_PI*Theta2 / 180), step1.y - onestep * sin(CV_PI*Theta2 / 180));
-			circle(cirGray2, step2, (onestep*0.6), Scalar::all(1), -1, CV_AA, 0);
-			cirGray2 += cirGray;
+			circle(cirGray2, step1, (onestep*0.4), Scalar::all(40), -1, CV_AA, 0);
+			circle(temp, step2, (onestep*0.6), Scalar::all(20), -1, CV_AA, 0);
+			circle(cirGray2, center, (onestep*0.8), Scalar::all(40), -1, CV_AA, 0);
+
+			//circle(cirGray2, Point2d(cenX, cenY), (onestep*0.8), Scalar::all(15), -1, CV_AA, 0);
+			cirGray2 += temp;
 			buffer = cirGray2.clone();
 			checkImgs.push_back(buffer);
 			//imshow("CHECK", buffer);
-			//waitKey(100);
+			//waitKey(10);
 		}
 	}
 
@@ -384,7 +391,7 @@ void Driving::Basic(int missionId) {
 		threshold(imgPath, imgPath, 1, 20, THRESH_BINARY_INV);
 		threshold(scoreMap, scoreMap, 1, 20, THRESH_BINARY_INV);
 
-		Mat _window = Mat::ones(10, 10, CV_8UC1);
+		Mat _window = Mat::ones(15, 15, CV_8UC1);
 		morphologyEx(imgPath, imgPath, MORPH_ERODE, _window);
 		//morphologyEx(scoreMap, scoreMap, MORPH_ERODE, _window);
 
@@ -395,7 +402,7 @@ void Driving::Basic(int missionId) {
 		Mat stepVot2 = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
 		for (int i = 1; i < 4; i++)
 		{
-			kerSize = 20 * i;
+			kerSize = 25 * i;
 			kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
 			morphologyEx(scoreMap, stepVot2, MORPH_ERODE, kernel);
 			morphologyEx(imgPath, stepVot, MORPH_ERODE, kernel);
@@ -433,22 +440,24 @@ void Driving::Basic(int missionId) {
 					sum += sumData[w*scHeight + h];
 				}
 			}
-			
 			score.push_back(sum);
 		}
 		uint scoreMax = distance(score.begin(), max_element(score.begin(), score.end()));
+		uint scoreMin = distance(score.begin(), min_element(score.begin(), score.end()));
 		int goTheta1 = checkTheta.at(scoreMax / checkTheta2.size());
 		int goTheta2 = checkTheta2.at(scoreMax % checkTheta2.size());
+		int dangerTheta = checkTheta.at(scoreMin / checkTheta2.size());
 
 		Point2d stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1) / 180)));
 		Point2d stepSecond(stepFirst.x + onestep * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*sin(CV_PI*(90 + goTheta2) / 180)));
+		Point2d dangerPoint(cenX + onestep * cos(CV_PI*(90 + dangerTheta) / 180), cenY - (onestep*sin(CV_PI*(90 + dangerTheta) / 180)));
 
 		double desired_steering = goTheta1 * steerRatio + goTheta2 * (1 - steerRatio);
 		Point2d pntF(cenX + onestep * 1.5 * cos(CV_PI*(90 + desired_steering) / 180), cenY - onestep * 1.5*sin(CV_PI*(90 + desired_steering) / 180));
 
 		arrowedLine(imgPath, locLidar, stepFirst,Scalar::all(50), 5);
 		arrowedLine(imgPath, stepFirst, stepSecond, Scalar::all(50), 5);
-		
+
 		/////////////////////////////////////////////////////////////////////
 		////Determine the desired Speed in Score System with Vornoi Field////
 		/////////////////////////////////////////////////////////////////////
@@ -467,7 +476,7 @@ void Driving::Basic(int missionId) {
 		}
 
 		double desired_speed = speedHigh * scoreofPath / scoreofMap;
-
+		//circle(imgPath, dangerPoint,20,Scalar::all(255),  -1, CV_AA, 0 );
 			///////////////////////
 			////Extra Condition////
 			///////////////////////
@@ -1056,6 +1065,7 @@ void Driving::MissionDynamicObs() {
 			objClose = objdist.at(distance(objdist.begin(), min_element(objdist.begin(), objdist.end())));
 			if (objClose >0 && objClose < thDist){
 				desired_brake = 200;
+				desired_speed = 0;
 				objflag = 1;
 				cout << "STOP!!!!!!!!!!!!!!!!!!!!!!!" << endl;
 			}
