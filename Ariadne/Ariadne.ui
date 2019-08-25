@@ -253,7 +253,7 @@
     <property name="title">
      <string>Mission</string>
     </property>
-    <widget class="QPushButton" name="Btn_Mission1">
+    <widget class="QPushButton" name="Btn_mission1">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -487,9 +487,15 @@
     <property name="currentIndex">
      <number>0</number>
     </property>
+    <property name="usesScrollButtons">
+     <bool>false</bool>
+    </property>
+    <property name="tabsClosable">
+     <bool>false</bool>
+    </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
-      <string>PC Con</string>
+      <string>PC</string>
      </attribute>
      <widget class="QPushButton" name="Btn_up">
       <property name="geometry">
@@ -569,7 +575,7 @@
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
-      <string>remoteCon</string>
+      <string>Remote Controller</string>
      </attribute>
     </widget>
    </widget>
@@ -1112,7 +1118,7 @@
      <x>0</x>
      <y>0</y>
      <width>1198</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

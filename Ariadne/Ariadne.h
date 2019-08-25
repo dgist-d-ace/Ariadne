@@ -172,6 +172,8 @@ public slots:
 
 	void onGreenLight(bool);
 
+	void onCurrentMission(int);
+
     /// DY: 0802
     void onLidarExit();
 

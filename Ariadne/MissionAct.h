@@ -52,6 +52,7 @@ public:
 	Planner *aster;
 signals:
 	void send2View(int id);
+	void currentMission(int id);
 
 public slots:
 	void DrawData();
