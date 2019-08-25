@@ -80,6 +80,7 @@ protected:
 public:
 	DataContainer *dataContainer;
 	MissionUpdate();
+	int brake = 50;
 
 public slots:
 	void MissionIDUpdate();

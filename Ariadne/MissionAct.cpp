@@ -263,15 +263,10 @@ void Driving::getGpsData(int scorestep)
 
 void Driving::PASIVcontrol(int desired_speed, int desired_steering, int brake) 
 {
-
-
-
-
 	//Return
 	dataContainer->setValue_UtoP_SPEED(desired_speed);
 	dataContainer->setValue_UtoP_STEER(desired_steering);
 	dataContainer->setValue_UtoP_BRAKE(brake);
-
 }
 
 //PASIV (Pointcloud-based Auto-driving with Score Implemented Voronoi field)
@@ -843,11 +838,24 @@ void Driving::MissionIntStop() {
 	//
 	//mission code
 	//
-	BasicGPS(INTER_STOP);
 
-	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
-	if (dataContainer->getValue_yolo_missionID()== INTER_STOP)
-		dataContainer->setValue_yolo_missionID(BASIC);
+	dataContainer->setValue_yolo_speed_ratio(0);
+
+	dataContainer->setValue_UtoP_BRAKE(50);
+	Sleep(100);
+	dataContainer->setValue_UtoP_BRAKE(100);
+	Sleep(100);
+	dataContainer->setValue_UtoP_BRAKE(150);
+	Sleep(100);
+	dataContainer->setValue_UtoP_BRAKE(200);
+
+	///emit(greenRight(false)); /// 이렇게 하지 말고 욜로쪽에서 하나 더 만드는게 나을듯
+	cout << "Red" << endl;
+	
+	while (dataContainer->getValue_yolo_missionID() == INTER_STOP)
+
+	dataContainer->setValue_UtoP_BRAKE(0); /// 브레이크 해제
+	dataContainer->setValue_yolo_speed_ratio(1); /// 신호를 받기 전으로 원상복귀		
 }
 
 //Mission No.7: Static Obstacle Mission
@@ -1101,7 +1109,6 @@ void Driving::autoMode() {
 	}
 }
 
-
 void Driving::DrawData()
 {
 	/*
@@ -1292,9 +1299,6 @@ void Driving::LOS() {
 	*/
 }
 
-
-
-
 	///////////////////////
 	////Mission Control////
 	///////////////////////
@@ -1313,6 +1317,19 @@ void MissionUpdate::MissionIDUpdate() {
 	//map 대신 array나 datacontainer에 각 미션 위험도를 int type으로 만들어서 바꾸자
 	int mission = 0;
 	map<string, int> temp = dataContainer->getValue_yolo_missions();
+
+	/*
+	일정 거리 이하인 미션 실행
+	static
+	dynamic
+	intersectionStop
+	intersectionStraight
+	intersectionLeft
+	intersectionRight
+	parking
+	*/
+
+	/*
 	if (temp.find("parking")->second == 3) {
 		dataContainer->setValue_yolo_missionID(PARKING);
 	}
@@ -1323,7 +1340,8 @@ void MissionUpdate::MissionIDUpdate() {
 		dataContainer->setValue_yolo_missionID(INTER_RIGHT);
 	}
 	else if (temp.find("intersectionStraight")->second == 3) {
-		dataContainer->setValue_yolo_missionID(INTER_STRAIGHT);}
+		dataContainer->setValue_yolo_missionID(INTER_STRAIGHT);
+	}
 	else if (temp.find("staticObstacle")->second == 3) {
 		dataContainer->setValue_yolo_missionID(STATIC_OBSTACLE);
 	}
@@ -1333,11 +1351,10 @@ void MissionUpdate::MissionIDUpdate() {
 	else if (temp.find("intersectionStop")->second == 3) {
 		dataContainer->setValue_yolo_missionID(INTER_STOP);
 	}
-	else if (temp.find("intersectionReady")->second == 3) {
-		dataContainer->setValue_yolo_missionID(INTER_READY);
-	}
-	/// kidSafe나 bust는 mission number에 병렬적으로 들어올 수 있으므로 이에 따라 속도 비율을 조정한다.
 
+	*/
+	/// kidSafe나 bust는 mission number에 병렬적으로 들어올 수 있으므로 이에 따라 속도 비율을 조정한다.
+	/*
 	if (temp.find("kidSafe")->second == 3) { dataContainer->setValue_yolo_speed_ratio(0.9); }
 	else { dataContainer->setValue_yolo_speed_ratio(1); } /// 지나간 후에는 다시 원상복귀한다. 이 때 원상복귀할때까지 시간 조절이 필요할 수 있음.
 
@@ -1345,28 +1362,9 @@ void MissionUpdate::MissionIDUpdate() {
 	else { dataContainer->setValue_yolo_speed_ratio(1); }
 
 	*/
-	
 
 		/// 신호등에 따라 갈지 말지를 결정하는 함수
 		/// ISSUE: BRAKE 정도가 PASIV와 충돌할 가능성은? PASIV에서 주행 명령을 내리면 다시 가버릴 수 있음.
-		bool goStop = dataContainer->getValue_yolo_go();
-		int originspeed = dataContainer->getValue_PtoU_SPEED();
-		if (!goStop) /// red light
-		{
-			dataContainer->setValue_UtoP_SPEED(0);
-			dataContainer->setValue_UtoP_BRAKE(50);
-			Sleep(100);
-			dataContainer->setValue_UtoP_BRAKE(100);
-			Sleep(100);
-			dataContainer->setValue_UtoP_BRAKE(150);
-			Sleep(100);
-			dataContainer->setValue_UtoP_BRAKE(200);
-			emit(greenRight(false)); /// 이렇게 하지 말고 욜로쪽에서 하나 더 만드는게 나을듯
-		}
-		else {
-			emit(greenRight(true));
-			dataContainer->setValue_UtoP_BRAKE(0); /// 브레이크 해제
-			dataContainer->setValue_UtoP_SPEED(originspeed); /// 신호를 받기 전으로 원상복귀
-		}
+		
 	}
 }

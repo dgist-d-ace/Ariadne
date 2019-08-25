@@ -105,9 +105,6 @@ public:
 	Yolo* yolo;
 	View* view;
 
-	GUID gpsGuid;
-	GUID platformGuid;
-
     QThread* platformThread;
     QThread* lidarThread;
     QThread* gpsThread;
@@ -123,6 +120,9 @@ public:
     DataContainer* dataContainer;
 
     QTimer* TimerSensorStatus;
+
+
+
     static Ui::AriadneClass* getUI();
 
 private:

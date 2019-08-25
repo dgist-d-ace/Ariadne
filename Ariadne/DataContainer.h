@@ -7,7 +7,7 @@
 
 
 #define PARKING 1
-#define INTER_READY 2
+#define INTER_READY 2 //ready ÇÊ¿ä x
 #define INTER_LEFT 3
 #define INTER_RIGHT 4
 #define INTER_STRAIGHT 5

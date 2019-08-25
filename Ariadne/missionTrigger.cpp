@@ -297,7 +297,6 @@ void MissionContainer::updateMissions() {
                 mission_dic.erase("intersectionReady");
                 intersectionCount = 0;
             }
-
         }
 
         // 교차로 진행 트리거
@@ -391,7 +390,6 @@ void MissionContainer::updateMissions() {
                 if (!pr.second) if (pr.first->second < mapiter2->second) pr.first->second = mapiter2->second;
                 intersectionCount = pr.first->second;
             }
-
         }
 
     }

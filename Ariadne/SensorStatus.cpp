@@ -83,10 +83,10 @@ int LidarCom::comLidar() {
 			lol.Clustering(lol.finVecXY, lol.finObjData);
 			lol.Vector(lol.finObjData, lol.finVecData, lol.finBoolData);
 
-				dataContainer->setValue_lidar_BoolData(lol.finBoolData);
-				dataContainer->setValue_lidar_Data(lol.finObjData);
-				dataContainer->setValue_lidar_VecXY(lol.finVecXY);
-				dataContainer->setValue_lidar_VecData(lol.finVecData);
+			dataContainer->setValue_lidar_BoolData(lol.finBoolData);
+			dataContainer->setValue_lidar_Data(lol.finObjData);
+			dataContainer->setValue_lidar_VecXY(lol.finVecXY);
+			dataContainer->setValue_lidar_VecData(lol.finVecData);
 
 
 			//dataContainer->setValue_lidar_ImgData(lol.imgLiDAR);
@@ -332,23 +332,6 @@ Yolo::Yolo() {
 	if (listen(server, SOMAXCONN) == SOCKET_ERROR)
 		cout << "listening fail\n";
 
-	//TCHAR pipe_name[] = TEXT("\\\\.\\pipe\\test_pipe");
-	//hNamePipe = CreateNamedPipe(pipe_name,
-	//	PIPE_ACCESS_DUPLEX,
-	//	PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT,
-	//	PIPE_UNLIMITED_INSTANCES,
-	//	0,
-	//	0,
-	//	20000,       // 대기 Timeout 시간
-	//	NULL
-	//);
-
-	//if (hNamePipe == INVALID_HANDLE_VALUE)
-	//	printf("CreateNamePipe error! \n");
-	//
-
-
-
 }
 
 void Yolo::comYolo() {
@@ -357,17 +340,6 @@ void Yolo::comYolo() {
 	//
 	//SuspendThread(tid);
 	ResumeThread(tid);
-
-	//while(1) {
-	//	if (!ConnectNamedPipe(hNamePipe, NULL))
-	//		CloseHandle(hNamePipe);
-	//	else {
-	//		if (ConnectClient(hNamePipe) == -1)
-	//			break;
-	//	}
-	//}
-	//DisconnectNamedPipe(hNamePipe);
-	//CloseHandle(hNamePipe);
 
 	cout << "try com\n";
 
@@ -402,7 +374,9 @@ void Yolo::comYolo() {
 			trigger.putbox(in[0], stof(in[3]), stof(in[4]));
 		}
 		trigger.update();
+
 		trigger.showObjects(1);
+		dataContainer->updateValue_yolo_status();
 	}
 
 	closesocket(client);
