@@ -73,12 +73,20 @@ Ariadne::Ariadne(QWidget *parent)
 
     //  -------------------  UI control ------------------------- //
 
-
     ui->comboBox_6->addItems({ "Drive" , "Neutral", "Reverse"}); // gaer items input
+	ui->Btn_mission1->setStyleSheet("Text-align:left");
+	ui->Btn_mission3->setStyleSheet("Text-align:left");
+	ui->Btn_mission4->setStyleSheet("Text-align:left");
+	ui->Btn_mission5->setStyleSheet("Text-align:left");
+	ui->Btn_mission6->setStyleSheet("Text-align:left");
+	ui->Btn_mission7->setStyleSheet("Text-align:left");
+	ui->Btn_mission8->setStyleSheet("Text-align:left");
+	ui->Btn_mission9->setStyleSheet("Text-align:left");
+
 
     // --------------------- Platform control Using UI ---------------------------------//
 
-    QObject::connect(ui->Btn_Mission1, SIGNAL(clicked()), this, SLOT(clicked_btn_mission1()));
+    QObject::connect(ui->Btn_mission1, SIGNAL(clicked()), this, SLOT(clicked_btn_mission1()));
 	QObject::connect(ui->Btn_mission3, SIGNAL(clicked()), this, SLOT(clicked_btn_mission3()));
 	QObject::connect(ui->Btn_mission4, SIGNAL(clicked()), this, SLOT(clicked_btn_mission4()));
 	QObject::connect(ui->Btn_mission5, SIGNAL(clicked()), this, SLOT(clicked_btn_mission5()));
@@ -101,7 +109,6 @@ Ariadne::Ariadne(QWidget *parent)
 
     // ------------------- UI update for Platform & GPS status ----------------------//
 
-
     connect(platformCom, SIGNAL(AorMChanged(int)), this, SLOT(onAorMChanged(int)));
     connect(platformCom, SIGNAL(EStopChanged(int)), this, SLOT(onEStopChanged(int)));
     connect(platformCom, SIGNAL(GearChanged(int)), this, SLOT(onGearChanged(int)));
@@ -113,6 +120,9 @@ Ariadne::Ariadne(QWidget *parent)
     connect(gpsCom, SIGNAL(latitudeChanged(double)), this, SLOT(onLatitudeChanged(double)));
     connect(gpsCom, SIGNAL(longitudeChanged(double)), this, SLOT(onLongitudeChanged(double)));
 
+	// ------------------- UI update for Mission ----------------------//
+
+	QObject::connect(missionUpdate, SIGNAL(currentMission(int)), this, SLOT(onCurrentMission(int)));
 	///connect(missionUpdate, SIGNAL(greenLight(bool)), this, SLOT(onGreenLight(bool)));
 
  }
@@ -125,6 +135,37 @@ CString ConvertQstringtoCString(QString qs)
     return cs;
 }
 
+void Ariadne::onCurrentMission(int id) {
+	ui->groupBox_3->setEnabled(true);
+	switch (id) {
+		case PARKING:
+			//ui->Btn_mission1->setStyleSheet("background-color: rgb()");
+			ui->Btn_mission1->setEnabled(false);
+			break;
+		case INTER_LEFT:
+			ui->Btn_mission3->setEnabled(false);
+			break;
+		case INTER_RIGHT:
+			ui->Btn_mission4->setEnabled(false);
+			break;
+		case INTER_STRAIGHT:
+			ui->Btn_mission5->setEnabled(false);
+			break;
+		case INTER_STOP:
+			ui->Btn_mission6->setEnabled(false);
+			break;
+		case STATIC_OBSTACLE:
+			ui->Btn_mission7->setEnabled(false);
+			break;
+		case DYNAMIC_OBSTACLE:
+			ui->Btn_mission8->setEnabled(false);
+			break;
+		case BASIC:
+			ui->Btn_mission9->setEnabled(false);
+			break;
+	}
+
+}
 // This function is to start communication with sensor.
 void Ariadne::clicked_btn_sensor() {
 	//SENSOR SWITCH

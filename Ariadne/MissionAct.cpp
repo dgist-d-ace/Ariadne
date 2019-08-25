@@ -1102,15 +1102,14 @@ void Driving::autoMode() {
 	while (1) {
 		cout << "automode function called" << endl;
 		cout << dataContainer->getValue_yolo_missionID() << endl;
-		if (dataContainer->getValue_yolo_missionID() == PARKING) {  MissionParking(); }
-		else if (dataContainer->getValue_yolo_missionID() == INTER_READY) { MissionIntReady(); }
-		else if (dataContainer->getValue_yolo_missionID() == INTER_LEFT) { emit(send2View(2)); MissionIntLeft(); }
-		else if (dataContainer->getValue_yolo_missionID() == INTER_RIGHT) { emit(send2View(3)); MissionIntRight(); }
-		else if (dataContainer->getValue_yolo_missionID() == INTER_STRAIGHT) { MissionIntStraight(); }
-		else if (dataContainer->getValue_yolo_missionID() == STATIC_OBSTACLE) { MissionStaticObs(); }
-		else if (dataContainer->getValue_yolo_missionID() == DYNAMIC_OBSTACLE) { MissionDynamicObs(); }
-		else if (dataContainer->getValue_yolo_missionID() == INTER_STOP) { MissionIntStop(); }
-		else { emit(send2View(1)); Basic(BASIC); }
+		if (dataContainer->getValue_yolo_missionID() == PARKING) { emit(currentMission(PARKING));MissionParking(); }
+		else if (dataContainer->getValue_yolo_missionID() == INTER_LEFT) { emit(currentMission(INTER_LEFT));emit(send2View(2)); MissionIntLeft(); }
+		else if (dataContainer->getValue_yolo_missionID() == INTER_RIGHT) { emit(currentMission(INTER_RIGHT));emit(send2View(3)); MissionIntRight(); }
+		else if (dataContainer->getValue_yolo_missionID() == INTER_STRAIGHT) { emit(currentMission(INTER_STRAIGHT));MissionIntStraight(); }
+		else if (dataContainer->getValue_yolo_missionID() == STATIC_OBSTACLE) { emit(currentMission(STATIC_OBSTACLE));MissionStaticObs(); }
+		else if (dataContainer->getValue_yolo_missionID() == DYNAMIC_OBSTACLE) { emit(currentMission(DYNAMIC_OBSTACLE));MissionDynamicObs(); }
+		else if (dataContainer->getValue_yolo_missionID() == INTER_STOP) { emit(currentMission(INTER_STOP));MissionIntStop(); }
+		else { emit(currentMission(BASIC));emit(send2View(1)); Basic(BASIC); }
 	}
 }
 

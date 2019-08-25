@@ -45,7 +45,7 @@ public:
     QLabel *statusYolo;
     QLabel *statusScnn;
     QGroupBox *groupBox_3;
-    QPushButton *Btn_Mission1;
+    QPushButton *Btn_mission1;
     QPushButton *Btn_mission3;
     QPushButton *Btn_mission4;
     QPushButton *Btn_mission8;
@@ -175,9 +175,9 @@ public:
         groupBox_3 = new QGroupBox(centralWidget);
         groupBox_3->setObjectName(QString::fromUtf8("groupBox_3"));
         groupBox_3->setGeometry(QRect(10, 310, 241, 301));
-        Btn_Mission1 = new QPushButton(groupBox_3);
-        Btn_Mission1->setObjectName(QString::fromUtf8("Btn_Mission1"));
-        Btn_Mission1->setGeometry(QRect(10, 20, 101, 31));
+        Btn_mission1 = new QPushButton(groupBox_3);
+        Btn_mission1->setObjectName(QString::fromUtf8("Btn_mission1"));
+        Btn_mission1->setGeometry(QRect(10, 20, 101, 31));
         Btn_mission3 = new QPushButton(groupBox_3);
         Btn_mission3->setObjectName(QString::fromUtf8("Btn_mission3"));
         Btn_mission3->setGeometry(QRect(10, 60, 101, 31));
@@ -232,6 +232,8 @@ public:
         tabWidget = new QTabWidget(centralWidget);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
         tabWidget->setGeometry(QRect(970, 80, 211, 191));
+        tabWidget->setUsesScrollButtons(false);
+        tabWidget->setTabsClosable(false);
         tab = new QWidget();
         tab->setObjectName(QString::fromUtf8("tab"));
         Btn_up = new QPushButton(tab);
@@ -404,7 +406,7 @@ public:
         AriadneClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AriadneClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1198, 21));
+        menuBar->setGeometry(QRect(0, 0, 1198, 26));
         AriadneClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(AriadneClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -436,7 +438,7 @@ public:
         statusYolo->setText(QString());
         statusScnn->setText(QString());
         groupBox_3->setTitle(QApplication::translate("AriadneClass", "Mission", nullptr));
-        Btn_Mission1->setText(QApplication::translate("AriadneClass", "1. Parking", nullptr));
+        Btn_mission1->setText(QApplication::translate("AriadneClass", "1. Parking", nullptr));
         Btn_mission3->setText(QApplication::translate("AriadneClass", "2. InterLeft", nullptr));
         Btn_mission4->setText(QApplication::translate("AriadneClass", "3. InterRight", nullptr));
         Btn_mission8->setText(QApplication::translate("AriadneClass", "7. DynamicOb", nullptr));
@@ -454,8 +456,8 @@ public:
         Btn_right->setText(QApplication::translate("AriadneClass", "\342\226\266", nullptr));
         Btn_left->setText(QApplication::translate("AriadneClass", "\342\227\200", nullptr));
         Btn_gearInput->setText(QApplication::translate("AriadneClass", "gear input", nullptr));
-        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("AriadneClass", "PC Con", nullptr));
-        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("AriadneClass", "remoteCon", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("AriadneClass", "PC", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("AriadneClass", "Remote Controller", nullptr));
         pushButton->setText(QApplication::translate("AriadneClass", "E-Stop", nullptr));
         groupBox_4->setTitle(QApplication::translate("AriadneClass", "SensorStatus", nullptr));
         label_2->setText(QApplication::translate("AriadneClass", "STEER", nullptr));
