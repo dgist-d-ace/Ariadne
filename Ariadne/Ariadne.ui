@@ -248,9 +248,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>310</y>
+      <y>290</y>
       <width>241</width>
-      <height>301</height>
+      <height>261</height>
      </rect>
     </property>
     <property name="title">
@@ -354,7 +354,7 @@
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>220</y>
+       <y>180</y>
        <width>101</width>
        <height>31</height>
       </rect>
@@ -381,7 +381,7 @@
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>260</y>
+       <y>220</y>
        <width>101</width>
        <height>31</height>
       </rect>
@@ -408,7 +408,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>230</y>
+       <y>190</y>
        <width>56</width>
        <height>12</height>
       </rect>
@@ -420,8 +420,8 @@
     <widget class="QLabel" name="label_21">
      <property name="geometry">
       <rect>
-       <x>40</x>
-       <y>270</y>
+       <x>30</x>
+       <y>230</y>
        <width>56</width>
        <height>12</height>
       </rect>
@@ -441,33 +441,6 @@
      </property>
      <property name="text">
       <string>8. Basic</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="Btn_Traffic">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>180</y>
-       <width>101</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset>
-       <normaloff>../../DYibre/Checkbox_Off.png</normaloff>
-       <normalon>../../DYibre/Checkbox_On.png</normalon>../../DYibre/Checkbox_Off.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>100</width>
-       <height>40</height>
-      </size>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
      </property>
     </widget>
    </widget>
@@ -1059,14 +1032,158 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>620</y>
+      <y>560</y>
       <width>241</width>
-      <height>161</height>
+      <height>221</height>
      </rect>
     </property>
     <property name="title">
      <string>YOLO</string>
     </property>
+    <widget class="QLCDNumber" name="lcdNumber_15">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>20</y>
+       <width>64</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdNumber_16">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>50</y>
+       <width>64</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdNumber_17">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>80</y>
+       <width>64</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdNumber_18">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>110</y>
+       <width>64</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdNumber_19">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>140</y>
+       <width>64</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdNumber_20">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>170</y>
+       <width>64</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdNumber_21">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>20</y>
+       <width>64</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdNumber_22">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>50</y>
+       <width>64</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdNumber_23">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>80</y>
+       <width>64</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
+     </property>
+    </widget>
    </widget>
    <widget class="QLabel" name="AriadneLogo">
     <property name="geometry">
