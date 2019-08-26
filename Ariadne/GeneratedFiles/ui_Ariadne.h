@@ -25,7 +25,6 @@
 #include <QtWidgets/QTabWidget>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
-#include "qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -100,11 +99,11 @@ public:
     QLCDNumber *lcdNumber_12;
     QLCDNumber *lcdNumber_13;
     QLCDNumber *lcdNumber_14;
-    QCustomPlot *rt_plot;
     QGroupBox *groupBox_5;
     QLabel *AriadneLogo;
     QPushButton *pushButton_2;
     QPushButton *pushButton_3;
+    QLabel *pathmap;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -390,9 +389,6 @@ public:
         lcdNumber_14->setFrameShadow(QFrame::Plain);
         lcdNumber_14->setMode(QLCDNumber::Dec);
         lcdNumber_14->setSegmentStyle(QLCDNumber::Flat);
-        rt_plot = new QCustomPlot(centralWidget);
-        rt_plot->setObjectName(QString::fromUtf8("rt_plot"));
-        rt_plot->setGeometry(QRect(269, 19, 691, 631));
         groupBox_5 = new QGroupBox(centralWidget);
         groupBox_5->setObjectName(QString::fromUtf8("groupBox_5"));
         groupBox_5->setGeometry(QRect(10, 620, 241, 161));
@@ -406,6 +402,9 @@ public:
         pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
         pushButton_3->setEnabled(true);
         pushButton_3->setGeometry(QRect(150, 250, 101, 28));
+        pathmap = new QLabel(centralWidget);
+        pathmap->setObjectName(QString::fromUtf8("pathmap"));
+        pathmap->setGeometry(QRect(270, 10, 691, 641));
         AriadneClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AriadneClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -481,6 +480,7 @@ public:
         AriadneLogo->setText(QString());
         pushButton_2->setText(QApplication::translate("AriadneClass", "\354\204\274\354\204\234 \355\206\265\354\213\240", nullptr));
         pushButton_3->setText(QApplication::translate("AriadneClass", "\354\243\274\355\226\211 \354\213\234\354\236\221", nullptr));
+        pathmap->setText(QString());
     } // retranslateUi
 
 };

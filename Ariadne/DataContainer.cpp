@@ -261,3 +261,11 @@ void DataContainer::show_gps()
 
 int DataContainer::getValue_view_number() { mtx_view_number.lock(); int temp = m_view_number; mtx_view_number.unlock(); return temp; }
 void DataContainer::setValue_view_number(int value) { mtx_view_number.lock(); m_view_number = value; mtx_view_number.unlock(); }
+
+QImage DataContainer::getValue_ui_pathmap() { mtx_ui_pathmap.lock(); cout << "get" << endl;  QImage temp = m_ui_pathmap.copy(); mtx_ui_pathmap.unlock(); return temp; }
+QImage DataContainer::getValue_ui_scnn() { mtx_ui_scnn.lock(); QImage temp = m_ui_scnn.copy(); mtx_ui_scnn.unlock(); return temp; }
+QImage DataContainer::getValue_ui_yolo() { mtx_ui_yolo.lock(); QImage temp = m_ui_yolo.copy(); mtx_ui_yolo.unlock(); return temp; }
+
+void DataContainer::setValue_ui_pathmap(QImage img) { mtx_ui_pathmap.lock(); cout << "set" << endl; m_ui_pathmap = img.copy(); mtx_ui_pathmap.unlock(); }
+void DataContainer::setValue_ui_scnn(QImage img) { mtx_ui_scnn.lock(); m_ui_scnn = img.copy(); mtx_ui_scnn.unlock(); }
+void DataContainer::setValue_ui_yolo(QImage img) { mtx_ui_yolo.lock(); m_ui_yolo = img.copy(); mtx_ui_yolo.unlock(); }

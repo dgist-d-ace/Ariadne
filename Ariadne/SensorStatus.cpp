@@ -376,7 +376,7 @@ void Yolo::comYolo() {
 		trigger.update();
 
 		trigger.showObjects(1);
-		dataContainer->setValue_yolo_missions(trigger.getMissions());
+		//dataContainer->setValue_yolo_missions(trigger.getMissions());
 		dataContainer->updateValue_yolo_status();
 	}
 

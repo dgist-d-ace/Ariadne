@@ -528,7 +528,9 @@ void Driving::Basic(int missionId) {
 
 		//imshow("Map", scoreMap);
 		PASIVcontrol(imgPath, desired_speed, goTheta1, goTheta2, desired_brake);
-		imshow("Path", imgPath);
+		//imshow("Path", imgPath);
+		QImage image1 = QImage((uchar*)imgPath.data, imgPath.cols, imgPath.rows, imgPath.step, QImage::Format_Grayscale8);
+		dataContainer->setValue_ui_pathmap(image1);
 
 		end = clock();
 		cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl;
@@ -753,7 +755,9 @@ void Driving::BasicGPS(int missionId) {
 
 		//imshow("Map", scoreMap);
 		PASIVcontrol(imgPath, desired_speed, goTheta1, goTheta2, desired_brake);
-		imshow("Path", imgPath);
+		//imshow("Path", imgPath);
+		QImage image1 = QImage((uchar*)imgPath.data, imgPath.cols, imgPath.rows, imgPath.step, QImage::Format_Grayscale8);
+		dataContainer->setValue_ui_pathmap(image1);
 
 		end = clock();
 		cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl;
@@ -1044,9 +1048,10 @@ void Driving::MissionDynamicObs() {
 		////Final Control the steering angle and speed////
 		//////////////////////////////////////////////////
 		//imshow("Map", LaneMap);
-		imshow("Path", imgPath);
+		//imshow("Path", imgPath);
 		PASIVcontrol(imgPath, desired_speed, goTheta1, goTheta2, desired_brake);
-
+		QImage image1 = QImage((uchar*)imgPath.data, imgPath.cols, imgPath.rows, imgPath.step, QImage::Format_Grayscale8);
+		dataContainer->setValue_ui_pathmap(image1);
 		///////////////////////////////////////////////////////
 		////Trigger for ending the Dynamic Obstacle Mission////
 		///////////////////////////////////////////////////////

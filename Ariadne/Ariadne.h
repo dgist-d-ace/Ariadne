@@ -111,6 +111,8 @@ public:
 	QThread* scnnThread;
 	QThread* yoloThread;
 
+	QTimer* TimerUIUpdate;
+
 	Driving* driving;
 	QThread* drivingThread;
 
@@ -120,8 +122,6 @@ public:
 	DataContainer* dataContainer;
 
 	QTimer* TimerSensorStatus;
-
-
 
 	static Ui::AriadneClass* getUI();
 
@@ -178,6 +178,8 @@ public slots:
 	void onLidarExit();
 
 	void AutoPortFinder();
+
+	void updateUI();
 
 };
 

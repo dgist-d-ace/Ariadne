@@ -196,6 +196,7 @@ void Ariadne::clicked_btn_sensor() {
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
 	TimerSensorStatus->start(1000);
 
+	
 }
 
 void Ariadne::onLidarExit()
@@ -220,6 +221,17 @@ void Ariadne::clicked_btn_driving() {
 	//if (!missionUpdateThread->isRunning())
 	//	missionUpdateThread->start();
 	//cout << "called in clicked_Btn_driving" << endl;
+
+	TimerUIUpdate = new QTimer(this);
+	QTimer::connect(TimerUIUpdate, &QTimer::timeout, this, &Ariadne::updateUI);
+	TimerUIUpdate->start(20);
+
+}
+
+void Ariadne::updateUI() {
+	printf("ui update\n");
+
+	ui->pathmap->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_pathmap()));
 }
 
 void Ariadne::clicked_btn_mission1() {
@@ -540,78 +552,7 @@ bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double headin
 GPSCom::GPSCom() {
 	ui = Ariadne::getUI();
 	dataContainer = DataContainer::getInstance();
-	Paint_base();
-	Paint_school();
-	ui->rt_plot->replot();
-}
 
-void GPSCom::Paint_base() // �⺻ �� ����
-{
-	ui->rt_plot->addGraph();
-	ui->rt_plot->graph(0)->rescaleAxes();
-	ui->rt_plot->axisRect()->setupFullAxesBox();
-}
-
-void GPSCom::Paint_school() {
-	ifstream gpsfile("txtfile\\filteredMapSch.txt");   //littleUTM , largeUTM, 30up, 123123, techALL,filteredMapSch
-	/// "C:\\Users\\bokyung\\Desktop\\Autonomous\\txtfile\\filteredMapSch.txt"
-	char line[200];
-	string tap;
-	vector<string> vec;
-
-	if (gpsfile.is_open()) {
-		while (gpsfile.getline(line, sizeof(line), '\n')) {
-			stringstream str(line);
-
-			while (getline(str, tap, '\t')) {  // sch1 >> ' ' , filteredMap, filteredMapsch >> '\t'
-				vec.push_back(tap);
-			}
-			x.push_back(atof(vec[0].c_str()));
-			y.push_back(atof(vec[1].c_str()));
-			vec.clear();
-		}
-	}
-	gpsfile.close();
-
-	ui->rt_plot->xAxis->setRange(450589, 450700);// range min to max
-	ui->rt_plot->yAxis->setRange(3951700, 3951800);
-
-	QCPScatterStyle myScatter2; // �� ��, ������, ������ 5
-	myScatter2.setShape(QCPScatterStyle::ssCircle);
-	myScatter2.setPen(QPen(Qt::black));
-	myScatter2.setSize(5);
-	ui->rt_plot->graph(0)->setScatterStyle(myScatter2);
-	ui->rt_plot->addGraph();
-
-	ui->rt_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
-	ui->rt_plot->graph(0)->setData(x, y);
-	ui->rt_plot->replot();
-	ui->rt_plot->update();
-
-	ifstream gpsfile1("txtfile\\filteredMapSch_link.csv");
-	char line1[200];
-	string tap1;
-	vector<string> vec1;
-	vector<double> vecd;
-	if (gpsfile1.is_open()) {
-
-		while (gpsfile1.getline(line1, sizeof(line1), '\n')) {
-
-			stringstream str1(line1);
-
-			while (getline(str1, tap1, ',')) {
-
-				vec1.push_back(tap1);
-			}
-			vecd.push_back(atof(vec1[0].c_str()));
-			vecd.push_back(atof(vec1[1].c_str()));
-			map_link.push_back(vecd);
-			//cout << map_link[0][1];
-			vec1.clear();
-			vecd.clear();
-		}
-	}
-	gpsfile1.close();
 }
 
 //얘가 실시간 좌표찍는 애임 , 클릭버튼했을 대 이 함수호출되도록했음
