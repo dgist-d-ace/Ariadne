@@ -1443,38 +1443,51 @@ void MissionUpdate::MissionIDUpdate() {
 	*/
 
 	/*
-	if (temp.find("parking")->second == 3) {
-		dataContainer->setValue_yolo_missionID(PARKING);
-	}
-	else if (temp.find("intersectionLeft")->second == 3) {
-		dataContainer->setValue_yolo_missionID(INTER_LEFT);
-	}
-	else if (temp.find("intersectionRight")->second == 3) {
-		dataContainer->setValue_yolo_missionID(INTER_RIGHT);
-	}
-	else if (temp.find("intersectionStraight")->second == 3) {
-		dataContainer->setValue_yolo_missionID(INTER_STRAIGHT);
-	}
-	else if (temp.find("staticObstacle")->second == 3) {
-		dataContainer->setValue_yolo_missionID(STATIC_OBSTACLE);
-	}
-	else if (temp.find("dynamicObstacle")->second == 3) {
-		dataContainer->setValue_yolo_missionID(DYNAMIC_OBSTACLE);
-	}
-	else if (temp.find("intersectionStop")->second == 3) {
-		dataContainer->setValue_yolo_missionID(INTER_STOP);
-	}
+	mission array 구조
+	0: <IntersectionState>
+	1: <IntersectionDistance>
+	2: <crossWalk>
+	3: <parking>
+	3: <busLane>
+	4: <staticObstacle>
+	5: <dynamicObstacle>
+	6: <kidSafe>
+	7: <bust>
 	*/
-	/// kidSafe나 bust는 mission number에 병렬적으로 들어올 수 있으므로 이에 따라 속도 비율을 조정한다.
-	/*
-	if (temp.find("kidSafe")->second == 3) { dataContainer->setValue_yolo_speed_ratio(0.9); }
-	else { dataContainer->setValue_yolo_speed_ratio(1); } /// 지나간 후에는 다시 원상복귀한다. 이 때 원상복귀할때까지 시간 조절이 필요할 수 있음.
-	if (temp.find("bust")->second == 3) { dataContainer->setValue_yolo_speed_ratio(0.9); }
-	else { dataContainer->setValue_yolo_speed_ratio(1); }
-	*/
+		int* temp = dataContainer->getValue_yolo_missions();
+	
+		if (temp[5] < 4) {
+			dataContainer->setValue_yolo_missionID(STATIC_OBSTACLE);
+		}
+		else if (temp[6] < 4) {
+			dataContainer->setValue_yolo_missionID(DYNAMIC_OBSTACLE);
+		}
+		else if (temp[0] == 0 && temp[1] < 4) {
+			dataContainer->setValue_yolo_missionID(INTER_STOP);
+		}
+		else if (temp[0] == 1 && temp[1] < 4) {
+			dataContainer->setValue_yolo_missionID(INTER_STRAIGHT);
+		}
+		else if (temp[0] == 1 && temp[1] < 4) {
+			dataContainer->setValue_yolo_missionID(INTER_LEFT);
+		}
+		else if (temp[0] == 1 && temp[1] < 4) {
+			dataContainer->setValue_yolo_missionID(INTER_RIGHT);
+		}
+		else if (temp[3] < 4) { //parking
+			dataContainer->setValue_yolo_missionID(PARKING);
+		}
+		else {
+			dataContainer->setValue_yolo_missionID(BASIC);
+		}
 
-	/// 신호등에 따라 갈지 말지를 결정하는 함수
-	/// ISSUE: BRAKE 정도가 PASIV와 충돌할 가능성은? PASIV에서 주행 명령을 내리면 다시 가버릴 수 있음.
+		/// kidSafe나 bust는 mission number에 병렬적으로 들어올 수 있으므로 이에 따라 속도 비율을 조정한다.
+		//kidsafe
+		if (temp[7] < 4) { dataContainer->setValue_yolo_speed_ratio(0.9); }
+		else { dataContainer->setValue_yolo_speed_ratio(1); } /// 지나간 후에는 다시 원상복귀한다. 이 때 원상복귀할때까지 시간 조절이 필요할 수 있음.
+		//bust
+		if ((temp[8] < 4)) { dataContainer->setValue_yolo_speed_ratio(0.9); }
+		else { dataContainer->setValue_yolo_speed_ratio(1); }
 
 	}
 }

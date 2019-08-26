@@ -121,12 +121,12 @@ private:
 	//
 	//카메라2: YOLO용
 	//
-	map<string, int> m_yolo_mission_map;
+	int m_yolo_missions[9];
 	double m_yolo_speed_ratio = 1;
 	int m_yolo_missionID = BASIC;
 	bool m_yolo_goStop = true; /// if true, go sign
 
-	QMutex mtx_yolo_mission_map;
+	QMutex mtx_yolo_missions;
 	QMutex mtx_yolo_speed_ratio;
 	QMutex mtx_yolo_missionID;
 	QMutex mtx_yolo_goStop;
@@ -306,8 +306,8 @@ public:
 	//
 	// 카메라 2 YOLO용
 	//
-	map<string, int> getValue_yolo_missions();
-	void setValue_yolo_missions(map<string, int>);
+	int* getValue_yolo_missions();
+	void setValue_yolo_missions(int temp[9]);
 
 	// SpeedRatio 조절 및 미션 넘버 조절 in yolo thread
 	void setValue_yolo_speed_ratio(double);
