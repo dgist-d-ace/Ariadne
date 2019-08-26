@@ -26,7 +26,6 @@ private:
 
 	static DataContainer* instance;
 
-	//
 	// UPPER to PCU (ÇÃ·§Æû¿¡ º¸³»´Â °ª)
 	//
 	int m_UtoP_AorM = 0;

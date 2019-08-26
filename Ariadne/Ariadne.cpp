@@ -188,7 +188,7 @@ void Ariadne::clicked_btn_sensor() {
 	//if (!platformThread->isRunning()) { platformThread->start(); }
 	//dataContainer->setValue_UtoP_AorM(1);
 
-	//if (!lidarThread->isRunning()) { lidarThread->start(); }
+	if (!lidarThread->isRunning()) { lidarThread->start(); }
 
 	//if (!gpsThread->isRunning()) { gpsThread->start(); }
 
