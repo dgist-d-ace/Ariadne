@@ -154,6 +154,7 @@ void DataContainer::show_PtoU()
 
 //
 //	라이다				???????싫비???????
+//										?? 싫비 누가 적은거임?? 내 아이디 인데 tlfgql (정평)
 //
 
 vector<cv::Point2d> DataContainer::getValue_lidar_VecXY() { mtx_lidar_VecXY.lock();vector<cv::Point2d> temp = m_lidar_VecXY; mtx_lidar_VecXY.unlock(); return temp; }

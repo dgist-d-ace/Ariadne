@@ -8,8 +8,12 @@
 #include <fstream>
 
 //Tuning point in getLanedata
-#define scoreStep 5
+#define LanescoreStep 5
 #define itvLane	20
+
+//Tuning point in getGpsData
+#define GPSscoreStep 20
+#define itvGPS 30
 
 #define steerRatio  1.0
 #define speedHigh	12.0
@@ -27,7 +31,7 @@ protected:
 	////FOR PASIV////
 	/////////////////
 	Mat getLaneData(int scorestep);
-	Mat getGpsData();
+	Mat getGpsData(int scorestep);
 	Mat imgPath = Mat::zeros(600, 600, CV_8UC1);
 	Mat scoreMap;
 
