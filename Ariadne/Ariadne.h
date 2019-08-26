@@ -140,7 +140,6 @@ public slots:
 	void clicked_btn_mission7();
 	void clicked_btn_mission8();
 	void clicked_btn_mission9();
-	void clicked_btn_traffic(bool);
 
 	void clicked_btn_sensor();
 	void clicked_btn_driving();

@@ -104,7 +104,7 @@ Ariadne::Ariadne(QWidget *parent)
 	QObject::connect(ui->Btn_right, SIGNAL(clicked()), this, SLOT(clicked_steer_right()));
 	QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_E_stop()));
 
-	QObject::connect(ui->Btn_Traffic, SIGNAL(clicked(bool)), this, SLOT(clicked_btn_traffic(bool)));
+	/// QObject::connect(ui->Btn_Traffic, SIGNAL(clicked(bool)), this, SLOT(clicked_btn_traffic(bool)));
 
 
 	// ------------------- UI update for Platform & GPS status ----------------------//
@@ -279,12 +279,6 @@ void Ariadne::clicked_btn_mission8() {
 void Ariadne::clicked_btn_mission9() {
 	dataContainer->setValue_yolo_missionID(BASIC);
 	ui->plainTextEdit->appendPlainText("Basic PASIV algorithm start");
-}
-
-void Ariadne::clicked_btn_traffic(bool light)
-{
-	dataContainer->setValue_yolo_go(light);
-	cout << "light is on! light :  " << light << endl;
 }
 
 // These functions is to control gplatform
