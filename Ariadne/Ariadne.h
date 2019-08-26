@@ -120,6 +120,8 @@ public:
     DataContainer* dataContainer;
 
     QTimer* TimerSensorStatus;
+	QTimer* TimerUIUpdate;
+
 
 
 
@@ -178,6 +180,9 @@ public slots:
     void onLidarExit();
 
 	void AutoPortFinder();
+	
+	void updateUI();
+	void uiTimerStart();
 	
 };
 
