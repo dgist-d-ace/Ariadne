@@ -660,7 +660,7 @@ void GPSCom::comGPS() { // rt ; Real Time
                             //ofile << vec[0] << ',' << vec[3] << ',' << vec[5]  << endl;
                             _lat = ((atof(vec[3].c_str()) - 3500) / 60) + 35; // 35랑 128은 상황에 따라 바꿔줘야함
                             _lng = ((atof(vec[5].c_str()) - 12800) / 60) + 128;
-                            heading = atof(vec[8].c_str());
+                            heading = atof(vec[8].c_str()) *CV_PI / 180; //[rad]
 
                             vector<double >utm = UTM(_lat, _lng);
                             lat = utm[0];

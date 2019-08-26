@@ -13,7 +13,6 @@ using namespace cv;
 //
 
 
-
 Driving::Driving() {
 	dataContainer = DataContainer::getInstance();
 
@@ -75,6 +74,155 @@ Driving::Driving() {
 	fillPoly(outRange, pnts, npt2, 1, Scalar::all(255));
 	fillPoly(outRange, pnts2, npt2, 1, Scalar::all(255));
 
+
+	void setPath();
+}
+
+vector<vector<double>>Driving:: WaySimul_straight() {
+	double path_x;
+	double path_y;
+
+	ifstream gpsfile("test1.txt");
+
+	char line[200];
+	string tap;
+	vector<string> vec;
+	vector<double> temp;
+	vector<vector<double>> gpsWayPoint;
+
+	if (gpsfile.is_open()) {
+		while (gpsfile.getline(line, sizeof(line), '\n')) {
+
+			stringstream str(line);
+
+			while (getline(str, tap, ',')) {
+				vec.push_back(tap);
+			}
+
+			path_x = (atof(vec[0].c_str()));
+			path_y = (atof(vec[1].c_str()));
+			temp.push_back(path_x);
+			temp.push_back(path_y);
+			gpsWayPoint.push_back(temp);
+
+			vec.clear();
+			temp.clear();
+		}
+	}
+
+	return gpsWayPoint;
+}
+
+vector<vector<double>>Driving::WaySimul_turn() {
+	double path_x;
+	double path_y;
+
+	ifstream gpsfile("test2.txt");
+
+	char line[200];
+	string tap;
+	vector<string> vec;
+	vector<double> temp;
+	vector<vector<double>> gpsWayPoint;
+
+	if (gpsfile.is_open()) {
+		while (gpsfile.getline(line, sizeof(line), '\n')) {
+
+			stringstream str(line);
+
+			while (getline(str, tap, ',')) {
+				vec.push_back(tap);
+			}
+
+			path_x = (atof(vec[0].c_str()));
+			path_y = (atof(vec[1].c_str()));
+			temp.push_back(path_x);
+			temp.push_back(path_y);
+			gpsWayPoint.push_back(temp);
+
+			vec.clear();
+			temp.clear();
+		}
+	}
+
+	return gpsWayPoint;
+}
+
+void Driving::setPath() {
+	double path_x;
+	double path_y;
+
+	//경로 설정 바꿔야함
+	ifstream gpsfile("test1.txt");
+
+	char line[200];
+	string tap;
+	vector<string> vec;
+	vector<double> temp;
+
+	if (gpsfile.is_open()) {
+		while (gpsfile.getline(line, sizeof(line), '\n')) {
+
+			stringstream str(line);
+
+			while (getline(str, tap, ',')) {
+				vec.push_back(tap);
+			}
+
+			path_x = (atof(vec[0].c_str()));
+			path_y = (atof(vec[1].c_str()));
+			temp.push_back(path_x);
+			temp.push_back(path_y);
+			path.push_back(temp);
+
+			vec.clear();
+			temp.clear();
+		}
+	}
+}
+
+#define num 100
+vector<vector<double>> Driving::forPASIV_path(double x_p, double y_p, vector<vector<double>> path) {
+	int min = 0;
+	int smin = 0;
+	double temp = 10000000;
+
+	for (int i = 0; i < path.size(); i++) {
+		double ref = pow(pow(x_p - path[i][0], 2) + pow(y_p - path[i][1], 2), 0.5);
+		
+		if (ref <= temp) {
+			min = i;
+			smin = min;
+			temp = ref;
+		}
+	}
+	
+	if (pow(pow(x_p - path[smin][0], 2) + pow(y_p - path[smin][1], 2), 0.5) > 10 || abs(min - smin) > 100) {
+		min = smin + 5;
+	}
+
+	vector<vector<double>> result;
+
+	for (int i = min; i < num; i++) {
+		result.push_back(path[i]);
+	}
+
+	return result;
+
+}
+
+vector<vector<double>> Driving::getWaypoint(double x_p, double y_p, double heading, vector<vector<double>>forPASIV_path) {
+	double theta = 2 * CV_PI - heading;
+
+	vector<vector<double>> gpsWayPoint;
+
+	for (int i = 0; i < forPASIV_path.size(); i++) {
+		vector<double> temp{ (forPASIV_path[i][0] - x_p + 300) * cos(theta) + (forPASIV_path[i][1] - y_p + 600) * sin(theta), (forPASIV_path[i][0] - x_p + 300) * sin(theta) - (forPASIV_path[i][1] - y_p + 600) * cos(theta) };
+		gpsWayPoint.push_back(temp);
+		temp.clear();
+	}
+
+	return gpsWayPoint;
 }
 
 #define scoreStep 5

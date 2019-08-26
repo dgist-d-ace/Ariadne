@@ -2,6 +2,11 @@
 #include "DataContainer.h"
 #include "Planner.hpp"
 #include <iostream>
+// header for GPS
+#include <string> 
+#include <sstream>
+#include <fstream>
+
 
 #define steerRatio  1.0
 #define speedHigh	12.0
@@ -47,8 +52,15 @@ public:
 	
 	void PASIVcontrol(double desired_speed, double desired_steering, double desired_brake = 0);
 
+	// functions for setting GPS way points
+	void setPath(); // 모든 주행경로 저장
+	vector<vector<double>> path;
+	vector<vector<double>> forPASIV_path(double x_p, double y_p, vector<vector<double>> path); //현재 위치와 가장 가까운 한 점을 찾은 후 이 점으로 부터 n개의 좌표를 저장
+	vector<vector<double>> getWaypoint(double x_p, double y_p, double heading, vector<vector<double>> forPASIV_path); // PASIV 주행을 위한 좌표계 변환
+	//vector<vector<double>> gpsWayPoint;
+	vector<vector<double>> WaySimul_straight();
+	vector<vector<double>> WaySimul_turn();
 
-	vector<vector<double>> gpsWayPoint;
 
 	Planner *aster;
 signals:
