@@ -105,6 +105,7 @@ public:
     QLabel *AriadneLogo;
     QPushButton *pushButton_2;
     QPushButton *pushButton_3;
+    QLabel *pathmap;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -174,11 +175,9 @@ public:
         statusScnn->setTextFormat(Qt::AutoText);
         groupBox_3 = new QGroupBox(centralWidget);
         groupBox_3->setObjectName(QString::fromUtf8("groupBox_3"));
-        groupBox_3->setEnabled(true);
         groupBox_3->setGeometry(QRect(10, 310, 241, 301));
         Btn_mission1 = new QPushButton(groupBox_3);
         Btn_mission1->setObjectName(QString::fromUtf8("Btn_mission1"));
-        Btn_mission1->setEnabled(true);
         Btn_mission1->setGeometry(QRect(10, 20, 101, 31));
         Btn_mission3 = new QPushButton(groupBox_3);
         Btn_mission3->setObjectName(QString::fromUtf8("Btn_mission3"));
@@ -392,7 +391,7 @@ public:
         lcdNumber_14->setSegmentStyle(QLCDNumber::Flat);
         rt_plot = new QCustomPlot(centralWidget);
         rt_plot->setObjectName(QString::fromUtf8("rt_plot"));
-        rt_plot->setGeometry(QRect(269, 19, 691, 631));
+        rt_plot->setGeometry(QRect(649, 379, 311, 271));
         groupBox_5 = new QGroupBox(centralWidget);
         groupBox_5->setObjectName(QString::fromUtf8("groupBox_5"));
         groupBox_5->setGeometry(QRect(10, 620, 241, 161));
@@ -404,12 +403,14 @@ public:
         pushButton_2->setGeometry(QRect(150, 210, 101, 28));
         pushButton_3 = new QPushButton(centralWidget);
         pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
-        pushButton_3->setEnabled(true);
         pushButton_3->setGeometry(QRect(150, 250, 101, 28));
+        pathmap = new QLabel(centralWidget);
+        pathmap->setObjectName(QString::fromUtf8("pathmap"));
+        pathmap->setGeometry(QRect(260, 20, 391, 341));
         AriadneClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AriadneClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1198, 21));
+        menuBar->setGeometry(QRect(0, 0, 1198, 26));
         AriadneClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(AriadneClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -481,6 +482,7 @@ public:
         AriadneLogo->setText(QString());
         pushButton_2->setText(QApplication::translate("AriadneClass", "\354\204\274\354\204\234 \355\206\265\354\213\240", nullptr));
         pushButton_3->setText(QApplication::translate("AriadneClass", "\354\243\274\355\226\211 \354\213\234\354\236\221", nullptr));
+        pathmap->setText(QString());
     } // retranslateUi
 
 };

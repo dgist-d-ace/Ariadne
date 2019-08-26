@@ -2,6 +2,7 @@
 
 #include "MissionAct.h"
 #include <iostream>
+
 #define PI 3.14159265358979323846
 
 using namespace std;
@@ -500,7 +501,8 @@ void Driving::Basic(int missionId) {
 		}
 		//imshow("Map", scoreMap);
 		imshow("Path", imgPath);
-
+		QImage image1 = QImage((uchar*)imgPath.data, imgPath.cols, imgPath.rows, imgPath.step, QImage::Format_RGB888);
+		dataContainer->setValue_ui_pathmap(image1);
 		//////////////////////////////////////////////////
 		////Final Control the steering angle and speed////
 		//////////////////////////////////////////////////
@@ -757,6 +759,9 @@ void Driving::BasicGPS(int missionId) {
 
 		//imshow("Map", scoreMap);
 		imshow("Path", imgPath);
+
+		QImage image1 = QImage((uchar*)imgPath.data, imgPath.cols, imgPath.rows, imgPath.step, QImage::Format_RGB888);
+		dataContainer->setValue_ui_pathmap(image1);
 
 		//////////////////////////////////////////////////
 		////Final Control the steering angle and speed////
@@ -1210,7 +1215,11 @@ void Driving::MissionDynamicObs() {
 		//////////////////////////////////////////////////
 		//imshow("Map", LaneMap);
 		imshow("Path", imgPath);
+
 		PASIVcontrol(desired_speed, goTheta1, goTheta2, desired_brake);
+		QImage image1 = QImage((uchar*)imgPath.data, imgPath.cols, imgPath.rows, imgPath.step, QImage::Format_RGB888);
+		dataContainer->setValue_ui_pathmap(image1);
+
 
 		///////////////////////////////////////////////////////
 		////Trigger for ending the Dynamic Obstacle Mission////
@@ -1511,6 +1520,7 @@ void MissionUpdate::MissionIDUpdate() {
 
 		/// 신호등에 따라 갈지 말지를 결정하는 함수
 		/// ISSUE: BRAKE 정도가 PASIV와 충돌할 가능성은? PASIV에서 주행 명령을 내리면 다시 가버릴 수 있음.
+		
 		
 	}
 }

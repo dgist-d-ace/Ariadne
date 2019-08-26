@@ -185,8 +185,7 @@ void Ariadne::clicked_btn_sensor() {
 
 	//if (!yoloThread->isRunning()){ yoloThread->start(); }
 
-	if(!platformThread->isRunning()) { platformThread->start(); }
-	dataContainer->setValue_UtoP_AorM(1);
+	//if(!platformThread->isRunning()) { platformThread->start(); }
 
 	if (!lidarThread->isRunning()) { lidarThread->start(); }
 
@@ -196,9 +195,28 @@ void Ariadne::clicked_btn_sensor() {
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
 	TimerSensorStatus->start(1000);
+	
+	//cout << 1 << endl;
+	//TimerUIUpdate = new QTimer(this);
+	//cout << 2 << endl;
+
+	//QTimer::connect(TimerUIUpdate, &QTimer::timeout, this, &Ariadne::updateUI);
+	//cout << 3 << endl;
+
+	//connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(uiTimerStart()));
+	//cout << 4 << endl;
 
 }
 
+void Ariadne::uiTimerStart() {
+	cout << "uitimer start" << endl;
+	Sleep(3000);
+	TimerUIUpdate->start(20);
+}
+
+void Ariadne::updateUI() {
+	ui->pathmap->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_pathmap()));
+}
 void Ariadne::onLidarExit()
 {
     cout << "onLidarExit is called" << endl;
@@ -215,8 +233,7 @@ void Ariadne::clicked_scnn_stop() { scnn->SuspendScnn(); }
 
 // This function is to start driving
 void Ariadne::clicked_btn_driving() {
-	if (!drivingThread->isRunning())
-		drivingThread->start();
+	if (!drivingThread->isRunning()) drivingThread->start();
 
 	//if (!missionUpdateThread->isRunning())
 	//	missionUpdateThread->start();
