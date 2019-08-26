@@ -19,30 +19,30 @@ using namespace std;
 
 class LidarCom : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 protected:
 
 public:
-    DataContainer *dataContainer;
+	DataContainer *dataContainer;
 
-    LidarCom();
+	LidarCom();
 private:
 
 signals: /// thread�� ���� broadcast �Լ���
-    void LidarExit();
+	void LidarExit();
 
 public slots:
-    int comLidar();
+	int comLidar();
 };
 
 
 class Scnn : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 protected:
 
 public:
-    DataContainer *dataContainer;
+	DataContainer *dataContainer;
 
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
@@ -51,7 +51,7 @@ public:
 	SOCKET server;
 	SOCKET client;
 
-    Scnn();
+	Scnn();
 
 private:
 
@@ -59,7 +59,7 @@ signals: /// thread�� ���� broadcast �Լ���
 
 
 public slots:
-    void comScnn();
+	void comScnn();
 	void SuspendScnn();
 	void ResumeScnn();
 	int boostScnn(); /// for boost test
@@ -80,7 +80,6 @@ public:
 
 	SOCKET server;
 	SOCKET client;
-	
 	Yolo();
 
 	bool Yolo_Com = true;
@@ -94,25 +93,25 @@ public slots:
 
 class View : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 protected:
-    
-public:
-    DataContainer *dataContainer;
 
-    STARTUPINFO si;
-    PROCESS_INFORMATION pi;
-    HANDLE tid;
-    SOCKET server;
-    SOCKET client;
-    View();
+public:
+	DataContainer *dataContainer;
+
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+	HANDLE tid;
+	SOCKET server;
+	SOCKET client;
+	View();
 	~View();
 private:
 
 public slots:
-    void comView(int id);
-    void SuspendView();
-    void ResumeView();
+	void comView(int id);
+	void SuspendView();
+	void ResumeView();
 
 };
 

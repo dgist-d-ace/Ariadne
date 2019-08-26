@@ -22,69 +22,69 @@
 
 class GPSCom : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 protected:
 
 public:
-    DataContainer *dataContainer;
-    Ui::AriadneClass *ui;
+	DataContainer *dataContainer;
+	Ui::AriadneClass *ui;
 
-    GPSCom();
-    bool loopStatusPlatform = true;
+	GPSCom();
+	bool loopStatusPlatform = true;
 
 private:
-    bool Geofence;
-    QString GF;
-    QVector<double> x, y;
-    double heading;
-    double _lat, _lng;
-    double lat, lng;
-    vector<vector<double>> map_link;
+	bool Geofence;
+	QString GF;
+	QVector<double> x, y;
+	double heading;
+	double _lat, _lng;
+	double lat, lng;
+	vector<vector<double>> map_link;
 
-    void Paint_base();
-    void Paint_school(); 
+	void Paint_base();
+	void Paint_school();
 
 signals:
-    void GPSExit();
-    void latitudeChanged(double);
-    void longitudeChanged(double);
+	void GPSExit();
+	void latitudeChanged(double);
+	void longitudeChanged(double);
 
 public slots:
-    void comGPS();
+	void comGPS();
 
 };
 
 class PlatformCom : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 protected:
-    Ui::AriadneClass *ui;
-    /// Because of including header file, 
-    /// GPS Thread and Platform Com Thread should be in the Ariadne.h
-    /// These two classes use UI component.
+	Ui::AriadneClass *ui;
+	/// Because of including header file, 
+	/// GPS Thread and Platform Com Thread should be in the Ariadne.h
+	/// These two classes use UI component.
 
 public:
-    DataContainer *dataContainer;
-    bool loopStatusPlatform = true;
-    PlatformCom();
-    //void run();
+	DataContainer *dataContainer;
+	bool loopStatusPlatform = true;
+	PlatformCom();
+	//void run();
 
 private:
-    ComPlatform _platform;
+	ComPlatform _platform;
 
 signals:
-    void AorMChanged(int);
-    void EStopChanged(int);
-    void GearChanged(int);
-    void SpeedChanged(int);
-    void SteerChanged(int);
-    void BreakChanged(int);
-    void EncChanged(int);
-    void AliveChanged(int);
-    void PlatformExit();
+	void AorMChanged(int);
+	void EStopChanged(int);
+	void GearChanged(int);
+	void SpeedChanged(int);
+	void SteerChanged(int);
+	void BreakChanged(int);
+	void EncChanged(int);
+	void AliveChanged(int);
+	void PlatformExit();
 
 public slots:
-    void comPlatform();
+	void comPlatform();
 
 };
 
@@ -92,23 +92,23 @@ public slots:
 
 class Ariadne : public QMainWindow
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    Ariadne(QWidget *parent = Q_NULLPTR);
+	Ariadne(QWidget *parent = Q_NULLPTR);
 
-    PlatformCom* platformCom;
-    //LidarComThread *lidarComThread;
-    LidarCom* lidarCom;
-    GPSCom* gpsCom;
-    Scnn* scnn;
+	PlatformCom* platformCom;
+	//LidarComThread *lidarComThread;
+	LidarCom* lidarCom;
+	GPSCom* gpsCom;
+	Scnn* scnn;
 	Yolo* yolo;
 	View* view;
 
-    QThread* platformThread;
-    QThread* lidarThread;
-    QThread* gpsThread;
-    QThread* scnnThread;
+	QThread* platformThread;
+	QThread* lidarThread;
+	QThread* gpsThread;
+	QThread* scnnThread;
 	QThread* yoloThread;
 
 	Driving* driving;
@@ -117,23 +117,21 @@ public:
 	MissionUpdate* missionUpdate;
 	QThread* missionUpdateThread;
 
-    DataContainer* dataContainer;
+	DataContainer* dataContainer;
 
-    QTimer* TimerSensorStatus;
-	QTimer* TimerUIUpdate;
-
+	QTimer* TimerSensorStatus;
 
 
 
-    static Ui::AriadneClass* getUI();
+	static Ui::AriadneClass* getUI();
 
 private:
-    static Ui::AriadneClass* ui;
-    void updateSensorStatus();
-    void keyPressEvent(QKeyEvent *);	
+	static Ui::AriadneClass* ui;
+	void updateSensorStatus();
+	void keyPressEvent(QKeyEvent *);
 
 public slots:
-    void clicked_btn_mission1();
+	void clicked_btn_mission1();
 	void clicked_btn_mission2();
 	void clicked_btn_mission3();
 	void clicked_btn_mission4();
@@ -144,49 +142,46 @@ public slots:
 	void clicked_btn_mission9();
 	void clicked_btn_traffic(bool);
 
-    void clicked_btn_sensor();
+	void clicked_btn_sensor();
 	void clicked_btn_driving();
 
-    void clicked_speed_up();
-    void clicked_speed_down();
-    void clicked_steer_left();
-    void clicked_steer_right();
-    void gear_input();
-    void clicked_E_stop();
+	void clicked_speed_up();
+	void clicked_speed_down();
+	void clicked_steer_left();
+	void clicked_steer_right();
+	void gear_input();
+	void clicked_E_stop();
 
-    void clicked_lidar_stop();
-    void clicked_lidar_restart();
-    void clicked_yolo_stop();
-    void clicked_yolo_restart();
-    void clicked_scnn_stop();
-    void clicked_scnn_restart();
+	void clicked_lidar_stop();
+	void clicked_lidar_restart();
+	void clicked_yolo_stop();
+	void clicked_yolo_restart();
+	void clicked_scnn_stop();
+	void clicked_scnn_restart();
 
-    void onAorMChanged(int);
-    void onEStopChanged(int);
-    void onGearChanged(int);
-    void onSpeedChanged(int);
-    void onBreakChanged(int);
-    void onSteerChanged(int);
-    void onEncChanged(int);
+	void onAorMChanged(int);
+	void onEStopChanged(int);
+	void onGearChanged(int);
+	void onSpeedChanged(int);
+	void onBreakChanged(int);
+	void onSteerChanged(int);
+	void onEncChanged(int);
 
-    void onLatitudeChanged(double);
-    void onLongitudeChanged(double);
+	void onLatitudeChanged(double);
+	void onLongitudeChanged(double);
 
 	void onGreenLight(bool);
 
 	void onCurrentMission(int);
 
-    /// DY: 0802
-    void onLidarExit();
+	/// DY: 0802
+	void onLidarExit();
 
 	void AutoPortFinder();
-	
-	void updateUI();
-	void uiTimerStart();
-	
+
 };
 
-CString ConvertQstringtoCString(QString); 
+CString ConvertQstringtoCString(QString);
 // this function is used in GPSCom Class and PlatformCom Class
 
 double rad2deg(double);

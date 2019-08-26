@@ -3,7 +3,6 @@
 #include <mutex>
 #include <QThread>
 #include <QMutex>
-#include <QImage>
 #include "LidarFunc.h"
 
 
@@ -178,18 +177,6 @@ private:
     int m_view_number = 0;
 
     QMutex mtx_view_number;
-
-	//
-	//	UI에 image 표시
-	//
-	QImage m_ui_pathmap;
-	QImage m_ui_scnn;
-	QImage m_ui_yolo;
-
-	QMutex mtx_ui_pathmap;
-	QMutex mtx_ui_scnn;
-	QMutex mtx_ui_yolo;
-
 
 public:
 
@@ -381,16 +368,4 @@ public:
 
     int getValue_view_number();
     void setValue_view_number(int);
-
-	//
-	//	UI에 image 표시
-	//
-	QImage getValue_ui_pathmap();
-	QImage getValue_ui_scnn();
-	QImage getValue_ui_yolo();
-
-	void setValue_ui_pathmap(QImage);
-	void setValue_ui_scnn(QImage);
-	void setValue_ui_yolo(QImage);
-
 };

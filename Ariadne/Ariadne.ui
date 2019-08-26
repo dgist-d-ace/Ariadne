@@ -242,6 +242,9 @@
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_3">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -254,6 +257,9 @@
      <string>Mission</string>
     </property>
     <widget class="QPushButton" name="Btn_mission1">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -1052,10 +1058,10 @@
    <widget class="QCustomPlot" name="rt_plot" native="true">
     <property name="geometry">
      <rect>
-      <x>649</x>
-      <y>379</y>
-      <width>311</width>
-      <height>271</height>
+      <x>269</x>
+      <y>19</y>
+      <width>691</width>
+      <height>631</height>
      </rect>
     </property>
    </widget>
@@ -1099,6 +1105,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_3">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -1111,19 +1120,6 @@
      <string>주행 시작</string>
     </property>
    </widget>
-   <widget class="QLabel" name="pathmap">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>20</y>
-      <width>391</width>
-      <height>341</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -1131,7 +1127,7 @@
      <x>0</x>
      <y>0</y>
      <width>1198</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

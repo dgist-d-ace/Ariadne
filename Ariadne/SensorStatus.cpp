@@ -161,10 +161,10 @@ int Scnn::boostScnn() {
 
 	//py::exec("import simple", main_namespace);
 	py::exec("import scnn_c_implementation_v2", main_namespace);
-	 
+
 	py::object scnn = py::import("scnn_c_implementation_v2");
-	
-	
+
+
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/exp1_kcity_best_50.pth", 0, true);
 	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", 0, true);
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test.mp4", true);
@@ -215,7 +215,7 @@ int Scnn::boostScnn() {
 				j++;
 			}
 			else {
-				cv::Point2i coordinate(lists[i], lists[i+1]);
+				cv::Point2i coordinate(lists[i], lists[i + 1]);
 				lanes[j].push_back(coordinate);
 				i++;
 			}
@@ -226,9 +226,9 @@ int Scnn::boostScnn() {
 		for (int i = 0; i < 4; i++)
 		{
 			//cout << "lane " << i << " : ";
-			for(int j = 0; j < dataContainer->getValue_scnn_lanes()[i].size(); j++){}
-				//cout << dataContainer->getValue_scnn_lanes()[i][j] << " ";
-			//cout << endl;
+			for (int j = 0; j < dataContainer->getValue_scnn_lanes()[i].size(); j++) {}
+			//cout << dataContainer->getValue_scnn_lanes()[i][j] << " ";
+		//cout << endl;
 		}
 
 		existLanes.clear();
@@ -244,7 +244,7 @@ int Scnn::boostScnn() {
 
 /// this function is for TCP/IP communication by WinSOCK: not used now.
 void Scnn::comScnn() {
-		
+
 	ResumeThread(tid);
 
 	client = accept(server, NULL, NULL); /// 누군가 나에게 연결할때까지 기다리겠다 <- 연결을 확실히 시도했다고 들 때
@@ -306,7 +306,7 @@ Yolo::Yolo() {
 	ZeroMemory(&si, sizeof(si));
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi)); // assign program memory
-	
+
 	TCHAR commandLine[] = TEXT("darknet detector demo data\\obj.data cfg\\yolov3_please.cfg yolov3_34500.weights data\\race1_cut.mp4");
 	SetCurrentDirectory(_T("C:\\Users\\D-Ace\\darknet-master\\build\\darknet\\x64")); // Darknet program start command
 	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi)) {
@@ -407,23 +407,23 @@ Ariadne to View Communication
 */
 
 View::View() {
-    dataContainer = DataContainer::getInstance();
-    ZeroMemory(&si, sizeof(si));
-    si.cb = sizeof(si);
-    ZeroMemory(&pi, sizeof(pi)); // assign program memory
-    TCHAR commandLine[] = TEXT(""); // VIEW command창에서 실행할 수 있는 명령어
-    if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
-    }
+	dataContainer = DataContainer::getInstance();
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi)); // assign program memory
+	TCHAR commandLine[] = TEXT(""); // VIEW command창에서 실행할 수 있는 명령어
+	if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
+	}
 
-    WSADATA wsa;
-    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-        cout << "View error\n"; /// 통신 포트 초기화 왠진 모르겠지만 해야함
+	WSADATA wsa;
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+		cout << "View error\n"; /// 통신 포트 초기화 왠진 모르겠지만 해야함
 
-    server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    sockaddr_in addr = { 0 };
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr("127.0.0.1"); /// local host의 번호(무조건 이거)
-    addr.sin_port = htons(8888); // 내부 포트 번호
+	server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	sockaddr_in addr = { 0 };
+	addr.sin_family = AF_INET;
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1"); /// local host의 번호(무조건 이거)
+	addr.sin_port = htons(8888); // 내부 포트 번호
 
 	if (::connect(server, (SOCKADDR*)&addr, sizeof(addr)) == -1) {
 		cout << "Connent error!!" << endl;
@@ -434,7 +434,7 @@ View::~View() {
 	close(server);
 }
 
-void View::comView(int id){
+void View::comView(int id) {
 	//char* c;            
 	//sprintf(c, "%d", id);
 	std::string s = std::to_string(id);
@@ -444,11 +444,11 @@ void View::comView(int id){
 }
 
 void View::SuspendView() {
-    SuspendThread(tid);
+	SuspendThread(tid);
 }
 
 void View::ResumeView() {
-    ResumeThread(tid);
+	ResumeThread(tid);
 }
 
 /// ///// 통합 프로그램 작성자 최도연

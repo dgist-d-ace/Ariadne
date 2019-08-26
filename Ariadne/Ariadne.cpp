@@ -14,18 +14,18 @@ using namespace std;
 Ui::AriadneClass* Ariadne::ui = new Ui::AriadneClass;
 
 Ariadne::Ariadne(QWidget *parent)
-    : QMainWindow(parent)
+	: QMainWindow(parent)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 
-    dataContainer = DataContainer::getInstance();
+	dataContainer = DataContainer::getInstance();
 
 	QPixmap pix("C:/Users/D-Ace/Documents/DYibre/temp.png");
 	ui->AriadneLogo->setPixmap(pix);
 
 	//  -------------------  Sensor Thread control ------------------------- //
 
-    platformCom = new PlatformCom;
+	platformCom = new PlatformCom;
 	platformThread = new QThread;
 	platformCom->moveToThread(platformThread);
 	connect(platformThread, SIGNAL(started()), platformCom, SLOT(comPlatform()));
@@ -42,7 +42,7 @@ Ariadne::Ariadne(QWidget *parent)
 	lidarCom->moveToThread(lidarThread);
 	connect(lidarThread, SIGNAL(started()), lidarCom, SLOT(comLidar()));
 	connect(lidarCom, SIGNAL(LidarExit()), lidarCom, SLOT(comLidar()));
-    
+
 	scnn = new Scnn;
 	scnnThread = new QThread;
 	scnn->moveToThread(scnnThread);
@@ -71,9 +71,9 @@ Ariadne::Ariadne(QWidget *parent)
 	view = new View;
 	connect(driving, SIGNAL(send2View(int)), view, SLOT(comView(int)));
 
-    //  -------------------  UI control ------------------------- //
+	//  -------------------  UI control ------------------------- //
 
-    ui->comboBox_6->addItems({ "Drive" , "Neutral", "Reverse"}); // gaer items input
+	ui->comboBox_6->addItems({ "Drive" , "Neutral", "Reverse" }); // gaer items input
 	ui->Btn_mission1->setStyleSheet("Text-align:left");
 	ui->Btn_mission3->setStyleSheet("Text-align:left");
 	ui->Btn_mission4->setStyleSheet("Text-align:left");
@@ -84,9 +84,9 @@ Ariadne::Ariadne(QWidget *parent)
 	ui->Btn_mission9->setStyleSheet("Text-align:left");
 
 
-    // --------------------- Platform control Using UI ---------------------------------//
+	// --------------------- Platform control Using UI ---------------------------------//
 
-    QObject::connect(ui->Btn_mission1, SIGNAL(clicked()), this, SLOT(clicked_btn_mission1()));
+	QObject::connect(ui->Btn_mission1, SIGNAL(clicked()), this, SLOT(clicked_btn_mission1()));
 	QObject::connect(ui->Btn_mission3, SIGNAL(clicked()), this, SLOT(clicked_btn_mission3()));
 	QObject::connect(ui->Btn_mission4, SIGNAL(clicked()), this, SLOT(clicked_btn_mission4()));
 	QObject::connect(ui->Btn_mission5, SIGNAL(clicked()), this, SLOT(clicked_btn_mission5()));
@@ -95,44 +95,44 @@ Ariadne::Ariadne(QWidget *parent)
 	QObject::connect(ui->Btn_mission8, SIGNAL(clicked()), this, SLOT(clicked_btn_mission8()));
 	QObject::connect(ui->Btn_mission9, SIGNAL(clicked()), this, SLOT(clicked_btn_mission9()));
 
-    QObject::connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_btn_sensor()));
+	QObject::connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_btn_sensor()));
 	QObject::connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(clicked_btn_driving()));
-    QObject::connect(ui->Btn_gearInput, SIGNAL(clicked()), this, SLOT(gear_input()));
-    QObject::connect(ui->Btn_up, SIGNAL(clicked()), this, SLOT(clicked_speed_up()));
-    QObject::connect(ui->Btn_down, SIGNAL(clicked()), this, SLOT(clicked_speed_down()));
-    QObject::connect(ui->Btn_left, SIGNAL(clicked()), this, SLOT(clicked_steer_left()));
-    QObject::connect(ui->Btn_right, SIGNAL(clicked()), this, SLOT(clicked_steer_right()));
-    QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_E_stop()));
+	QObject::connect(ui->Btn_gearInput, SIGNAL(clicked()), this, SLOT(gear_input()));
+	QObject::connect(ui->Btn_up, SIGNAL(clicked()), this, SLOT(clicked_speed_up()));
+	QObject::connect(ui->Btn_down, SIGNAL(clicked()), this, SLOT(clicked_speed_down()));
+	QObject::connect(ui->Btn_left, SIGNAL(clicked()), this, SLOT(clicked_steer_left()));
+	QObject::connect(ui->Btn_right, SIGNAL(clicked()), this, SLOT(clicked_steer_right()));
+	QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_E_stop()));
 
 	QObject::connect(ui->Btn_Traffic, SIGNAL(clicked(bool)), this, SLOT(clicked_btn_traffic(bool)));
 
 
-    // ------------------- UI update for Platform & GPS status ----------------------//
+	// ------------------- UI update for Platform & GPS status ----------------------//
 
-    connect(platformCom, SIGNAL(AorMChanged(int)), this, SLOT(onAorMChanged(int)));
-    connect(platformCom, SIGNAL(EStopChanged(int)), this, SLOT(onEStopChanged(int)));
-    connect(platformCom, SIGNAL(GearChanged(int)), this, SLOT(onGearChanged(int)));
-    connect(platformCom, SIGNAL(SpeedChanged(int)), this, SLOT(onSpeedChanged(int)));
-    connect(platformCom, SIGNAL(SteerChanged(int)), this, SLOT(onSteerChanged(int)));
-    connect(platformCom, SIGNAL(BreakChanged(int)), this, SLOT(onBreakChanged(int)));
-    connect(platformCom, SIGNAL(EncChanged(int)), this, SLOT(onEncChanged(int)));
+	connect(platformCom, SIGNAL(AorMChanged(int)), this, SLOT(onAorMChanged(int)));
+	connect(platformCom, SIGNAL(EStopChanged(int)), this, SLOT(onEStopChanged(int)));
+	connect(platformCom, SIGNAL(GearChanged(int)), this, SLOT(onGearChanged(int)));
+	connect(platformCom, SIGNAL(SpeedChanged(int)), this, SLOT(onSpeedChanged(int)));
+	connect(platformCom, SIGNAL(SteerChanged(int)), this, SLOT(onSteerChanged(int)));
+	connect(platformCom, SIGNAL(BreakChanged(int)), this, SLOT(onBreakChanged(int)));
+	connect(platformCom, SIGNAL(EncChanged(int)), this, SLOT(onEncChanged(int)));
 
-    connect(gpsCom, SIGNAL(latitudeChanged(double)), this, SLOT(onLatitudeChanged(double)));
-    connect(gpsCom, SIGNAL(longitudeChanged(double)), this, SLOT(onLongitudeChanged(double)));
+	connect(gpsCom, SIGNAL(latitudeChanged(double)), this, SLOT(onLatitudeChanged(double)));
+	connect(gpsCom, SIGNAL(longitudeChanged(double)), this, SLOT(onLongitudeChanged(double)));
 
 	// ------------------- UI update for Mission ----------------------//
 
 	QObject::connect(driving, SIGNAL(currentMission(int)), this, SLOT(onCurrentMission(int)));
 	///connect(missionUpdate, SIGNAL(greenLight(bool)), this, SLOT(onGreenLight(bool)));
 
- }
+}
 
 // This function is to change comport numbers from CString to QString.
 CString ConvertQstringtoCString(QString qs)
 {
-    std::string utf8_text = qs.toUtf8().constData();
-    CString cs(utf8_text.c_str());
-    return cs;
+	std::string utf8_text = qs.toUtf8().constData();
+	CString cs(utf8_text.c_str());
+	return cs;
 }
 
 void Ariadne::onCurrentMission(int id) {
@@ -146,32 +146,32 @@ void Ariadne::onCurrentMission(int id) {
 	ui->Btn_mission9->setEnabled(true);
 
 	switch (id) {
-		case PARKING:
-			//ui->Btn_mission1->setStyleSheet("background-color: rgb()");
-			ui->Btn_mission1->setEnabled(false);
-			break;
-		case INTER_LEFT:
-			ui->Btn_mission3->setEnabled(false);
-			break;
-		case INTER_RIGHT:
-			ui->Btn_mission4->setEnabled(false);
-			break;
-		case INTER_STRAIGHT:
-			ui->Btn_mission5->setEnabled(false);
-			break;
-		case INTER_STOP:
-			ui->Btn_mission6->setEnabled(false);
-			break;
-		case STATIC_OBSTACLE:
-			ui->Btn_mission7->setEnabled(false);
-			break;
-		case DYNAMIC_OBSTACLE:
-			ui->Btn_mission8->setEnabled(false);
-			break;
-		case BASIC:
-			ui->Btn_mission9->setEnabled(false);
-			cout << "basic enabled false set"<<endl;
-			break;
+	case PARKING:
+		//ui->Btn_mission1->setStyleSheet("background-color: rgb()");
+		ui->Btn_mission1->setEnabled(false);
+		break;
+	case INTER_LEFT:
+		ui->Btn_mission3->setEnabled(false);
+		break;
+	case INTER_RIGHT:
+		ui->Btn_mission4->setEnabled(false);
+		break;
+	case INTER_STRAIGHT:
+		ui->Btn_mission5->setEnabled(false);
+		break;
+	case INTER_STOP:
+		ui->Btn_mission6->setEnabled(false);
+		break;
+	case STATIC_OBSTACLE:
+		ui->Btn_mission7->setEnabled(false);
+		break;
+	case DYNAMIC_OBSTACLE:
+		ui->Btn_mission8->setEnabled(false);
+		break;
+	case BASIC:
+		ui->Btn_mission9->setEnabled(false);
+		cout << "basic enabled false set" << endl;
+		break;
 	}
 
 }
@@ -185,45 +185,26 @@ void Ariadne::clicked_btn_sensor() {
 
 	//if (!yoloThread->isRunning()){ yoloThread->start(); }
 
-	//if(!platformThread->isRunning()) { platformThread->start(); }
+	//if (!platformThread->isRunning()) { platformThread->start(); }
+	//dataContainer->setValue_UtoP_AorM(1);
 
-	if (!lidarThread->isRunning()) { lidarThread->start(); }
+	//if (!lidarThread->isRunning()) { lidarThread->start(); }
 
-    
 	//if (!gpsThread->isRunning()) { gpsThread->start(); }
 
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
 	TimerSensorStatus->start(1000);
-	
-	//cout << 1 << endl;
-	//TimerUIUpdate = new QTimer(this);
-	//cout << 2 << endl;
-
-	//QTimer::connect(TimerUIUpdate, &QTimer::timeout, this, &Ariadne::updateUI);
-	//cout << 3 << endl;
-
-	//connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(uiTimerStart()));
-	//cout << 4 << endl;
 
 }
 
-void Ariadne::uiTimerStart() {
-	cout << "uitimer start" << endl;
-	Sleep(3000);
-	TimerUIUpdate->start(20);
-}
-
-void Ariadne::updateUI() {
-	ui->pathmap->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_pathmap()));
-}
 void Ariadne::onLidarExit()
 {
-    cout << "onLidarExit is called" << endl;
+	cout << "onLidarExit is called" << endl;
 
 }
 
-void Ariadne::clicked_lidar_restart() {cout << "no function here" << endl;}
+void Ariadne::clicked_lidar_restart() { cout << "no function here" << endl; }
 void Ariadne::clicked_lidar_stop() { cout << "no functions here" << endl; }
 void Ariadne::clicked_yolo_restart() { yolo->ResumeYolo(); }
 void Ariadne::clicked_yolo_stop() { yolo->SuspendYolo(); }
@@ -233,7 +214,8 @@ void Ariadne::clicked_scnn_stop() { scnn->SuspendScnn(); }
 
 // This function is to start driving
 void Ariadne::clicked_btn_driving() {
-	if (!drivingThread->isRunning()) drivingThread->start();
+	if (!drivingThread->isRunning())
+		drivingThread->start();
 
 	//if (!missionUpdateThread->isRunning())
 	//	missionUpdateThread->start();
@@ -262,7 +244,7 @@ void Ariadne::clicked_btn_mission4() {
 }
 
 void Ariadne::clicked_btn_mission5() {
-	dataContainer->setValue_yolo_missionID(INTER_STRAIGHT) ;
+	dataContainer->setValue_yolo_missionID(INTER_STRAIGHT);
 	ui->plainTextEdit->appendPlainText("intersection straight mission start");
 }
 
@@ -296,11 +278,11 @@ void Ariadne::clicked_btn_traffic(bool light)
 // These functions is to control gplatform
 void Ariadne::gear_input()
 {
-    QString qs;
-    qs = ui->comboBox_6->currentText();
-    if (qs == "Drive") { dataContainer->setValue_UtoP_GEAR(0); }
-    else if (qs == "Neutral") { dataContainer->setValue_UtoP_GEAR(1); }
-    else { dataContainer->setValue_UtoP_GEAR(2); }
+	QString qs;
+	qs = ui->comboBox_6->currentText();
+	if (qs == "Drive") { dataContainer->setValue_UtoP_GEAR(0); }
+	else if (qs == "Neutral") { dataContainer->setValue_UtoP_GEAR(1); }
+	else { dataContainer->setValue_UtoP_GEAR(2); }
 }
 
 void Ariadne::clicked_speed_up() { dataContainer->setValue_UtoP_SPEED(dataContainer->getValue_UtoP_SPEED() + 1); }
@@ -309,16 +291,16 @@ void Ariadne::clicked_steer_left() { dataContainer->setValue_UtoP_STEER(dataCont
 void Ariadne::clicked_steer_right() { dataContainer->setValue_UtoP_STEER(dataContainer->getValue_UtoP_STEER() + 100); }
 void Ariadne::clicked_E_stop()
 {
-    if (dataContainer->getValue_UtoP_E_STOP() == 0) { dataContainer->setValue_UtoP_E_STOP(1); }
-    else { dataContainer->setValue_UtoP_E_STOP(0); }
+	if (dataContainer->getValue_UtoP_E_STOP() == 0) { dataContainer->setValue_UtoP_E_STOP(1); }
+	else { dataContainer->setValue_UtoP_E_STOP(0); }
 }
 
 void Ariadne::keyPressEvent(QKeyEvent *event) {
-    if (event->key() == Qt::Key_Left) { clicked_steer_left(); }
-    if (event->key() == Qt::Key_Right) { clicked_steer_right(); }
-    if (event->key() == Qt::Key_Up) { clicked_speed_up(); }
-    if (event->key() == Qt::Key_Down) { clicked_speed_down(); }
-    if (event->key() == Qt::Key_Enter) { clicked_E_stop(); }
+	if (event->key() == Qt::Key_Left) { clicked_steer_left(); }
+	if (event->key() == Qt::Key_Right) { clicked_steer_right(); }
+	if (event->key() == Qt::Key_Up) { clicked_speed_up(); }
+	if (event->key() == Qt::Key_Down) { clicked_speed_down(); }
+	if (event->key() == Qt::Key_Enter) { clicked_E_stop(); }
 }
 
 //  _    _ _____    _    _ _____  _____       _______ ______
@@ -338,7 +320,7 @@ void Ariadne::onBreakChanged(int Number) { ui->lcdNumber_6->display(Number); }
 void Ariadne::onEncChanged(int Number) { ui->lcdNumber_7->display(Number); }
 void Ariadne::onLatitudeChanged(double Number) { ui->lcdNumber_8->display(Number); }
 void Ariadne::onLongitudeChanged(double Number) { ui->lcdNumber_9->display(Number); }
-void Ariadne::onGreenLight(bool light) 
+void Ariadne::onGreenLight(bool light)
 {
 	/// TODO: 여기서 true가 나오면 ui 버튼도 업데이트할 것.
 }
@@ -373,18 +355,18 @@ void Ariadne::AutoPortFinder() {
 		SetupDiGetDeviceRegistryProperty(hDeviceInfo, &devInfoData, SPDRP_HARDWAREID, nullptr, nullptr, 0, &reqSize);
 		BYTE* hardwareId = new BYTE[(reqSize > 1) ? reqSize : 1];
 		// now store it in a buffer
-		
+
 		if (SetupDiGetDeviceRegistryProperty(hDeviceInfo, &devInfoData, SPDRP_HARDWAREID, &regDataType, hardwareId, sizeof(hardwareId) * reqSize, nullptr))
 		{
 			// find the size required to hold the friendly name
-			reqSize =0;
+			reqSize = 0;
 			SetupDiGetDeviceRegistryProperty(hDeviceInfo, &devInfoData, SPDRP_FRIENDLYNAME, nullptr, nullptr, 0, &reqSize);
-			
+
 			BYTE* friendlyName = new BYTE[(reqSize > 1) ? reqSize : 1];
 			//TCHAR friendly_name[256];
 			// now store it in a buffer
 
-			
+
 			if (!SetupDiGetDeviceRegistryProperty(hDeviceInfo, &devInfoData, SPDRP_FRIENDLYNAME, nullptr, friendlyName, sizeof(friendlyName) * reqSize, nullptr))
 			{
 				// device does not have this property set
@@ -400,7 +382,7 @@ void Ariadne::AutoPortFinder() {
 				}
 				else if (hwID == "USB\\VID_067B&PID_2303&REV_0300") {
 					dataContainer->setValue_platform_port(port);
-				}				
+				}
 			}
 			// use friendlyName here
 			delete[] friendlyName;
@@ -419,18 +401,18 @@ void Ariadne::updateSensorStatus()
 		ui->statusPlatform->setFixedWidth(60);
 	}
 	else if (dataContainer->getValue_platform_status() > 0) {
-		ui->statusPlatform->setStyleSheet("background-color: yellow;"); 
+		ui->statusPlatform->setStyleSheet("background-color: yellow;");
 		ui->statusPlatform->setFixedWidth(40);
 	}
-	else{
-		ui->statusPlatform->setStyleSheet("background-color: red;"); 
+	else {
+		ui->statusPlatform->setStyleSheet("background-color: red;");
 		ui->statusPlatform->setFixedWidth(20);
 	}
 	dataContainer->setValue_platform_status(0);
 
 	// LiDAR communication code
 	if (dataContainer->getValue_lidar_status() > 5) {
-		ui->statusLidar->setStyleSheet("background-color: rgb(0, 153, 76);"); 
+		ui->statusLidar->setStyleSheet("background-color: rgb(0, 153, 76);");
 		ui->statusLidar->setFixedWidth(60);
 	}
 	else if (dataContainer->getValue_lidar_status() > 0) {
@@ -438,7 +420,7 @@ void Ariadne::updateSensorStatus()
 		ui->statusLidar->setFixedWidth(40);
 	}
 	else {
-		ui->statusLidar->setStyleSheet("background-color: red;"); 
+		ui->statusLidar->setStyleSheet("background-color: red;");
 		ui->statusLidar->setFixedWidth(20);
 	}
 	dataContainer->setValue_lidar_status(0);
@@ -452,8 +434,8 @@ void Ariadne::updateSensorStatus()
 		ui->statusGps->setStyleSheet("background-color: yellow;");
 		ui->statusGps->setFixedWidth(40);
 	}
-	else{
-		ui->statusGps->setStyleSheet("background-color: red;"); 
+	else {
+		ui->statusGps->setStyleSheet("background-color: red;");
 		ui->statusGps->setFixedWidth(20);
 	}
 	dataContainer->setValue_gps_status(0);
@@ -464,7 +446,7 @@ void Ariadne::updateSensorStatus()
 		ui->statusScnn->setFixedWidth(60);
 	}
 	else if (dataContainer->getValue_scnn_status() > 0) {
-		ui->statusScnn->setStyleSheet("background-color: yellow;"); 
+		ui->statusScnn->setStyleSheet("background-color: yellow;");
 		ui->statusScnn->setFixedWidth(40);
 	}
 	else {
@@ -482,12 +464,12 @@ void Ariadne::updateSensorStatus()
 		ui->statusYolo->setStyleSheet("background-color: yellow;");
 		ui->statusYolo->setFixedWidth(40);
 	}
-	else{
+	else {
 		ui->statusYolo->setStyleSheet("background-color: red;");
 		ui->statusYolo->setFixedWidth(20);
 	}
 	dataContainer->setValue_yolo_status(0);
-	
+
 }
 
 Ui::AriadneClass* Ariadne::getUI() { return ui; }
@@ -496,46 +478,46 @@ Ui::AriadneClass* Ariadne::getUI() { return ui; }
 
 PlatformCom::PlatformCom()
 {
-    dataContainer = DataContainer::getInstance();
-    ui = Ariadne::getUI();
+	dataContainer = DataContainer::getInstance();
+	ui = Ariadne::getUI();
 }
 
 void PlatformCom::comPlatform() {
-    cout << "platform start" << endl;
-	
+	cout << "platform start" << endl;
+
 	/// dataContainer->getValue_platform_port()
-    if (_platform.OpenPort(dataContainer->getValue_platform_port()))
-    {
-        _platform.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
-        _platform.SetCommunicationTimeouts(0, 0, 0, 0, 0);
+	if (_platform.OpenPort(dataContainer->getValue_platform_port()))
+	{
+		_platform.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
+		_platform.SetCommunicationTimeouts(0, 0, 0, 0, 0);
 
-        while (loopStatusPlatform)
-        {
-            if (_platform.MyCommRead()) {}
-            else {
-                _platform.ClosePort();
-                emit(PlatformExit());
-                return;
-            }
-            _platform.MyCommWrite();
-            dataContainer->updateValue_platform_status();
+		while (loopStatusPlatform)
+		{
+			if (_platform.MyCommRead()) {}
+			else {
+				_platform.ClosePort();
+				emit(PlatformExit());
+				return;
+			}
+			_platform.MyCommWrite();
+			dataContainer->updateValue_platform_status();
 
-            emit(AorMChanged(dataContainer->getValue_PtoU_AorM()));
-            emit(EStopChanged(dataContainer->getValue_PtoU_E_STOP()));
-            emit(SpeedChanged(dataContainer->getValue_PtoU_SPEED()));
-            emit(SteerChanged(dataContainer->getValue_PtoU_STEER()));
-            emit(GearChanged(dataContainer->getValue_PtoU_GEAR()));
-            emit(BreakChanged(dataContainer->getValue_PtoU_BRAKE()));
-            emit(EncChanged(dataContainer->getValue_PtoU_ENC()));
+			emit(AorMChanged(dataContainer->getValue_PtoU_AorM()));
+			emit(EStopChanged(dataContainer->getValue_PtoU_E_STOP()));
+			emit(SpeedChanged(dataContainer->getValue_PtoU_SPEED()));
+			emit(SteerChanged(dataContainer->getValue_PtoU_STEER()));
+			emit(GearChanged(dataContainer->getValue_PtoU_GEAR()));
+			emit(BreakChanged(dataContainer->getValue_PtoU_BRAKE()));
+			emit(EncChanged(dataContainer->getValue_PtoU_ENC()));
 
-            Sleep(100);
-        }
-    }
-    else {
-        cout << "platform not connect\n";
-        emit(PlatformExit());
-        return;
-    }
+			Sleep(100);
+		}
+	}
+	else {
+		cout << "platform not connect\n";
+		emit(PlatformExit());
+		return;
+	}
 }
 
 /// ------------------ GPS Communication Function -----------------///
@@ -556,308 +538,308 @@ vector <double>UTM(double lat, double lng);
 bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double heading);
 
 GPSCom::GPSCom() {
-    ui = Ariadne::getUI();
-    dataContainer = DataContainer::getInstance();
-    Paint_base();
-    Paint_school();
-    ui->rt_plot->replot();
+	ui = Ariadne::getUI();
+	dataContainer = DataContainer::getInstance();
+	Paint_base();
+	Paint_school();
+	ui->rt_plot->replot();
 }
 
 void GPSCom::Paint_base() // �⺻ �� ����
 {
-    ui->rt_plot->addGraph();
+	ui->rt_plot->addGraph();
 	ui->rt_plot->graph(0)->rescaleAxes();
-    ui->rt_plot->axisRect()->setupFullAxesBox();
+	ui->rt_plot->axisRect()->setupFullAxesBox();
 }
 
 void GPSCom::Paint_school() {
-    ifstream gpsfile("txtfile\\filteredMapSch.txt");   //littleUTM , largeUTM, 30up, 123123, techALL,filteredMapSch
-    /// "C:\\Users\\bokyung\\Desktop\\Autonomous\\txtfile\\filteredMapSch.txt"
-    char line[200];
-    string tap;
-    vector<string> vec;
+	ifstream gpsfile("txtfile\\filteredMapSch.txt");   //littleUTM , largeUTM, 30up, 123123, techALL,filteredMapSch
+	/// "C:\\Users\\bokyung\\Desktop\\Autonomous\\txtfile\\filteredMapSch.txt"
+	char line[200];
+	string tap;
+	vector<string> vec;
 
-    if (gpsfile.is_open()) {
-        while (gpsfile.getline(line, sizeof(line), '\n')) {
-            stringstream str(line);
+	if (gpsfile.is_open()) {
+		while (gpsfile.getline(line, sizeof(line), '\n')) {
+			stringstream str(line);
 
-            while (getline(str, tap, '\t')) {  // sch1 >> ' ' , filteredMap, filteredMapsch >> '\t'
-                vec.push_back(tap);
-            }
-            x.push_back(atof(vec[0].c_str()));
-            y.push_back(atof(vec[1].c_str()));
-            vec.clear();
-        }
-    }
-    gpsfile.close();
+			while (getline(str, tap, '\t')) {  // sch1 >> ' ' , filteredMap, filteredMapsch >> '\t'
+				vec.push_back(tap);
+			}
+			x.push_back(atof(vec[0].c_str()));
+			y.push_back(atof(vec[1].c_str()));
+			vec.clear();
+		}
+	}
+	gpsfile.close();
 
-    ui->rt_plot->xAxis->setRange(450589, 450700);// range min to max
-    ui->rt_plot->yAxis->setRange(3951700, 3951800);
+	ui->rt_plot->xAxis->setRange(450589, 450700);// range min to max
+	ui->rt_plot->yAxis->setRange(3951700, 3951800);
 
-    QCPScatterStyle myScatter2; // �� ��, ������, ������ 5
-    myScatter2.setShape(QCPScatterStyle::ssCircle);
-    myScatter2.setPen(QPen(Qt::black));
-    myScatter2.setSize(5);
-    ui->rt_plot->graph(0)->setScatterStyle(myScatter2);
-    ui->rt_plot->addGraph();
+	QCPScatterStyle myScatter2; // �� ��, ������, ������ 5
+	myScatter2.setShape(QCPScatterStyle::ssCircle);
+	myScatter2.setPen(QPen(Qt::black));
+	myScatter2.setSize(5);
+	ui->rt_plot->graph(0)->setScatterStyle(myScatter2);
+	ui->rt_plot->addGraph();
 
-    ui->rt_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
-    ui->rt_plot->graph(0)->setData(x, y);
-    ui->rt_plot->replot();
-    ui->rt_plot->update();
+	ui->rt_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
+	ui->rt_plot->graph(0)->setData(x, y);
+	ui->rt_plot->replot();
+	ui->rt_plot->update();
 
-    ifstream gpsfile1("txtfile\\filteredMapSch_link.csv");
-    char line1[200];
-    string tap1;
-    vector<string> vec1;
-    vector<double> vecd;
-    if (gpsfile1.is_open()) {
+	ifstream gpsfile1("txtfile\\filteredMapSch_link.csv");
+	char line1[200];
+	string tap1;
+	vector<string> vec1;
+	vector<double> vecd;
+	if (gpsfile1.is_open()) {
 
-        while (gpsfile1.getline(line1, sizeof(line1), '\n')) {
+		while (gpsfile1.getline(line1, sizeof(line1), '\n')) {
 
-            stringstream str1(line1);
+			stringstream str1(line1);
 
-            while (getline(str1, tap1, ',')) {
+			while (getline(str1, tap1, ',')) {
 
-                vec1.push_back(tap1);
-            }
-            vecd.push_back(atof(vec1[0].c_str()));
-            vecd.push_back(atof(vec1[1].c_str()));
-            map_link.push_back(vecd);
-            //cout << map_link[0][1];
-            vec1.clear();
-            vecd.clear();
-        }
-    }
-    gpsfile1.close();
+				vec1.push_back(tap1);
+			}
+			vecd.push_back(atof(vec1[0].c_str()));
+			vecd.push_back(atof(vec1[1].c_str()));
+			map_link.push_back(vecd);
+			//cout << map_link[0][1];
+			vec1.clear();
+			vecd.clear();
+		}
+	}
+	gpsfile1.close();
 }
 
 //얘가 실시간 좌표찍는 애임 , 클릭버튼했을 대 이 함수호출되도록했음
 void GPSCom::comGPS() { // rt ; Real Time
-    QVector<double> temp1;
-    QVector<double> temp2;
-    QVector<double> store_x;
-    QVector<double> store_y;
+	QVector<double> temp1;
+	QVector<double> temp2;
+	QVector<double> store_x;
+	QVector<double> store_y;
 
-    cout << "gps communication now" << endl;
+	cout << "gps communication now" << endl;
 	// 
-    if (_gps.OpenPort(dataContainer->getValue_gps_port())) {
+	if (_gps.OpenPort(dataContainer->getValue_gps_port())) {
 
-        _gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
-        _gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
-        string tap;
-        string tap2;
-        vector<string> vec;
+		_gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
+		_gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
+		string tap;
+		string tap2;
+		vector<string> vec;
 
-        while (1) {
-            BYTE * pByte = new BYTE[128]; // 2028
+		while (1) {
+			BYTE * pByte = new BYTE[128]; // 2028
 
-            if (_gps.ReadByte(pByte, 128)) {
+			if (_gps.ReadByte(pByte, 128)) {
 
 				dataContainer->updateValue_gps_status();
 
-                pByte[127] = '\0'; // 2027
+				pByte[127] = '\0'; // 2027
 
-                const char * p = (const char*)pByte;
-                //cout << p;
+				const char * p = (const char*)pByte;
+				//cout << p;
 
-                stringstream str(p);
+				stringstream str(p);
 
-                while (getline(str, tap, '\n')) {
-                    //cout << tap;
-                    stringstream qwe(tap);
+				while (getline(str, tap, '\n')) {
+					//cout << tap;
+					stringstream qwe(tap);
 
-                    while (getline(qwe, tap2, ',')) {
-                        vec.push_back(tap2);
-                    }
-                    //cout << vec[0] << endl;
+					while (getline(qwe, tap2, ',')) {
+						vec.push_back(tap2);
+					}
+					//cout << vec[0] << endl;
 
-                    if (vec.size() > 8) {
-                        if (vec[0] == "$GNRMC" && vec[2] == "A") {
-                            //ofile << vec[0] << ',' << vec[3] << ',' << vec[5]  << endl;
-                            _lat = ((atof(vec[3].c_str()) - 3500) / 60) + 35; // 35랑 128은 상황에 따라 바꿔줘야함
-                            _lng = ((atof(vec[5].c_str()) - 12800) / 60) + 128;
-                            heading = atof(vec[8].c_str());
+					if (vec.size() > 8) {
+						if (vec[0] == "$GNRMC" && vec[2] == "A") {
+							//ofile << vec[0] << ',' << vec[3] << ',' << vec[5]  << endl;
+							_lat = ((atof(vec[3].c_str()) - 3500) / 60) + 35; // 35랑 128은 상황에 따라 바꿔줘야함
+							_lng = ((atof(vec[5].c_str()) - 12800) / 60) + 128;
+							heading = atof(vec[8].c_str()) *CV_PI / 180; //[rad]
 
-                            vector<double >utm = UTM(_lat, _lng);
-                            lat = utm[0];
-                            lng = utm[1];
+							vector<double >utm = UTM(_lat, _lng);
+							lat = utm[0];
+							lng = utm[1];
 
 							dataContainer->resetValue_gps_valid();
 							dataContainer->setValue_gps_heading(heading);
 							dataContainer->setValue_gps_latitude(lat);
 							dataContainer->setValue_gps_longitude(lng);
 
-                            emit latitudeChanged(lat/1000);
-                            emit longitudeChanged(lng/1000); /// 숫자가 너무 커서 나눴음
+							emit latitudeChanged(lat / 1000);
+							emit longitudeChanged(lng / 1000); /// 숫자가 너무 커서 나눴음
 
-                            cout << lat << "    " << lng << endl;
-                        }
+							cout << lat << "    " << lng << endl;
+						}
 						else if (vec[2] == "V") {
 							dataContainer->count_gps_valid();
 						}
-                    }
-                    vec.clear();
-                }
-            }
-            else {
-                cout << "GPS not connect" << endl;
+					}
+					vec.clear();
+				}
+			}
+			else {
+				cout << "GPS not connect" << endl;
 				_gps.ClosePort();
-                emit(GPSExit());
+				emit(GPSExit());
 				return;
-            }
-            Sleep(100);
-        }
-    }
+			}
+			Sleep(100);
+		}
+	}
 }
 
 vector <double>UTM(double lat, double lng) { /// This function is to calculate UTM parameters.
-    double lat_rad = lat * PI / 180.0;
-    double lng_rad = lng * PI / 180.0;
+	double lat_rad = lat * PI / 180.0;
+	double lng_rad = lng * PI / 180.0;
 
-    double n = radiRatio / (2 - radiRatio);
-    double A = radi * (1 - n + 5.0 / 4.0 * (pow(n, 2) - pow(n, 3)) + 81.0 / 64.0 * (pow(n, 4) - pow(n, 5)));
-    double B = 3.0 / 2.0 * radi*(n - pow(n, 2) + 7.0 / 8.0 * (pow(n, 3) - pow(n, 4)) + 55.0 / 64.0* pow(n, 5));
-    double C = 15.0 / 16.0 * radi*(pow(n, 2) - pow(n, 3) + 3.0 / 4.0 * (pow(n, 4) - pow(n, 5)));
-    double D = 35.0 / 48.0 *radi*(pow(n, 3) - pow(n, 4) + 11.0 / 16.0 * pow(n, 5));
-    double Ed = 315.0 / 512.0 * radi*(pow(n, 4) - pow(n, 5));
-    double S = A * lat_rad - B * sin(2 * lat_rad) + C * sin(4 * lat_rad) - D * sin(6 * lat_rad) + Ed * sin(8 * lat_rad);
-    double esq = radiRatio * (2 - radiRatio);
-    double v = radi / sqrt(1 - esq * pow(sin(lat_rad), 2));
-    double esqd = radiRatio * (2 - radiRatio) / pow((1 - radiRatio), 2);
+	double n = radiRatio / (2 - radiRatio);
+	double A = radi * (1 - n + 5.0 / 4.0 * (pow(n, 2) - pow(n, 3)) + 81.0 / 64.0 * (pow(n, 4) - pow(n, 5)));
+	double B = 3.0 / 2.0 * radi*(n - pow(n, 2) + 7.0 / 8.0 * (pow(n, 3) - pow(n, 4)) + 55.0 / 64.0* pow(n, 5));
+	double C = 15.0 / 16.0 * radi*(pow(n, 2) - pow(n, 3) + 3.0 / 4.0 * (pow(n, 4) - pow(n, 5)));
+	double D = 35.0 / 48.0 *radi*(pow(n, 3) - pow(n, 4) + 11.0 / 16.0 * pow(n, 5));
+	double Ed = 315.0 / 512.0 * radi*(pow(n, 4) - pow(n, 5));
+	double S = A * lat_rad - B * sin(2 * lat_rad) + C * sin(4 * lat_rad) - D * sin(6 * lat_rad) + Ed * sin(8 * lat_rad);
+	double esq = radiRatio * (2 - radiRatio);
+	double v = radi / sqrt(1 - esq * pow(sin(lat_rad), 2));
+	double esqd = radiRatio * (2 - radiRatio) / pow((1 - radiRatio), 2);
 
-    double T1 = k0 * S;
-    double T2 = v * sin(lat_rad)*cos(lat_rad)*k0 / 2.0;
-    double T3 = v * sin(lat_rad)*pow(cos(lat_rad), 3)*k0 / 24.0 * (5.0 - pow(tan(lat_rad), 2) + 9.0 * esqd*pow(cos(lat_rad), 2) + 4.0 * pow(esqd, 2)*pow(cos(lat_rad), 4));
-    double T4 = v * sin(lat_rad)*pow(cos(lat_rad), 5)*k0 / 720.0 * (61.0 - 58.0 * pow(tan(lat_rad), 2) + pow(tan(lat_rad), 4) + 270.0 * esqd*pow(cos(lat_rad), 2) - 330.0 * esqd*pow(tan(lat_rad)*cos(lat_rad), 2)
-        + 445.0 * pow(esqd, 2)*pow(cos(lat_rad), 4) + 324.0 * pow(esqd, 3)*pow(cos(lat_rad), 6) - 680.0 *pow(tan(lat_rad), 2)* pow(esqd, 2)*pow(cos(lat_rad), 4) + 88.0 * pow(esqd, 4)*pow(cos(lat_rad), 8) - 600.0 * pow(esqd, 3)*pow(tan(lat_rad), 2)*pow(cos(lat_rad), 6)
-        - 192.0 * pow(esqd, 4)*pow(tan(lat_rad), 2)*pow(cos(lat_rad), 8));
-    double T5 = v * sin(lat_rad)*pow(cos(lat_rad), 7)*k0 / 40320.0 * (1385.0 - 3111.0 * pow(tan(lat_rad), 2) + 543.0 * pow(tan(lat_rad), 4) - pow(tan(lat_rad), 6));
-    double T6 = v * cos(lat_rad)*k0;
-    double T7 = v * pow(cos(lat_rad), 3)*k0 / 6.0 * (1.0 - pow(tan(lat_rad), 2) + esqd * pow(cos(lat_rad), 2));
-    double T8 = v * pow(cos(lat_rad), 5)*k0 / 120.0 * (5.0 - 18.0 * pow(tan(lat_rad), 2) + pow(tan(lat_rad), 4) + 14.0 * esqd*pow(cos(lat_rad), 2) - 58.0 * esqd*pow(tan(lat_rad)*cos(lat_rad), 2) + 13.0 * pow(esqd, 2)*pow(cos(lat_rad), 4) + 4.0 * pow(esqd, 3)*pow(cos(lat_rad), 6)
-        - 64.0 * pow(esqd*tan(lat_rad), 2)*pow(cos(lat_rad), 4) - 24.0 * pow(tan(lat_rad), 2)*pow(esqd, 3)*pow(cos(lat_rad), 6));
-    double T9 = v * pow(cos(lat_rad), 7)*k0 / 5040.0 * (61.0 - 479.0 * pow(tan(lat_rad), 2) + 179.0 * pow(tan(lat_rad), 4) - pow(tan(lat_rad), 6));
+	double T1 = k0 * S;
+	double T2 = v * sin(lat_rad)*cos(lat_rad)*k0 / 2.0;
+	double T3 = v * sin(lat_rad)*pow(cos(lat_rad), 3)*k0 / 24.0 * (5.0 - pow(tan(lat_rad), 2) + 9.0 * esqd*pow(cos(lat_rad), 2) + 4.0 * pow(esqd, 2)*pow(cos(lat_rad), 4));
+	double T4 = v * sin(lat_rad)*pow(cos(lat_rad), 5)*k0 / 720.0 * (61.0 - 58.0 * pow(tan(lat_rad), 2) + pow(tan(lat_rad), 4) + 270.0 * esqd*pow(cos(lat_rad), 2) - 330.0 * esqd*pow(tan(lat_rad)*cos(lat_rad), 2)
+		+ 445.0 * pow(esqd, 2)*pow(cos(lat_rad), 4) + 324.0 * pow(esqd, 3)*pow(cos(lat_rad), 6) - 680.0 *pow(tan(lat_rad), 2)* pow(esqd, 2)*pow(cos(lat_rad), 4) + 88.0 * pow(esqd, 4)*pow(cos(lat_rad), 8) - 600.0 * pow(esqd, 3)*pow(tan(lat_rad), 2)*pow(cos(lat_rad), 6)
+		- 192.0 * pow(esqd, 4)*pow(tan(lat_rad), 2)*pow(cos(lat_rad), 8));
+	double T5 = v * sin(lat_rad)*pow(cos(lat_rad), 7)*k0 / 40320.0 * (1385.0 - 3111.0 * pow(tan(lat_rad), 2) + 543.0 * pow(tan(lat_rad), 4) - pow(tan(lat_rad), 6));
+	double T6 = v * cos(lat_rad)*k0;
+	double T7 = v * pow(cos(lat_rad), 3)*k0 / 6.0 * (1.0 - pow(tan(lat_rad), 2) + esqd * pow(cos(lat_rad), 2));
+	double T8 = v * pow(cos(lat_rad), 5)*k0 / 120.0 * (5.0 - 18.0 * pow(tan(lat_rad), 2) + pow(tan(lat_rad), 4) + 14.0 * esqd*pow(cos(lat_rad), 2) - 58.0 * esqd*pow(tan(lat_rad)*cos(lat_rad), 2) + 13.0 * pow(esqd, 2)*pow(cos(lat_rad), 4) + 4.0 * pow(esqd, 3)*pow(cos(lat_rad), 6)
+		- 64.0 * pow(esqd*tan(lat_rad), 2)*pow(cos(lat_rad), 4) - 24.0 * pow(tan(lat_rad), 2)*pow(esqd, 3)*pow(cos(lat_rad), 6));
+	double T9 = v * pow(cos(lat_rad), 7)*k0 / 5040.0 * (61.0 - 479.0 * pow(tan(lat_rad), 2) + 179.0 * pow(tan(lat_rad), 4) - pow(tan(lat_rad), 6));
 
-    double dellng = lng_rad - lamda;
+	double dellng = lng_rad - lamda;
 
-    //offset
-    double N = T1 + pow(dellng, 2)*T2 + pow(dellng, 4)*T3 + pow(dellng, 6)*T4 + pow(dellng, 8)*T5 + 1.32;
-    double E = Eoff + dellng * T6 + pow(dellng, 3)*T7 + pow(dellng, 5)*T8 + pow(dellng, 7)*T9;
+	//offset
+	double N = T1 + pow(dellng, 2)*T2 + pow(dellng, 4)*T3 + pow(dellng, 6)*T4 + pow(dellng, 8)*T5 + 1.32;
+	double E = Eoff + dellng * T6 + pow(dellng, 3)*T7 + pow(dellng, 5)*T8 + pow(dellng, 7)*T9;
 
-    vector<double> utm;
-    utm.push_back(E);
-    utm.push_back(N);
-    return utm;
+	vector<double> utm;
+	utm.push_back(E);
+	utm.push_back(N);
+	return utm;
 }
 
 double L1Distance(vector<double> coor1, vector<double> coor2) {
-    double L1 = 0;
-    L1 = abs(coor1[0] - coor2[0]) + abs(coor1[1] - coor2[1]);
+	double L1 = 0;
+	L1 = abs(coor1[0] - coor2[0]) + abs(coor1[1] - coor2[1]);
 
-    return L1;
+	return L1;
 }
 
 double L2Distance(double x2, double y2, double x1 = 0, double y1 = 0) {
-    double L2 = 0;
-    L2 = pow(pow(x2 - x1, 2) + pow(y2 - y1, 2), 0.5);
+	double L2 = 0;
+	L2 = pow(pow(x2 - x1, 2) + pow(y2 - y1, 2), 0.5);
 
-    return L2;
+	return L2;
 }
 
 vector<int> mins(double x, double y, vector<vector<double>> map_link_cut, vector<double> unitHeading) {
 
-    int min = 0;
-    int smin = 0;
-    int ssmin = 0;
-    int sssmin = 0;
-    vector <double> rt_postion{ x,y };
-    double temp = 1000000000;
+	int min = 0;
+	int smin = 0;
+	int ssmin = 0;
+	int sssmin = 0;
+	vector <double> rt_postion{ x,y };
+	double temp = 1000000000;
 
-    for (int i = 0; i < map_link_cut.size(); i++) {
-        double ref = L1Distance(rt_postion, map_link_cut[i]);
-        if (ref <= temp) {
-            sssmin = ssmin;
-            ssmin = smin;
-            smin = min;
-            min = i;
-            temp = ref;
-        }
-    }
-    int lastPoint = 0;
+	for (int i = 0; i < map_link_cut.size(); i++) {
+		double ref = L1Distance(rt_postion, map_link_cut[i]);
+		if (ref <= temp) {
+			sssmin = ssmin;
+			ssmin = smin;
+			smin = min;
+			min = i;
+			temp = ref;
+		}
+	}
+	int lastPoint = 0;
 
-    if ((unitHeading[0] * (map_link_cut[ssmin][0] - x) + unitHeading[1] * (map_link_cut[ssmin][1]) - y) >= 0) {
-        lastPoint = ssmin;
-    }
-    if ((unitHeading[0] * (map_link_cut[ssmin][0] - x) + unitHeading[1] * (map_link_cut[ssmin][1]) - y) < 0) {
-        if ((unitHeading[0] * (map_link_cut[sssmin][0] - x) + unitHeading[1] * (map_link_cut[sssmin][1]) - y) >= 0) {
-            lastPoint = sssmin;
-        }
-        else {
-            lastPoint = ssmin;
-        }
-    }
+	if ((unitHeading[0] * (map_link_cut[ssmin][0] - x) + unitHeading[1] * (map_link_cut[ssmin][1]) - y) >= 0) {
+		lastPoint = ssmin;
+	}
+	if ((unitHeading[0] * (map_link_cut[ssmin][0] - x) + unitHeading[1] * (map_link_cut[ssmin][1]) - y) < 0) {
+		if ((unitHeading[0] * (map_link_cut[sssmin][0] - x) + unitHeading[1] * (map_link_cut[sssmin][1]) - y) >= 0) {
+			lastPoint = sssmin;
+		}
+		else {
+			lastPoint = ssmin;
+		}
+	}
 
-    vector<int> temp2{ lastPoint, smin, min };
-    return temp2;
+	vector<int> temp2{ lastPoint, smin, min };
+	return temp2;
 }
 
 
 //�������� ���͸� ����
 vector<double> makeVector(double x1, double y1, double x2, double y2) {
-    double _x = x1 - x2;
-    double _y = y1 - y2;
-    vector<double> temp{ _x,_y };
+	double _x = x1 - x2;
+	double _y = y1 - y2;
+	vector<double> temp{ _x,_y };
 
-    return temp;
+	return temp;
 }
 
 //���� ����
 double outerProduct(double x1, double y1, double x2, double y2) {
-    double temp = x1 * y2 - y1 * x2; // 2���� ��������
+	double temp = x1 * y2 - y1 * x2; // 2���� ��������
 
-    // �����̸� ������ �߾��� �����ʹ���, �����̸� ���ʹ���
-    return temp;
+	// �����̸� ������ �߾��� �����ʹ���, �����̸� ���ʹ���
+	return temp;
 }
 
 //������ �̿��ؼ� �Ÿ����ϴ� �˰���������
 double getDistance(vector<double> a, vector<double> h) {
-    vector<double> _d;
+	vector<double> _d;
 
-    _d.push_back(a[0] - (a[0] * h[0] + a[1] * h[1])*h[0]);
-    _d.push_back(a[1] - (a[0] * h[0] + a[1] * h[1])*h[1]);
-    //(unitHeading[0], unitHeading[1], vec1[0], vec1[1]);
-    double d = outerProduct(h[0], h[1], a[0], a[1]);
-    return d;
+	_d.push_back(a[0] - (a[0] * h[0] + a[1] * h[1])*h[0]);
+	_d.push_back(a[1] - (a[0] * h[0] + a[1] * h[1])*h[1]);
+	//(unitHeading[0], unitHeading[1], vec1[0], vec1[1]);
+	double d = outerProduct(h[0], h[1], a[0], a[1]);
+	return d;
 }
 
 double getError(double x, double y, vector<vector<double>> map_link, vector<double> unitHeading) {
 
-    vector<vector<double>> map_link_cut;
+	vector<vector<double>> map_link_cut;
 
-    //map_link���� ������ǥ�� �������� �ȿ� �����ִ� ��ǥ���� ���� ����
-    //��, ������ġ�� ���� ����������ŭ �ڸ��� ����
-    for (int i = 0; i < map_link.size(); i++) {
-        if ((map_link[i][0] >= x - 50 && map_link[i][0] <= x + 50) && (map_link[i][1] >= y - 50 && map_link[i][1] <= y + 50)) {
-            map_link_cut.push_back(map_link[i]);
-        }
-    }
+	//map_link���� ������ǥ�� �������� �ȿ� �����ִ� ��ǥ���� ���� ����
+	//��, ������ġ�� ���� ����������ŭ �ڸ��� ����
+	for (int i = 0; i < map_link.size(); i++) {
+		if ((map_link[i][0] >= x - 50 && map_link[i][0] <= x + 50) && (map_link[i][1] >= y - 50 && map_link[i][1] <= y + 50)) {
+			map_link_cut.push_back(map_link[i]);
+		}
+	}
 
-    vector<int> _mins = mins(x, y, map_link_cut, unitHeading); // return {min , smin, ssmin} �ε��� �ѹ�
+	vector<int> _mins = mins(x, y, map_link_cut, unitHeading); // return {min , smin, ssmin} �ε��� �ѹ�
 
-    //������ ���� ������ ���� ���ͻ���
-    vector<double> vec1 = makeVector(map_link_cut[_mins[0]][0], map_link_cut[_mins[0]][1], x, y);
-    vector<double> vec2 = makeVector(map_link_cut[_mins[1]][0], map_link_cut[_mins[1]][1], x, y);
-    vector<double> vec3 = makeVector(map_link_cut[_mins[2]][0], map_link_cut[_mins[2]][1], x, y);
+	//������ ���� ������ ���� ���ͻ���
+	vector<double> vec1 = makeVector(map_link_cut[_mins[0]][0], map_link_cut[_mins[0]][1], x, y);
+	vector<double> vec2 = makeVector(map_link_cut[_mins[1]][0], map_link_cut[_mins[1]][1], x, y);
+	vector<double> vec3 = makeVector(map_link_cut[_mins[2]][0], map_link_cut[_mins[2]][1], x, y);
 
-    //������ ���鿡 ���� �Ÿ�
-    double d1 = getDistance(vec1, unitHeading);
-    double d2 = getDistance(vec2, unitHeading);
-    double d3 = getDistance(vec3, unitHeading);
+	//������ ���鿡 ���� �Ÿ�
+	double d1 = getDistance(vec1, unitHeading);
+	double d2 = getDistance(vec2, unitHeading);
+	double d3 = getDistance(vec3, unitHeading);
 
-    double Error = (abs(d1) + abs(d2) + abs(d3)) / 3;
+	double Error = (abs(d1) + abs(d2) + abs(d3)) / 3;
 
-    return Error;
+	return Error;
 }
 
 // threshole�� 0.9���� ���Ƿ� ����, ���������� �ϴ� 0.9���� ������(�ʿ信 ���� �ٲ� �� ����)
@@ -866,19 +848,19 @@ double getError(double x, double y, vector<vector<double>> map_link, vector<doub
 // else GEOFENCE = FALUSE
 bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double heading) {
 
-    vector<double> unitHeading{ sin(heading*(PI / 180)),cos(heading*(PI / 180)) }; // ������ ���ֺ��� ����
+	vector<double> unitHeading{ sin(heading*(PI / 180)),cos(heading*(PI / 180)) }; // ������ ���ֺ��� ����
 
-    double Error = getError(x, y, map_link, unitHeading);
-    if (Error > 0) {
-        sign = true;
-    }
-    else {
-        sign = false;
-    }
-    if (abs(Error) >= threshold) {
-        return true;
-    }
-    else {
-        return false;
-    }
+	double Error = getError(x, y, map_link, unitHeading);
+	if (Error > 0) {
+		sign = true;
+	}
+	else {
+		sign = false;
+	}
+	if (abs(Error) >= threshold) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
