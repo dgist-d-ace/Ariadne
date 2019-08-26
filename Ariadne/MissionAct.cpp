@@ -51,6 +51,11 @@ Driving::Driving() {
 	////Fill the Regions where cannot go in, because of max value of steering angle.////
 	////////////////////////////////////////////////////////////////////////////////////
 
+	double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
+	double rightEndX = cenX + SICK_SCAN_ROI_X * scale;
+	double topEndY = cenY - SICK_SCAN_ROI_Y * scale;
+	double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
+
 	int npt2[] = { 4 };
 	//Left area where platform can not go (left 60degrees)
 	Point points[1][4];
@@ -414,12 +419,15 @@ void Driving::getGpsData(int scorestep)
 }
 
 void Driving::PASIVcontrol(double desired_speed, double goTheta1, double goTheta2, double desired_brake){
+{
 
 	//get the values from platform
 	/*double pre_speed, pre_steer, pre_brake;
 	pre_speed = dataContainer->getValue_PtoU_SPEED()/10;
 	pre_steer = dataContainer->getValue_PtoU_STEER()/10;
 	pre_brake = dataContainer->getValue_PtoU_BRAKE()/10;*/
+
+
 	double desired_steering = goTheta1 * steerRatio + goTheta2 * (1 - steerRatio);
 	Point2d pntF(cenX + onestep * 1.5 * cos(CV_PI*(90 + desired_steering) / 180), cenY - onestep * 1.5*sin(CV_PI*(90 + desired_steering) / 180));
 	arrowedLine(imgPath, Point2d(cenX, cenY), pntF, Scalar::all(200), 2);
@@ -427,6 +435,8 @@ void Driving::PASIVcontrol(double desired_speed, double goTheta1, double goTheta
 	if (desired_brake > 0) { desired_speed = 0;  desired_steering = 0; }
 
 	if (desired_speed > 0) { desired_brake = 0; }
+
+
 	
 	//function
 	cout << "desired_speed = " << desired_speed << endl;
@@ -463,6 +473,12 @@ void Driving::Basic(int missionId) {
 
 		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
 		vector<Point2d> vecXYDraw;
+
+		//ROI AREA in the maps
+		double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
+		double rightEndX = cenX + SICK_SCAN_ROI_X * scale;
+		double topEndY = cenY - SICK_SCAN_ROI_Y * scale;
+		double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
 
 		//Localization of LiDAR in the ROI
 		Point2d locLidar(cenX, cenY);
@@ -1226,6 +1242,8 @@ void Driving::MissionDynamicObs() {
 		PASIVcontrol(desired_speed, goTheta1, goTheta2, desired_brake);
 		QImage image1 = QImage((uchar*)imgPath.data, imgPath.cols, imgPath.rows, imgPath.step, QImage::Format_RGB888);
 		dataContainer->setValue_ui_pathmap(image1);
+
+
 
 		///////////////////////////////////////////////////////
 		////Trigger for ending the Dynamic Obstacle Mission////

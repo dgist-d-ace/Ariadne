@@ -24,18 +24,18 @@ protected:
 	/////////////////
 	Mat getLaneData(int scorestep);
 	void getGpsData(int scorestep);
+
 	Mat scoreMap;
+
 	Mat imgPath = Mat::zeros(600, 600, CV_8UC1);
 	Mat outRange = Mat::zeros(600, 600, CV_8UC1);
 	double cenX = (double)imgPath.cols * 0.5, cenY = (double)imgPath.rows *1.0; //the location of LiDAR in the map.
 	double scale = cenY / (SICK_SCAN_ROI_Y + 50);
 	double carW = CAR_WIDTH * scale, carH = CAR_HEIGH * scale;
 	uchar onestep = (CAR_WIDTH)* scale;
-	double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
-	double rightEndX = cenX + SICK_SCAN_ROI_X * scale;
-	double topEndY = cenY - SICK_SCAN_ROI_Y * scale;
-	double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
 
+
+	Mat scoreMap;
 
 	vector<Mat> checkImgs;
 	//vector<int> checkTheta = { 0, -2,2, -4, 4, -6, 6, -8, 8, -10,10, -12,12, -14, 14, -16,16,-18,18, -20, 20, -22,22,-24,24,-26, 26 };//The steering angle candidates
