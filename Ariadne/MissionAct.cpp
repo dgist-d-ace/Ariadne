@@ -12,7 +12,6 @@ using namespace cv;
 //smaller onestep is better, but we also need the long step.
 //
 
-
 Driving::Driving() {
 	dataContainer = DataContainer::getInstance();
 
@@ -49,10 +48,6 @@ Driving::Driving() {
 	////////////////////////////////////////////////////////////////////////////////////
 	////Fill the Regions where cannot go in, because of max value of steering angle.////
 	////////////////////////////////////////////////////////////////////////////////////
-	double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
-	double rightEndX = cenX + SICK_SCAN_ROI_X * scale;
-	double topEndY = cenY - SICK_SCAN_ROI_Y * scale;
-	double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
 	int npt2[] = { 4 };
 	//Left area where platform can not go (left 60degrees)
 	Point points[1][4];
@@ -78,167 +73,16 @@ Driving::Driving() {
 	void setPath();
 }
 
-vector<vector<double>>Driving:: WaySimul_straight() {
-	double path_x;
-	double path_y;
-
-	ifstream gpsfile("test1.txt");
-
-	char line[200];
-	string tap;
-	vector<string> vec;
-	vector<double> temp;
-	vector<vector<double>> gpsWayPoint;
-
-	if (gpsfile.is_open()) {
-		while (gpsfile.getline(line, sizeof(line), '\n')) {
-
-			stringstream str(line);
-
-			while (getline(str, tap, ',')) {
-				vec.push_back(tap);
-			}
-
-			path_x = (atof(vec[0].c_str()));
-			path_y = (atof(vec[1].c_str()));
-			temp.push_back(path_x);
-			temp.push_back(path_y);
-			gpsWayPoint.push_back(temp);
-
-			vec.clear();
-			temp.clear();
-		}
-	}
-
-	return gpsWayPoint;
-}
-
-vector<vector<double>>Driving::WaySimul_turn() {
-	double path_x;
-	double path_y;
-
-	ifstream gpsfile("test2.txt");
-
-	char line[200];
-	string tap;
-	vector<string> vec;
-	vector<double> temp;
-	vector<vector<double>> gpsWayPoint;
-
-	if (gpsfile.is_open()) {
-		while (gpsfile.getline(line, sizeof(line), '\n')) {
-
-			stringstream str(line);
-
-			while (getline(str, tap, ',')) {
-				vec.push_back(tap);
-			}
-
-			path_x = (atof(vec[0].c_str()));
-			path_y = (atof(vec[1].c_str()));
-			temp.push_back(path_x);
-			temp.push_back(path_y);
-			gpsWayPoint.push_back(temp);
-
-			vec.clear();
-			temp.clear();
-		}
-	}
-
-	return gpsWayPoint;
-}
-
-void Driving::setPath() {
-	double path_x;
-	double path_y;
-
-	//경로 설정 바꿔야함
-	ifstream gpsfile("test1.txt");
-
-	char line[200];
-	string tap;
-	vector<string> vec;
-	vector<double> temp;
-
-	if (gpsfile.is_open()) {
-		while (gpsfile.getline(line, sizeof(line), '\n')) {
-
-			stringstream str(line);
-
-			while (getline(str, tap, ',')) {
-				vec.push_back(tap);
-			}
-
-			path_x = (atof(vec[0].c_str()));
-			path_y = (atof(vec[1].c_str()));
-			temp.push_back(path_x);
-			temp.push_back(path_y);
-			path.push_back(temp);
-
-			vec.clear();
-			temp.clear();
-		}
-	}
-}
-
-#define num 100
-vector<vector<double>> Driving::forPASIV_path(double x_p, double y_p, vector<vector<double>> path) {
-	int min = 0;
-	int smin = 0;
-	double temp = 10000000;
-
-	for (int i = 0; i < path.size(); i++) {
-		double ref = pow(pow(x_p - path[i][0], 2) + pow(y_p - path[i][1], 2), 0.5);
-		
-		if (ref <= temp) {
-			min = i;
-			smin = min;
-			temp = ref;
-		}
-	}
-	
-	if (pow(pow(x_p - path[smin][0], 2) + pow(y_p - path[smin][1], 2), 0.5) > 10 || abs(min - smin) > 100) {
-		min = smin + 5;
-	}
-
-	vector<vector<double>> result;
-
-	for (int i = min; i < num; i++) {
-		result.push_back(path[i]);
-	}
-
-	return result;
-
-}
-
-vector<vector<double>> Driving::getWaypoint(double x_p, double y_p, double heading, vector<vector<double>>forPASIV_path) {
-	double theta = 2 * CV_PI - heading;
-
-	vector<vector<double>> gpsWayPoint;
-
-	for (int i = 0; i < forPASIV_path.size(); i++) {
-		vector<double> temp{ (forPASIV_path[i][0] - x_p + 300) * cos(theta) + (forPASIV_path[i][1] - y_p + 600) * sin(theta), (forPASIV_path[i][0] - x_p + 300) * sin(theta) - (forPASIV_path[i][1] - y_p + 600) * cos(theta) };
-		gpsWayPoint.push_back(temp);
-		temp.clear();
-	}
-
-	return gpsWayPoint;
-}
-
-#define scoreStep 5
-#define itvLane	20 //tuning with real scale ratio with Bae
 //Input: lane data from scnn
 //output: 600x600 Mat image
 //Make the scored lane map 
 //Tuning Point:
-/*
-**vector about steering angle(or checking angle)
-**onestep
-**do or dont fill the area meaning out of steering angle range
-**kernal size for obstacle, inter size of lane.
-**value of lane, obstacle
-**speed decision.(ratio)
-*/
+//**vector about steering angle(or checking angle)
+//**onestep
+//**do or dont fill the area meaning out of steering angle range
+//**kernal size for obstacle, inter size of lane.
+//**value of lane, obstacle
+//**speed decision.(ratio)
 //Manual tuning: scoreStep & itvLane
 Mat Driving::getLaneData(int scorestep)
 {
@@ -415,16 +259,19 @@ void Driving::getGpsData(int scorestep)
 
 }
 
-void Driving::PASIVcontrol(double desired_speed, double desired_steering, double desired_brake)
+void Driving::PASIVcontrol(double desired_speed, double goTheta1, double goTheta2, double desired_brake)
 {
 	//get the values from platform
 	/*double pre_speed, pre_steer, pre_brake;
 	pre_speed = dataContainer->getValue_PtoU_SPEED()/10;
 	pre_steer = dataContainer->getValue_PtoU_STEER()/10;
 	pre_brake = dataContainer->getValue_PtoU_BRAKE()/10;*/
-	
+	double desired_steering = goTheta1 * steerRatio + goTheta2 * (1 - steerRatio);
+	Point2d pntF(cenX + onestep * 1.5 * cos(CV_PI*(90 + desired_steering) / 180), cenY - onestep * 1.5*sin(CV_PI*(90 + desired_steering) / 180));
+	arrowedLine(imgPath, Point2d(cenX, cenY), pntF, Scalar::all(200), 2);
+
 	if (desired_speed > 0) { desired_brake = 0; }
-	if (desired_brake > 0) { desired_speed = 0; }
+	if (desired_brake > 0) { desired_speed = 0;  desired_steering = 0;}
 	
 	//function
 	cout << "desired_speed = " << desired_speed << endl;
@@ -456,17 +303,12 @@ void Driving::Basic(int missionId) {
 			break;
 		}
 		///////////////////////////////////////////
+
 		imgPath = cv::Mat::zeros(600, 600, CV_8UC1);				//path made with lanes and objs
 		scoreMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1); //lane map without objs
 
 		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
 		vector<Point2d> vecXYDraw;
-
-		//ROI AREA in the maps
-		double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
-		double rightEndX = cenX + SICK_SCAN_ROI_X * scale;
-		double topEndY = cenY - SICK_SCAN_ROI_Y * scale;
-		double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
 
 		//Localization of LiDAR in the ROI
 		Point2d locLidar(cenX, cenY);
@@ -474,6 +316,8 @@ void Driving::Basic(int missionId) {
 		//////////////////////////////////////////////////////////////////
 		////Because Of Obstacles, Fill the Regions where cannot go in.////
 		//////////////////////////////////////////////////////////////////
+		
+		///clustering
 		for (int i = 0; i < vecXY.size(); ++i) {
 			double xyDrawX = locLidar.x + vecXY[i].x * scale;
 			double xyDrawY = locLidar.y - vecXY[i].y * scale;
@@ -491,12 +335,14 @@ void Driving::Basic(int missionId) {
 			}
 		}
 
+		///filling the area
 		vector<vector<double> > objDataSet = dataContainer->getValue_lidar_Data().back();
 		Point polypts[1][4];
 		double cirCenX, cirCenY, cirCenR;
 		double cenDist, touchDist, theta_s, theta_l;
 		vector<double>objdist;
 		int polyX1, polyY1, polyX2, polyY2, polyX3, polyY3, polyX4, polyY4;
+
 		for (int i = 0; i < objDataSet.size(); i++) {
 			cirCenX = locLidar.x + objDataSet[i][0] * scale;
 			cirCenY = locLidar.y - objDataSet[i][1] * scale;
@@ -507,27 +353,33 @@ void Driving::Basic(int missionId) {
 			touchDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2) - pow(cirCenR, 2));
 			theta_s = asin(cirCenR / cenDist);
 			theta_l = atan(objDataSet[i][1] / objDataSet[i][0]);
+
 			if (theta_l < 0) {
 				theta_l += CV_PI;
 			}
+
 			polyX1 = (int)(touchDist*cos(theta_l - theta_s) + cenX), polyY1 = (int)(cenY - touchDist * sin(theta_l - theta_s));
 			polyX2 = (int)(touchDist*cos(theta_l + theta_s) + cenX), polyY2 = (int)(cenY - touchDist * sin(theta_l + theta_s));
 			polyX3 = (polyX2 - cenX)*(cenY - topEndY) / (cenY - polyY2) + cenX, polyY3 = topEndY;
 			polyX4 = (polyX1 - cenX)*(cenY - topEndY) / (cenY - polyY1) + cenX, polyY4 = topEndY;
+
 			if (polyY1 > cenY) {
 				polyX4 = polyX4 * (-1);
 				polyY4 = bottomEndY - 0.0001;
 			}
+
 			if (polyY2 > cenY) {
 				polyX3 = polyX3 * (-1);
 				polyY3 = bottomEndY - 0.0001;
 			}
+
 			polypts[0][0] = Point(polyX1, polyY1);
 			polypts[0][1] = Point(polyX2, polyY2);
 			polypts[0][2] = Point(polyX3, polyY3);
 			polypts[0][3] = Point(polyX4, polyY4);
 			const Point* ppt[1] = { polypts[0] };
 			int npt[] = { 4 };
+
 			fillPoly(imgPath, ppt, npt, 1, CV_RGB(200, 200, 200));
 			circle(imgPath, cirCen, cirCenR, CV_RGB(255, 255, 255), -1, CV_AA);
 		}
@@ -600,9 +452,6 @@ void Driving::Basic(int missionId) {
 		Point2d stepSecond(stepFirst.x + onestep * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*sin(CV_PI*(90 + goTheta2) / 180)));
 		Point2d dangerPoint(cenX + onestep * cos(CV_PI*(90 + dangerTheta) / 180), cenY - (onestep*sin(CV_PI*(90 + dangerTheta) / 180)));
 
-		double desired_steering = goTheta1 * steerRatio + goTheta2 * (1 - steerRatio);
-		Point2d pntF(cenX + onestep * 1.5 * cos(CV_PI*(90 + desired_steering) / 180), cenY - onestep * 1.5*sin(CV_PI*(90 + desired_steering) / 180));
-
 		arrowedLine(imgPath, locLidar, stepFirst,Scalar::all(50), 5);
 		arrowedLine(imgPath, stepFirst, stepSecond, Scalar::all(50), 5);
 
@@ -624,15 +473,9 @@ void Driving::Basic(int missionId) {
 		}
 
 		double desired_speed = speedHigh * scoreofPath / scoreofMap;
-		//circle(imgPath, dangerPoint,20,Scalar::all(255),  -1, CV_AA, 0 );
-			///////////////////////
-			////Extra Condition////
-			///////////////////////
 		double desired_brake;
 		if (objdist.size() == 0) {
-			//There is no obstacles.
 			desired_brake=0;
-			cv::arrowedLine(imgPath, locLidar, pntF, Scalar::all(200), 2);
 		}
 		else {
 			//stop condition
@@ -649,22 +492,19 @@ void Driving::Basic(int missionId) {
 				//limit the speed
 				desired_brake = 0;
 				desired_speed = speedLow; cout << "LOW SCORE!!" << endl;
-				cv::arrowedLine(imgPath, locLidar, pntF, Scalar::all(200), 2);
 			}
 			else {
 				desired_brake = 0;
 				desired_speed = desired_speed;
-				cv::arrowedLine(imgPath, locLidar, pntF, Scalar::all(200), 2);
 			}
 		}
-		//cout << "ordered speed: " << desired_speed << endl;
 		//imshow("Map", scoreMap);
 		imshow("Path", imgPath);
 
 		//////////////////////////////////////////////////
 		////Final Control the steering angle and speed////
 		//////////////////////////////////////////////////
-		PASIVcontrol(desired_speed, desired_steering, desired_brake);
+		PASIVcontrol(desired_speed, goTheta1, goTheta2, desired_brake);
 
 		end = clock();
 		cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl ;
@@ -933,6 +773,158 @@ void Driving::BasicGPS(int missionId) {
 	}
 }
 
+
+vector<vector<double>>Driving::WaySimul_straight() {
+	double path_x;
+	double path_y;
+
+	ifstream gpsfile("test1.txt");
+
+	char line[200];
+	string tap;
+	vector<string> vec;
+	vector<double> temp;
+	vector<vector<double>> gpsWayPoint;
+
+	if (gpsfile.is_open()) {
+		while (gpsfile.getline(line, sizeof(line), '\n')) {
+
+			stringstream str(line);
+
+			while (getline(str, tap, ',')) {
+				vec.push_back(tap);
+			}
+
+			path_x = (atof(vec[0].c_str()));
+			path_y = (atof(vec[1].c_str()));
+			temp.push_back(path_x);
+			temp.push_back(path_y);
+			gpsWayPoint.push_back(temp);
+
+			vec.clear();
+			temp.clear();
+		}
+	}
+
+	return gpsWayPoint;
+}
+
+vector<vector<double>>Driving::WaySimul_turn() {
+	double path_x;
+	double path_y;
+
+	ifstream gpsfile("test2.txt");
+
+	char line[200];
+	string tap;
+	vector<string> vec;
+	vector<double> temp;
+	vector<vector<double>> gpsWayPoint;
+
+	if (gpsfile.is_open()) {
+		while (gpsfile.getline(line, sizeof(line), '\n')) {
+
+			stringstream str(line);
+
+			while (getline(str, tap, ',')) {
+				vec.push_back(tap);
+			}
+
+			path_x = (atof(vec[0].c_str()));
+			path_y = (atof(vec[1].c_str()));
+			temp.push_back(path_x);
+			temp.push_back(path_y);
+			gpsWayPoint.push_back(temp);
+
+			vec.clear();
+			temp.clear();
+		}
+	}
+
+	return gpsWayPoint;
+}
+
+void Driving::setPath() {
+	double path_x;
+	double path_y;
+
+	//경로 설정 바꿔야함
+	ifstream gpsfile("test1.txt");
+
+	char line[200];
+	string tap;
+	vector<string> vec;
+	vector<double> temp;
+
+	if (gpsfile.is_open()) {
+		while (gpsfile.getline(line, sizeof(line), '\n')) {
+
+			stringstream str(line);
+
+			while (getline(str, tap, ',')) {
+				vec.push_back(tap);
+			}
+
+			path_x = (atof(vec[0].c_str()));
+			path_y = (atof(vec[1].c_str()));
+			temp.push_back(path_x);
+			temp.push_back(path_y);
+			path.push_back(temp);
+
+			vec.clear();
+			temp.clear();
+		}
+	}
+}
+
+#define num 100
+vector<vector<double>> Driving::forPASIV_path(double x_p, double y_p, vector<vector<double>> path) {
+	int min = 0;
+	int smin = 0;
+	double temp = 10000000;
+
+	for (int i = 0; i < path.size(); i++) {
+		double ref = pow(pow(x_p - path[i][0], 2) + pow(y_p - path[i][1], 2), 0.5);
+
+		if (ref <= temp) {
+			min = i;
+			smin = min;
+			temp = ref;
+		}
+	}
+
+	if (pow(pow(x_p - path[smin][0], 2) + pow(y_p - path[smin][1], 2), 0.5) > 10 || abs(min - smin) > 100) {
+		min = smin + 5;
+	}
+
+	vector<vector<double>> result;
+
+	for (int i = min; i < num; i++) {
+		result.push_back(path[i]);
+	}
+
+	return result;
+
+}
+
+vector<vector<double>> Driving::getWaypoint(double x_p, double y_p, double heading, vector<vector<double>>forPASIV_path) {
+	double theta = 2 * CV_PI - heading;
+
+	vector<vector<double>> gpsWayPoint;
+
+	for (int i = 0; i < forPASIV_path.size(); i++) {
+		vector<double> temp{ (forPASIV_path[i][0] - x_p + 300) * cos(theta) + (forPASIV_path[i][1] - y_p + 600) * sin(theta), (forPASIV_path[i][0] - x_p + 300) * sin(theta) - (forPASIV_path[i][1] - y_p + 600) * cos(theta) };
+		gpsWayPoint.push_back(temp);
+		temp.clear();
+	}
+
+	return gpsWayPoint;
+}
+
+	////////////////
+	////Missions////
+	////////////////
+
 //Mission No.1: Parking
 void Driving::MissionParking() {
 	cout << "parking start" << endl;
@@ -1065,22 +1057,14 @@ void Driving::MissionDynamicObs() {
 		imgPath = cv::Mat::zeros(600, 600, CV_8UC1);
 		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
 		vector<Point2d> vecXYDraw;
-		double cenX = imgPath.cols * 0.5, cenY = imgPath.rows *0.99; //the location of LiDAR in the map.
-		double scale = cenY / (SICK_SCAN_ROI_Y + 50);				  //obj_Data => imgPath
-		//ROI AREA
-		double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
-		double rightEndX = cenX + SICK_SCAN_ROI_X * scale;
-		double topEndY = cenY - SICK_SCAN_ROI_Y * scale;
-		double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
-		//Localization of LiDAR in the ROI
-		Point2d center(cenX, cenY);
 
+		Point2d locLidar(cenX, cenY);
 		//////////////////////////////////////////////////////////////////
 		////Because Of Obstacles, Fill the Regions where cannot go in.////
 		//////////////////////////////////////////////////////////////////
 		for (int i = 0; i < vecXY.size(); ++i) {
-			double xyDrawX = center.x + vecXY[i].x * scale;
-			double xyDrawY = center.y - vecXY[i].y * scale;
+			double xyDrawX = locLidar.x + vecXY[i].x * scale;
+			double xyDrawY = locLidar.y - vecXY[i].y * scale;
 
 			Point2d xyDraw(xyDrawX, xyDrawY);
 			vecXYDraw.push_back(xyDraw);
@@ -1104,12 +1088,12 @@ void Driving::MissionDynamicObs() {
 		int polyX1, polyY1, polyX2, polyY2, polyX3, polyY3, polyX4, polyY4;
 
 		for (int i = 0; i < objDataSet.size(); i++) {
-			cirCenX = center.x + objDataSet[i][0] * scale;
-			cirCenY = center.y - objDataSet[i][1] * scale;
+			cirCenX = locLidar.x + objDataSet[i][0] * scale;
+			cirCenY = locLidar.y - objDataSet[i][1] * scale;
 			cirCenR = objDataSet[i][2] * scale;
 			Point2d cirCen(cirCenX, cirCenY); //locLidar of objs.
 			cenDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2));
-			if (cirCenY < (center.y - 10) && (abs(cenDist-cirCenR) >0.001)) { 
+			if (cirCenY < (locLidar.y - 10) && (abs(cenDist-cirCenR) >0.001)) { 
 				objdist.push_back(cenDist - cirCenR);
 			}
 
@@ -1181,7 +1165,7 @@ void Driving::MissionDynamicObs() {
 		double desired_steering = goTheta1 * steerRatio + goTheta2 * (1 - steerRatio);
 		Point2d pntF(cenX + onestep * 1.5 * cos(CV_PI*(90 + desired_steering) / 180), cenY - onestep * 1.5*sin(CV_PI*(90 + desired_steering) / 180));
 
-		arrowedLine(imgPath, center, stepFirst, CV_RGB(50, 50, 50), 5);
+		arrowedLine(imgPath, locLidar, stepFirst, CV_RGB(50, 50, 50), 5);
 		arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(50, 50, 50), 5);
 		
 
@@ -1203,11 +1187,11 @@ void Driving::MissionDynamicObs() {
 		desired_speed = DynamicMaxSpeed *scorePath /scoreLaneMap;
 
 		double thDist = stopDist * scale;
-		circle(imgPath, center, thDist, Scalar::all(255));
+		circle(imgPath, locLidar, thDist, Scalar::all(255));
 
 		double objClose = -1;
 		if (objdist.size() == 0){
-			cv::arrowedLine(imgPath, center, pntF, CV_RGB(255, 255, 255), 2);
+			cv::arrowedLine(imgPath, locLidar, pntF, CV_RGB(255, 255, 255), 2);
 		}
 		else{
 			objClose = objdist.at(distance(objdist.begin(), min_element(objdist.begin(), objdist.end())));
@@ -1218,7 +1202,7 @@ void Driving::MissionDynamicObs() {
 				cout << "STOP!!!!!!!!!!!!!!!!!!!!!!!" << endl;
 			}
 			else{
-				cv::arrowedLine(imgPath, center, pntF, CV_RGB(255, 255, 255), 2);
+				cv::arrowedLine(imgPath, locLidar, pntF, CV_RGB(255, 255, 255), 2);
 			}
 		}
 		//////////////////////////////////////////////////
@@ -1226,7 +1210,7 @@ void Driving::MissionDynamicObs() {
 		//////////////////////////////////////////////////
 		//imshow("Map", LaneMap);
 		imshow("Path", imgPath);
-		PASIVcontrol(desired_speed, desired_steering, desired_brake);
+		PASIVcontrol(desired_speed, goTheta1, goTheta2, desired_brake);
 
 		///////////////////////////////////////////////////////
 		////Trigger for ending the Dynamic Obstacle Mission////
