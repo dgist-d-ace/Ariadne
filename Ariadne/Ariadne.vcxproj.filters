@@ -147,8 +147,4 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\..\..\Desktop\test1.txt" />
-    <Text Include="..\..\..\Desktop\test2.txt" />
-  </ItemGroup>
 </Project>
