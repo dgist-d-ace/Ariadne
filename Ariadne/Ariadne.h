@@ -48,6 +48,7 @@ signals:
 	void GPSExit();
 	void latitudeChanged(double);
 	void longitudeChanged(double);
+	void headingChanged(double);
 
 public slots:
 	void comGPS();
@@ -168,6 +169,7 @@ public slots:
 
 	void onLatitudeChanged(double);
 	void onLongitudeChanged(double);
+	void onHeadingChanged(double);
 
 	void onGreenLight(bool);
 

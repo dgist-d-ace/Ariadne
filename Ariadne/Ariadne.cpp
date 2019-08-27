@@ -119,6 +119,7 @@ Ariadne::Ariadne(QWidget *parent)
 
 	connect(gpsCom, SIGNAL(latitudeChanged(double)), this, SLOT(onLatitudeChanged(double)));
 	connect(gpsCom, SIGNAL(longitudeChanged(double)), this, SLOT(onLongitudeChanged(double)));
+	connect(gpsCom, SIGNAL(headingChanged(double)), this, SLOT(onHeadingChanged(double)));
 
 	// ------------------- UI update for Mission ----------------------//
 
@@ -330,6 +331,7 @@ void Ariadne::onGreenLight(bool light)
 {
 	/// TODO: 여기서 true가 나오면 ui 버튼도 업데이트할 것.
 }
+void Ariadne::onHeadingChanged(double Number) { ui->lcdNumber_10->display(Number); }
 
 void Ariadne::AutoPortFinder() {
 
@@ -607,6 +609,7 @@ void GPSCom::comGPS() { // rt ; Real Time
 
 							emit latitudeChanged(lat / 1000);
 							emit longitudeChanged(lng / 1000); /// 숫자가 너무 커서 나눴음
+							emit headingChanged(heading);
 
 							cout << lat << "    " << lng << endl;
 						}
