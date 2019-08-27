@@ -13,7 +13,7 @@
 #define itvLane	15 //400*400
 
 //Tuning point in getGpsData
-#define GPSscoreStep 20
+#define GPSscoreStep 10
 ///#define itvGPS 30 //600*600
 #define itvGPS 20 //400*400
 
@@ -23,7 +23,7 @@
 
 //Tuning points in Dynamic Mission
 #define stopDist 1200.0 //for Dynamic Obstacle mission
-#define DynamicMaxSpeed 10.0
+#define DynamicMaxSpeed 12.0
 
 class Driving : public QObject
 {

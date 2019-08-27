@@ -21,8 +21,10 @@ private:
 	int f_brake = 0;
 	*/
 	void setWritePram(BYTE* writeBuffer);
+
 	int setData_steering(double desired_steering);
 	int setData_speed(double desired_speed);
+	int setData_brake(double desired_brake);
 
 public:
 	ComPlatform();

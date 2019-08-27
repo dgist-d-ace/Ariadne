@@ -200,7 +200,7 @@ void Ariadne::clicked_btn_sensor() {
 
 	//if (!yoloThread->isRunning()){ yoloThread->start(); }
 
-	if (!platformThread->isRunning()) { platformThread->start(); }
+	//if (!platformThread->isRunning()) { platformThread->start(); }
 	//dataContainer->setValue_UtoP_AorM(1);
 
 	if (!lidarThread->isRunning()) { lidarThread->start(); }

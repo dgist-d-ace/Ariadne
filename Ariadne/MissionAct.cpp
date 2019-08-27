@@ -257,9 +257,10 @@ Mat Driving::getLaneData(int scorestep)
 Mat Driving::getGpsData(int scorestep)
 {
 	int mission = dataContainer->getValue_yolo_missionID();
+	int stepNum = 9;
 	vector<Point2d> wayPoints;
 	Mat gpsMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
-	gpsMap = Scalar::all(scorestep*6);
+	gpsMap = Scalar::all(scorestep*stepNum);
 
 	if (mission == INTER_STRAIGHT){wayPoints = WaySimul_straight();}
 	else if (mission == INTER_RIGHT){wayPoints = WaySimul_turn();}
@@ -270,11 +271,11 @@ Mat Driving::getGpsData(int scorestep)
 	//Function
 	Mat buffer = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 	Point2d getPoint;
-	for (int i = 0; i < 5; i++){
+	for (int i = 1; i < stepNum; i++){
 		buffer = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
-		for (int j = 1; j < wayPoints.size(); j++){
+		for (int j = 0; j < wayPoints.size(); j++){
 			getPoint = Point2d(wayPoints.at(j).x *2/3, wayPoints.at(j).y*2/3);
-			circle(buffer, getPoint, itvGPS * (5-i), Scalar::all(scorestep), -1, CV_AA, 0);
+			circle(buffer, getPoint, itvGPS * (stepNum-i), Scalar::all(scorestep), -1, CV_AA, 0);
 		}
 		gpsMap -= buffer;
 	}
@@ -286,7 +287,7 @@ void Driving::PASIVcontrol(Mat imgPath, double desired_speed, double steer1, dou
 {
 	//function
 
-	//1. steering angle with speicific condition
+	//1. steering angle with speicific condition(success!!)
 	if (steer2 == 0 ||steer1*steer2<0) {
 		if (abs(steer1 > 4)) {
 			steer1 *1.5;
@@ -336,7 +337,6 @@ void Driving::Basic(int missionId) {
 			break;
 		}
 		///////////////////////////////////////////
-		///imgPath = cv::Mat::zeros(600, 600, CV_8UC1);				//path made with lanes and objs
 		imgPath = cv::Mat::zeros(400, 400, CV_8UC1);				//path made with lanes and objs
 		scoreMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1); //lane map without objs
 
@@ -416,10 +416,8 @@ void Driving::Basic(int missionId) {
 		threshold(imgPath, imgPath, 1, 20, THRESH_BINARY_INV);
 		threshold(scoreMap, scoreMap, 1, 20, THRESH_BINARY_INV);
 
-		///Mat _window = Mat::ones(15, 15, CV_8UC1);
 		Mat _window = Mat::ones(10, 10, CV_8UC1);
 		morphologyEx(imgPath, imgPath, MORPH_ERODE, _window);
-		//morphologyEx(scoreMap, scoreMap, MORPH_ERODE, _window);
 
 		//SCORE IMPLEMENTED VORONOI FIELD
 		int kerSize;
@@ -428,7 +426,6 @@ void Driving::Basic(int missionId) {
 		Mat stepVot2 = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
 		for (int i = 1; i < 4; i++)
 		{
-			///kerSize = 25 * i;
 			kerSize = 17 * i;
 			kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
 			morphologyEx(scoreMap, stepVot2, MORPH_ERODE, kernel);
@@ -436,8 +433,6 @@ void Driving::Basic(int missionId) {
 			imgPath += stepVot;
 			scoreMap += stepVot2;
 		}
-		//cout << imgPath.col(300) << endl;
-		//scoreMap = Scalar::all(160);
 
 		////Apply the lane data to the locLidar data
 		Mat laneImg = getLaneData(LanescoreStep);
@@ -497,8 +492,14 @@ void Driving::Basic(int missionId) {
 				scoreofPath += path[i*mapW + j];
 			}
 		}
+		double scoreRatio = scoreofPath / scoreofMap;
+		double desired_speed;
+		if (scoreRatio > 0.8) { desired_speed = speedHigh; }
+		else {
+			desired_speed = speedHigh * scoreRatio/ 0.8;
 
-		double desired_speed = speedHigh * scoreofPath / scoreofMap;
+		}
+
 			///////////////////////
 			////Extra Condition////
 			///////////////////////
