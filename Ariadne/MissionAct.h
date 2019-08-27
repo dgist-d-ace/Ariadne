@@ -9,11 +9,13 @@
 
 //Tuning point in getLanedata
 #define LanescoreStep 5
-#define itvLane	20
+///#define itvLane	20 //600*600
+#define itvLane	15 //400*400
 
 //Tuning point in getGpsData
 #define GPSscoreStep 20
-#define itvGPS 30
+///#define itvGPS 30 //600*600
+#define itvGPS 20 //400*400
 
 #define steerRatio  1.0
 #define speedHigh	12.0
@@ -32,10 +34,11 @@ protected:
 	/////////////////
 	Mat getLaneData(int scorestep);
 	Mat getGpsData(int scorestep);
-	Mat imgPath = Mat::zeros(600, 600, CV_8UC1);
+	///Mat imgPath = Mat::zeros(600, 600, CV_8UC1);
+	Mat imgPath = Mat::zeros(400, 400, CV_8UC1);
 	Mat scoreMap;
-
-	Mat outRange = Mat::zeros(600, 600, CV_8UC1);
+	///Mat outRange = Mat::zeros(600, 600, CV_8UC1);
+	Mat outRange = Mat::zeros(400, 400, CV_8UC1);
 	double cenX = (double)imgPath.cols * 0.5, cenY = (double)imgPath.rows *1.0; //the location of LiDAR in the map.
 	double scale = cenY / (SICK_SCAN_ROI_Y + 50);
 	double carW = CAR_WIDTH * scale, carH = CAR_HEIGH * scale;
