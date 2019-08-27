@@ -49,10 +49,6 @@ Driving::Driving() {
 	////////////////////////////////////////////////////////////////////////////////////
 	////Fill the Regions where cannot go in, because of max value of steering angle.////
 	////////////////////////////////////////////////////////////////////////////////////
-	double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
-	double rightEndX = cenX + SICK_SCAN_ROI_X * scale;
-	double topEndY = cenY - SICK_SCAN_ROI_Y * scale;
-	double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
 	int npt2[] = { 4 };
 	//Left area where platform can not go (left 60degrees)
 	Point points[1][4];
@@ -382,6 +378,7 @@ void Driving::Basic(int missionId) {
 			cirCenR = objDataSet[i][2] * scale;
 			Point2d cirCen(cirCenX, cirCenY); //locLidar of objs.
 			cenDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2));
+
 			objdist.push_back(cenDist - cirCenR);
 			touchDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2) - pow(cirCenR, 2));
 			theta_s = asin(cirCenR / cenDist);
@@ -389,17 +386,18 @@ void Driving::Basic(int missionId) {
 			if (theta_l < 0) {
 				theta_l += CV_PI;
 			}
+
 			polyX1 = (int)(touchDist*cos(theta_l - theta_s) + cenX), polyY1 = (int)(cenY - touchDist * sin(theta_l - theta_s));
 			polyX2 = (int)(touchDist*cos(theta_l + theta_s) + cenX), polyY2 = (int)(cenY - touchDist * sin(theta_l + theta_s));
 			polyX3 = (polyX2 - cenX)*(cenY - topEndY) / (cenY - polyY2) + cenX, polyY3 = topEndY;
 			polyX4 = (polyX1 - cenX)*(cenY - topEndY) / (cenY - polyY1) + cenX, polyY4 = topEndY;
-			if (polyY1 > cenY) {
-				polyX4 = polyX4 * (-1);
-				polyY4 = bottomEndY - 0.0001;
+			if (polyY1 >= cenY) {
+				polyX4 = rightEndX;
+				polyY4 = bottomEndY;
 			}
-			if (polyY2 > cenY) {
-				polyX3 = polyX3 * (-1);
-				polyY3 = bottomEndY - 0.0001;
+			if (polyY2 >= cenY) {
+				polyX3 = leftEndX;
+				polyY3 = bottomEndY;
 			}
 			polypts[0][0] = Point(polyX1, polyY1);
 			polypts[0][1] = Point(polyX2, polyY2);
@@ -617,13 +615,13 @@ void Driving::BasicGPS(int missionId) {
 			polyX2 = (int)(touchDist*cos(theta_l + theta_s) + cenX), polyY2 = (int)(cenY - touchDist * sin(theta_l + theta_s));
 			polyX3 = (polyX2 - cenX)*(cenY - topEndY) / (cenY - polyY2) + cenX, polyY3 = topEndY;
 			polyX4 = (polyX1 - cenX)*(cenY - topEndY) / (cenY - polyY1) + cenX, polyY4 = topEndY;
-			if (polyY1 > cenY) {
-				polyX4 = polyX4 * (-1);
-				polyY4 = bottomEndY - 0.0001;
+			if (polyY1 >= cenY) {
+				polyX4 = rightEndX;
+				polyY4 = bottomEndY;
 			}
-			if (polyY2 > cenY) {
-				polyX3 = polyX3 * (-1);
-				polyY3 = bottomEndY - 0.0001;
+			if (polyY2 >= cenY) {
+				polyX3 = leftEndX;
+				polyY3 = bottomEndY;
 			}
 			polypts[0][0] = Point(polyX1, polyY1);
 			polypts[0][1] = Point(polyX2, polyY2);
@@ -960,13 +958,13 @@ void Driving::MissionDynamicObs() {
 			polyX2 = (int)(touchDist*cos(theta_l + theta_s) + cenX), polyY2 = (int)(cenY - touchDist * sin(theta_l + theta_s));
 			polyX3 = (polyX2 - cenX)*(cenY - topEndY) / (cenY - polyY2) + cenX, polyY3 = topEndY;
 			polyX4 = (polyX1 - cenX)*(cenY - topEndY) / (cenY - polyY1) + cenX, polyY4 = topEndY;
-			if (polyY1 > cenY) {
-				polyX4 = polyX4 * (-1);
-				polyY4 = bottomEndY - 0.0001;
+			if (polyY1 >= cenY) {
+				polyX4 = rightEndX;
+				polyY4 = bottomEndY;
 			}
-			if (polyY2 > cenY) {
-				polyX3 = polyX3 * (-1);
-				polyY3 = bottomEndY - 0.0001;
+			if (polyY2 >= cenY) {
+				polyX3 = leftEndX;
+				polyY3 = bottomEndY;
 			}
 			polypts[0][0] = Point(polyX1, polyY1);
 			polypts[0][1] = Point(polyX2, polyY2);

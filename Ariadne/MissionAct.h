@@ -18,12 +18,12 @@
 #define itvGPS 20 //400*400
 
 #define steerRatio  1.0
-#define speedHigh	12.0
+#define speedHigh	20.0
 #define speedLow	5.0
 
 //Tuning points in Dynamic Mission
 #define stopDist 1200.0 //for Dynamic Obstacle mission
-#define DynamicMaxSpeed 8.0
+#define DynamicMaxSpeed 10.0
 
 class Driving : public QObject
 {
@@ -48,7 +48,8 @@ protected:
 	double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
 	double rightEndX = cenX + SICK_SCAN_ROI_X * scale;
 	double topEndY = cenY - SICK_SCAN_ROI_Y * scale;
-	double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
+	double bottomEndY = cenY;
+	//double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
 
 	vector<Mat> checkImgs;
 	vector<int> checkTheta = { 0, -6, 6, -4, 4, -2, 2, -8, 8, -14, 14, -11, 11, -20, 20, -17, 17, -28, 28, -24, 24 };
