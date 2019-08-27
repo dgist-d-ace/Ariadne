@@ -79,7 +79,7 @@ Driving::Driving() {
 
 
 //Input: lane data from scnn
-//output: 600x600 Mat image
+//output: 400x400 Mat image
 //Make the scored lane map 
 //Tuning Point:
 //**vector about steering angle(or checking angle)
@@ -252,7 +252,8 @@ Mat Driving::getLaneData(int scorestep)
 	bufferImg = bufferImgR + bufferImgL;
 	//imshow("M", bufferImg);
 	bufferImg = bufferImg(Range(800 - 400, 800), Range(400 - 200, 400 + 200));
-	resize(bufferImg, bufferImg, Size(600, 600), 0, 0, CV_INTER_NN);	//resize the image for be same the size of locLidar data
+	resize(bufferImg, bufferImg, Size(400, 400), 0, 0, CV_INTER_NN);	//resize the image for be same the size of locLidar data
+	///resize(bufferImg, bufferImg, Size(600, 600), 0, 0, CV_INTER_NN);	//resize the image for be same the size of locLidar data
 	//imshow("buffer", bufferImg);
 	return bufferImg;
 }
@@ -276,7 +277,7 @@ Mat Driving::getGpsData(int scorestep)
 	for (int i = 0; i < 5; i++){
 		buffer = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 		for (int j = 1; j < wayPoints.size(); j++){
-			getPoint = wayPoints.at(j);
+			getPoint = Point2d(wayPoints.at(j).x *2/3, wayPoints.at(j).y*2/3);
 			circle(buffer, getPoint, itvGPS * (5-i), Scalar::all(scorestep), -1, CV_AA, 0);
 		}
 		gpsMap -= buffer;
@@ -292,7 +293,7 @@ void Driving::PASIVcontrol(Mat imgPath, double desired_speed, double steer1, dou
 	//1. steering angle with speicific condition
 	if (steer2 == 0 ||steer1*steer2<0) {
 		if (abs(steer1 > 4)) {
-			steer1 *1.2;
+			steer1 *1.5;
 		}
 	}
 	double desired_steering = steer1;
@@ -339,7 +340,8 @@ void Driving::Basic(int missionId) {
 			break;
 		}
 		///////////////////////////////////////////
-		imgPath = cv::Mat::zeros(600, 600, CV_8UC1);				//path made with lanes and objs
+		///imgPath = cv::Mat::zeros(600, 600, CV_8UC1);				//path made with lanes and objs
+		imgPath = cv::Mat::zeros(400, 400, CV_8UC1);				//path made with lanes and objs
 		scoreMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1); //lane map without objs
 
 		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
@@ -416,7 +418,8 @@ void Driving::Basic(int missionId) {
 		threshold(imgPath, imgPath, 1, 20, THRESH_BINARY_INV);
 		threshold(scoreMap, scoreMap, 1, 20, THRESH_BINARY_INV);
 
-		Mat _window = Mat::ones(15, 15, CV_8UC1);
+		///Mat _window = Mat::ones(15, 15, CV_8UC1);
+		Mat _window = Mat::ones(10, 10, CV_8UC1);
 		morphologyEx(imgPath, imgPath, MORPH_ERODE, _window);
 		//morphologyEx(scoreMap, scoreMap, MORPH_ERODE, _window);
 
@@ -427,7 +430,8 @@ void Driving::Basic(int missionId) {
 		Mat stepVot2 = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
 		for (int i = 1; i < 4; i++)
 		{
-			kerSize = 25 * i;
+			///kerSize = 25 * i;
+			kerSize = 17 * i;
 			kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
 			morphologyEx(scoreMap, stepVot2, MORPH_ERODE, kernel);
 			morphologyEx(imgPath, stepVot, MORPH_ERODE, kernel);
@@ -560,7 +564,8 @@ void Driving::BasicGPS(int missionId) {
 			break;
 		}
 		///////////////////////////////////////////
-		imgPath = cv::Mat::zeros(600, 600, CV_8UC1);				//path made with lanes and objs
+		imgPath = cv::Mat::zeros(400, 400, CV_8UC1);				//path made with lanes and objs
+		///imgPath = cv::Mat::zeros(600, 600, CV_8UC1);				//path made with lanes and objs
 		scoreMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1); //lane map without objs
 
 		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
@@ -637,7 +642,8 @@ void Driving::BasicGPS(int missionId) {
 		threshold(imgPath, imgPath, 1, 20, THRESH_BINARY_INV);
 		threshold(scoreMap, scoreMap, 1, 20, THRESH_BINARY_INV);
 
-		Mat _window = Mat::ones(15, 15, CV_8UC1);
+		///Mat _window = Mat::ones(15, 15, CV_8UC1);
+		Mat _window = Mat::ones(10, 10, CV_8UC1);
 		morphologyEx(imgPath, imgPath, MORPH_ERODE, _window);
 		//morphologyEx(scoreMap, scoreMap, MORPH_ERODE, _window);
 
@@ -648,7 +654,8 @@ void Driving::BasicGPS(int missionId) {
 		Mat stepVot2 = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
 		for (int i = 1; i < 4; i++)
 		{
-			kerSize = 25 * i;
+			kerSize = 17 * i;
+			//kerSize = 25 * i;
 			kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
 			morphologyEx(scoreMap, stepVot2, MORPH_ERODE, kernel);
 			morphologyEx(imgPath, stepVot, MORPH_ERODE, kernel);
@@ -664,7 +671,7 @@ void Driving::BasicGPS(int missionId) {
 		imgPath -= laneImg;
 
 		//Apply GPS data.
-		Mat gpsMap = Mat::zeros(600, 600, CV_8UC1);
+		Mat gpsMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 		gpsMap = getGpsData(GPSscoreStep);
 		scoreMap -= gpsMap;
 		imgPath -= gpsMap;
@@ -898,7 +905,7 @@ void Driving::MissionDynamicObs() {
 			break;
 		}
 
-		imgPath = cv::Mat::zeros(600, 600, CV_8UC1);
+		imgPath = cv::Mat::zeros(400, 400, CV_8UC1);
 		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
 		vector<Point2d> vecXYDraw;
 
@@ -1215,7 +1222,7 @@ vector<vector<double>> Driving::getWaypoint(double x_p, double y_p, double headi
 	vector<vector<double>> gpsWayPoint;
 
 	for (int i = 0; i < forPASIV_path.size(); i++) {
-		vector<double> temp{ (forPASIV_path[i][0] - x_p + 300) * cos(theta) + (forPASIV_path[i][1] - y_p + 600) * sin(theta), (forPASIV_path[i][0] - x_p + 300) * sin(theta) - (forPASIV_path[i][1] - y_p + 600) * cos(theta) };
+		vector<double> temp{ 200/3*((forPASIV_path[i][0] - x_p + 3) * cos(theta) + (forPASIV_path[i][1] - y_p + 6) * sin(theta)), 200/3*((forPASIV_path[i][0] - x_p + 3) * sin(theta) - (forPASIV_path[i][1] - y_p + 6) * cos(theta))};
 		gpsWayPoint.push_back(temp);
 		temp.clear();
 	}
