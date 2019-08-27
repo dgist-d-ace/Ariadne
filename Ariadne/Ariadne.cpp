@@ -47,6 +47,7 @@ Ariadne::Ariadne(QWidget *parent)
 	scnnThread = new QThread;
 	scnn->moveToThread(scnnThread);
 	connect(scnnThread, SIGNAL(started()), scnn, SLOT(boostScnn()));
+	connect(scnn, SIGNAL(drivingEnabled()), this, SLOT(onDrivingEnabled()));
 
 	yolo = new Yolo;
 	yoloThread = new QThread;
@@ -103,6 +104,8 @@ Ariadne::Ariadne(QWidget *parent)
 	QObject::connect(ui->Btn_left, SIGNAL(clicked()), this, SLOT(clicked_steer_left()));
 	QObject::connect(ui->Btn_right, SIGNAL(clicked()), this, SLOT(clicked_steer_right()));
 	QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_E_stop()));
+	QObject::connect(ui->Btn_auto, SIGNAL(clicked()), this, SLOT(clicked_auto()));
+	QObject::connect(ui->Btn_manual, SIGNAL(clicked()), this, SLOT(clicked_manual()));
 
 	/// QObject::connect(ui->Btn_Traffic, SIGNAL(clicked(bool)), this, SLOT(clicked_btn_traffic(bool)));
 
@@ -134,6 +137,17 @@ CString ConvertQstringtoCString(QString qs)
 	std::string utf8_text = qs.toUtf8().constData();
 	CString cs(utf8_text.c_str());
 	return cs;
+}
+void Ariadne::clicked_auto() {
+	dataContainer->setValue_UtoP_AorM(1);
+}
+
+void Ariadne::clicked_manual() {
+	dataContainer->setValue_UtoP_AorM(0);
+}
+
+void Ariadne::onDrivingEnabled() {
+	ui->pushButton_3->setEnabled(true);
 }
 
 void Ariadne::onCurrentMission(int id) {
@@ -230,9 +244,10 @@ void Ariadne::clicked_btn_driving() {
 }
 
 void Ariadne::updateUI() {
-	printf("ui update\n");
 
 	ui->pathmap->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_pathmap()));
+	//ui->scnn->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_scnn()));
+
 }
 
 void Ariadne::clicked_btn_mission1() {

@@ -56,7 +56,7 @@ public:
 private:
 
 signals: /// thread�� ���� broadcast �Լ���
-
+	void drivingEnabled();
 
 public slots:
 	void comScnn();

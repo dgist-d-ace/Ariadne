@@ -378,6 +378,9 @@
      </property>
     </widget>
     <widget class="QPushButton" name="Btn_Bust">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>160</x>
@@ -385,6 +388,14 @@
        <width>120</width>
        <height>31</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <kerning>true</kerning>
+      </font>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
      </property>
      <property name="text">
       <string/>
@@ -402,6 +413,15 @@
      </property>
      <property name="checkable">
       <bool>true</bool>
+     </property>
+     <property name="autoDefault">
+      <bool>false</bool>
+     </property>
+     <property name="default">
+      <bool>false</bool>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
      </property>
     </widget>
     <widget class="QLabel" name="label_20">
@@ -549,7 +569,7 @@
         <x>20</x>
         <y>120</y>
         <width>94</width>
-        <height>21</height>
+        <height>28</height>
        </rect>
       </property>
      </widget>
@@ -566,7 +586,7 @@
        <string>gear input</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="Btn_gearInput_2">
+     <widget class="QPushButton" name="Btn_auto">
       <property name="geometry">
        <rect>
         <x>210</x>
@@ -579,7 +599,7 @@
        <string>Auto</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="Btn_gearInput_3">
+     <widget class="QPushButton" name="Btn_manual">
       <property name="geometry">
        <rect>
         <x>210</x>
@@ -916,7 +936,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="pathmap_2">
+   <widget class="QLabel" name="scnn">
     <property name="geometry">
      <rect>
       <x>980</x>
@@ -1390,7 +1410,7 @@
      <x>0</x>
      <y>0</y>
      <width>1920</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

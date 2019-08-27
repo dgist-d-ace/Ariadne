@@ -151,6 +151,8 @@ public slots:
 	void clicked_steer_right();
 	void gear_input();
 	void clicked_E_stop();
+	void clicked_auto();
+	void clicked_manual();
 
 	void clicked_lidar_stop();
 	void clicked_lidar_restart();
@@ -174,7 +176,7 @@ public slots:
 	void onGreenLight(bool);
 
 	void onCurrentMission(int);
-
+	void onDrivingEnabled();
 	/// DY: 0802
 	void onLidarExit();
 
