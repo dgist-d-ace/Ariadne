@@ -326,6 +326,7 @@ void Ariadne::onSteerChanged(int Number) { ui->lcdNumber_5->display(Number); }
 void Ariadne::onBreakChanged(int Number) { ui->lcdNumber_6->display(Number); }
 void Ariadne::onEncChanged(int Number) { ui->lcdNumber_7->display(Number); }
 void Ariadne::onLatitudeChanged(double Number) { ui->lcdNumber_8->display(Number); }
+
 void Ariadne::onLongitudeChanged(double Number) { ui->lcdNumber_9->display(Number); }
 void Ariadne::onGreenLight(bool light)
 {
