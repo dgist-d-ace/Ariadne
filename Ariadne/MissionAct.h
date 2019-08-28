@@ -101,5 +101,4 @@ public slots:
 	void MissionIntStop(); // intersection stop
 	void MissionStaticObs(); // static obstacle
 	void MissionDynamicObs(); // dynamic obstacle
-
 };

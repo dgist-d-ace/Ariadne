@@ -102,7 +102,7 @@ void ComPlatform::setWritePram(BYTE* writeBuffer)
 	writeBuffer[7] = upper(setData_speed(dataContainer->getValue_UtoP_SPEED()));
 	writeBuffer[8] = lower(setData_steering(dataContainer->getValue_UtoP_STEER()));
 	writeBuffer[9] = upper(setData_steering(dataContainer->getValue_UtoP_STEER()));
-	writeBuffer[10] = (BYTE)(setData_brake(dataContainer->getValue_UtoP_BRAKE())); //**Need check
+	writeBuffer[10] = (BYTE)(setData_brake(dataContainer->getValue_UtoP_BRAKE())); 
 	writeBuffer[11] = (BYTE)(dataContainer->getValue_UtoP_ALIVE());
 	writeBuffer[12] = 0x0d;
 	writeBuffer[13] = 0x0a;

@@ -187,10 +187,10 @@ int Scnn::boostScnn() {
 		auto first = lists.cbegin();
 		auto end = lists.cbegin() + 691200/64;
 
-		vector<int32_t> img1d(first, end);
-		vector<int> LANES(end + 1, lists.cend());
+		vector<int32_t> img1d(first, end-1);
+		vector<int> LANES(end , lists.cend());
 
-		auto image(QImage((uchar *)img1d.data(), 100, 36, 100*3, QImage::Format_RGB32));
+		auto image(QImage((uchar *)img1d.data(), 100, 36, QImage::Format_RGB32));
 		//QImage img;
 		//img.loadFromData((uchar*)img1d.data(), img1d.size());
 		//img.scaled(QSize(300, 300), Qt::KeepAspectRatio);

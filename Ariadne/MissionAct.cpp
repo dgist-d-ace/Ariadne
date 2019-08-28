@@ -75,7 +75,6 @@ Driving::Driving() {
 	void setPath();
 }
 
-
 //Input: lane data from scnn
 //output: 400x400 Mat image
 //Make the scored lane map 
@@ -303,8 +302,8 @@ void Driving::PASIVcontrol(Mat imgPath, double desired_speed, double steer1, dou
 	//1. steering angle with speicific condition(success!!)
 	if (steer2 == 0 ||steer1*steer2<0) {
 		if (abs(steer1 > 6)) {
-			if (steer1 > 0) steer1++;
-			else if (steer1 < 0) steer1--;
+			if (steer1 > 0) steer1 += 2;
+			else if (steer1 < 0) steer1-=2;
 		}
 		else {
 			steer1 = steer1;
@@ -580,11 +579,11 @@ void Driving::BasicGPS(int missionId) {
 			cout << "called in PASIV but wrong mission ID : " << mission << endl;
 			break;
 		}
-		//if (initialGPSpoint + numGPS <= presentGPSpoint)
-		//{
-		//	cout << "EXIT INTERSECTION" << endl;
-		//	break;
-		//}
+		if (initialGPSpoint + numGPS <= presentGPSpoint)
+		{
+			cout << "EXIT INTERSECTION" << endl;
+			break;
+		}
 		///////////////////////////////////////////
 		imgPath = cv::Mat::zeros(400, 400, CV_8UC1);				//path made with lanes and objs
 		///imgPath = cv::Mat::zeros(600, 600, CV_8UC1);				//path made with lanes and objs
@@ -693,10 +692,10 @@ void Driving::BasicGPS(int missionId) {
 		imgPath -= laneImg;
 
 		//Apply GPS data.
-		//Mat gpsMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
-		//gpsMap = getGpsData(GPSscoreStep);
-		//scoreMap -= gpsMap;
-		//imgPath -= gpsMap;
+		Mat gpsMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
+		gpsMap = getGpsData(GPSscoreStep);
+		scoreMap -= gpsMap;
+		imgPath -= gpsMap;
 
 		////Apply the out of range of steering angle
 		scoreMap -= outRange;
@@ -831,7 +830,7 @@ void Driving::MissionIntLeft() {
 	//
 	//mission code
 	//
-	//getGPSinitial(dataContainer->getValue_gps_latitude(), dataContainer->getValue_gps_longitude(), path);
+	getGPSinitial(dataContainer->getValue_gps_latitude(), dataContainer->getValue_gps_longitude(), path);
 	BasicGPS(INTER_LEFT);
 	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
 	if (dataContainer->getValue_yolo_missionID() == INTER_LEFT)
