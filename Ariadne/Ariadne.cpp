@@ -64,10 +64,6 @@ Ariadne::Ariadne(QWidget *parent)
 	connect(drivingThread, SIGNAL(started()), driving, SLOT(autoMode()));
 	//connect(drivingThread, SIGNAL(started()), driving, SLOT(LOS()));
 
-	missionUpdate = new MissionUpdate;
-	missionUpdateThread = new QThread;
-	missionUpdate->moveToThread(missionUpdateThread);
-	connect(missionUpdateThread, SIGNAL(started()), missionUpdate, SLOT(MissionIDUpdate()));
 
 	view = new View;
 	connect(driving, SIGNAL(send2View(int)), view, SLOT(comView(int)));
@@ -106,8 +102,8 @@ Ariadne::Ariadne(QWidget *parent)
 	QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_E_stop()));
 	QObject::connect(ui->Btn_auto, SIGNAL(clicked()), this, SLOT(clicked_auto()));
 	QObject::connect(ui->Btn_manual, SIGNAL(clicked()), this, SLOT(clicked_manual()));
-
-	/// QObject::connect(ui->Btn_Traffic, SIGNAL(clicked(bool)), this, SLOT(clicked_btn_traffic(bool)));
+	QObject::connect(ui->Btn_Bust, SIGNAL(clicked(bool)), this, SLOT(clicked_btn_bust(bool)));
+	QObject::connect(ui->Btn_kidsafe, SIGNAL(clicked(bool)), this, SLOT(clicked_btn_kidsafe(bool)));
 
 
 	// ------------------- UI update for Platform & GPS status ----------------------//
@@ -127,7 +123,8 @@ Ariadne::Ariadne(QWidget *parent)
 	// ------------------- UI update for Mission ----------------------//
 
 	QObject::connect(driving, SIGNAL(currentMission(int)), this, SLOT(onCurrentMission(int)));
-	///connect(missionUpdate, SIGNAL(greenLight(bool)), this, SLOT(onGreenLight(bool)));
+	QObject::connect(yolo, SIGNAL(BustExist(bool)), this, SLOT(onBustExist(bool)));
+	QObject::connect(yolo, SIGNAL(KidsafeExist(bool)), this, SLOT(onKidsafeExist(bool)));
 
 }
 
@@ -164,32 +161,54 @@ void Ariadne::onCurrentMission(int id) {
 	case PARKING:
 		//ui->Btn_mission1->setStyleSheet("background-color: rgb()");
 		ui->Btn_mission1->setEnabled(false);
+		ui->plainTextEdit->appendPlainText("Parking Mission Start");
 		break;
 	case INTER_LEFT:
 		ui->Btn_mission3->setEnabled(false);
+		ui->plainTextEdit->appendPlainText("Intersection left mission start");
 		break;
 	case INTER_RIGHT:
 		ui->Btn_mission4->setEnabled(false);
+		ui->plainTextEdit->appendPlainText("Intersection right mission start");
 		break;
 	case INTER_STRAIGHT:
 		ui->Btn_mission5->setEnabled(false);
+		ui->plainTextEdit->appendPlainText("intersection straight mission start");
 		break;
 	case INTER_STOP:
 		ui->Btn_mission6->setEnabled(false);
+		ui->plainTextEdit->appendPlainText("intersection stop mission start");
 		break;
 	case STATIC_OBSTACLE:
 		ui->Btn_mission7->setEnabled(false);
+		ui->plainTextEdit->appendPlainText("Static Obstacle Mission Start");
 		break;
 	case DYNAMIC_OBSTACLE:
 		ui->Btn_mission8->setEnabled(false);
+		ui->plainTextEdit->appendPlainText("Dynamic Obstacle Mission Start");
 		break;
 	case BASIC:
 		ui->Btn_mission9->setEnabled(false);
-		cout << "basic enabled false set" << endl;
+		ui->plainTextEdit->appendPlainText("Basic PASIV algorithm start");
 		break;
 	}
 
 }
+
+void Ariadne::onBustExist(bool bust) {
+	if (bust)
+		ui->label_21->setStyleSheet("background-color: rgb(255, 51, 51)");
+	else
+		ui->label_21->setStyleSheet("background-color: rgb(0, 204, 102)");
+}
+
+void Ariadne::onKidsafeExist(bool kidsafe) {
+	if (kidsafe)
+		ui->label_20->setStyleSheet("background-color: rgb(255, 51, 51)");
+	else
+		ui->label_20->setStyleSheet("background-color: rgb(0, 204, 102)");
+}
+
 // This function is to start communication with sensor.
 void Ariadne::clicked_btn_sensor() {
 	//SENSOR SWITCH
@@ -211,31 +230,35 @@ void Ariadne::clicked_btn_sensor() {
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
 	TimerSensorStatus->start(1000);
 
+	ui->pushButton_3->setEnabled(false);
 	
 }
 
-void Ariadne::onLidarExit()
-{
-	cout << "onLidarExit is called" << endl;
-
+void Ariadne::clicked_btn_bust(bool bust) {
+	/// if bust is on(true), speed ratio will be decreased.
+	if (bust) { dataContainer->setValue_yolo_speed_ratio(SPEED_RATIO_LOW);
+	ui->label_21->setStyleSheet("background-color: rgb(255, 51, 51)");
+	}
+	else { dataContainer->setValue_yolo_speed_ratio(1); 
+	ui->label_21->setStyleSheet("background-color: rgb(0, 204, 102)");
+	}
 }
 
-void Ariadne::clicked_lidar_restart() { cout << "no function here" << endl; }
-void Ariadne::clicked_lidar_stop() { cout << "no functions here" << endl; }
-void Ariadne::clicked_yolo_restart() { yolo->ResumeYolo(); }
-void Ariadne::clicked_yolo_stop() { yolo->SuspendYolo(); }
-void Ariadne::clicked_scnn_restart() { scnn->ResumeScnn(); }
-void Ariadne::clicked_scnn_stop() { scnn->SuspendScnn(); }
+void Ariadne::clicked_btn_kidsafe(bool kidsafe) {
+	/// if kidsafe is on(true) speed ratio will be decreased.
+	if (kidsafe) { dataContainer->setValue_yolo_speed_ratio(SPEED_RATIO_LOW);
+	ui->label_20->setStyleSheet("background-color: rgb(255, 51, 51)");
+	}
+	else { dataContainer->setValue_yolo_speed_ratio(1); 
+	ui->label_20->setStyleSheet("background-color: rgb(0, 204, 102)");
+	}
+}
 
 
 // This function is to start driving
 void Ariadne::clicked_btn_driving() {
 	if (!drivingThread->isRunning())
 		drivingThread->start();
-
-	//if (!missionUpdateThread->isRunning())
-	//	missionUpdateThread->start();
-	//cout << "called in clicked_Btn_driving" << endl;
 
 	TimerUIUpdate = new QTimer(this);
 	QTimer::connect(TimerUIUpdate, &QTimer::timeout, this, &Ariadne::updateUI);
@@ -253,48 +276,38 @@ void Ariadne::updateUI() {
 void Ariadne::clicked_btn_mission1() {
 	AutoPortFinder();
 	dataContainer->setValue_yolo_missionID(PARKING);
-	ui->plainTextEdit->appendPlainText("Parking Mission Start");
 }
 
 void Ariadne::clicked_btn_mission2() {
 	dataContainer->setValue_yolo_missionID(INTER_READY);
-	ui->plainTextEdit->appendPlainText("Intersection Ready mission start");
 }
 
 void Ariadne::clicked_btn_mission3() {
-	dataContainer->setValue_yolo_missionID(INTER_LEFT);
-	ui->plainTextEdit->appendPlainText("Intersection left mission start");
+	dataContainer->setValue_yolo_missionID(INTER_LEFT);	
 }
 
 void Ariadne::clicked_btn_mission4() {
 	dataContainer->setValue_yolo_missionID(INTER_RIGHT);
-	ui->plainTextEdit->appendPlainText("Intersection right mission start");
 }
 
 void Ariadne::clicked_btn_mission5() {
 	dataContainer->setValue_yolo_missionID(INTER_STRAIGHT);
-	ui->plainTextEdit->appendPlainText("intersection straight mission start");
 }
 
 void Ariadne::clicked_btn_mission6() {
 	dataContainer->setValue_yolo_missionID(INTER_STOP);
-	ui->plainTextEdit->appendPlainText("intersection stop mission start");
 }
 
 void Ariadne::clicked_btn_mission7() {
-	dataContainer->setValue_yolo_missionID(STATIC_OBSTACLE);
-	cout << dataContainer->getValue_yolo_missionID() << endl;
-	ui->plainTextEdit->appendPlainText("Static Obstacle Mission Start");
+	dataContainer->setValue_yolo_missionID(STATIC_OBSTACLE);	
 }
 
 void Ariadne::clicked_btn_mission8() {
 	dataContainer->setValue_yolo_missionID(DYNAMIC_OBSTACLE);
-	ui->plainTextEdit->appendPlainText("Dynamic Obstacle Mission Start");
 }
 
 void Ariadne::clicked_btn_mission9() {
 	dataContainer->setValue_yolo_missionID(BASIC);
-	ui->plainTextEdit->appendPlainText("Basic PASIV algorithm start");
 }
 
 // These functions is to control gplatform
@@ -343,10 +356,6 @@ void Ariadne::onEncChanged(int Number) { ui->lcdNumber_7->display(Number); }
 void Ariadne::onLatitudeChanged(double Number) { ui->lcdNumber_8->display(Number); }
 
 void Ariadne::onLongitudeChanged(double Number) { ui->lcdNumber_9->display(Number); }
-void Ariadne::onGreenLight(bool light)
-{
-	/// TODO: 여기서 true가 나오면 ui 버튼도 업데이트할 것.
-}
 void Ariadne::onHeadingChanged(double Number) { ui->lcdNumber_10->display(Number); }
 
 void Ariadne::AutoPortFinder() {
@@ -421,7 +430,7 @@ void Ariadne::updateSensorStatus()
 {
 	// Platform communication
 	if (dataContainer->getValue_platform_status() > 5) {
-		ui->statusPlatform->setStyleSheet("background-color: rgb(0, 153, 76);");
+		ui->statusPlatform->setStyleSheet("background-color: rgb(0, 204, 102);");
 		ui->statusPlatform->setFixedWidth(60);
 	}
 	else if (dataContainer->getValue_platform_status() > 0) {
@@ -429,14 +438,14 @@ void Ariadne::updateSensorStatus()
 		ui->statusPlatform->setFixedWidth(40);
 	}
 	else {
-		ui->statusPlatform->setStyleSheet("background-color: red;");
+		ui->statusPlatform->setStyleSheet("background-color: rgb(255, 51, 51);");
 		ui->statusPlatform->setFixedWidth(20);
 	}
 	dataContainer->setValue_platform_status(0);
 
 	// LiDAR communication code
 	if (dataContainer->getValue_lidar_status() > 5) {
-		ui->statusLidar->setStyleSheet("background-color: rgb(0, 153, 76);");
+		ui->statusLidar->setStyleSheet("background-color: rgb(0, 204, 102);");
 		ui->statusLidar->setFixedWidth(60);
 	}
 	else if (dataContainer->getValue_lidar_status() > 0) {
@@ -444,14 +453,14 @@ void Ariadne::updateSensorStatus()
 		ui->statusLidar->setFixedWidth(40);
 	}
 	else {
-		ui->statusLidar->setStyleSheet("background-color: red;");
+		ui->statusLidar->setStyleSheet("background-color: rgb(255, 51, 51);");
 		ui->statusLidar->setFixedWidth(20);
 	}
 	dataContainer->setValue_lidar_status(0);
 
 	// GPS communication code
 	if (dataContainer->getValue_gps_status() > 5) {
-		ui->statusGps->setStyleSheet("background-color: rgb(0, 153, 76);");
+		ui->statusGps->setStyleSheet("background-color: rgb(0, 204, 102);");
 		ui->statusGps->setFixedWidth(60);
 	}
 	else if (dataContainer->getValue_gps_status() > 0) {
@@ -459,14 +468,14 @@ void Ariadne::updateSensorStatus()
 		ui->statusGps->setFixedWidth(40);
 	}
 	else {
-		ui->statusGps->setStyleSheet("background-color: red;");
+		ui->statusGps->setStyleSheet("background-color: rgb(255, 51, 51);");
 		ui->statusGps->setFixedWidth(20);
 	}
 	dataContainer->setValue_gps_status(0);
 
 	// scnn communication code
 	if (dataContainer->getValue_scnn_status() > 5) {
-		ui->statusScnn->setStyleSheet("background-color: rgb(0, 153, 76);");
+		ui->statusScnn->setStyleSheet("background-color: rgb(0, 204, 102);");
 		ui->statusScnn->setFixedWidth(60);
 	}
 	else if (dataContainer->getValue_scnn_status() > 0) {
@@ -474,14 +483,14 @@ void Ariadne::updateSensorStatus()
 		ui->statusScnn->setFixedWidth(40);
 	}
 	else {
-		ui->statusScnn->setStyleSheet("background-color: red;");
+		ui->statusScnn->setStyleSheet("background-color: rgb(255, 51, 51);");
 		ui->statusScnn->setFixedWidth(20);
 	}
 	dataContainer->setValue_scnn_status(0);
 
 	// yolo communication code
 	if (dataContainer->getValue_yolo_status() > 5) {
-		ui->statusYolo->setStyleSheet("background-color: rgb(0, 153, 76);");
+		ui->statusYolo->setStyleSheet("background-color: rgb(0, 204, 102);");
 		ui->statusYolo->setFixedWidth(60);
 	}
 	else if (dataContainer->getValue_yolo_status() > 0) {
@@ -489,7 +498,7 @@ void Ariadne::updateSensorStatus()
 		ui->statusYolo->setFixedWidth(40);
 	}
 	else {
-		ui->statusYolo->setStyleSheet("background-color: red;");
+		ui->statusYolo->setStyleSheet("background-color: rgb(255, 51, 51);");
 		ui->statusYolo->setFixedWidth(20);
 	}
 	dataContainer->setValue_yolo_status(0);

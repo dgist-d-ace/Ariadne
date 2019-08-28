@@ -85,6 +85,11 @@ public:
 	bool Yolo_Com = true;
 
 private:
+
+signals:
+	void BustExist(bool);
+	void KidsafeExist(bool);
+
 public slots:
 	void comYolo();
 	void SuspendYolo();

@@ -855,11 +855,11 @@ void Driving::MissionIntStop() {
 	dataContainer->setValue_yolo_speed_ratio(0);
 
 	dataContainer->setValue_UtoP_BRAKE(50);
-	Sleep(100);
+	Sleep(300);
 	dataContainer->setValue_UtoP_BRAKE(100);
-	Sleep(100);
+	Sleep(300);
 	dataContainer->setValue_UtoP_BRAKE(150);
-	Sleep(100);
+	Sleep(300);
 	dataContainer->setValue_UtoP_BRAKE(200);
 
 	///emit(greenRight(false)); /// 이렇게 하지 말고 욜로쪽에서 하나 더 만드는게 나을듯
@@ -1246,6 +1246,7 @@ void Driving::autoMode() {
 		else if (dataContainer->getValue_yolo_missionID() == DYNAMIC_OBSTACLE) { emit(currentMission(DYNAMIC_OBSTACLE)); MissionDynamicObs(); }
 		else if (dataContainer->getValue_yolo_missionID() == INTER_STOP) { emit(currentMission(INTER_STOP)); MissionIntStop(); }
 		else { emit(currentMission(BASIC)); emit(send2View(1)); Basic(BASIC); }
+
 	}
 }
 
@@ -1392,80 +1393,3 @@ void Driving::LOS() {
 	*/
 }
 
-///////////////////////
-////Mission Control////
-///////////////////////
-
-MissionUpdate::MissionUpdate() {
-	dataContainer = DataContainer::getInstance();
-}
-
-void MissionUpdate::MissionIDUpdate() {
-
-	while (true)
-	{
-		/*
-	/// dataContainer의 yolo map을 받아서 mission number를 업데이트 하는 함수
-	//map 대신 array나 datacontainer에 각 미션 위험도를 int type으로 만들어서 바꾸자
-	int mission = 0;
-	map<string, int> temp = dataContainer->getValue_yolo_missions();
-	/*
-	일정 거리 이하인 미션 실행
-	static
-	dynamic
-	intersectionStop
-	intersectionStraight
-	intersectionLeft
-	intersectionRight
-	parking
-	*/
-
-	/*
-	mission array 구조
-	0: <IntersectionState>
-	1: <IntersectionDistance>
-	2: <crossWalk>
-	3: <parking>
-	3: <busLane>
-	4: <staticObstacle>
-	5: <dynamicObstacle>
-	6: <kidSafe>
-	7: <bust>
-	*/
-		int* temp = dataContainer->getValue_yolo_missions();
-	
-		if (temp[5] < 4) {
-			dataContainer->setValue_yolo_missionID(STATIC_OBSTACLE);
-		}
-		else if (temp[6] < 4) {
-			dataContainer->setValue_yolo_missionID(DYNAMIC_OBSTACLE);
-		}
-		else if (temp[0] == 0 && temp[1] < 4) {
-			dataContainer->setValue_yolo_missionID(INTER_STOP);
-		}
-		else if (temp[0] == 1 && temp[1] < 4) {
-			dataContainer->setValue_yolo_missionID(INTER_STRAIGHT);
-		}
-		else if (temp[0] == 1 && temp[1] < 4) {
-			dataContainer->setValue_yolo_missionID(INTER_LEFT);
-		}
-		else if (temp[0] == 1 && temp[1] < 4) {
-			dataContainer->setValue_yolo_missionID(INTER_RIGHT);
-		}
-		else if (temp[3] < 4) { //parking
-			dataContainer->setValue_yolo_missionID(PARKING);
-		}
-		else {
-			dataContainer->setValue_yolo_missionID(BASIC);
-		}
-
-		/// kidSafe나 bust는 mission number에 병렬적으로 들어올 수 있으므로 이에 따라 속도 비율을 조정한다.
-		//kidsafe
-		if (temp[7] < 4) { dataContainer->setValue_yolo_speed_ratio(0.9); }
-		else { dataContainer->setValue_yolo_speed_ratio(1); } /// 지나간 후에는 다시 원상복귀한다. 이 때 원상복귀할때까지 시간 조절이 필요할 수 있음.
-		//bust
-		if ((temp[8] < 4)) { dataContainer->setValue_yolo_speed_ratio(0.9); }
-		else { dataContainer->setValue_yolo_speed_ratio(1); }
-
-	}
-}

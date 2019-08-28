@@ -127,6 +127,7 @@ public:
     {
         if (AriadneClass->objectName().isEmpty())
             AriadneClass->setObjectName(QString::fromUtf8("AriadneClass"));
+        AriadneClass->setEnabled(true);
         AriadneClass->resize(1920, 1030);
         centralWidget = new QWidget(AriadneClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
@@ -219,7 +220,7 @@ public:
         icon.addFile(QString::fromUtf8("../../DYibre/Checkbox_Off.png"), QSize(), QIcon::Normal, QIcon::Off);
         icon.addFile(QString::fromUtf8("../../DYibre/Checkbox_On.png"), QSize(), QIcon::Normal, QIcon::On);
         Btn_kidsafe->setIcon(icon);
-        Btn_kidsafe->setIconSize(QSize(100, 40));
+        Btn_kidsafe->setIconSize(QSize(120, 55));
         Btn_kidsafe->setCheckable(true);
         Btn_Bust = new QPushButton(groupBox_3);
         Btn_Bust->setObjectName(QString::fromUtf8("Btn_Bust"));
@@ -230,17 +231,19 @@ public:
         Btn_Bust->setFont(font2);
         Btn_Bust->setAutoFillBackground(false);
         Btn_Bust->setIcon(icon);
-        Btn_Bust->setIconSize(QSize(100, 40));
+        Btn_Bust->setIconSize(QSize(120, 55));
         Btn_Bust->setCheckable(true);
         Btn_Bust->setAutoDefault(false);
         Btn_Bust->setFlat(false);
         label_20 = new QLabel(groupBox_3);
         label_20->setObjectName(QString::fromUtf8("label_20"));
         label_20->setGeometry(QRect(20, 180, 120, 30));
+        label_20->setStyleSheet(QString::fromUtf8("background-color: rgb(0, 204, 102)"));
         label_20->setAlignment(Qt::AlignCenter);
         label_21 = new QLabel(groupBox_3);
         label_21->setObjectName(QString::fromUtf8("label_21"));
         label_21->setGeometry(QRect(20, 220, 120, 30));
+        label_21->setStyleSheet(QString::fromUtf8("background-color: rgb(0, 204, 102)"));
         label_21->setAlignment(Qt::AlignCenter);
         Btn_mission9 = new QPushButton(groupBox_3);
         Btn_mission9->setObjectName(QString::fromUtf8("Btn_mission9"));

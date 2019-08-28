@@ -166,8 +166,8 @@ int Scnn::boostScnn() {
 
 
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/exp1_kcity_best_50.pth", 0, true);
-	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", 0, true);
-	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test.mp4", true);
+	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_big_crop_pass4_best.pth", 0, true);
+	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_big_crop_pass4_best.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test.mp4", true);
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", "C:/Users/D-Ace/Pictures/Camera Roll/4.mp4", true);
 
 	//scnn.attr("scnn_init")("exp1_kcity_best_50.pth", 0, true);
@@ -379,6 +379,16 @@ void Yolo::comYolo() {
 		trigger.showObjects(1);
 		//dataContainer->setValue_yolo_missions(trigger.getMissions());
 		dataContainer->updateValue_yolo_status();
+
+		/// 여기서 speed ratio도 set할것
+		/// autoMode() 함수에서 해도 되는데 여기서 미션 파싱까지 다 하는김에 해버리는쪽이 좋을듯
+
+		//bool bustOn = (trigger.getMissions[8] == 0);
+		//bool kidsafeOn = (trigger.getMissions[7] == 0);
+		//if ( bustOn || kidsafeOn ) { dataContainer->setValue_yolo_speed_ratio(SPEED_RATIO_LOW); } //<- bust is on
+		//else { dataContainer->setValue_yolo_speed_ratio(1); }
+		//emit(BustExist(bustOn)); // if bust is in front of the car, UI bust button will be automatically switched.
+		//emit(KidsafeExist(kidsafeOn));
 	}
 
 	closesocket(client);

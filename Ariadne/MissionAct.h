@@ -18,8 +18,8 @@
 #define itvGPS 20 //400*400
 
 #define steerRatio  1.0
-#define speedHigh	20.0
-#define speedLow	5.0
+#define speedHigh	10.0
+#define speedLow	7.0
 
 //Tuning points in Dynamic Mission
 #define stopDist 1200.0 //for Dynamic Obstacle mission
@@ -97,21 +97,4 @@ public slots:
 	void MissionStaticObs(); // static obstacle
 	void MissionDynamicObs(); // dynamic obstacle
 
-};
-
-class MissionUpdate : public QObject
-{
-	Q_OBJECT
-protected:
-
-public:
-	DataContainer *dataContainer;
-	MissionUpdate();
-	int brake = 50;
-
-public slots:
-	void MissionIDUpdate();
-
-signals:
-	void greenRight(bool);
 };

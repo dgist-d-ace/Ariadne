@@ -129,7 +129,7 @@ int ComPlatform::setData_steering(double desired_steering)
 	else if (desired_steering < -2000) {
 		desired_steering = -2000;
 	}
-	cout << "desired_angle: " << desired_steering << ", real_angle: " << present_steering << endl;
+	//cout << "desired_angle: " << desired_steering << ", real_angle: " << present_steering << endl;
 
 	return desired_steering;
 	//dataContainer->setValue_UtoP_STEER(desired_steering);
@@ -139,10 +139,11 @@ int ComPlatform::setData_speed(double desired_speed)
 {
 	double present_speed = dataContainer->getValue_PtoU_SPEED(); //0~200
 	double speedratio = dataContainer->getValue_yolo_speed_ratio();
+	cout << "speedratio: " << speedratio << endl;
 	desired_speed *= 10;
 	//Non_control
-	//desired_speed = (double)desired_speed*speedKP*speedratio;
-	desired_speed = desired_speed*speedKP;
+	desired_speed = (double)desired_speed*speedKP*speedratio;
+	//desired_speed = desired_speed*speedKP;
 
 	//P-control
 	//desired_speed = (desired_speed - present_speed)*speedKP;
@@ -153,7 +154,7 @@ int ComPlatform::setData_speed(double desired_speed)
 	else if (desired_speed < 0) {
 		desired_speed = 0;
 	}
-	cout << "desired_speed: " << desired_speed << ", real_speed: " << present_speed << endl;
+	// cout << "desired_speed: " << desired_speed << ", real_speed: " << present_speed << endl;
 
 	return desired_speed;
 	//dataContainer->setValue_UtoP_SPEED(desired_speed);

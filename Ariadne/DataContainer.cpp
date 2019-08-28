@@ -191,9 +191,6 @@ void DataContainer::setValue_yolo_speed_ratio(double temp) { mtx_yolo_speed_rati
 int DataContainer::getValue_yolo_missionID() { mtx_yolo_missionID.lock(); int temp = m_yolo_missionID; mtx_yolo_missionID.unlock(); return temp; }
 void DataContainer::setValue_yolo_missionID(int ID) { mtx_yolo_missionID.lock(); m_yolo_missionID = ID; mtx_yolo_missionID.unlock(); }
 
-bool DataContainer::getValue_yolo_go() { mtx_yolo_goStop.lock(); bool temp = m_yolo_goStop; mtx_yolo_goStop.unlock(); return temp; }
-void DataContainer::setValue_yolo_go(bool go) { mtx_yolo_goStop.lock(); m_yolo_goStop = go; mtx_yolo_goStop.unlock(); }
-
 //
 // SCNN
 //

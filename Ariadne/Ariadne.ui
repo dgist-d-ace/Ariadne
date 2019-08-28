@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>AriadneClass</class>
  <widget class="QMainWindow" name="AriadneClass">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -369,8 +372,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>100</width>
-       <height>40</height>
+       <width>120</width>
+       <height>55</height>
       </size>
      </property>
      <property name="checkable">
@@ -407,8 +410,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>100</width>
-       <height>40</height>
+       <width>120</width>
+       <height>55</height>
       </size>
      </property>
      <property name="checkable">
@@ -433,6 +436,9 @@
        <height>30</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(0, 204, 102)</string>
+     </property>
      <property name="text">
       <string>KidSafe</string>
      </property>
@@ -448,6 +454,9 @@
        <width>120</width>
        <height>30</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(0, 204, 102)</string>
      </property>
      <property name="text">
       <string>Bust</string>

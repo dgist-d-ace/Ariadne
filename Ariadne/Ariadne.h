@@ -117,9 +117,6 @@ public:
 	Driving* driving;
 	QThread* drivingThread;
 
-	MissionUpdate* missionUpdate;
-	QThread* missionUpdateThread;
-
 	DataContainer* dataContainer;
 
 	QTimer* TimerSensorStatus;
@@ -141,6 +138,8 @@ public slots:
 	void clicked_btn_mission7();
 	void clicked_btn_mission8();
 	void clicked_btn_mission9();
+	void clicked_btn_bust(bool);
+	void clicked_btn_kidsafe(bool);
 
 	void clicked_btn_sensor();
 	void clicked_btn_driving();
@@ -154,13 +153,6 @@ public slots:
 	void clicked_auto();
 	void clicked_manual();
 
-	void clicked_lidar_stop();
-	void clicked_lidar_restart();
-	void clicked_yolo_stop();
-	void clicked_yolo_restart();
-	void clicked_scnn_stop();
-	void clicked_scnn_restart();
-
 	void onAorMChanged(int);
 	void onEStopChanged(int);
 	void onGearChanged(int);
@@ -172,13 +164,10 @@ public slots:
 	void onLatitudeChanged(double);
 	void onLongitudeChanged(double);
 	void onHeadingChanged(double);
-
-	void onGreenLight(bool);
-
 	void onCurrentMission(int);
 	void onDrivingEnabled();
-	/// DY: 0802
-	void onLidarExit();
+	void onBustExist(bool);
+	void onKidsafeExist(bool);
 
 	void AutoPortFinder();
 
