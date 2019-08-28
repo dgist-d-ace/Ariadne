@@ -167,7 +167,7 @@ int Scnn::boostScnn() {
 
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/exp1_kcity_best_50.pth", 0, true);
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_big_crop_pass4_best.pth", 0, true);
-	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_big_crop_pass4_best.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test.mp4", true);
+	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_big_crop_pass4_best.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test2.mp4", true);
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", "C:/Users/D-Ace/Pictures/Camera Roll/4.mp4", true);
 
 	//scnn.attr("scnn_init")("exp1_kcity_best_50.pth", 0, true);
@@ -175,16 +175,34 @@ int Scnn::boostScnn() {
 	emit(drivingEnabled());
 	while (1)
 	{
+		cout << 1 << endl;
 		dataContainer->updateValue_scnn_status();
 		py::object params = scnn.attr("scnn_run")();
+		cout << 2 << endl;
 		vector<int> lists = to_std_vector<int>(params);
+		cout << 3 << endl;
 		vector<int> existLanes;
 		vector<vector<Point2i>> lanes(4);
+
+		auto first = lists.cbegin();
+		auto end = lists.cbegin() + 691200/64;
+
+		vector<int32_t> img1d(first, end);
+		vector<int> LANES(end + 1, lists.cend());
+
+		auto image(QImage((uchar *)img1d.data(), 100, 36, 100*3, QImage::Format_RGB32));
+		//QImage img;
+		//img.loadFromData((uchar*)img1d.data(), img1d.size());
+		//img.scaled(QSize(300, 300), Qt::KeepAspectRatio);
+
+		////QImage img = QImage((uchar)img1d.data(), img1d.size(), QImage::Format_RGB888);
+		////img.scaled(QSize(800/8, 288/8), Qt::KeepAspectRatio);
+		dataContainer->setValue_ui_scnn(image);
 
 		int i, j = 0;
 
 		for (i = 0; i < 4; i++) {
-			existLanes.push_back(lists[i]);
+			existLanes.push_back(LANES[i]);
 		}
 
 		dataContainer->setValue_scnn_existLanes(existLanes);
@@ -211,16 +229,17 @@ int Scnn::boostScnn() {
 		//cout << endl;
 
 		j = 0;
-		for (i = 5; i < lists.size(); i++) {
-			if (lists[i] == -1) {
+		for (i = 5; i < LANES.size(); i++) {
+			if (LANES[i] == -1) {
 				j++;
 			}
 			else {
-				cv::Point2i coordinate(lists[i], lists[i + 1]);
+				cv::Point2i coordinate(LANES[i], LANES[i + 1]);
 				lanes[j].push_back(coordinate);
 				i++;
 			}
 		}
+
 
 		dataContainer->setValue_scnn_lanes(lanes);
 
@@ -308,7 +327,7 @@ Yolo::Yolo() {
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi)); // assign program memory
 
-	TCHAR commandLine[] = TEXT("darknet detector demo data\\obj.data cfg\\yolov3_please.cfg yolov3_34500.weights data\\race1_cut.mp4");
+	TCHAR commandLine[] = TEXT("darknet.exe detector demo data\\obj.data cfg\\yolov3_please.cfg yolov3_54000.weights data\\middle.mp4");
 	SetCurrentDirectory(_T("C:\\Users\\D-Ace\\darknet-master\\build\\darknet\\x64")); // Darknet program start command
 	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi)) {
 	//}
@@ -360,39 +379,64 @@ void Yolo::comYolo() {
 
 	/// TODO: control yolo flag in Ariadne.cpp
 	while (Yolo_Com) {
-		cout << "communication2\n";
 
-		strLen = recv(client, message, sizeof(message) - 1, 0);
+
+		strLen = recv(client, message, 8192, 0);
 		if (strLen == -1) cout << "send error\n";
-		cout << message << endl; // 여기서 정보 출력!
 
-		// 문자열 파싱
-		stringstream ss1(message);
-		for (string str1; getline(ss1, str1, '\n');) {
-			stringstream ss2(str1);
-			vector<string> in;
-			for (string str2; getline(ss2, str2, ' ');) in.push_back(str2);
-			trigger.putbox(in[0], stof(in[3]), stof(in[4]));
+		int* trigger = new int;
+		trigger = (int*)message;
+
+
+		if (trigger[5] && trigger[5] < 4) {
+			dataContainer->setValue_yolo_missionID(STATIC_OBSTACLE);
 		}
-		trigger.update();
+		else if (trigger[6] < 4) {
+			dataContainer->setValue_yolo_missionID(DYNAMIC_OBSTACLE);
+		}
+		else if (trigger[0] == 0 && trigger[1] && trigger[1] < 4) {
+			dataContainer->setValue_yolo_missionID(INTER_STOP);
+		}
+		else if (trigger[0] == 2 && trigger[1] && trigger[1] < 4) {
+			dataContainer->setValue_yolo_missionID(INTER_STRAIGHT);
+		}
+		else if (trigger[0] == 1 && trigger[1] && trigger[1] < 4) {
+			dataContainer->setValue_yolo_missionID(INTER_LEFT);
+		}
+		else if (trigger[0] == 3 && trigger[1] && trigger[1] < 4) {
+			dataContainer->setValue_yolo_missionID(INTER_RIGHT);
+		}
+		else if (trigger[3] && trigger[3] < 4) { //parking
+			dataContainer->setValue_yolo_missionID(PARKING);
+		}
+		else {
+			dataContainer->setValue_yolo_missionID(BASIC);
+		}
+		vector<int> mission; 
 
-		trigger.showObjects(1);
-		//dataContainer->setValue_yolo_missions(trigger.getMissions());
+		for (int i = 0; i < 9; i++) {
+			mission.push_back(trigger[i]);
+		}
+
+		dataContainer->setValue_yolo_missions(mission);
+
 		dataContainer->updateValue_yolo_status();
-
-		/// 여기서 speed ratio도 set할것
-		/// autoMode() 함수에서 해도 되는데 여기서 미션 파싱까지 다 하는김에 해버리는쪽이 좋을듯
-
-		//bool bustOn = (trigger.getMissions[8] == 0);
-		//bool kidsafeOn = (trigger.getMissions[7] == 0);
-		//if ( bustOn || kidsafeOn ) { dataContainer->setValue_yolo_speed_ratio(SPEED_RATIO_LOW); } //<- bust is on
-		//else { dataContainer->setValue_yolo_speed_ratio(1); }
-		//emit(BustExist(bustOn)); // if bust is in front of the car, UI bust button will be automatically switched.
-		//emit(KidsafeExist(kidsafeOn));
+		bool bustOn = (trigger[8] == 0);
+		bool kidsafeOn = (trigger[7] == 0);
+		if ( bustOn || kidsafeOn ) { dataContainer->setValue_yolo_speed_ratio(SPEED_RATIO_LOW); } //<- bust is on
+		else { dataContainer->setValue_yolo_speed_ratio(1); }
+		emit(BustExist(bustOn)); // if bust is in front of the car, UI bust button will be automatically switched.
+		emit(KidsafeExist(kidsafeOn));
 	}
 
 	closesocket(client);
 	closesocket(server);
+}
+
+Yolo::~Yolo() {
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+	TerminateProcess(pi.hProcess, 0);
 }
 
 void Yolo::SuspendYolo() {

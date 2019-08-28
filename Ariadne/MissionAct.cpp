@@ -15,7 +15,9 @@ using namespace cv;
 
 Driving::Driving() {
 	dataContainer = DataContainer::getInstance();
+	int initialGPSpoint = 0;
 
+	////////////////////////////////////////////
 	Mat cirGray, cirGray2, temp, buffer;
 	uint Theta, Theta2;
 
@@ -161,11 +163,14 @@ Mat Driving::getLaneData(int scorestep)
 				fillPoly(bufferImgL, &pts3, &ptNum, 1, Scalar(scorestep * 6, scorestep * 6, scorestep * 6));
 				fillPoly(bufferImgL, &pts2, &ptNum, 1, Scalar(scorestep * 8, scorestep * 8, scorestep * 8));
 				fillPoly(bufferImgL, &pts1, &ptNum, 1, Scalar(scorestep * (10 * idLane[i]), scorestep *(10 * idLane[i]), scorestep *(10 * idLane[i])));
-
-				Mat bufferIv = Mat::zeros(800, 800, CV_8UC1);
-				fillPoly(bufferIv, &pts9, &ptNum, 1, Scalar(scorestep, scorestep, scorestep));
-				threshold(bufferIv, bufferIv, 1, scorestep * 4, THRESH_BINARY_INV);
-				bufferImgL += bufferIv;
+				
+				if (idLane[2]==0)
+				{
+					Mat bufferIv = Mat::zeros(800, 800, CV_8UC1);
+					fillPoly(bufferIv, &pts9, &ptNum, 1, Scalar(scorestep, scorestep, scorestep));
+					threshold(bufferIv, bufferIv, 1, scorestep * 5, THRESH_BINARY_INV);
+					bufferImgL += bufferIv;
+				}
 				break;
 			}
 		}
@@ -234,11 +239,14 @@ Mat Driving::getLaneData(int scorestep)
 				fillPoly(bufferImgR, &pts2, &ptNum, 1, Scalar(scorestep * 8, scorestep * 8, scorestep * 8));
 				fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar(scorestep * (10 * id), scorestep *(10 * id), scorestep *(10 * id)));
 
-				Mat bufferIv = Mat::zeros(800, 800, CV_8UC1);
-				fillPoly(bufferIv, &pts9, &ptNum, 1, Scalar(scorestep, scorestep, scorestep));
-				threshold(bufferIv, bufferIv, 1, scorestep * 4, THRESH_BINARY_INV);
+				if (idLane[1] == 0)
+				{
+					Mat bufferIv = Mat::zeros(800, 800, CV_8UC1);
+					fillPoly(bufferIv, &pts9, &ptNum, 1, Scalar(scorestep, scorestep, scorestep));
+					threshold(bufferIv, bufferIv, 1, scorestep * 5, THRESH_BINARY_INV);
+					bufferImgR += bufferIv;
+				}
 
-				bufferImgR += bufferIv;
 
 				break;
 			}
@@ -259,14 +267,19 @@ Mat Driving::getGpsData(int scorestep)
 	int mission = dataContainer->getValue_yolo_missionID();
 	int stepNum = 9;
 	vector<Point2d> wayPoints;
+	double gps_X = dataContainer->getValue_gps_latitude();
+	double gps_Y = dataContainer->getValue_gps_longitude();
+	double gps_H = dataContainer->getValue_gps_heading();
+
+	wayPoints = getWaypoint(gps_X, gps_Y, gps_H, forPASIV_path(gps_X, gps_Y, path));
 	Mat gpsMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 	gpsMap = Scalar::all(scorestep*stepNum);
 
-	if (mission == INTER_STRAIGHT){wayPoints = WaySimul_straight();}
-	else if (mission == INTER_RIGHT){wayPoints = WaySimul_turn();}
-	else if (mission == INTER_LEFT) {}
-	else if (mission == INTER_STOP) {}
-	else if (mission == INTER_READY) {}
+	//if (mission == INTER_STRAIGHT){wayPoints = WaySimul_straight();}
+	//else if (mission == INTER_RIGHT){wayPoints = WaySimul_turn();}
+	//else if (mission == INTER_LEFT) {}
+	//else if (mission == INTER_STOP) {}
+	//else if (mission == INTER_READY) {}
 
 	//Function
 	Mat buffer = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
@@ -289,8 +302,12 @@ void Driving::PASIVcontrol(Mat imgPath, double desired_speed, double steer1, dou
 
 	//1. steering angle with speicific condition(success!!)
 	if (steer2 == 0 ||steer1*steer2<0) {
-		if (abs(steer1 > 4)) {
-			steer1 *1.5;
+		if (abs(steer1 > 6)) {
+			if (steer1 > 0) steer1++;
+			else if (steer1 < 0) steer1--;
+		}
+		else {
+			steer1 = steer1;
 		}
 	}
 	double desired_steering = steer1;
@@ -533,6 +550,7 @@ void Driving::Basic(int missionId) {
 		//imshow("Map", scoreMap);
 		PASIVcontrol(imgPath, desired_speed, goTheta1, goTheta2, desired_brake);
 		//imshow("Path", imgPath);
+		cout << "=====================" << imgPath.step << endl;
 		QImage image1 = QImage((uchar*)imgPath.data, imgPath.cols, imgPath.rows, imgPath.step, QImage::Format_Grayscale8);
 		dataContainer->setValue_ui_pathmap(image1);
 
@@ -562,6 +580,11 @@ void Driving::BasicGPS(int missionId) {
 			cout << "called in PASIV but wrong mission ID : " << mission << endl;
 			break;
 		}
+		//if (initialGPSpoint + numGPS <= presentGPSpoint)
+		//{
+		//	cout << "EXIT INTERSECTION" << endl;
+		//	break;
+		//}
 		///////////////////////////////////////////
 		imgPath = cv::Mat::zeros(400, 400, CV_8UC1);				//path made with lanes and objs
 		///imgPath = cv::Mat::zeros(600, 600, CV_8UC1);				//path made with lanes and objs
@@ -670,10 +693,10 @@ void Driving::BasicGPS(int missionId) {
 		imgPath -= laneImg;
 
 		//Apply GPS data.
-		Mat gpsMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
-		gpsMap = getGpsData(GPSscoreStep);
-		scoreMap -= gpsMap;
-		imgPath -= gpsMap;
+		//Mat gpsMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
+		//gpsMap = getGpsData(GPSscoreStep);
+		//scoreMap -= gpsMap;
+		//imgPath -= gpsMap;
 
 		////Apply the out of range of steering angle
 		scoreMap -= outRange;
@@ -805,11 +828,10 @@ void Driving::MissionIntReady() {
 //Mission No.3: Intersection->Turn Left
 void Driving::MissionIntLeft() {
 	cout << "mission 3" << endl;
-
-
 	//
 	//mission code
 	//
+	//getGPSinitial(dataContainer->getValue_gps_latitude(), dataContainer->getValue_gps_longitude(), path);
 	BasicGPS(INTER_LEFT);
 	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
 	if (dataContainer->getValue_yolo_missionID() == INTER_LEFT)
@@ -819,10 +841,10 @@ void Driving::MissionIntLeft() {
 //Mission No.4: Intersection->Turn Right
 void Driving::MissionIntRight() {
 	cout << "mission 4" << endl;
-
 	//
 	//mission code
 	//
+	getGPSinitial(dataContainer->getValue_gps_latitude(), dataContainer->getValue_gps_longitude(), path);
 	BasicGPS(INTER_RIGHT);
 
 	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
@@ -833,10 +855,10 @@ void Driving::MissionIntRight() {
 //Mission No.5: Intersection->Go Straight
 void Driving::MissionIntStraight() {
 	cout << "mission 5" << endl;
-
 	//
 	//mission code
 	//
+	getGPSinitial(dataContainer->getValue_gps_latitude(), dataContainer->getValue_gps_longitude(), path);
 	BasicGPS(INTER_STRAIGHT);
 
 	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
@@ -1158,16 +1180,15 @@ void Driving::setPath() {
 	double path_y;
 
 	//경로 설정 바꿔야함
-	ifstream gpsfile("test1.txt");
+	ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_school_rtk_LTE_10Hz_3.txt");
 
 	char line[200];
 	string tap;
 	vector<string> vec;
-	vector<double> temp;
+	//vector<double> temp;
 
 	if (gpsfile.is_open()) {
 		while (gpsfile.getline(line, sizeof(line), '\n')) {
-
 			stringstream str(line);
 
 			while (getline(str, tap, ',')) {
@@ -1176,24 +1197,24 @@ void Driving::setPath() {
 
 			path_x = (atof(vec[0].c_str()));
 			path_y = (atof(vec[1].c_str()));
-			temp.push_back(path_x);
-			temp.push_back(path_y);
-			path.push_back(temp);
+			//temp.push_back(path_x);
+			//temp.push_back(path_y);
+			Point2d pathPoint = Point2d(path_x, path_y);
+			path.push_back(pathPoint);
 
 			vec.clear();
-			temp.clear();
+			//temp.clear();
 		}
 	}
 }
 
-#define num 100
-vector<vector<double>> Driving::forPASIV_path(double x_p, double y_p, vector<vector<double>> path) {
+void Driving::getGPSinitial(double x_p, double y_p, vector<Point2d> path) {
 	int min = 0;
 	int smin = 0;
 	double temp = 10000000;
 
-	for (int i = 0; i < path.size(); i++) {
-		double ref = pow(pow(x_p - path[i][0], 2) + pow(y_p - path[i][1], 2), 0.5);
+	for (int i = initialGPSpoint; i < path.size(); i++) {
+		double ref = pow(pow(x_p - path[i].x, 2) + pow(y_p - path[i].y, 2), 0.5);
 
 		if (ref <= temp) {
 			min = i;
@@ -1202,30 +1223,55 @@ vector<vector<double>> Driving::forPASIV_path(double x_p, double y_p, vector<vec
 		}
 	}
 
-	if (pow(pow(x_p - path[smin][0], 2) + pow(y_p - path[smin][1], 2), 0.5) > 10 || abs(min - smin) > 100) {
+	if (pow(pow(x_p - path[smin].x, 2) + pow(y_p - path[smin].y, 2), 0.5) > 10 || abs(min - smin) > 100) {
 		min = smin + 5;
 	}
 
-	vector<vector<double>> result;
+	initialGPSpoint = min;
+}
 
-	for (int i = min; i < num; i++) {
-		result.push_back(path[i]);
+vector<Point2d> Driving::forPASIV_path(double x_p, double y_p, vector<Point2d> path) {
+	int min = 0;
+	int smin = 0;
+	double temp = 10000000;
+	
+	for (int i = initialGPSpoint; i < path.size(); i++) {
+		double ref = pow(pow(x_p - path[i].x, 2) + pow(y_p - path[i].y, 2), 0.5);
+
+		if (ref <= temp) {
+			min = i;
+			smin = min;
+			temp = ref;
+		}
 	}
 
+	if (pow(pow(x_p - path[smin].x, 2) + pow(y_p - path[smin].y, 2), 0.5) > 10 || abs(min - smin) > 100) {
+		min = smin + 5;
+	}
+
+	vector<Point2d> result;
+	for (int i = min; i < numGPS; i++) {
+		result.push_back(path[i]);
+	}
+	presentGPSpoint = min;
 	return result;
 }
 
-vector<vector<double>> Driving::getWaypoint(double x_p, double y_p, double heading, vector<vector<double>>forPASIV_path) {
+vector<Point2d> Driving::getWaypoint(double x_p, double y_p, double heading, vector<Point2d>forPASIV_path) {
 	double theta = 2 * CV_PI - heading;
 
-	vector<vector<double>> gpsWayPoint;
-
-	for (int i = 0; i < forPASIV_path.size(); i++) {
-		vector<double> temp{ 200/3*((forPASIV_path[i][0] - x_p + 3) * cos(theta) + (forPASIV_path[i][1] - y_p + 6) * sin(theta)), 200/3*((forPASIV_path[i][0] - x_p + 3) * sin(theta) - (forPASIV_path[i][1] - y_p + 6) * cos(theta))};
-		gpsWayPoint.push_back(temp);
-		temp.clear();
+	vector<Point2d> gpsWayPoint;
+	if (forPASIV_path.size() == 0){
 	}
-
+	else{
+		for (int i = 0; i < forPASIV_path.size(); i++) {
+			Point2d temp = Point2d(200 / 3 * ((forPASIV_path[i].x - x_p + 3) * cos(theta) + (forPASIV_path[i].y - y_p + 6) * sin(theta)), 200 / 3 * ((forPASIV_path[i].x - x_p + 3) * sin(theta) - (forPASIV_path[i].y - y_p + 6) * cos(theta)));
+			//Point2d temp = Point2d(200 / 3 * (forPASIV_path[i].x - x_p + 3), -200 / 3 * (forPASIV_path[i].y - y_p + 6));
+			//vector<double> temp{ 200/3*(forPASIV_path[i].x - x_p + 3), -200/3* (forPASIV_path[i].y - y_p + 6)};
+			gpsWayPoint.push_back(temp);
+			//temp.clear();
+		}
+	}
 	return gpsWayPoint;
 }
 

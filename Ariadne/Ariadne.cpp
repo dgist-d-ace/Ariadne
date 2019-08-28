@@ -224,7 +224,7 @@ void Ariadne::clicked_btn_sensor() {
 
 	if (!lidarThread->isRunning()) { lidarThread->start(); }
 
-	//if (!gpsThread->isRunning()) { gpsThread->start(); }
+	if (!gpsThread->isRunning()) { gpsThread->start(); }
 
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
@@ -270,7 +270,24 @@ void Ariadne::updateUI() {
 
 	ui->pathmap->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_pathmap()));
 	//ui->scnn->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_scnn()));
+	
+	/*vector<int> arr = dataContainer->getValue_yolo_missions();
+	QString str;
 
+	if (arr[0] == 0) str = QString("STOP");
+	else if (arr[0] == 1) str = QString("LEFT");
+	else if (arr[0] == 2) str = QString("STRAIGHT");
+	else if (arr[0] == 3) str = QString("RIGHT");
+	else str = QString("None");
+
+	ui->label_28->setText(str);
+	ui->lcdNumber_16->display(arr[1]);
+	ui->lcdNumber_18->display(arr[2]);
+	ui->lcdNumber_19->display(arr[3]);
+	ui->lcdNumber_20->display(arr[4]);
+	ui->lcdNumber_21->display(arr[5]);
+	ui->lcdNumber_22->display(arr[6]);*/
+	
 }
 
 void Ariadne::clicked_btn_mission1() {

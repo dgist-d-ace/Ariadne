@@ -16,6 +16,7 @@
 #define GPSscoreStep 10
 ///#define itvGPS 30 //600*600
 #define itvGPS 20 //400*400
+#define numGPS 100
 
 #define steerRatio  1.0
 #define speedHigh	10.0
@@ -68,9 +69,13 @@ public:
 
 	// functions for setting GPS way points
 	void setPath(); // 모든 주행경로 저장
-	vector<vector<double>> path;
-	vector<vector<double>> forPASIV_path(double x_p, double y_p, vector<vector<double>> path); //현재 위치와 가장 가까운 한 점을 찾은 후 이 점으로 부터 n개의 좌표를 저장
-	vector<vector<double>> getWaypoint(double x_p, double y_p, double heading, vector<vector<double>> forPASIV_path); // PASIV 주행을 위한 좌표계 변환
+
+	int initialGPSpoint;
+	int presentGPSpoint;
+	vector<Point2d> path; //total way point.
+	void getGPSinitial(double x_p, double y_p, vector<Point2d> path);
+	vector<Point2d> forPASIV_path(double x_p, double y_p, vector<Point2d> path); //현재 위치와 가장 가까운 한 점을 찾은 후 이 점으로 부터 n개의 좌표를 저장
+	vector<Point2d> getWaypoint(double x_p, double y_p, double heading, vector<Point2d> forPASIV_path); // PASIV 주행을 위한 좌표계 변환
 	vector<Point2d> WaySimul_straight();
 	vector<Point2d> WaySimul_turn();
 

@@ -123,7 +123,7 @@ private:
 	//
 	//카메라2: YOLO용
 	//
-	int m_yolo_missions[9];
+	vector<int> m_yolo_missions;
 	double m_yolo_speed_ratio = 1;
 	int m_yolo_missionID = BASIC;
 
@@ -318,8 +318,8 @@ public:
 	//
 	// 카메라 2 YOLO용
 	//
-	int* getValue_yolo_missions();
-	void setValue_yolo_missions(int temp[9]);
+	vector<int> getValue_yolo_missions();
+	void setValue_yolo_missions(vector<int> temp);
 
 	// SpeedRatio 조절 및 미션 넘버 조절 in yolo thread
 	void setValue_yolo_speed_ratio(double);
