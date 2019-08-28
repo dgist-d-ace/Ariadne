@@ -215,21 +215,23 @@ void Ariadne::clicked_btn_sensor() {
 
 	AutoPortFinder();
 
-	//if (!scnnThread->isRunning()) { scnnThread->start(); }
+	// if (!scnnThread->isRunning()) { scnnThread->start(); }
 
-	//if (!yoloThread->isRunning()){ yoloThread->start(); }
+	if (!yoloThread->isRunning()){ yoloThread->start(); }
 
 	//if (!platformThread->isRunning()) { platformThread->start(); }
 	
 	//if (!lidarThread->isRunning()) { lidarThread->start(); }
 
-	if (!gpsThread->isRunning()) { gpsThread->start(); }
+	//if (!gpsThread->isRunning()) { gpsThread->start(); }
 
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
 	TimerSensorStatus->start(1000);
 
+
 	ui->pushButton_3->setEnabled(false);
+	
 	
 }
 
@@ -259,10 +261,14 @@ void Ariadne::clicked_btn_driving() {
 	if (!drivingThread->isRunning())
 		drivingThread->start();
 
+	/// 0829 오전 6시 46분 DY: 하단 TimerUIUpdate를 clicked_btn_sensors() 에 옮겨서 테스트해보니 여기서 에러가 남.
+	/// 하지만 데이터파싱은 잘 됨을 확인함.( sensorstatus.cpp 파일 430줄 ) 
+	/// 우선 케이시티가서 디버깅할때 에러나지 말라고 여기 주석처리 해둘게 보경 UI update는 나중에 시간날때 천천히 살펴봐
+	/*
 	TimerUIUpdate = new QTimer(this);
 	QTimer::connect(TimerUIUpdate, &QTimer::timeout, this, &Ariadne::updateUI);
 	TimerUIUpdate->start(20);
-
+	*/
 }
 
 void Ariadne::updateUI() {
@@ -270,7 +276,7 @@ void Ariadne::updateUI() {
 	ui->pathmap->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_pathmap()));
 	//ui->scnn->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_scnn()));
 	
-	/*vector<int> arr = dataContainer->getValue_yolo_missions();
+	vector<int> arr = dataContainer->getValue_yolo_missions();
 	QString str;
 
 	if (arr[0] == 0) str = QString("STOP");
@@ -285,7 +291,7 @@ void Ariadne::updateUI() {
 	ui->lcdNumber_19->display(arr[3]);
 	ui->lcdNumber_20->display(arr[4]);
 	ui->lcdNumber_21->display(arr[5]);
-	ui->lcdNumber_22->display(arr[6]);*/
+	ui->lcdNumber_22->display(arr[6]);
 	
 }
 

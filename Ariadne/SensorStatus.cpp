@@ -427,6 +427,7 @@ void Yolo::comYolo() {
 		else { dataContainer->setValue_yolo_speed_ratio(1); }
 		emit(BustExist(bustOn)); // if bust is in front of the car, UI bust button will be automatically switched.
 		emit(KidsafeExist(kidsafeOn));
+		/// cout << trigger[0] << " " << trigger[1] << " " << trigger[2] << " " << trigger[3] << " " << trigger[4] << " " << trigger[5] << " " << trigger[6] << " " << trigger[7] << " " << trigger[8] << " " << endl;
 	}
 
 	closesocket(client);
