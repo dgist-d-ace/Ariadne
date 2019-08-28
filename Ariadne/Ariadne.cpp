@@ -215,14 +215,13 @@ void Ariadne::clicked_btn_sensor() {
 
 	AutoPortFinder();
 
-	if (!scnnThread->isRunning()) { scnnThread->start(); }
+	//if (!scnnThread->isRunning()) { scnnThread->start(); }
 
 	//if (!yoloThread->isRunning()){ yoloThread->start(); }
 
-	if (!platformThread->isRunning()) { platformThread->start(); }
-	//dataContainer->setValue_UtoP_AorM(1);
-
-	if (!lidarThread->isRunning()) { lidarThread->start(); }
+	//if (!platformThread->isRunning()) { platformThread->start(); }
+	
+	//if (!lidarThread->isRunning()) { lidarThread->start(); }
 
 	if (!gpsThread->isRunning()) { gpsThread->start(); }
 
@@ -579,6 +578,7 @@ void PlatformCom::comPlatform() {
 #define Eoff 500000
 #define k0 0.9996
 #define radi 6378137
+#define GPSCOM L"COM14"
 
 bool sign;
 
@@ -595,32 +595,24 @@ GPSCom::GPSCom() {
 
 //얘가 실시간 좌표찍는 애임 , 클릭버튼했을 대 이 함수호출되도록했음
 void GPSCom::comGPS() { // rt ; Real Time
-	QVector<double> temp1;
-	QVector<double> temp2;
-	QVector<double> store_x;
-	QVector<double> store_y;
 
-	cout << "gps communication now" << endl;
-	// 
-	if (_gps.OpenPort(dataContainer->getValue_gps_port())) {
+	// dataContainer->getValue_gps_port()
+	if (_gps.OpenPort(GPSCOM)) {
 
 		_gps.ConfigurePortW(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
 		_gps.SetCommunicationTimeouts(0, 0, 0, 0, 0);
 		string tap;
 		string tap2;
 		vector<string> vec;
-
 		while (1) {
-			BYTE * pByte = new BYTE[128]; // 2028
-
-			if (_gps.ReadByte(pByte, 128)) {
+			BYTE * pByte = new BYTE[512]; // 2028
+			if (_gps.ReadByte(pByte, 512)) {
 
 				dataContainer->updateValue_gps_status();
 
-				pByte[127] = '\0'; // 2027
+				pByte[511] = '\0'; // 2027
 
 				const char * p = (const char*)pByte;
-				//cout << p;
 
 				stringstream str(p);
 
@@ -632,6 +624,8 @@ void GPSCom::comGPS() { // rt ; Real Time
 						vec.push_back(tap2);
 					}
 					//cout << vec[0] << endl;
+
+					cout << vec.size() << endl;
 
 					if (vec.size() > 8) {
 						if (vec[0] == "$GNRMC" && vec[2] == "A") {
@@ -657,6 +651,7 @@ void GPSCom::comGPS() { // rt ; Real Time
 						}
 						else if (vec[2] == "V") {
 							dataContainer->count_gps_valid();
+
 						}
 					}
 					vec.clear();
@@ -670,6 +665,10 @@ void GPSCom::comGPS() { // rt ; Real Time
 			}
 			Sleep(100);
 		}
+	}
+	else {
+		cout << "port not connect" << endl;
+		emit(GPSExit());
 	}
 }
 
