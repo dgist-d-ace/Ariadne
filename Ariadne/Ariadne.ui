@@ -1079,22 +1079,6 @@
     <property name="title">
      <string>SCNN</string>
     </property>
-    <widget class="QLCDNumber" name="lcdNumber_11">
-     <property name="geometry">
-      <rect>
-       <x>180</x>
-       <y>20</y>
-       <width>70</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_16">
      <property name="geometry">
       <rect>
@@ -1134,41 +1118,6 @@
       <string>RightLine</string>
      </property>
     </widget>
-    <widget class="QLCDNumber" name="lcdNumber_14">
-     <property name="geometry">
-      <rect>
-       <x>180</x>
-       <y>110</y>
-       <width>70</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-     <property name="mode">
-      <enum>QLCDNumber::Dec</enum>
-     </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
-    <widget class="QLCDNumber" name="lcdNumber_13">
-     <property name="geometry">
-      <rect>
-       <x>180</x>
-       <y>80</y>
-       <width>70</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_19">
      <property name="geometry">
       <rect>
@@ -1182,20 +1131,56 @@
       <string>RightRightLine</string>
      </property>
     </widget>
-    <widget class="QLCDNumber" name="lcdNumber_12">
+    <widget class="QLabel" name="label_31">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>20</y>
+       <width>70</width>
+       <height>12</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>None</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_32">
      <property name="geometry">
       <rect>
        <x>180</x>
        <y>50</y>
        <width>70</width>
-       <height>23</height>
+       <height>12</height>
       </rect>
      </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
+     <property name="text">
+      <string>None</string>
      </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
+    </widget>
+    <widget class="QLabel" name="label_33">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>80</y>
+       <width>70</width>
+       <height>12</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>None</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_34">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>110</y>
+       <width>70</width>
+       <height>12</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>None</string>
      </property>
     </widget>
    </widget>
