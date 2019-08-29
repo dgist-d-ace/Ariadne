@@ -188,30 +188,6 @@ int Scnn::boostScnn() {
 			existLanes.push_back(lists[i]);
 		}
 
-		dataContainer->setValue_scnn_existLanes(existLanes);
-		//cout << "existLanes : ";
-
-		for (i = 0; i < 4; i++)
-		{
-			//cout << lists[i] << " ";
-		}
-		//cout << endl;
-
-		//cout << "existLanes : ";
-		for (i = 0; i < 4; i++)
-		{
-			//cout << existLanes[i] << " ";
-		}
-		//cout << endl;
-
-		//cout << "existLanes : ";
-		for (i = 0; i < 4; i++)
-		{
-			//cout << dataContainer->getValue_scnn_existLanes()[i] << " ";
-		}
-		//cout << endl;
-
-		j = 0;
 		for (i = 5; i < lists.size(); i++) {
 			if (lists[i] == -1) {
 				j++;
@@ -223,24 +199,47 @@ int Scnn::boostScnn() {
 			}
 		}
 
-
 		dataContainer->setValue_scnn_lanes(lanes);
+		dataContainer->setValue_scnn_existLanes(existLanes);
 
+
+		
+		/*cout << "existLanes : ";
+
+		for (i = 0; i < 4; i++)
+		{
+			cout << lists[i] << " ";
+		}
+		cout << endl;
+
+		cout << "existLanes : ";
+		for (i = 0; i < 4; i++)
+		{
+			cout << existLanes[i] << " ";
+		}
+		cout << endl;
+
+		cout << "existLanes : ";
+		for (i = 0; i < 4; i++)
+		{
+			cout << dataContainer->getValue_scnn_existLanes()[i] << " ";
+		}
+		cout << endl;
+		
 		for (int i = 0; i < 4; i++)
 		{
-			//cout << "lane " << i << " : ";
-			for (int j = 0; j < dataContainer->getValue_scnn_lanes()[i].size(); j++) {}
-			//cout << dataContainer->getValue_scnn_lanes()[i][j] << " ";
-		//cout << endl;
-		}
-
+			cout << "lane " << i << " : ";
+			for (int j = 0; j < dataContainer->getValue_scnn_lanes()[i].size(); j++) {
+				cout << dataContainer->getValue_scnn_lanes()[i][j] << " ";
+			}
+		cout << endl;
+		}*/
 		existLanes.clear();
 		lanes.clear();
+
 	}
 
 	scnn.attr("scnn_destroy")();
-	print("good");
-
 
 	return 0;
 }
@@ -310,15 +309,15 @@ Yolo::Yolo() {
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi)); // assign program memory
 
-	TCHAR commandLine[] = TEXT("darknet.exe detector demo data\\obj.data cfg\\yolov3_please.cfg yolov3_54000.weights data\\middle.mp4");
+	TCHAR commandLine[] = TEXT("darknet.exe detector demo data\\obj.data cfg\\yolov3_please.cfg yolov3_3250.weights data\\middle.mp4");
 	SetCurrentDirectory(_T("C:\\Users\\D-Ace\\darknet-master\\build\\darknet\\x64")); // Darknet program start command
 	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi)) {
 	//}
-	if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
-		cout << "error\n";
+	if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi)) {
+		cout << "yolo create fail\n";
 	}
 	else {
-		cout << "open ok";
+		cout << "yolo create succese\n";
 		tid = pi.hThread;
 		SuspendThread(tid);
 	}
@@ -344,16 +343,12 @@ void Yolo::comYolo() {
 	//SuspendThread(tid);
 	ResumeThread(tid);
 
-	cout << "try com\n";
-
 	Sleep(5000);
 	client = accept(server, NULL, NULL);
 	if (client == INVALID_SOCKET)
 		cout << "invalid socket\n";
-	else cout << "valid socket\n";
 
-
-	char message[8192];
+	char message[50];
 	int strLen;
 	float* data;
 	cout << "communication1\n";
@@ -364,7 +359,7 @@ void Yolo::comYolo() {
 	while (Yolo_Com) {
 
 
-		strLen = recv(client, message, 8192, 0);
+		strLen = recv(client, message, 50, 0);
 		if (strLen == -1) cout << "send error\n";
 
 		int* trigger = new int;
@@ -440,9 +435,7 @@ void Yolo::comYolo() {
 }
 
 Yolo::~Yolo() {
-	CloseHandle(pi.hProcess);
-	CloseHandle(pi.hThread);
-	TerminateProcess(pi.hProcess, 0);
+	TerminateProcess(pi.hProcess, NULL);
 }
 
 void Yolo::SuspendYolo() {

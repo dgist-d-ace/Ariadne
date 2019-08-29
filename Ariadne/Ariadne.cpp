@@ -126,6 +126,18 @@ Ariadne::Ariadne(QWidget *parent)
 	QObject::connect(yolo, SIGNAL(BustExist(bool)), this, SLOT(onBustExist(bool)));
 	QObject::connect(yolo, SIGNAL(KidsafeExist(bool)), this, SLOT(onKidsafeExist(bool)));
 
+	TimerUIUpdate = new QTimer(this);
+	QTimer::connect(TimerUIUpdate, &QTimer::timeout, this, &Ariadne::updateUI);
+
+}
+
+void Ariadne::closeEvent(QCloseEvent *e) {
+	//delete platformCom;
+	//delete lidarCom;
+	//delete gpsCom;
+	//delete scnn;
+	delete yolo;
+	//delete view;
 }
 
 // This function is to change comport numbers from CString to QString.
@@ -144,6 +156,7 @@ void Ariadne::clicked_manual() {
 }
 
 void Ariadne::onDrivingEnabled() {
+	Sleep(1000);
 	ui->pushButton_3->setEnabled(true);
 }
 
@@ -229,28 +242,26 @@ void Ariadne::clicked_btn_sensor() {
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
 	TimerSensorStatus->start(1000);
 
-
 	ui->pushButton_3->setEnabled(false);
-	
 	
 }
 
 void Ariadne::clicked_btn_bust(bool bust) {
 	/// if bust is on(true), speed ratio will be decreased.
-	if (bust) { dataContainer->setValue_speed_ratio(SPEED_RATIO_LOW);
+	if (bust) { dataContainer->setValue_speed_ratio_bust(SPEED_RATIO_LOW);
 	ui->label_21->setStyleSheet("background-color: rgb(255, 51, 51)");
 	}
-	else { dataContainer->setValue_speed_ratio(1); 
+	else { dataContainer->setValue_speed_ratio_bust(1); 
 	ui->label_21->setStyleSheet("background-color: rgb(0, 204, 102)");
 	}
 }
 
 void Ariadne::clicked_btn_kidsafe(bool kidsafe) {
 	/// if kidsafe is on(true) speed ratio will be decreased.
-	if (kidsafe) { dataContainer->setValue_speed_ratio(SPEED_RATIO_LOW);
+	if (kidsafe) { dataContainer->setValue_speed_ratio_kid(SPEED_RATIO_LOW);
 	ui->label_20->setStyleSheet("background-color: rgb(255, 51, 51)");
 	}
-	else { dataContainer->setValue_speed_ratio(1); 
+	else { dataContainer->setValue_speed_ratio_kid(1); 
 	ui->label_20->setStyleSheet("background-color: rgb(0, 204, 102)");
 	}
 }
@@ -258,32 +269,28 @@ void Ariadne::clicked_btn_kidsafe(bool kidsafe) {
 
 // This function is to start driving
 void Ariadne::clicked_btn_driving() {
-	if (!drivingThread->isRunning())
-		drivingThread->start();
+	//if (!drivingThread->isRunning())
+	//	drivingThread->start();
 
 	/// 0829 오전 6시 46분 DY: 하단 TimerUIUpdate를 clicked_btn_sensors() 에 옮겨서 테스트해보니 여기서 에러가 남.
 	/// 하지만 데이터파싱은 잘 됨을 확인함.( sensorstatus.cpp 파일 430줄 ) 
 	/// 우선 케이시티가서 디버깅할때 에러나지 말라고 여기 주석처리 해둘게 보경 UI update는 나중에 시간날때 천천히 살펴봐
-	/*
-	TimerUIUpdate = new QTimer(this);
-	QTimer::connect(TimerUIUpdate, &QTimer::timeout, this, &Ariadne::updateUI);
-	TimerUIUpdate->start(20);
-	*/
+	
+	TimerUIUpdate->start(100);
 }
 
 void Ariadne::updateUI() {
 
 	ui->pathmap->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_pathmap()));
-	//ui->scnn->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_scnn()));
 	
-	vector<int> arr = dataContainer->getValue_yolo_missions();
+	/*vector<int> arr = dataContainer->getValue_yolo_missions();
 	QString str;
 
 	if (arr[0] == 0) str = QString("STOP");
 	else if (arr[0] == 1) str = QString("LEFT");
 	else if (arr[0] == 2) str = QString("STRAIGHT");
 	else if (arr[0] == 3) str = QString("RIGHT");
-	else str = QString("None");
+	else str = QString("NONE");
 
 	ui->label_28->setText(str);
 	ui->lcdNumber_16->display(arr[1]);
@@ -291,8 +298,16 @@ void Ariadne::updateUI() {
 	ui->lcdNumber_19->display(arr[3]);
 	ui->lcdNumber_20->display(arr[4]);
 	ui->lcdNumber_21->display(arr[5]);
-	ui->lcdNumber_22->display(arr[6]);
+	ui->lcdNumber_22->display(arr[6]);*/
 	
+	vector<int> arr2 = dataContainer->getValue_scnn_existLanes();
+
+	ui->lcdNumber_11->display(arr2[0]);
+	ui->lcdNumber_12->display(arr2[1]);
+	ui->lcdNumber_13->display(arr2[2]);
+	ui->lcdNumber_14->display(arr2[3]);
+
+		
 }
 
 void Ariadne::clicked_btn_mission1() {

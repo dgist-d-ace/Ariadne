@@ -157,14 +157,14 @@ vector<Point2d> Driving::forPASIV_path(double x_p, double y_p, vector<Point2d> p
 }
 
 vector<Point2d> Driving::getWaypoint(double x_p, double y_p, double heading, vector<Point2d>forPASIV_path) {
-	double theta = 2 * CV_PI - heading;
+	double theta =  - heading;
 
 	vector<Point2d> gpsWayPoint;
 	if (forPASIV_path.size() == 0) {
 	}
 	else {
 		for (int i = 0; i < forPASIV_path.size(); i++) {
-			Point2d temp = Point2d(200 / 3 * ((forPASIV_path[i].x - x_p + 3) * cos(theta) + (forPASIV_path[i].y - y_p + 6) * sin(theta)), 200 / 3 * ((forPASIV_path[i].x - x_p + 3) * sin(theta) - (forPASIV_path[i].y - y_p + 6) * cos(theta)));
+			Point2d temp = Point2d(200 / 3 * ((forPASIV_path[i].x - x_p) * cos(theta) + (forPASIV_path[i].y - y_p ) * sin(theta) + 3), 200 / 3 * ((forPASIV_path[i].x - x_p) * sin(theta) - (forPASIV_path[i].y - y_p ) * cos(theta) + 6 ));
 			//Point2d temp = Point2d(200 / 3 * (forPASIV_path[i].x - x_p + 3), -200 / 3 * (forPASIV_path[i].y - y_p + 6));
 			//vector<double> temp{ 200/3*(forPASIV_path[i].x - x_p + 3), -200/3* (forPASIV_path[i].y - y_p + 6)};
 			gpsWayPoint.push_back(temp);
@@ -967,7 +967,7 @@ void Driving::MissionIntStop() {
 	//mission code
 	//
 
-	dataContainer->setValue_speed_ratio(0);
+	dataContainer->setValue_UtoP_SPEED(0);
 
 	dataContainer->setValue_UtoP_BRAKE(50);
 	Sleep(300);
@@ -982,8 +982,7 @@ void Driving::MissionIntStop() {
 
 	while (dataContainer->getValue_yolo_missionID() == INTER_STOP)
 
-		dataContainer->setValue_UtoP_BRAKE(0); /// 브레이크 해제
-	dataContainer->setValue_speed_ratio(1); /// 신호를 받기 전으로 원상복귀		
+	dataContainer->setValue_UtoP_BRAKE(0); /// 브레이크 해제
 }
 
 //Mission No.7: Static Obstacle Mission

@@ -7,6 +7,7 @@
 #include "ui_Ariadne.h"
 #include <QtWidgets/QPushButton>
 #include <QTimer>
+#include <QCloseEvent>
 
 #include <iostream>
 #include <fstream>
@@ -122,11 +123,12 @@ public:
 	QTimer* TimerSensorStatus;
 
 	static Ui::AriadneClass* getUI();
-
+	
 private:
 	static Ui::AriadneClass* ui;
 	void updateSensorStatus();
 	void keyPressEvent(QKeyEvent *);
+	void closeEvent(QCloseEvent *event);
 
 public slots:
 	void clicked_btn_mission1();

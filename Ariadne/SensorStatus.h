@@ -81,7 +81,7 @@ public:
 	SOCKET server;
 	SOCKET client;
 	Yolo();
-	~Yolo();
+	virtual ~Yolo();
 	bool Yolo_Com = true;
 
 private:
