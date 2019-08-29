@@ -215,7 +215,7 @@ void Ariadne::clicked_btn_sensor() {
 
 	AutoPortFinder();
 
-	// if (!scnnThread->isRunning()) { scnnThread->start(); }
+	if (!scnnThread->isRunning()) { scnnThread->start(); }
 
 	if (!yoloThread->isRunning()){ yoloThread->start(); }
 

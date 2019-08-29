@@ -19,8 +19,8 @@
 #define numGPS 100
 
 #define steerRatio  1.0
-#define speedHigh	10.0
-#define speedLow	7.0
+#define speedHigh	15.0
+#define speedLow	5.0
 
 //Tuning points in Dynamic Mission
 #define stopDist 1200.0 //for Dynamic Obstacle mission

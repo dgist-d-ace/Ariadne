@@ -75,6 +75,105 @@ Driving::Driving() {
 	void setPath();
 }
 
+void Driving::setPath() {
+	double path_x;
+	double path_y;
+
+	//경로 설정 바꿔야함
+	ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_school_rtk_LTE_10Hz_3.txt");
+
+	char line[200];
+	string tap;
+	vector<string> vec;
+	//vector<double> temp;
+
+	if (gpsfile.is_open()) {
+		while (gpsfile.getline(line, sizeof(line), '\n')) {
+			stringstream str(line);
+
+			while (getline(str, tap, ',')) {
+				vec.push_back(tap);
+			}
+
+			path_x = (atof(vec[0].c_str()));
+			path_y = (atof(vec[1].c_str()));
+			//temp.push_back(path_x);
+			//temp.push_back(path_y);
+			Point2d pathPoint = Point2d(path_x, path_y);
+			path.push_back(pathPoint);
+
+			vec.clear();
+			//temp.clear();
+		}
+	}
+}
+
+//set the "presentGPSpoint" which mean the mission strat point.
+void Driving::getGPSinitial(double x_p, double y_p, vector<Point2d> path) {
+	int min = 0;
+	double temp = 10000000;
+	double ref;
+
+	for (int i = initialGPSpoint; i <(initialGPSpoint+ path.size()/4); i++) {
+		ref = pow(pow(x_p - path[i].x, 2) + pow(y_p - path[i].y, 2), 0.5);
+
+		if (ref <= temp) {
+			min = i;
+			temp = ref;
+		}
+	}
+
+	initialGPSpoint = min;
+	presentGPSpoint = min;
+}
+
+//output: vector includes number of "numGPS" waypoints
+//refresh the "presentGPSpoint" as the closest point to me.
+vector<Point2d> Driving::forPASIV_path(double x_p, double y_p, vector<Point2d> path) {
+	int min = 0;
+	int smin = 0;
+	double temp = 10000000;
+
+	for (int i = initialGPSpoint; i < (initialGPSpoint+path.size()/4); i++) {
+		double ref = pow(pow(x_p - path[i].x, 2) + pow(y_p - path[i].y, 2), 0.5);
+
+		if (ref <= temp) {
+			smin = min; 
+			min = i;
+			temp = ref;
+		}
+	}
+
+	if (sqrt(pow(x_p - path[presentGPSpoint].x, 2) + pow(y_p - path[presentGPSpoint].y, 2) > 10 || abs(min - presentGPSpoint) > 100)) {
+		min = presentGPSpoint + 5;
+	}
+
+	vector<Point2d> result;
+	for (int i = min; i < min + numGPS; i++) {
+		result.push_back(path[i]);
+	}
+	presentGPSpoint = min;
+	return result;
+}
+
+vector<Point2d> Driving::getWaypoint(double x_p, double y_p, double heading, vector<Point2d>forPASIV_path) {
+	double theta = 2 * CV_PI - heading;
+
+	vector<Point2d> gpsWayPoint;
+	if (forPASIV_path.size() == 0) {
+	}
+	else {
+		for (int i = 0; i < forPASIV_path.size(); i++) {
+			Point2d temp = Point2d(200 / 3 * ((forPASIV_path[i].x - x_p + 3) * cos(theta) + (forPASIV_path[i].y - y_p + 6) * sin(theta)), 200 / 3 * ((forPASIV_path[i].x - x_p + 3) * sin(theta) - (forPASIV_path[i].y - y_p + 6) * cos(theta)));
+			//Point2d temp = Point2d(200 / 3 * (forPASIV_path[i].x - x_p + 3), -200 / 3 * (forPASIV_path[i].y - y_p + 6));
+			//vector<double> temp{ 200/3*(forPASIV_path[i].x - x_p + 3), -200/3* (forPASIV_path[i].y - y_p + 6)};
+			gpsWayPoint.push_back(temp);
+			//temp.clear();
+		}
+	}
+	return gpsWayPoint;
+}
+
 //Input: lane data from scnn
 //output: 400x400 Mat image
 //Make the scored lane map 
@@ -274,12 +373,6 @@ Mat Driving::getGpsData(int scorestep)
 	Mat gpsMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 	gpsMap = Scalar::all(scorestep*stepNum);
 
-	//if (mission == INTER_STRAIGHT){wayPoints = WaySimul_straight();}
-	//else if (mission == INTER_RIGHT){wayPoints = WaySimul_turn();}
-	//else if (mission == INTER_LEFT) {}
-	//else if (mission == INTER_STOP) {}
-	//else if (mission == INTER_READY) {}
-
 	//Function
 	Mat buffer = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 	Point2d getPoint;
@@ -291,7 +384,6 @@ Mat Driving::getGpsData(int scorestep)
 		}
 		gpsMap -= buffer;
 	}
-	//imshow("GPSloc", gpsMap);
 	return gpsMap;
 }
 
@@ -442,7 +534,7 @@ void Driving::Basic(int missionId) {
 		Mat stepVot2 = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
 		for (int i = 1; i < 4; i++)
 		{
-			kerSize = 17 * i;
+			kerSize = 15 * i;
 			kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
 			morphologyEx(scoreMap, stepVot2, MORPH_ERODE, kernel);
 			morphologyEx(imgPath, stepVot, MORPH_ERODE, kernel);
@@ -568,6 +660,8 @@ void Driving::BasicGPS(int missionId) {
 	dataContainer->setValue_UtoP_AorM(1);
 	clock_t start, end;
 
+	//GPS initialization
+	getGPSinitial(dataContainer->getValue_gps_latitude(), dataContainer->getValue_gps_longitude(), path);
 	while (1) {
 		start = clock();
 		///////////////////////////////////////////
@@ -581,12 +675,12 @@ void Driving::BasicGPS(int missionId) {
 		}
 		if (initialGPSpoint + numGPS <= presentGPSpoint)
 		{
+			initialGPSpoint = presentGPSpoint;
 			cout << "EXIT INTERSECTION" << endl;
 			break;
 		}
 		///////////////////////////////////////////
 		imgPath = cv::Mat::zeros(400, 400, CV_8UC1);				//path made with lanes and objs
-		///imgPath = cv::Mat::zeros(600, 600, CV_8UC1);				//path made with lanes and objs
 		scoreMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1); //lane map without objs
 
 		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
@@ -675,7 +769,7 @@ void Driving::BasicGPS(int missionId) {
 		Mat stepVot2 = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
 		for (int i = 1; i < 4; i++)
 		{
-			kerSize = 17 * i;
+			kerSize = 15 * i;
 			//kerSize = 25 * i;
 			kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
 			morphologyEx(scoreMap, stepVot2, MORPH_ERODE, kernel);
@@ -830,7 +924,6 @@ void Driving::MissionIntLeft() {
 	//
 	//mission code
 	//
-	getGPSinitial(dataContainer->getValue_gps_latitude(), dataContainer->getValue_gps_longitude(), path);
 	BasicGPS(INTER_LEFT);
 	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
 	if (dataContainer->getValue_yolo_missionID() == INTER_LEFT)
@@ -843,7 +936,6 @@ void Driving::MissionIntRight() {
 	//
 	//mission code
 	//
-	getGPSinitial(dataContainer->getValue_gps_latitude(), dataContainer->getValue_gps_longitude(), path);
 	BasicGPS(INTER_RIGHT);
 
 	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
@@ -857,7 +949,6 @@ void Driving::MissionIntStraight() {
 	//
 	//mission code
 	//
-	getGPSinitial(dataContainer->getValue_gps_latitude(), dataContainer->getValue_gps_longitude(), path);
 	BasicGPS(INTER_STRAIGHT);
 
 	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
@@ -1171,106 +1262,6 @@ vector<Point2d>Driving::WaySimul_turn() {
 		}
 	}
 	gpsfile.close();
-	return gpsWayPoint;
-}
-
-void Driving::setPath() {
-	double path_x;
-	double path_y;
-
-	//경로 설정 바꿔야함
-	ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_school_rtk_LTE_10Hz_3.txt");
-
-	char line[200];
-	string tap;
-	vector<string> vec;
-	//vector<double> temp;
-
-	if (gpsfile.is_open()) {
-		while (gpsfile.getline(line, sizeof(line), '\n')) {
-			stringstream str(line);
-
-			while (getline(str, tap, ',')) {
-				vec.push_back(tap);
-			}
-
-			path_x = (atof(vec[0].c_str()));
-			path_y = (atof(vec[1].c_str()));
-			//temp.push_back(path_x);
-			//temp.push_back(path_y);
-			Point2d pathPoint = Point2d(path_x, path_y);
-			path.push_back(pathPoint);
-
-			vec.clear();
-			//temp.clear();
-		}
-	}
-}
-
-void Driving::getGPSinitial(double x_p, double y_p, vector<Point2d> path) {
-	int min = 0;
-	int smin = 0;
-	double temp = 10000000;
-
-	for (int i = initialGPSpoint; i < path.size(); i++) {
-		double ref = pow(pow(x_p - path[i].x, 2) + pow(y_p - path[i].y, 2), 0.5);
-
-		if (ref <= temp) {
-			min = i;
-			smin = min;
-			temp = ref;
-		}
-	}
-
-	if (pow(pow(x_p - path[smin].x, 2) + pow(y_p - path[smin].y, 2), 0.5) > 10 || abs(min - smin) > 100) {
-		min = smin + 5;
-	}
-
-	initialGPSpoint = min;
-}
-
-vector<Point2d> Driving::forPASIV_path(double x_p, double y_p, vector<Point2d> path) {
-	int min = 0;
-	int smin = 0;
-	double temp = 10000000;
-	
-	for (int i = initialGPSpoint; i < path.size(); i++) {
-		double ref = pow(pow(x_p - path[i].x, 2) + pow(y_p - path[i].y, 2), 0.5);
-
-		if (ref <= temp) {
-			min = i;
-			smin = min;
-			temp = ref;
-		}
-	}
-
-	if (pow(pow(x_p - path[smin].x, 2) + pow(y_p - path[smin].y, 2), 0.5) > 10 || abs(min - smin) > 100) {
-		min = smin + 5;
-	}
-
-	vector<Point2d> result;
-	for (int i = min; i < numGPS; i++) {
-		result.push_back(path[i]);
-	}
-	presentGPSpoint = min;
-	return result;
-}
-
-vector<Point2d> Driving::getWaypoint(double x_p, double y_p, double heading, vector<Point2d>forPASIV_path) {
-	double theta = 2 * CV_PI - heading;
-
-	vector<Point2d> gpsWayPoint;
-	if (forPASIV_path.size() == 0){
-	}
-	else{
-		for (int i = 0; i < forPASIV_path.size(); i++) {
-			Point2d temp = Point2d(200 / 3 * ((forPASIV_path[i].x - x_p + 3) * cos(theta) + (forPASIV_path[i].y - y_p + 6) * sin(theta)), 200 / 3 * ((forPASIV_path[i].x - x_p + 3) * sin(theta) - (forPASIV_path[i].y - y_p + 6) * cos(theta)));
-			//Point2d temp = Point2d(200 / 3 * (forPASIV_path[i].x - x_p + 3), -200 / 3 * (forPASIV_path[i].y - y_p + 6));
-			//vector<double> temp{ 200/3*(forPASIV_path[i].x - x_p + 3), -200/3* (forPASIV_path[i].y - y_p + 6)};
-			gpsWayPoint.push_back(temp);
-			//temp.clear();
-		}
-	}
 	return gpsWayPoint;
 }
 
