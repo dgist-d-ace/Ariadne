@@ -176,34 +176,16 @@ int Scnn::boostScnn() {
 	emit(drivingEnabled());
 	while (1)
 	{
-		cout << 1 << endl;
 		dataContainer->updateValue_scnn_status();
 		py::object params = scnn.attr("scnn_run")();
-		cout << 2 << endl;
 		vector<int> lists = to_std_vector<int>(params);
-		cout << 3 << endl;
 		vector<int> existLanes;
 		vector<vector<Point2i>> lanes(4);
-
-		auto first = lists.cbegin();
-		auto end = lists.cbegin() + 691200/64;
-
-		vector<int32_t> img1d(first, end-1);
-		vector<int> LANES(end , lists.cend());
-
-		auto image(QImage((uchar *)img1d.data(), 100, 36, QImage::Format_RGB32));
-		//QImage img;
-		//img.loadFromData((uchar*)img1d.data(), img1d.size());
-		//img.scaled(QSize(300, 300), Qt::KeepAspectRatio);
-
-		////QImage img = QImage((uchar)img1d.data(), img1d.size(), QImage::Format_RGB888);
-		////img.scaled(QSize(800/8, 288/8), Qt::KeepAspectRatio);
-		dataContainer->setValue_ui_scnn(image);
 
 		int i, j = 0;
 
 		for (i = 0; i < 4; i++) {
-			existLanes.push_back(LANES[i]);
+			existLanes.push_back(lists[i]);
 		}
 
 		dataContainer->setValue_scnn_existLanes(existLanes);
@@ -230,12 +212,12 @@ int Scnn::boostScnn() {
 		//cout << endl;
 
 		j = 0;
-		for (i = 5; i < LANES.size(); i++) {
-			if (LANES[i] == -1) {
+		for (i = 5; i < lists.size(); i++) {
+			if (lists[i] == -1) {
 				j++;
 			}
 			else {
-				cv::Point2i coordinate(LANES[i], LANES[i + 1]);
+				cv::Point2i coordinate(lists[i], lists[i + 1]);
 				lanes[j].push_back(coordinate);
 				i++;
 			}

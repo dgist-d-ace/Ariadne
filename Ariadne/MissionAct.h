@@ -26,6 +26,30 @@
 #define stopDist 1200.0 //for Dynamic Obstacle mission
 #define DynamicMaxSpeed 12.0
 
+#define rate (1/60)
+#define K 0.7
+#define desired_road_length 3
+#define parking_speed  30
+#define park_y 4
+#define park_x 2
+#define circle_path 4.5
+#define speed_error 19
+#define dis_error_rate 0.7
+#define brake 150
+
+#define deg_2_rad (CV_PI / 180)
+
+//Camera define setting
+#define CAMERA_X 1280
+#define CAMERA_Y 720
+#define CAMERA_H 1.0
+#define CAMERA_ANGLE 78.0
+#define CAMERA_TILT 20.0
+#define CAMERA_TOP_ANGLE 15.0
+#define CAMERA_SIDE_ANGLE 24.0
+#define CAMERA_AREA_MIN 50000
+#define CAMERA_AREA_MAX 500000
+
 class Driving : public QObject
 {
 	Q_OBJECT
@@ -59,6 +83,18 @@ protected:
 	//////////////////////////////////////////////
 	//////////////////////////////////////////////
 
+	////////////////////   PARKING   //////////////////////////
+
+	Mat FilteredImage(Mat &img_camera);
+	Mat FindLotLines(Mat &img_edge);
+	vector<vector<Point2f> > FindLotContours(Mat &img_camera, Mat &img_edge);
+	Point2f SetLotCenter(vector<vector<Point2f> > &contours);
+	vector<float> PosFromCamera(Point2f &center);
+	vector<float> FindParkingLot(Mat &img_camera);
+	void controlSpeed(int speed);
+	void brakeTime(double second);
+	void controlENC(int gear, int speed, double dist, int steer = 0);
+
 public:
 	DataContainer *dataContainer;
 	Driving();
@@ -78,7 +114,8 @@ public:
 	vector<Point2d> getWaypoint(double x_p, double y_p, double heading, vector<Point2d> forPASIV_path); // PASIV 주행을 위한 좌표계 변환
 	vector<Point2d> WaySimul_straight();
 	vector<Point2d> WaySimul_turn();
-
+	void practice(double parkDis);
+	int ParkingMission();
 
 	Planner *aster;
 signals:

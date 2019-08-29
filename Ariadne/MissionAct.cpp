@@ -899,6 +899,9 @@ void Driving::MissionParking() {
 	//	mission code
 	//
 
+	if (ParkingMission()) {}
+	else cout << "Parking Fail" << endl;
+
 	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
 	if (dataContainer->getValue_yolo_missionID() == PARKING)
 		dataContainer->setValue_yolo_missionID(BASIC);
@@ -1429,3 +1432,335 @@ void Driving::LOS() {
 	*/
 }
 
+
+Mat Driving::FilteredImage(Mat &img_camera) {
+	Mat img_original = img_camera, img_gray, img_edge;
+
+	//그레이 스케일 영상으로 변환 한후.  
+	cvtColor(img_original, img_gray, COLOR_BGR2GRAY);
+
+	//가우시안 블러와 캐니에지를 이용하여 에지 성분을 검출합니다.
+	//GaussianBlur(img_gray, img_gray, cvSize(3, 3), 0, 0);
+	Canny(img_gray, img_edge, 125, 175, 3);
+	GaussianBlur(img_edge, img_edge, cvSize(5, 5), 0, 0);
+
+	imshow("Edge", img_edge);
+
+	return img_edge;
+}
+
+Mat Driving::FindLotLines(Mat &img_edge) {
+	Mat img_lines = img_edge;
+
+	//직선 성분을 검출합니다.
+	vector<Vec2f> lines;
+	HoughLines(img_lines, lines, 1, CV_PI / 180, 150);
+
+	//검출한 직선을 영상에 그려줍니다.
+	for (int i = 0; i < lines.size(); i++)
+	{
+		float rho = lines[i][0], theta = lines[i][1];
+
+		int x1, x2, y1, y2;
+
+		int xminY = rho / sin(theta), xmaxY = -1 / tan(theta) * img_lines.cols + rho / sin(theta); // xmin = 0, xmax = cols
+		int yminX = rho / cos(theta), ymaxX = -tan(theta) * img_lines.rows + rho / cos(theta); // ymin = 0, ymax = rows
+
+		// 선분의 종류
+		if (yminX >= 0 && yminX <= img_lines.cols) { // top
+			x1 = yminX;
+			y1 = 0;
+
+			if (xminY >= 0 && xminY <= img_lines.rows) { // left
+				x2 = 0;
+				y2 = xminY;
+			}
+			else if (ymaxX >= 0 && ymaxX <= img_lines.cols) { // bottom
+				x2 = ymaxX;
+				y2 = img_lines.rows;
+			}
+			else if (xmaxY >= 0 && xmaxY <= img_lines.rows) { // right
+				x2 = img_lines.cols;
+				y2 = xmaxY;
+			}
+		}
+		else if (xminY >= 0 && xminY <= img_lines.rows) { // left
+			x1 = 0;
+			y1 = xminY;
+
+			if (ymaxX >= 0 && ymaxX <= img_lines.cols) { // bottom
+				x2 = ymaxX;
+				y2 = img_lines.rows;
+			}
+			else if (xmaxY >= 0 && xmaxY <= img_lines.rows) { // right
+				x2 = img_lines.cols;
+				y2 = xmaxY;
+			}
+		}
+		else if (ymaxX >= 0 && ymaxX <= img_lines.cols) { // bottom
+			x1 = ymaxX;
+			y1 = img_lines.rows;
+
+			if (xmaxY >= 0 && xmaxY <= img_lines.rows) { // right
+				x2 = img_lines.cols;
+				y2 = xmaxY;
+			}
+		}
+
+		line(img_lines, Point(x1, y1), Point(x2, y2), Scalar(255, 0, 0), 1);
+	}
+
+	// 검출한 직선의 교점을 영상에 그려줍니다.
+	for (int i = 0; i < lines.size() - 1; i++) {
+		for (int j = i; j < lines.size(); j++) {
+			float rho1 = lines[i][0], theta1 = lines[i][1];
+			float rho2 = lines[j][0], theta2 = lines[j][1];
+
+			int x = (rho2 / sin(theta2) - rho1 / sin(theta1)) / (1 / tan(theta2) - 1 / tan(theta1));
+			int y = (rho2 / cos(theta2) - rho1 / cos(theta1)) / (tan(theta2) - tan(theta1));
+
+			circle(img_lines, Point(x, y), 3, Scalar(0, 255, 0));
+		}
+	}
+
+	imshow("result", img_lines);
+
+	return img_lines;
+}
+
+vector<vector<Point2f> > Driving::FindLotContours(Mat &img_camera, Mat &img_edge) {
+	Mat img_result = img_camera, img_contours = img_edge;
+
+	//contour를 찾는다.
+	vector<vector<Point> > contours;
+	findContours(img_contours, contours, noArray(), RETR_LIST, CHAIN_APPROX_SIMPLE);
+
+	//contour를 근사화한다.
+	vector<vector<Point2f> > finLotContours;
+	vector<Point2f> approx;
+
+	for (size_t i = 0; i < contours.size(); i++) {
+		approxPolyDP(Mat(contours[i]), approx, arcLength(Mat(contours[i]), true) * 0.01, true);
+
+		double area = contourArea(Mat(approx));
+
+		if (area > CAMERA_AREA_MIN && area < CAMERA_AREA_MAX) { //면적이 일정크기 이상이어야 한다. 50000 < 종이 주차장 < 200000
+			int size = approx.size();
+
+			if (size == 4 && isContourConvex(Mat(approx))) { //사각형 이상의 볼록다각형만 그린다.
+				Point2f center(0, 0);
+
+				for (int j = 0; j < size - 1; j++)
+					line(img_result, approx[j], approx[j + 1], Scalar(0, 255, 0), 3);
+				line(img_result, approx[0], approx[size - 1], Scalar(0, 255, 0), 3);
+
+				for (int j = 0; j < size; j++) {
+					circle(img_result, approx[j], 3, Scalar(0, 0, 255), -1);
+					center.x += approx[j].x;
+					center.y += approx[j].y;
+				}
+
+				center.x = center.x / size;
+				center.y = center.y / size;
+				circle(img_result, center, 3, Scalar(255, 255, 255), -1);
+
+				approx.push_back(center);
+
+				finLotContours.push_back(approx);
+			}
+		}
+	}
+
+	imshow("Result", img_result);
+
+	return finLotContours;
+}
+
+Point2f Driving::SetLotCenter(vector<vector<Point2f> > &contours) {
+	Point2f finCenter;
+
+	vector<vector<Point2f> > parkingLots = contours;
+	Point2f minFarLot(CAMERA_X, CAMERA_Y / 2);
+
+	for (int i = 0; i < parkingLots.size(); i++) {
+		if (parkingLots[i].back().x <= minFarLot.x) {
+			minFarLot = parkingLots[i].back();
+		}
+	}
+
+	finCenter = minFarLot;
+
+	return finCenter;
+}
+
+vector<float> Driving::PosFromCamera(Point2f &center) {
+	Point2f finCen(center.x - CAMERA_X / 2, CAMERA_Y - center.y);
+
+	vector<float> position;
+
+	position.push_back(CAMERA_H * tan(CAMERA_SIDE_ANGLE * deg_2_rad) * tan(finCen.x * CAMERA_ANGLE / CAMERA_X * deg_2_rad)); // x
+	position.push_back(CAMERA_H * tan((finCen.y * (90 - CAMERA_TILT) / CAMERA_Y + CAMERA_SIDE_ANGLE) * deg_2_rad)); // y
+
+	return position;
+}
+
+vector<float> Driving::FindParkingLot(Mat &img_camera) {
+	// 주차장을 검출하고, 주차장의 중심을 찾아, 카메라를 원점으로 하는 중심의 좌표를 구합니다.
+	Mat camera = img_camera;
+	Mat edge = FilteredImage(camera);
+	vector<vector<Point2f> > contours = FindLotContours(camera, edge);
+	Point2f center = SetLotCenter(contours);
+	vector<float> position;
+
+	if (center.x >= (CAMERA_X * 2 / 8) && center.x <= (CAMERA_X * 6 / 8) && center.y >= (CAMERA_Y * 2 / 8) && center.y <= (CAMERA_Y * 6 / 8)) {
+		cout << center.x << " " << center.y << " 잘 찾았다 기모띠" << endl;
+		position = PosFromCamera(center);
+	}
+	else {
+		center = Point2f(0, 0);
+		cout << center.x << " " << center.y << " 못 찾겠다 꾀꼬리" << endl;
+		position = { 0, 0 };
+	}
+
+	cout << "최종 x: " << position[0] << ", y: " << position[1] << endl;
+
+	return position;
+}
+
+void Driving::controlSpeed(int speed) {
+	cout << "속도 제어를 시작합니다." << endl;
+
+	double m_speed = dataContainer->getValue_PtoU_SPEED();
+	double error = abs(m_speed - speed);
+	cout << "error before: " << error << endl;
+
+	if (error <= speed_error) {
+		error = 0;
+	}
+
+	int f_speed = speed + K * error;
+	cout << "final speed: " << f_speed << ", error after: " << error << endl;
+
+	dataContainer->setValue_UtoP_SPEED(f_speed);
+}
+
+void Driving::brakeTime(double second) {
+	cout << "브레이크 발동" << endl;
+
+	clock_t start = clock();
+	clock_t delay = second * CLOCKS_PER_SEC;
+
+	while (clock() - start <= delay) {
+		dataContainer->setValue_UtoP_BRAKE(brake);
+	}
+
+	dataContainer->setValue_UtoP_BRAKE(1);
+
+}
+
+void Driving::controlENC(int gear, int speed, double dist, int steer = 0) {
+	cout << "기어 " << gear << "번, 속도 " << (float)(speed / 10) << "km/h, 거리 " << dist << endl;
+	cout << "Encoder 제어를 시작합니다." << endl;
+
+	dataContainer->setValue_UtoP_GEAR(gear);
+	dataContainer->setValue_UtoP_SPEED(speed);
+	dataContainer->setValue_UtoP_STEER(steer);
+
+	double b_ENC1 = dataContainer->getValue_PtoU_ENC();
+
+	while (1) {
+		// 속도 제어하는 코드
+		controlSpeed(speed);
+
+		//거리 구하는 코드
+		double p_ENC1 = dataContainer->getValue_PtoU_ENC();
+		double distance = abs(p_ENC1 - b_ENC1) * rate;
+
+		if (distance >= dist) {
+			cout << "실제 이동한 거리 : " << distance << endl;
+			brakeTime(1);
+			break;
+		}
+	}
+}
+
+
+void Driving::practice(double parkDis) { // 후진 후 좌회전
+	double finDist;
+
+	finDist = dis_error_rate * (park_y - pow(pow(parkDis, 2) - pow(park_x, 2), 0.5));
+	controlENC(2, parking_speed, finDist);
+
+	cout << "backward success" << endl;
+
+	finDist = dis_error_rate * circle_path;
+	controlENC(0, parking_speed, finDist, -18);
+
+	cout << "parking success" << endl;
+
+	brakeTime(5);
+	controlENC(2, parking_speed, finDist, -18);
+
+	cout << "parking the end" << endl;
+}
+
+int Driving::ParkingMission() {
+	//실시간 카메라 불러오기
+	VideoCapture cap(1 + CAP_DSHOW);
+	cap.set(CV_CAP_PROP_FRAME_WIDTH, CAMERA_X);
+	cap.set(CV_CAP_PROP_FRAME_HEIGHT, CAMERA_Y);
+
+	//저장된 동영상 불러오기
+	//VideoCapture cap("Picture/Track1.mp4");
+
+	if (!cap.isOpened()) {
+		cerr << "에러 - 영상을 열 수 없습니다.\n";
+		return -1;
+	}
+
+	Mat img_camera;
+	vector<float> finParkPos;
+
+	while (1)
+	{
+		double distance = 0;
+		// 카메라로부터 캡쳐한 영상을 frame에 저장합니다.
+		cap >> img_camera;
+
+		if (img_camera.empty()) {
+			cerr << "빈 영상이 캡쳐되었습니다.\n";
+			continue;
+		}
+
+		///////////////////////////////////////
+		//            //////             //
+		//         ///// ☆ /////          //
+		//      ///// ☆☆☆☆☆☆ /////       //
+		//   ///// ☆☆☆☆☆☆☆☆☆☆☆ ///// //
+		///// ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ /////
+		// 주차 전 직진 (PASIV)
+
+
+		// 눈감고 10m 직진
+		//controlENC(0, parking_speed, 10.0, 0);
+
+		//주차장 검출
+		finParkPos = FindParkingLot(img_camera);
+		distance = sqrt(pow(finParkPos[0], 2) + pow(finParkPos[1], 2));
+
+		//주차 시작
+		if (distance != 0) {
+			cout << "카메라와 주차장 사이 실제 거리: " << distance << endl;
+			practice(distance);
+			return 0;
+		}
+		///// ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ /////
+		//   ///// ☆☆☆☆☆☆☆☆☆☆☆ ///// //
+		//      ///// ☆☆☆☆☆☆ /////       //
+		//         ///// ☆ /////          //
+		//            //////             //
+		///////////////////////////////////////
+	}
+
+	return 0;
+}
