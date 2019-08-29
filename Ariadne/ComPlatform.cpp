@@ -138,11 +138,9 @@ int ComPlatform::setData_steering(double desired_steering)
 int ComPlatform::setData_speed(double desired_speed)
 {
 	double present_speed = dataContainer->getValue_PtoU_SPEED(); //0~200
-	double speedratio = dataContainer->getValue_yolo_speed_ratio();
-	cout << "speedratio: " << speedratio << endl;
 	desired_speed *= 10;
 	//Non_control
-	desired_speed = (double)desired_speed*speedKP*speedratio;
+	desired_speed = (double)desired_speed*speedKP* (dataContainer->getValue_speed_ratio_bust()) * (dataContainer->getValue_speed_ratio_kid());
 	//desired_speed = desired_speed*speedKP;
 
 	//P-control

@@ -72,9 +72,11 @@ private:
 	//
 	// 상황에 따른 Speed Ratio 결정
 	//
-	double m_speed_ratio = 1;
+	double m_speed_ratio_bust = 1;
+	double m_speed_ratio_kid = 1;
 
-	QMutex mtx_Speed_Ratio;
+	QMutex mtx_speed_ratio_bust;
+	QMutex mtx_speed_ratio_kid;
 
 	//
 	// 센서 및 플랫폼 연결 상태 정보
@@ -124,11 +126,11 @@ private:
 	//카메라2: YOLO용
 	//
 	vector<int> m_yolo_missions;
-	double m_yolo_speed_ratio = 1;
+	double m_speed_ratio = 1;
 	int m_yolo_missionID = BASIC;
 
 	QMutex mtx_yolo_missions;
-	QMutex mtx_yolo_speed_ratio;
+	QMutex mtx_speed_ratio;
 	QMutex mtx_yolo_missionID;
 
 	//
@@ -322,8 +324,11 @@ public:
 	void setValue_yolo_missions(vector<int> temp);
 
 	// SpeedRatio 조절 및 미션 넘버 조절 in yolo thread
-	void setValue_yolo_speed_ratio(double);
-	double getValue_yolo_speed_ratio();
+	void setValue_speed_ratio_bust(double);
+	double getValue_speed_ratio_bust();
+
+	void setValue_speed_ratio_kid(double);
+	double getValue_speed_ratio_kid();
 
 	int getValue_yolo_missionID();
 	void setValue_yolo_missionID(int ID);

@@ -63,7 +63,7 @@ void DataContainer::setValue_UtoP_E_STOP(int value) { mtx_UtoP_E_STOP.lock(); m_
 void DataContainer::setValue_UtoP_GEAR(int value) { mtx_UtoP_GEAR.lock(); m_UtoP_GEAR = (value > 0 ? (value < 2 ? value : 2) : 0); mtx_UtoP_GEAR.unlock(); }
 void DataContainer::setValue_UtoP_SPEED(int value) { mtx_UtoP_SPEED.lock(); m_UtoP_SPEED = (value > 0 ? (value < 200 ? value : 200) : 0); mtx_UtoP_SPEED.unlock(); }
 void DataContainer::setValue_UtoP_STEER(int value) { mtx_UtoP_STEER.lock(); m_UtoP_STEER = (value > -2000 ? (value < 2000 ? value : 2000) : -2000); mtx_UtoP_STEER.unlock(); }
-void DataContainer::setValue_UtoP_BRAKE(int value) { mtx_UtoP_BRAKE.lock(); m_UtoP_BRAKE = (value > 0 ? (value < 200 ? value : 200) : 0); mtx_UtoP_BRAKE.unlock(); }
+void DataContainer::setValue_UtoP_BRAKE(int value) { mtx_UtoP_BRAKE.lock(); m_UtoP_BRAKE = (value > 0 ? (value < 200 ? value : 200) : 1); mtx_UtoP_BRAKE.unlock(); }
 void DataContainer::setValue_UtoP_ALIVE(int value) { mtx_UtoP_ALIVE.lock(); m_UtoP_ALIVE = (value % 256); mtx_UtoP_ALIVE.unlock(); }
 
 // 값을 통째로 가져오고, 지정하는 함수. 순서대로 (AorM, E_STOP, GEAR, SPEED, STEER, BRAKE)
@@ -185,8 +185,10 @@ void deleteData_lidar_object(){}
 vector<int> DataContainer::getValue_yolo_missions() { mtx_yolo_missions.lock(); vector<int>temp = m_yolo_missions; mtx_yolo_missions.unlock(); return temp; }
 void DataContainer::setValue_yolo_missions(vector<int> temp) { mtx_yolo_missions.lock(); m_yolo_missions = temp; mtx_yolo_missions.unlock(); }
 
-double DataContainer::getValue_yolo_speed_ratio() { mtx_yolo_speed_ratio.lock(); double temp = m_yolo_speed_ratio; mtx_yolo_speed_ratio.unlock(); return temp; }
-void DataContainer::setValue_yolo_speed_ratio(double temp) { mtx_yolo_speed_ratio.lock(); m_yolo_speed_ratio = temp; mtx_yolo_speed_ratio.unlock(); }
+double DataContainer::getValue_speed_ratio_bust() { mtx_speed_ratio_bust.lock(); double temp = m_speed_ratio_bust; mtx_speed_ratio_bust.unlock(); return temp; }
+void DataContainer::setValue_speed_ratio_bust(double temp) { mtx_speed_ratio_bust.lock(); m_speed_ratio_bust = temp; mtx_speed_ratio_bust.unlock(); }
+double DataContainer::getValue_speed_ratio_kid() { mtx_speed_ratio_kid.lock(); double temp = m_speed_ratio_kid; mtx_speed_ratio_kid.unlock(); return temp; }
+void DataContainer::setValue_speed_ratio_kid(double temp) { mtx_speed_ratio_kid.lock(); m_speed_ratio_kid = temp; mtx_speed_ratio_kid.unlock(); }
 
 int DataContainer::getValue_yolo_missionID() { mtx_yolo_missionID.lock(); int temp = m_yolo_missionID; mtx_yolo_missionID.unlock(); return temp; }
 void DataContainer::setValue_yolo_missionID(int ID) { mtx_yolo_missionID.lock(); m_yolo_missionID = ID; mtx_yolo_missionID.unlock(); }

@@ -237,20 +237,20 @@ void Ariadne::clicked_btn_sensor() {
 
 void Ariadne::clicked_btn_bust(bool bust) {
 	/// if bust is on(true), speed ratio will be decreased.
-	if (bust) { dataContainer->setValue_yolo_speed_ratio(SPEED_RATIO_LOW);
+	if (bust) { dataContainer->setValue_speed_ratio(SPEED_RATIO_LOW);
 	ui->label_21->setStyleSheet("background-color: rgb(255, 51, 51)");
 	}
-	else { dataContainer->setValue_yolo_speed_ratio(1); 
+	else { dataContainer->setValue_speed_ratio(1); 
 	ui->label_21->setStyleSheet("background-color: rgb(0, 204, 102)");
 	}
 }
 
 void Ariadne::clicked_btn_kidsafe(bool kidsafe) {
 	/// if kidsafe is on(true) speed ratio will be decreased.
-	if (kidsafe) { dataContainer->setValue_yolo_speed_ratio(SPEED_RATIO_LOW);
+	if (kidsafe) { dataContainer->setValue_speed_ratio(SPEED_RATIO_LOW);
 	ui->label_20->setStyleSheet("background-color: rgb(255, 51, 51)");
 	}
-	else { dataContainer->setValue_yolo_speed_ratio(1); 
+	else { dataContainer->setValue_speed_ratio(1); 
 	ui->label_20->setStyleSheet("background-color: rgb(0, 204, 102)");
 	}
 }

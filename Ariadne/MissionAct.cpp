@@ -181,7 +181,7 @@ vector<Point2d> Driving::getWaypoint(double x_p, double y_p, double heading, vec
 //**vector about steering angle(or checking angle)
 //**onestep
 //**do or dont fill the area meaning out of steering angle range
-//**kernal size for obstacle, inter size of lane.
+//**kernal size for obstacle,  size of lane.
 //**value of lane, obstacle
 //**speed decision.(ratio)
 //Manual tuning: scoreStep & itvLane
@@ -967,7 +967,7 @@ void Driving::MissionIntStop() {
 	//mission code
 	//
 
-	dataContainer->setValue_yolo_speed_ratio(0);
+	dataContainer->setValue_speed_ratio(0);
 
 	dataContainer->setValue_UtoP_BRAKE(50);
 	Sleep(300);
@@ -983,7 +983,7 @@ void Driving::MissionIntStop() {
 	while (dataContainer->getValue_yolo_missionID() == INTER_STOP)
 
 		dataContainer->setValue_UtoP_BRAKE(0); /// 브레이크 해제
-	dataContainer->setValue_yolo_speed_ratio(1); /// 신호를 받기 전으로 원상복귀		
+	dataContainer->setValue_speed_ratio(1); /// 신호를 받기 전으로 원상복귀		
 }
 
 //Mission No.7: Static Obstacle Mission
@@ -1613,22 +1613,22 @@ vector<float> Driving::FindParkingLot(Mat &img_camera) {
 	vector<float> position;
 
 	if (center.x >= (CAMERA_X * 2 / 8) && center.x <= (CAMERA_X * 6 / 8) && center.y >= (CAMERA_Y * 2 / 8) && center.y <= (CAMERA_Y * 6 / 8)) {
-		cout << center.x << " " << center.y << " 잘 찾았다 기모띠" << endl;
+		cout << center.x << " " << center.y << " can find" << endl;
 		position = PosFromCamera(center);
 	}
 	else {
 		center = Point2f(0, 0);
-		cout << center.x << " " << center.y << " 못 찾겠다 꾀꼬리" << endl;
+		cout << center.x << " " << center.y << " cannot find" << endl;
 		position = { 0, 0 };
 	}
 
-	cout << "최종 x: " << position[0] << ", y: " << position[1] << endl;
+	cout << "Final x: " << position[0] << ", y: " << position[1] << endl;
 
 	return position;
 }
 
 void Driving::controlSpeed(int speed) {
-	cout << "속도 제어를 시작합니다." << endl;
+	cout << "Start to speed control." << endl;
 
 	double m_speed = dataContainer->getValue_PtoU_SPEED();
 	double error = abs(m_speed - speed);
@@ -1639,13 +1639,13 @@ void Driving::controlSpeed(int speed) {
 	}
 
 	int f_speed = speed + K * error;
-	cout << "final speed: " << f_speed << ", error after: " << error << endl;
+	cout << "Final speed: " << f_speed << ", Error after: " << error << endl;
 
 	dataContainer->setValue_UtoP_SPEED(f_speed);
 }
 
 void Driving::brakeTime(double second) {
-	cout << "브레이크 발동" << endl;
+	cout << "Brake" << endl;
 
 	clock_t start = clock();
 	clock_t delay = second * CLOCKS_PER_SEC;
@@ -1658,9 +1658,9 @@ void Driving::brakeTime(double second) {
 
 }
 
-void Driving::controlENC(int gear, int speed, double dist, int steer = 0) {
-	cout << "기어 " << gear << "번, 속도 " << (float)(speed / 10) << "km/h, 거리 " << dist << endl;
-	cout << "Encoder 제어를 시작합니다." << endl;
+void Driving::controlENC(int gear, int speed, double dist, int steer) {
+	cout << "Gear " << gear << ", Speed " << (float)(speed / 10) << "km/h, Distance " << dist << endl;
+	cout << "Start to controling the Encoder ." << endl;
 
 	dataContainer->setValue_UtoP_GEAR(gear);
 	dataContainer->setValue_UtoP_SPEED(speed);
@@ -1677,16 +1677,16 @@ void Driving::controlENC(int gear, int speed, double dist, int steer = 0) {
 		double distance = abs(p_ENC1 - b_ENC1) * rate;
 
 		if (distance >= dist) {
-			cout << "실제 이동한 거리 : " << distance << endl;
+			cout << "moving distance : " << distance << endl;
 			brakeTime(1);
 			break;
 		}
 	}
 }
 
-
 void Driving::practice(double parkDis) { // 후진 후 좌회전
 	double finDist;
+	brakeTime(1);
 
 	finDist = dis_error_rate * (park_y - pow(pow(parkDis, 2) - pow(park_x, 2), 0.5));
 	controlENC(2, parking_speed, finDist);
@@ -1714,7 +1714,7 @@ int Driving::ParkingMission() {
 	//VideoCapture cap("Picture/Track1.mp4");
 
 	if (!cap.isOpened()) {
-		cerr << "에러 - 영상을 열 수 없습니다.\n";
+		cerr << "Error to open the video.\n";
 		return -1;
 	}
 
@@ -1723,12 +1723,12 @@ int Driving::ParkingMission() {
 
 	while (1)
 	{
-		double distance = 0;
+		double distParking= 0;
 		// 카메라로부터 캡쳐한 영상을 frame에 저장합니다.
 		cap >> img_camera;
 
 		if (img_camera.empty()) {
-			cerr << "빈 영상이 캡쳐되었습니다.\n";
+			cerr << "There is no video.\n";
 			continue;
 		}
 
@@ -1739,6 +1739,43 @@ int Driving::ParkingMission() {
 		//   ///// ☆☆☆☆☆☆☆☆☆☆☆ ///// //
 		///// ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ /////
 		// 주차 전 직진 (PASIV)
+		imgPath = Mat::zeros(400, 400, CV_8UC1);
+		imgPath = Scalar::all(160);
+		Mat imgLane = getLaneData(LanescoreStep);
+		imgPath -= imgLane;
+		//////////////////////////////////////////////////////////////////////////////
+		////Determine the desired Steering Angle in Score System with Vornoi Field////
+		//////////////////////////////////////////////////////////////////////////////
+		//REGION OF WORKABLE ANGLE: 60 ~ 120, with interval=5 degrees
+		uint scoresize = checkTheta.size()*checkTheta2.size();
+		vector<uint> score;
+		score.reserve(scoresize);
+		Mat scresult;
+		uint sum;
+		for (int i = 0; i < checkImgs.size(); i++) {
+			scresult = checkImgs[i].mul(imgPath);
+			uchar *sumData = scresult.data;
+			int scHeight = scresult.rows;
+			int scWidth = scresult.cols;
+			sum = 0;
+			for (int h = 0; h < scHeight; h++) {
+				for (int w = 0; w < scWidth; w++) {
+					sum += sumData[w*scHeight + h];
+				}
+			}
+
+			score.push_back(sum);
+		}
+
+		uint scoreMax = distance(score.begin(), max_element(score.begin(), score.end()));
+		int goTheta1 = checkTheta.at(scoreMax / checkTheta2.size());
+		int goTheta2 = checkTheta2.at(scoreMax % checkTheta2.size());
+		Point2d center(cenX, cenY);
+		Point2d stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1) / 180)));
+		Point2d stepSecond(stepFirst.x + onestep * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*sin(CV_PI*(90 + goTheta2) / 180)));
+
+		arrowedLine(imgPath, center, stepFirst, CV_RGB(50, 50, 50), 5);
+		arrowedLine(imgPath, stepFirst, stepSecond, CV_RGB(50, 50, 50), 5);
 
 
 		// 눈감고 10m 직진
@@ -1746,13 +1783,16 @@ int Driving::ParkingMission() {
 
 		//주차장 검출
 		finParkPos = FindParkingLot(img_camera);
-		distance = sqrt(pow(finParkPos[0], 2) + pow(finParkPos[1], 2));
+		distParking = sqrt(pow(finParkPos[0], 2) + pow(finParkPos[1], 2));
 
 		//주차 시작
-		if (distance != 0) {
-			cout << "카메라와 주차장 사이 실제 거리: " << distance << endl;
-			practice(distance);
+		if (distParking != 0) {
+			cout << "The distance between camera and parking area: " << distParking << endl;
+			practice(distParking);
 			return 0;
+		}
+		else {
+			PASIVcontrol(imgPath, parking_speed, goTheta1, goTheta2, 0);
 		}
 		///// ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ /////
 		//   ///// ☆☆☆☆☆☆☆☆☆☆☆ ///// //

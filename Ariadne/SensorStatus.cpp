@@ -371,23 +371,30 @@ void Yolo::comYolo() {
 		trigger = (int*)message;
 
 
-		if (trigger[5] && trigger[5] < 4) {
+		/*if (trigger[5] && trigger[5] < 4) {
 			dataContainer->setValue_yolo_missionID(STATIC_OBSTACLE);
-		}
-		else if (trigger[6] < 4) {
+		}*/
+		if (trigger[6] < 4) {
 			dataContainer->setValue_yolo_missionID(DYNAMIC_OBSTACLE);
 		}
-		else if (trigger[0] == 0 && trigger[1] && trigger[1] < 4) {
-			dataContainer->setValue_yolo_missionID(INTER_STOP);
-		}
-		else if (trigger[0] == 2 && trigger[1] && trigger[1] < 4) {
-			dataContainer->setValue_yolo_missionID(INTER_STRAIGHT);
-		}
-		else if (trigger[0] == 1 && trigger[1] && trigger[1] < 4) {
-			dataContainer->setValue_yolo_missionID(INTER_LEFT);
-		}
-		else if (trigger[0] == 3 && trigger[1] && trigger[1] < 4) {
-			dataContainer->setValue_yolo_missionID(INTER_RIGHT);
+		// tigger[1] == 0 일 땐, 플랫폼으로부터 정지선까지 2m 남았음
+		// INTER_STOP 에서 천천히 멈춰주는게 구현되어 있으면 됨
+		else if (trigger[1] == 0) {
+			if (trigger[0] == 0) {
+				dataContainer->setValue_yolo_missionID(INTER_STOP);
+			}
+			else if (trigger[0] == 1) {
+				dataContainer->setValue_yolo_missionID(INTER_LEFT);
+
+			}
+			else if (trigger[0] == 2) {
+				dataContainer->setValue_yolo_missionID(INTER_STRAIGHT);
+
+			}
+			else if (trigger[0] == 3) {
+				dataContainer->setValue_yolo_missionID(INTER_RIGHT);
+
+			}
 		}
 		else if (trigger[3] && trigger[3] < 4) { //parking
 			dataContainer->setValue_yolo_missionID(PARKING);
@@ -404,12 +411,27 @@ void Yolo::comYolo() {
 		dataContainer->setValue_yolo_missions(mission);
 
 		dataContainer->updateValue_yolo_status();
-		bool bustOn = (trigger[8] == 0);
-		bool kidsafeOn = (trigger[7] == 0);
-		if ( bustOn || kidsafeOn ) { dataContainer->setValue_yolo_speed_ratio(SPEED_RATIO_LOW); } //<- bust is on
-		else { dataContainer->setValue_yolo_speed_ratio(1); }
-		emit(BustExist(bustOn)); // if bust is in front of the car, UI bust button will be automatically switched.
-		emit(KidsafeExist(kidsafeOn));
+
+		if (!trigger[8]) {
+			dataContainer->setValue_speed_ratio_bust(SPEED_RATIO_LOW);
+			bustCon = clock();
+			emit(BustExist(true));
+		}
+
+		if (!bustCon && clock() - bustCon > 2000) {
+			dataContainer->setValue_speed_ratio_bust(1);
+			bustCon = 0;
+			emit(BustExist(false));
+		}
+
+		if (!trigger[7]) {
+			dataContainer->setValue_speed_ratio_kid(SPEED_RATIO_LOW);
+			emit(KidsafeExist(true));
+		}
+		else {
+			dataContainer->setValue_speed_ratio_kid(1);
+			emit(KidsafeExist(false));
+		}
 		/// cout << trigger[0] << " " << trigger[1] << " " << trigger[2] << " " << trigger[3] << " " << trigger[4] << " " << trigger[5] << " " << trigger[6] << " " << trigger[7] << " " << trigger[8] << " " << endl;
 	}
 

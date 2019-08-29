@@ -77,7 +77,7 @@ public:
 	HANDLE tid;
 
 	HANDLE hNamePipe;
-
+	clock_t bustCon = 0;
 	SOCKET server;
 	SOCKET client;
 	Yolo();
