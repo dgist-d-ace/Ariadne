@@ -232,11 +232,11 @@ void Ariadne::clicked_btn_sensor() {
 
 	if (!yoloThread->isRunning()){ yoloThread->start(); }
 
-	//if (!platformThread->isRunning()) { platformThread->start(); }
+	if (!platformThread->isRunning()) { platformThread->start(); }
 	
-	//if (!lidarThread->isRunning()) { lidarThread->start(); }
+	if (!lidarThread->isRunning()) { lidarThread->start(); }
 
-	//if (!gpsThread->isRunning()) { gpsThread->start(); }
+	if (!gpsThread->isRunning()) { gpsThread->start(); }
 
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
@@ -269,8 +269,10 @@ void Ariadne::clicked_btn_kidsafe(bool kidsafe) {
 
 // This function is to start driving
 void Ariadne::clicked_btn_driving() {
-	//if (!drivingThread->isRunning())
-	//	drivingThread->start();
+
+	//lidar, scnn 켰을 때만 실행
+	if (!drivingThread->isRunning())
+		drivingThread->start();
 
 	/// 0829 오전 6시 46분 DY: 하단 TimerUIUpdate를 clicked_btn_sensors() 에 옮겨서 테스트해보니 여기서 에러가 남.
 	/// 하지만 데이터파싱은 잘 됨을 확인함.( sensorstatus.cpp 파일 430줄 ) 
@@ -283,7 +285,8 @@ void Ariadne::updateUI() {
 
 	ui->pathmap->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_pathmap()));
 	
-	/*vector<int> arr = dataContainer->getValue_yolo_missions();
+	////yolo 켰을 때만 실행
+	vector<int> arr = dataContainer->getValue_yolo_missions();
 	QString str;
 
 	if (arr[0] == 0) str = QString("STOP");
@@ -298,14 +301,16 @@ void Ariadne::updateUI() {
 	ui->lcdNumber_19->display(arr[3]);
 	ui->lcdNumber_20->display(arr[4]);
 	ui->lcdNumber_21->display(arr[5]);
-	ui->lcdNumber_22->display(arr[6]);*/
+	ui->lcdNumber_22->display(arr[6]);
 	
-	vector<int> arr2 = dataContainer->getValue_scnn_existLanes();
 
-	ui->lcdNumber_11->display(arr2[0]);
-	ui->lcdNumber_12->display(arr2[1]);
-	ui->lcdNumber_13->display(arr2[2]);
-	ui->lcdNumber_14->display(arr2[3]);
+	////scnn 켰을때만 실행
+	arr = dataContainer->getValue_scnn_existLanes();
+
+	ui->lcdNumber_11->display(arr[0]);
+	ui->lcdNumber_12->display(arr[1]);
+	ui->lcdNumber_13->display(arr[2]);
+	ui->lcdNumber_14->display(arr[3]);
 
 		
 }
