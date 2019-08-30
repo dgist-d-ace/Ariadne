@@ -230,11 +230,11 @@ void Ariadne::clicked_btn_sensor() {
 
 	if (!scnnThread->isRunning()) { scnnThread->start(); }
 
-	if (!yoloThread->isRunning()){ yoloThread->start(); }
+	//if (!yoloThread->isRunning()){ yoloThread->start(); }
 
-	//if (!platformThread->isRunning()) { platformThread->start(); }
+	if (!platformThread->isRunning()) { platformThread->start(); }
 	
-	//if (!lidarThread->isRunning()) { lidarThread->start(); }
+	if (!lidarThread->isRunning()) { lidarThread->start(); }
 
 	//if (!gpsThread->isRunning()) { gpsThread->start(); }
 
@@ -271,8 +271,8 @@ void Ariadne::clicked_btn_kidsafe(bool kidsafe) {
 void Ariadne::clicked_btn_driving() {
 
 	//lidar, scnn 켰을 때만 실행
-	//if (!drivingThread->isRunning())
-	//	drivingThread->start();
+	if (!drivingThread->isRunning())
+		drivingThread->start();
 
 	/// 0829 오전 6시 46분 DY: 하단 TimerUIUpdate를 clicked_btn_sensors() 에 옮겨서 테스트해보니 여기서 에러가 남.
 	/// 하지만 데이터파싱은 잘 됨을 확인함.( sensorstatus.cpp 파일 430줄 ) 
@@ -289,7 +289,7 @@ void Ariadne::updateUI() {
 	vector<int> arr = dataContainer->getValue_yolo_missions();
 	QString str;
 
-	if (arr[0] == 0) str = QString("STOP");
+	/*if (arr[0] == 0) str = QString("STOP");
 	else if (arr[0] == 1) str = QString("LEFT");
 	else if (arr[0] == 2) str = QString("STRAIGHT");
 	else if (arr[0] == 3) str = QString("RIGHT");
@@ -301,7 +301,7 @@ void Ariadne::updateUI() {
 	ui->lcdNumber_19->display(arr[3]);
 	ui->lcdNumber_20->display(arr[4]);
 	ui->lcdNumber_21->display(arr[5]);
-	ui->lcdNumber_22->display(arr[6]);
+	ui->lcdNumber_22->display(arr[6]);*/
 	
 
 	////scnn 켰을때만 실행

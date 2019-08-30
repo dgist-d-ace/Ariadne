@@ -10,7 +10,7 @@
 //Tuning point in getLanedata
 #define LanescoreStep 5
 ///#define itvLane	20 //600*600
-#define itvLane	15 //400*400
+#define itvLane	20 //400*400
 
 //Tuning point in getGpsData
 #define GPSscoreStep 10
@@ -19,13 +19,14 @@
 #define numGPS 100
 
 #define steerRatio  1.0
-#define speedHigh	15.0
+#define speedHigh	13.0
 #define speedLow	5.0
 
 //Tuning points in Dynamic Mission
 #define stopDist 1200.0 //for Dynamic Obstacle mission
 #define DynamicMaxSpeed 12.0
 
+//Tuning points for GPS
 #define rate (1/60)
 #define K 0.7
 #define desired_road_length 3
@@ -67,7 +68,7 @@ protected:
 	double cenX = (double)imgPath.cols * 0.5, cenY = (double)imgPath.rows *1.0; //the location of LiDAR in the map.
 	double scale = cenY / (SICK_SCAN_ROI_Y + 50);
 	double carW = CAR_WIDTH * scale, carH = CAR_HEIGH * scale;
-	uchar onestep = (CAR_WIDTH)* scale;
+	uchar onestep = (CAR_HEIGH)* scale;
 
 	//ROI AREA in the maps
 	double leftEndX = cenX - SICK_SCAN_ROI_X * scale;

@@ -80,7 +80,7 @@ void Driving::setPath() {
 	double path_y;
 
 	//경로 설정 바꿔야함
-	ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_school_rtk_LTE_10Hz_3.txt");
+	ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_k_city_test.txt"); //k_city_rtk_10Hz_1
 
 	char line[200];
 	string tap;
@@ -444,6 +444,7 @@ void Driving::Basic(int missionId) {
 			cout << "called in PASIV but wrong mission ID : " << mission << endl;
 			break;
 		}
+		cout << "in PASIV while" << endl;
 		///////////////////////////////////////////
 		imgPath = cv::Mat::zeros(400, 400, CV_8UC1);				//path made with lanes and objs
 		scoreMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1); //lane map without objs
@@ -602,12 +603,13 @@ void Driving::Basic(int missionId) {
 		}
 		double scoreRatio = scoreofPath / scoreofMap;
 		double desired_speed;
-		if (scoreRatio > 0.8) { desired_speed = speedHigh; }
+		desired_speed = speedHigh * scoreRatio;
+		/*if (scoreRatio > 0.8) { desired_speed = speedHigh; }
 		else {
 			desired_speed = speedHigh * scoreRatio/ 0.8;
 
 		}
-
+*/
 			///////////////////////
 			////Extra Condition////
 			///////////////////////
