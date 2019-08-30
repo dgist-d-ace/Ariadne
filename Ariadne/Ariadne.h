@@ -123,6 +123,8 @@ public:
 	QTimer* TimerSensorStatus;
 
 	static Ui::AriadneClass* getUI();
+
+	bool parkingOn = false;
 	
 private:
 	static Ui::AriadneClass* ui;
@@ -142,6 +144,7 @@ public slots:
 	void clicked_btn_mission9();
 	void clicked_btn_bust(bool);
 	void clicked_btn_kidsafe(bool);
+	void clicked_btn_shift();
 
 	void clicked_btn_sensor();
 	void clicked_btn_driving();
@@ -167,6 +170,7 @@ public slots:
 	void onLongitudeChanged(double);
 	void onHeadingChanged(double);
 	void onCurrentMission(int);
+	void onExitMission(int);
 	void onDrivingEnabled();
 	void onBustExist(bool);
 	void onKidsafeExist(bool);

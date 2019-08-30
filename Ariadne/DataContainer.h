@@ -145,7 +145,9 @@ private:
 
 	int m_gps_Valid = 0;
 	double m_gps_latitude = 0;
+	double m_gps_latitude_shift= 0;
 	double m_gps_longitude = 0;
+	double m_gps_longitude_shift = 0;
 	double m_gps_velocity = 0;
 	double m_gps_heading = 0;
 
@@ -163,7 +165,9 @@ private:
 	
 	QMutex mtx_gps_valid;
 	QMutex mtx_gps_latitude;
+	QMutex mtx_gps_latitude_shift;
 	QMutex mtx_gps_longitude;
+	QMutex mtx_gps_longitude_shift;
 	QMutex mtx_gps_velocity;
 	QMutex mtx_gps_heading;
 
@@ -365,6 +369,8 @@ public:
 	void count_gps_valid();
 	void setValue_gps_latitude(double value);
 	void setValue_gps_longitude(double value);
+	void setValue_gps_latitude_shift(double value);
+	void setValue_gps_longitude_shift(double value);
 	void setValue_gps_velocity(double value);
 	void setValue_gps_heading(double value);
 
@@ -387,10 +393,10 @@ public:
 	//	UI¿¡ image Ç¥½Ã
 	//
 	QImage getValue_ui_pathmap();
-	QImage getValue_ui_scnn();
+	QImage getValue_ui_parking();
 	QImage getValue_ui_yolo();
 
 	void setValue_ui_pathmap(QImage);
-	void setValue_ui_scnn(QImage);
+	void setValue_ui_parking(QImage);
 	void setValue_ui_yolo(QImage);
 };

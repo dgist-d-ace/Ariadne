@@ -62,8 +62,6 @@ Ariadne::Ariadne(QWidget *parent)
 
 	//SWITCH LIDAR CONTROLING.
 	connect(drivingThread, SIGNAL(started()), driving, SLOT(autoMode()));
-	//connect(drivingThread, SIGNAL(started()), driving, SLOT(LOS()));
-
 
 	view = new View;
 	connect(driving, SIGNAL(send2View(int)), view, SLOT(comView(int)));
@@ -104,7 +102,7 @@ Ariadne::Ariadne(QWidget *parent)
 	QObject::connect(ui->Btn_manual, SIGNAL(clicked()), this, SLOT(clicked_manual()));
 	QObject::connect(ui->Btn_Bust, SIGNAL(clicked(bool)), this, SLOT(clicked_btn_bust(bool)));
 	QObject::connect(ui->Btn_kidsafe, SIGNAL(clicked(bool)), this, SLOT(clicked_btn_kidsafe(bool)));
-
+	QObject::connect(ui->shiftOK, SIGNAL(clicked()), this, SLOT(clicked_btn_shift()));
 
 	// ------------------- UI update for Platform & GPS status ----------------------//
 
@@ -123,12 +121,14 @@ Ariadne::Ariadne(QWidget *parent)
 	// ------------------- UI update for Mission ----------------------//
 
 	QObject::connect(driving, SIGNAL(currentMission(int)), this, SLOT(onCurrentMission(int)));
+	QObject::connect(driving, SIGNAL(exitMission(int)), this, SLOT(onExitMission(int)));
 	QObject::connect(yolo, SIGNAL(BustExist(bool)), this, SLOT(onBustExist(bool)));
 	QObject::connect(yolo, SIGNAL(KidsafeExist(bool)), this, SLOT(onKidsafeExist(bool)));
 
 	TimerUIUpdate = new QTimer(this);
 	QTimer::connect(TimerUIUpdate, &QTimer::timeout, this, &Ariadne::updateUI);
-
+	TimerSensorStatus = new QTimer(this);
+	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
 }
 
 void Ariadne::closeEvent(QCloseEvent *e) {
@@ -175,6 +175,7 @@ void Ariadne::onCurrentMission(int id) {
 		//ui->Btn_mission1->setStyleSheet("background-color: rgb()");
 		ui->Btn_mission1->setEnabled(false);
 		ui->plainTextEdit->appendPlainText("Parking Mission Start");
+		parkingOn = true;
 		break;
 	case INTER_LEFT:
 		ui->Btn_mission3->setEnabled(false);
@@ -207,7 +208,28 @@ void Ariadne::onCurrentMission(int id) {
 	}
 
 }
-
+void Ariadne::onExitMission(int id) {
+	switch (id) {
+	case PARKING:
+		parkingOn = false;
+		ui->parking->clear();
+		break;
+	case INTER_LEFT:
+		break;
+	case INTER_RIGHT:
+		break;
+	case INTER_STRAIGHT:
+		break;
+	case INTER_STOP:
+		break;
+	case STATIC_OBSTACLE:
+		break;
+	case DYNAMIC_OBSTACLE:
+		break;
+	case BASIC:
+		break;
+	}
+}
 void Ariadne::onBustExist(bool bust) {
 	if (bust)
 		ui->label_21->setStyleSheet("background-color: rgb(255, 51, 51)");
@@ -228,22 +250,20 @@ void Ariadne::clicked_btn_sensor() {
 
 	AutoPortFinder();
 
-	if (!scnnThread->isRunning()) { scnnThread->start(); }
+	if (!scnnThread->isRunning()) { ui->pushButton_3->setEnabled(false); scnnThread->start(); }
 
 	//if (!yoloThread->isRunning()){ yoloThread->start(); }
 
-	if (!platformThread->isRunning()) { platformThread->start(); }
+	//if (!platformThread->isRunning()) { platformThread->start(); }
 	
-	if (!lidarThread->isRunning()) { lidarThread->start(); }
+	//if (!lidarThread->isRunning()) { lidarThread->start(); }
 
-	if (!gpsThread->isRunning()) { gpsThread->start(); }
+	//if (!gpsThread->isRunning()) { gpsThread->start(); }
 
-	TimerSensorStatus = new QTimer(this);
-	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);
-	TimerSensorStatus->start(1000);
-
-	ui->pushButton_3->setEnabled(false);
-	
+	if (!TimerSensorStatus->isActive()) {
+		TimerSensorStatus->start(1000);
+	}
+		
 }
 
 void Ariadne::clicked_btn_bust(bool bust) {
@@ -283,55 +303,60 @@ void Ariadne::clicked_btn_driving() {
 
 void Ariadne::updateUI() {
 
-	ui->pathmap->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_pathmap()));
-	
-	////yolo 켰을 때만 실행
-	vector<int> arr = dataContainer->getValue_yolo_missions();
+	vector<int> arr;
 	QString str;
 
-	/*if (arr[0] == 0) str = QString("STOP");
-	else if (arr[0] == 1) str = QString("LEFT");
-	else if (arr[0] == 2) str = QString("STRAIGHT");
-	else if (arr[0] == 3) str = QString("RIGHT");
-	else str = QString("None");
+	if (yoloThread->isRunning()) {
+		arr = dataContainer->getValue_yolo_missions();
+		if (arr[0] == 0) str = QString("STOP");
+		else if (arr[0] == 1) str = QString("LEFT");
+		else if (arr[0] == 2) str = QString("STRAIGHT");
+		else if (arr[0] == 3) str = QString("RIGHT");
+		else str = QString("None");
 
-	ui->label_28->setText(str);
-	ui->lcdNumber_16->display(arr[1]);
-	ui->lcdNumber_18->display(arr[2]);
-	ui->lcdNumber_19->display(arr[3]);
-	ui->lcdNumber_20->display(arr[4]);
-	ui->lcdNumber_21->display(arr[5]);
-	ui->lcdNumber_22->display(arr[6]);*/
+		ui->label_28->setText(str);
+		ui->lcdNumber_16->display(arr[1]);
+		ui->lcdNumber_18->display(arr[2]);
+		ui->lcdNumber_19->display(arr[3]);
+		ui->lcdNumber_20->display(arr[4]);
+		ui->lcdNumber_21->display(arr[5]);
+		ui->lcdNumber_22->display(arr[6]);
+	}
 	
+	if (scnnThread->isRunning()) {
+		arr = dataContainer->getValue_scnn_existLanes();
 
-	////scnn 켰을때만 실행
-	arr = dataContainer->getValue_scnn_existLanes();
+		if (arr[0] == 1) str = QString("White Lane");
+		else if (arr[0] == 2) str = QString("Yellow Lane");
+		else if (arr[0] == 3) str = QString("Bus Lane");
+		else str = QString("None");
+		ui->label_31->setText(str);
 
-	if (arr[0] == 1) str = QString("White Lane");
-	else if (arr[0] == 2) str = QString("Yellow Lane");
-	else if (arr[0] == 3) str = QString("Bus Lane");
-	else str = QString("None");
-	ui->label_31->setText(str);
+		if (arr[1] == 1) str = QString("White Lane");
+		else if (arr[1] == 2) str = QString("Yellow Lane");
+		else if (arr[1] == 3) str = QString("Bus Lane");
+		else str = QString("None");
+		ui->label_32->setText(str);
 
-	if (arr[1] == 1) str = QString("White Lane");
-	else if (arr[1] == 2) str = QString("Yellow Lane");
-	else if (arr[1] == 3) str = QString("Bus Lane");
-	else str = QString("None");
-	ui->label_32->setText(str);
+		if (arr[2] == 1) str = QString("White Lane");
+		else if (arr[2] == 2) str = QString("Yellow Lane");
+		else if (arr[2] == 3) str = QString("Bus Lane");
+		else str = QString("None");
+		ui->label_33->setText(str);
 
-	if (arr[2] == 1) str = QString("White Lane");
-	else if (arr[2] == 2) str = QString("Yellow Lane");
-	else if (arr[2] == 3) str = QString("Bus Lane");
-	else str = QString("None");
-	ui->label_33->setText(str);
+		if (arr[3] == 1) str = QString("White Lane");
+		else if (arr[3] == 2) str = QString("Yellow Lane");
+		else if (arr[3] == 3) str = QString("Bus Lane");
+		else str = QString("None");
+		ui->label_34->setText(str);
+	}
 
-	if (arr[3] == 1) str = QString("White Lane");
-	else if (arr[3] == 2) str = QString("Yellow Lane");
-	else if (arr[3] == 3) str = QString("Bus Lane");
-	else str = QString("None");
-	ui->label_34->setText(str);
-
-		
+	if (drivingThread->isRunning()) {
+		ui->pathmap->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_pathmap()));
+	}
+	if (parkingOn) {
+		ui->parking->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_parking()));
+	}
 }
 
 void Ariadne::clicked_btn_mission1() {
@@ -369,6 +394,18 @@ void Ariadne::clicked_btn_mission8() {
 
 void Ariadne::clicked_btn_mission9() {
 	dataContainer->setValue_yolo_missionID(BASIC);
+}
+
+void Ariadne::clicked_btn_shift() {
+	bool ok;
+	double shift;
+	shift = ui->latitudeShift->toPlainText().toDouble(&ok);
+	if(ok) dataContainer->setValue_gps_latitude_shift(shift);
+	ui->plainTextEdit->appendPlainText(QString::number(shift));
+	shift = ui->longitudeShift->toPlainText().toDouble(&ok);
+	if(ok) 	dataContainer->setValue_gps_longitude_shift(shift);
+	ui->plainTextEdit->appendPlainText(QString::number(shift));
+	ui->plainTextEdit->appendPlainText("gps shift");
 }
 
 // These functions is to control gplatform
@@ -670,13 +707,13 @@ void GPSCom::comGPS() { // rt ; Real Time
 					}
 					//cout << vec[0] << endl;
 
-					cout << vec.size() << endl;
+					//cout << vec.size() << endl;
 
 					if (vec.size() > 8) {
 						if (vec[0] == "$GNRMC" && vec[2] == "A") {
 							//ofile << vec[0] << ',' << vec[3] << ',' << vec[5]  << endl;
-							_lat = ((atof(vec[3].c_str()) - 3500) / 60) + 35; // 35랑 128은 상황에 따라 바꿔줘야함
-							_lng = ((atof(vec[5].c_str()) - 12800) / 60) + 128;
+							_lat = ((atof(vec[3].c_str()) - 3700) / 60) + 37; // 35랑 128은 상황에 따라 바꿔줘야함
+							_lng = ((atof(vec[5].c_str()) - 12600) / 60) + 126; // 37, 126
 							heading = atof(vec[8].c_str()) *CV_PI / 180; //[rad]
 
 							vector<double >utm = UTM(_lat, _lng);
@@ -692,7 +729,7 @@ void GPSCom::comGPS() { // rt ; Real Time
 							emit longitudeChanged(lng / 1000); /// 숫자가 너무 커서 나눴음
 							emit headingChanged(heading);
 
-							cout << lat << "    " << lng << endl;
+							//cout << lat << "    " << lng << endl;
 						}
 						else if (vec[2] == "V") {
 							dataContainer->count_gps_valid();

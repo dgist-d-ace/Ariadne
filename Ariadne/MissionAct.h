@@ -6,6 +6,7 @@
 #include <string> 
 #include <sstream>
 #include <fstream>
+#include <algorithm>
 
 //Tuning point in getLanedata
 #define LanescoreStep 5
@@ -13,10 +14,10 @@
 #define itvLane	20 //400*400
 
 //Tuning point in getGpsData
-#define GPSscoreStep 10
+#define GPSscoreStep 60
 ///#define itvGPS 30 //600*600
 #define itvGPS 20 //400*400
-#define numGPS 100
+#define numGPS 500
 
 #define steerRatio  1.0
 #define speedHigh	13.0
@@ -30,13 +31,13 @@
 #define rate (1/60)
 #define K 0.7
 #define desired_road_length 3
-#define parking_speed  30
+#define parking_speed  3
 #define park_y 4
 #define park_x 2
 #define circle_path 4.5
 #define speed_error 19
-#define dis_error_rate 0.7
-#define brake 150
+#define dis_error_rate 0.9
+#define brake 100
 
 #define deg_2_rad (CV_PI / 180)
 
@@ -122,6 +123,7 @@ public:
 signals:
 	void send2View(int id);
 	void currentMission(int id);
+	void exitMission(int id);
 
 public slots:
 	void DrawData();

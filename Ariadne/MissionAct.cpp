@@ -12,8 +12,8 @@ using namespace cv;
 //smaller onestep is better, but we also need the long step.
 //
 
-
 Driving::Driving() {
+	cout << "===================DRIVING initialization=========================\n" << endl;
 	dataContainer = DataContainer::getInstance();
 	int initialGPSpoint = 0;
 
@@ -72,24 +72,29 @@ Driving::Driving() {
 	fillPoly(outRange, pnts, npt2, 1, Scalar::all(255));
 	fillPoly(outRange, pnts2, npt2, 1, Scalar::all(255));
 
-	void setPath();
-}
-
-void Driving::setPath() {
+	cout << "=======================================================" << endl;
+	//cout << "start setPath" << endl;
+	//void setPath();
+	//cout << "in setPath" << endl;
 	double path_x;
 	double path_y;
 
 	//경로 설정 바꿔야함
-	ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_k_city_test.txt"); //k_city_rtk_10Hz_1
+	ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\k_city_rtk_10Hz_2_1.txt");
+	//k_city_rtk_10Hz_1
 
 	char line[200];
 	string tap;
 	vector<string> vec;
 	//vector<double> temp;
+	//cout << "in setPath2" << endl;
 
 	if (gpsfile.is_open()) {
+		//cout << "in setPath3" << endl;
+
 		while (gpsfile.getline(line, sizeof(line), '\n')) {
 			stringstream str(line);
+			//cout << "in setPath4" << endl;
 
 			while (getline(str, tap, ',')) {
 				vec.push_back(tap);
@@ -106,6 +111,48 @@ void Driving::setPath() {
 			//temp.clear();
 		}
 	}
+	//cout << "in setPath5" << endl;
+}
+
+void Driving::setPath() {
+	cout<<"in setPath"<<endl;
+	double path_x;
+	double path_y;
+
+	//경로 설정 바꿔야함
+	ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\k_city_rtk_10Hz_2_1.txt"); 
+	//k_city_rtk_10Hz_1
+
+	char line[200];
+	string tap;
+	vector<string> vec;
+	//vector<double> temp;
+	//cout << "in setPath2" << endl;
+
+	if (gpsfile.is_open()) {
+		//cout << "in setPath3" << endl;
+
+		while (gpsfile.getline(line, sizeof(line), '\n')) {
+			stringstream str(line);
+			//cout << "in setPath4" << endl;
+
+			while (getline(str, tap, ',')) {
+				vec.push_back(tap);
+			}
+
+			path_x = (atof(vec[0].c_str()));
+			path_y = (atof(vec[1].c_str()));
+			//temp.push_back(path_x);
+			//temp.push_back(path_y);
+			Point2d pathPoint = Point2d(path_x, path_y);
+			path.push_back(pathPoint);
+
+			vec.clear();
+			//temp.clear();
+		}
+	}
+	//cout << "in setPath5" << endl;
+
 }
 
 //set the "presentGPSpoint" which mean the mission strat point.
@@ -113,8 +160,8 @@ void Driving::getGPSinitial(double x_p, double y_p, vector<Point2d> path) {
 	int min = 0;
 	double temp = 10000000;
 	double ref;
-
-	for (int i = initialGPSpoint; i <(initialGPSpoint+ path.size()/4); i++) {
+	//cout << "getGPSinitial" << endl;
+	for (int i = initialGPSpoint; i <(path.size()); i++) {
 		ref = pow(pow(x_p - path[i].x, 2) + pow(y_p - path[i].y, 2), 0.5);
 
 		if (ref <= temp) {
@@ -122,14 +169,17 @@ void Driving::getGPSinitial(double x_p, double y_p, vector<Point2d> path) {
 			temp = ref;
 		}
 	}
-
+	
 	initialGPSpoint = min;
 	presentGPSpoint = min;
+
+	cout << "initial: " << initialGPSpoint << endl;
 }
 
 //output: vector includes number of "numGPS" waypoints
 //refresh the "presentGPSpoint" as the closest point to me.
 vector<Point2d> Driving::forPASIV_path(double x_p, double y_p, vector<Point2d> path) {
+	//cout << "in forPASIV_path" << endl;
 	int min = 0;
 	int smin = 0;
 	double temp = 10000000;
@@ -144,12 +194,12 @@ vector<Point2d> Driving::forPASIV_path(double x_p, double y_p, vector<Point2d> p
 		}
 	}
 
-	if (sqrt(pow(x_p - path[presentGPSpoint].x, 2) + pow(y_p - path[presentGPSpoint].y, 2) > 10 || abs(min - presentGPSpoint) > 100)) {
-		min = presentGPSpoint + 5;
-	}
+	//if (sqrt(pow(x_p - path[presentGPSpoint].x, 2) + pow(y_p - path[presentGPSpoint].y, 2) > 10 )) {
+	//	min = presentGPSpoint + 5;
+	//}
 
 	vector<Point2d> result;
-	for (int i = min; i < min + numGPS; i++) {
+	for (int i = min; i < std::min(min + numGPS, (int)path.size()); i++) {
 		result.push_back(path[i]);
 	}
 	presentGPSpoint = min;
@@ -158,7 +208,7 @@ vector<Point2d> Driving::forPASIV_path(double x_p, double y_p, vector<Point2d> p
 
 vector<Point2d> Driving::getWaypoint(double x_p, double y_p, double heading, vector<Point2d>forPASIV_path) {
 	double theta =  - heading;
-
+	//cout << "getWayPoint" << endl;
 	vector<Point2d> gpsWayPoint;
 	if (forPASIV_path.size() == 0) {
 	}
@@ -364,9 +414,9 @@ Mat Driving::getLaneData(int scorestep)
 
 Mat Driving::getGpsData(int scorestep)
 {
-	cout << "getting the data from gps." << endl;
+	//cout << "getting the data from gps." << endl;
 	int mission = dataContainer->getValue_yolo_missionID();
-	int stepNum = 9;
+	int stepNum = 4;
 	vector<Point2d> wayPoints;
 	double gps_X = dataContainer->getValue_gps_latitude();
 	double gps_Y = dataContainer->getValue_gps_longitude();
@@ -382,14 +432,14 @@ Mat Driving::getGpsData(int scorestep)
 	for (int i = 1; i < stepNum; i++){
 		buffer = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 		for (int j = 0; j < wayPoints.size(); j++){
-			getPoint = Point2d(wayPoints.at(j).x *2/3, wayPoints.at(j).y*2/3);
+			getPoint = Point2d(wayPoints.at(j).x , wayPoints.at(j).y);
 			cout << i << "th Map - " << j << "th point: " << "wayPoint x-> " << wayPoints.at(j).x << "y-> " << wayPoints.at(j).y << endl;
-			circle(buffer, getPoint, itvGPS * (stepNum-i), Scalar::all(scorestep), -1, CV_AA, 0);
+			circle(buffer, getPoint, itvGPS * (stepNum-i), Scalar::all(30), -1, CV_AA, 0);
 		}
 		gpsMap -= buffer;
-		cout << "========================================================\n\n" << endl;
+		//cout << "========================================================\n\n" << endl;
 	}
-	imshow("GPSmap", gpsMap);
+	//imshow("GPSmap", gpsMap);
 	return gpsMap;
 }
 
@@ -423,9 +473,9 @@ void Driving::PASIVcontrol(Mat imgPath, double desired_speed, double steer1, dou
 		desired_speed = 0; desired_steering = 0; 
 	}
 
-	cout << "desired_speed = " << desired_speed << endl;
-	cout << "desired_steer = " << desired_steering << endl;
-	cout << "desired_brake = " << desired_brake << endl;
+	//cout << "desired_speed = " << desired_speed << endl;
+	//cout << "desired_steer = " << desired_steering << endl;
+	//cout << "desired_brake = " << desired_brake << endl;
 
 	//Return
 	dataContainer->setValue_UtoP_SPEED(desired_speed);
@@ -450,7 +500,7 @@ void Driving::Basic(int missionId) {
 			cout << "called in PASIV but wrong mission ID : " << mission << endl;
 			break;
 		}
-		cout << "in PASIV while" << endl;
+		//cout << "in PASIV while" << endl;
 		///////////////////////////////////////////
 		imgPath = cv::Mat::zeros(400, 400, CV_8UC1);				//path made with lanes and objs
 		scoreMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1); //lane map without objs
@@ -687,6 +737,8 @@ void Driving::BasicGPS(int missionId) {
 			cout << "EXIT INTERSECTION" << endl;
 			break;
 		}
+		cout << "initial Point: " << initialGPSpoint << endl;
+		cout << "present Point: " << presentGPSpoint << endl;
 		///////////////////////////////////////////
 		imgPath = cv::Mat::zeros(400, 400, CV_8UC1);				//path made with lanes and objs
 		scoreMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1); //lane map without objs
@@ -906,7 +958,7 @@ void Driving::MissionParking() {
 	//
 	//	mission code
 	//
-
+	dataContainer->setValue_UtoP_AorM(1);
 	if (ParkingMission()) {}
 	else cout << "Parking Fail" << endl;
 
@@ -930,6 +982,7 @@ void Driving::MissionIntReady() {
 }
 
 //Mission No.3: Intersection->Turn Left
+
 void Driving::MissionIntLeft() {
 	cout << "mission 3" << endl;
 	//
@@ -1284,7 +1337,7 @@ void Driving::autoMode() {
 	//emit(send2View(7));
 	while (1) {
 		cout << dataContainer->getValue_yolo_missionID() << endl;
-		if (dataContainer->getValue_yolo_missionID() == PARKING) { emit(currentMission(PARKING)); MissionParking(); }
+		if (dataContainer->getValue_yolo_missionID() == PARKING) { emit(currentMission(PARKING)); MissionParking(); emit(exitMission(PARKING)); }
 		else if (dataContainer->getValue_yolo_missionID() == INTER_LEFT) { emit(currentMission(INTER_LEFT)); emit(send2View(2)); MissionIntLeft(); }
 		else if (dataContainer->getValue_yolo_missionID() == INTER_RIGHT) { emit(currentMission(INTER_RIGHT)); emit(send2View(3)); MissionIntRight(); }
 		else if (dataContainer->getValue_yolo_missionID() == INTER_STRAIGHT) { emit(currentMission(INTER_STRAIGHT)); MissionIntStraight(); }
@@ -1529,8 +1582,9 @@ Mat Driving::FindLotLines(Mat &img_edge) {
 			circle(img_lines, Point(x, y), 3, Scalar(0, 255, 0));
 		}
 	}
-
-	imshow("result", img_lines);
+	QImage image1 = QImage((uchar*)img_lines.data, img_lines.cols, img_lines.rows, img_lines.step, QImage::Format_RGB888);
+	dataContainer->setValue_ui_parking(image1);
+	//imshow("result", img_lines);
 
 	return img_lines;
 }
@@ -1674,14 +1728,17 @@ void Driving::controlENC(int gear, int speed, double dist, int steer) {
 	dataContainer->setValue_UtoP_STEER(steer);
 
 	double b_ENC1 = dataContainer->getValue_PtoU_ENC();
+	cout << "b_ENC1: " << b_ENC1 << endl;
 
 	while (1) {
 		// 속도 제어하는 코드
-		controlSpeed(speed);
+		//controlSpeed(speed);
 
 		//거리 구하는 코드
 		double p_ENC1 = dataContainer->getValue_PtoU_ENC();
-		double distance = abs(p_ENC1 - b_ENC1) * rate;
+		waitKey(100);
+		double distance = abs(p_ENC1 - b_ENC1) /60.0;
+		cout << "b_ENC1: " << b_ENC1 << endl << "p_ENC1 : " << p_ENC1 << endl<< "distance : "<<distance<<endl;
 
 		if (distance >= dist) {
 			cout << "moving distance : " << distance << endl;
@@ -1695,7 +1752,8 @@ void Driving::practice(double parkDis) { // 후진 후 좌회전
 	double finDist;
 	brakeTime(1);
 
-	finDist = dis_error_rate * (park_y - pow(pow(parkDis, 2) - pow(park_x, 2), 0.5));
+	finDist = 0.7 * (park_y - pow(pow(parkDis, 2) - pow(park_x, 2), 0.5));
+	//finDist = 1;
 	controlENC(2, parking_speed, finDist);
 
 	cout << "backward success" << endl;
@@ -1703,9 +1761,24 @@ void Driving::practice(double parkDis) { // 후진 후 좌회전
 	finDist = dis_error_rate * circle_path;
 	controlENC(0, parking_speed, finDist, -18);
 
-	cout << "parking success" << endl;
+	cout << "turn success" << endl;
 
-	brakeTime(5);
+	finDist = 1.3;
+	controlENC(0, parking_speed, finDist);
+
+	cout << "straight success" << endl;
+
+	dataContainer->setValue_UtoP_BRAKE(200);
+	//brakeTime(5);
+	Sleep(3000);
+	dataContainer->setValue_UtoP_BRAKE(0);
+
+	finDist = 1.3;
+	controlENC(2, parking_speed, finDist);
+
+	cout << "straight success" << endl;
+
+	finDist = dis_error_rate * circle_path;
 	controlENC(2, parking_speed, finDist, -18);
 
 	cout << "parking the end" << endl;
@@ -1713,7 +1786,7 @@ void Driving::practice(double parkDis) { // 후진 후 좌회전
 
 int Driving::ParkingMission() {
 	//실시간 카메라 불러오기
-	VideoCapture cap(1 + CAP_DSHOW);
+	VideoCapture cap(0 + CAP_DSHOW);
 	cap.set(CV_CAP_PROP_FRAME_WIDTH, CAMERA_X);
 	cap.set(CV_CAP_PROP_FRAME_HEIGHT, CAMERA_Y);
 
@@ -1738,7 +1811,8 @@ int Driving::ParkingMission() {
 			cerr << "There is no video.\n";
 			continue;
 		}
-
+		QImage image1 = QImage((uchar*)img_camera.data, img_camera.cols, img_camera.rows, img_camera.step, QImage::Format_RGB888);
+		dataContainer->setValue_ui_parking(image1);
 		///////////////////////////////////////
 		//            //////             //
 		//         ///// ☆ /////          //
@@ -1796,6 +1870,7 @@ int Driving::ParkingMission() {
 		if (distParking != 0) {
 			cout << "The distance between camera and parking area: " << distParking << endl;
 			practice(distParking);
+			dataContainer->setValue_UtoP_GEAR(0);
 			return 0;
 		}
 		else {
