@@ -236,7 +236,7 @@ void Ariadne::clicked_btn_sensor() {
 	
 	if (!lidarThread->isRunning()) { lidarThread->start(); }
 
-	//if (!gpsThread->isRunning()) { gpsThread->start(); }
+	if (!gpsThread->isRunning()) { gpsThread->start(); }
 
 	TimerSensorStatus = new QTimer(this);
 	QTimer::connect(TimerSensorStatus, &QTimer::timeout, this, &Ariadne::updateSensorStatus);

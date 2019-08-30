@@ -134,7 +134,7 @@ vector<Point2d> Driving::forPASIV_path(double x_p, double y_p, vector<Point2d> p
 	int smin = 0;
 	double temp = 10000000;
 
-	for (int i = initialGPSpoint; i < (initialGPSpoint+path.size()/4); i++) {
+	for (int i = initialGPSpoint; i < (path.size()); i++) {
 		double ref = pow(pow(x_p - path[i].x, 2) + pow(y_p - path[i].y, 2), 0.5);
 
 		if (ref <= temp) {
@@ -202,6 +202,7 @@ Mat Driving::getLaneData(int scorestep)
 	else {
 		Point2i endUp;
 		Point2i endDown;
+
 		//check the l, ll lanes
 		for (int i = 1; i > -1; i--) {
 			if (idLane[i] == 0) {}
@@ -252,26 +253,27 @@ Mat Driving::getLaneData(int scorestep)
 				const Point2i *pts9 = (const Point2i*)Mat(lineContour9).data;
 
 				int ptNum = Mat(lineContour1).rows;
-				fillPoly(bufferImgL, &pts9, &ptNum, 1, Scalar(scorestep * 3, scorestep * 3, scorestep * 3));
-				fillPoly(bufferImgL, &pts8, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
-				fillPoly(bufferImgL, &pts7, &ptNum, 1, Scalar(scorestep * 1, scorestep * 1, scorestep * 1));
-				fillPoly(bufferImgL, &pts6, &ptNum, 1, Scalar(scorestep * 0, scorestep * 0, scorestep * 0));
-				fillPoly(bufferImgL, &pts5, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
-				fillPoly(bufferImgL, &pts4, &ptNum, 1, Scalar(scorestep * 4, scorestep * 4, scorestep * 4));
-				fillPoly(bufferImgL, &pts3, &ptNum, 1, Scalar(scorestep * 6, scorestep * 6, scorestep * 6));
-				fillPoly(bufferImgL, &pts2, &ptNum, 1, Scalar(scorestep * 8, scorestep * 8, scorestep * 8));
-				fillPoly(bufferImgL, &pts1, &ptNum, 1, Scalar(scorestep * (10 * idLane[i]), scorestep *(10 * idLane[i]), scorestep *(10 * idLane[i])));
+				fillPoly(bufferImgL, &pts9, &ptNum, 1, Scalar::all(scorestep * 3));
+				fillPoly(bufferImgL, &pts8, &ptNum, 1, Scalar::all(scorestep * 2));
+				fillPoly(bufferImgL, &pts7, &ptNum, 1, Scalar::all(scorestep * 1));
+				fillPoly(bufferImgL, &pts6, &ptNum, 1, Scalar::all(scorestep * 0));
+				fillPoly(bufferImgL, &pts5, &ptNum, 1, Scalar::all(scorestep * 2));
+				fillPoly(bufferImgL, &pts4, &ptNum, 1, Scalar::all(scorestep * 4));
+				fillPoly(bufferImgL, &pts3, &ptNum, 1, Scalar::all(scorestep * 6));
+				fillPoly(bufferImgL, &pts2, &ptNum, 1, Scalar::all(scorestep * 8));
+				fillPoly(bufferImgL, &pts1, &ptNum, 1, Scalar::all(scorestep * (15 * idLane[i])));
 				
 				if (idLane[2]==0)
 				{
 					Mat bufferIv = Mat::zeros(800, 800, CV_8UC1);
 					fillPoly(bufferIv, &pts9, &ptNum, 1, Scalar(scorestep, scorestep, scorestep));
-					threshold(bufferIv, bufferIv, 1, scorestep * 5, THRESH_BINARY_INV);
+					threshold(bufferIv, bufferIv, 1, scorestep * 7, THRESH_BINARY_INV);
 					bufferImgL += bufferIv;
 				}
 				break;
 			}
 		}
+
 		//check the r, rr lines
 		for (int i = 2; i < idLane.size(); i++) {
 			if (idLane[i] == 0) {}
@@ -327,21 +329,21 @@ Mat Driving::getLaneData(int scorestep)
 
 				int ptNum = Mat(lineContour1).rows;
 
-				fillPoly(bufferImgR, &pts9, &ptNum, 1, Scalar(scorestep * 3, scorestep * 3, scorestep * 3));
-				fillPoly(bufferImgR, &pts8, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
-				fillPoly(bufferImgR, &pts7, &ptNum, 1, Scalar(scorestep * 1, scorestep * 1, scorestep * 1));
-				fillPoly(bufferImgR, &pts6, &ptNum, 1, Scalar(scorestep * 0, scorestep * 0, scorestep * 0));
-				fillPoly(bufferImgR, &pts5, &ptNum, 1, Scalar(scorestep * 2, scorestep * 2, scorestep * 2));
-				fillPoly(bufferImgR, &pts4, &ptNum, 1, Scalar(scorestep * 4, scorestep * 4, scorestep * 4));
-				fillPoly(bufferImgR, &pts3, &ptNum, 1, Scalar(scorestep * 6, scorestep * 6, scorestep * 6));
-				fillPoly(bufferImgR, &pts2, &ptNum, 1, Scalar(scorestep * 8, scorestep * 8, scorestep * 8));
-				fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar(scorestep * (10 * id), scorestep *(10 * id), scorestep *(10 * id)));
+				fillPoly(bufferImgR, &pts9, &ptNum, 1, Scalar::all(scorestep * 3));
+				fillPoly(bufferImgR, &pts8, &ptNum, 1, Scalar::all(scorestep * 2));
+				fillPoly(bufferImgR, &pts7, &ptNum, 1, Scalar::all(scorestep * 1));
+				fillPoly(bufferImgR, &pts6, &ptNum, 1, Scalar::all(scorestep * 0));
+				fillPoly(bufferImgR, &pts5, &ptNum, 1, Scalar::all(scorestep * 2));
+				fillPoly(bufferImgR, &pts4, &ptNum, 1, Scalar::all(scorestep * 4));
+				fillPoly(bufferImgR, &pts3, &ptNum, 1, Scalar::all(scorestep * 6));
+				fillPoly(bufferImgR, &pts2, &ptNum, 1, Scalar::all(scorestep * 8));
+				fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar::all(scorestep * (15 * id)));
 
 				if (idLane[1] == 0)
 				{
 					Mat bufferIv = Mat::zeros(800, 800, CV_8UC1);
 					fillPoly(bufferIv, &pts9, &ptNum, 1, Scalar(scorestep, scorestep, scorestep));
-					threshold(bufferIv, bufferIv, 1, scorestep * 5, THRESH_BINARY_INV);
+					threshold(bufferIv, bufferIv, 1, scorestep * 7, THRESH_BINARY_INV);
 					bufferImgR += bufferIv;
 				}
 
@@ -362,6 +364,7 @@ Mat Driving::getLaneData(int scorestep)
 
 Mat Driving::getGpsData(int scorestep)
 {
+	cout << "getting the data from gps." << endl;
 	int mission = dataContainer->getValue_yolo_missionID();
 	int stepNum = 9;
 	vector<Point2d> wayPoints;
@@ -380,10 +383,13 @@ Mat Driving::getGpsData(int scorestep)
 		buffer = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 		for (int j = 0; j < wayPoints.size(); j++){
 			getPoint = Point2d(wayPoints.at(j).x *2/3, wayPoints.at(j).y*2/3);
+			cout << i << "th Map - " << j << "th point: " << "wayPoint x-> " << wayPoints.at(j).x << "y-> " << wayPoints.at(j).y << endl;
 			circle(buffer, getPoint, itvGPS * (stepNum-i), Scalar::all(scorestep), -1, CV_AA, 0);
 		}
 		gpsMap -= buffer;
+		cout << "========================================================\n\n" << endl;
 	}
+	imshow("GPSmap", gpsMap);
 	return gpsMap;
 }
 
@@ -643,12 +649,12 @@ void Driving::Basic(int missionId) {
 		//imshow("Map", scoreMap);
 		PASIVcontrol(imgPath, desired_speed, goTheta1, goTheta2, desired_brake);
 		//imshow("Path", imgPath);
-		cout << "=====================" << imgPath.step << endl;
+		//cout << "=====================" << imgPath.step << endl;
 		QImage image1 = QImage((uchar*)imgPath.data, imgPath.cols, imgPath.rows, imgPath.step, QImage::Format_Grayscale8);
 		dataContainer->setValue_ui_pathmap(image1);
 
 		end = clock();
-		cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl;
+		//cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl;
 		int key = cv::waitKey(1);
 		if (key == 27) {
 			break;
@@ -885,7 +891,7 @@ void Driving::BasicGPS(int missionId) {
 		dataContainer->setValue_ui_pathmap(image1);
 
 		end = clock();
-		cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl;
+		//cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl;
 		int key = cv::waitKey(1);
 		if (key == 27) {
 			break;
