@@ -114,8 +114,8 @@ Ariadne::Ariadne(QWidget *parent)
 	connect(platformCom, SIGNAL(BreakChanged(int)), this, SLOT(onBreakChanged(int)));
 	connect(platformCom, SIGNAL(EncChanged(int)), this, SLOT(onEncChanged(int)));
 
-	connect(gpsCom, SIGNAL(latitudeChanged(double)), this, SLOT(onLatitudeChanged(double)));
-	connect(gpsCom, SIGNAL(longitudeChanged(double)), this, SLOT(onLongitudeChanged(double)));
+	connect(gpsCom, SIGNAL(latitudeChanged(int)), this, SLOT(onLatitudeChanged(int)));
+	connect(gpsCom, SIGNAL(longitudeChanged(int)), this, SLOT(onLongitudeChanged(int)));
 	connect(gpsCom, SIGNAL(headingChanged(double)), this, SLOT(onHeadingChanged(double)));
 
 	// ------------------- UI update for Mission ----------------------//
@@ -256,7 +256,7 @@ void Ariadne::clicked_btn_sensor() {
 
 	//if (!platformThread->isRunning()) { platformThread->start(); }
 	
-	//if (!lidarThread->isRunning()) { lidarThread->start(); }
+	if (!lidarThread->isRunning()) { lidarThread->start(); }
 
 	//if (!gpsThread->isRunning()) { gpsThread->start(); }
 
@@ -451,9 +451,9 @@ void Ariadne::onSpeedChanged(int Number) { ui->lcdNumber_4->display(Number); }
 void Ariadne::onSteerChanged(int Number) { ui->lcdNumber_5->display(Number); }
 void Ariadne::onBreakChanged(int Number) { ui->lcdNumber_6->display(Number); }
 void Ariadne::onEncChanged(int Number) { ui->lcdNumber_7->display(Number); }
-void Ariadne::onLatitudeChanged(double Number) { ui->lcdNumber_8->display(Number); }
+void Ariadne::onLatitudeChanged(int Number) { ui->lcdNumber_8->display(Number); }
 
-void Ariadne::onLongitudeChanged(double Number) { ui->lcdNumber_9->display(Number); }
+void Ariadne::onLongitudeChanged(int Number) { ui->lcdNumber_9->display(Number); }
 void Ariadne::onHeadingChanged(double Number) { ui->lcdNumber_10->display(Number); }
 
 void Ariadne::AutoPortFinder() {
@@ -714,7 +714,7 @@ void GPSCom::comGPS() { // rt ; Real Time
 							//ofile << vec[0] << ',' << vec[3] << ',' << vec[5]  << endl;
 							_lat = ((atof(vec[3].c_str()) - 3700) / 60) + 37; // 35랑 128은 상황에 따라 바꿔줘야함
 							_lng = ((atof(vec[5].c_str()) - 12600) / 60) + 126; // 37, 126
-							heading = atof(vec[8].c_str()) *CV_PI / 180; //[rad]
+							heading = atof(vec[8].c_str()) * CV_PI / 180; //[rad]
 
 							vector<double >utm = UTM(_lat, _lng);
 							lat = utm[0];
@@ -725,9 +725,9 @@ void GPSCom::comGPS() { // rt ; Real Time
 							dataContainer->setValue_gps_latitude(lat);
 							dataContainer->setValue_gps_longitude(lng);
 
-							emit latitudeChanged(lat / 1000);
-							emit longitudeChanged(lng / 1000); /// 숫자가 너무 커서 나눴음
-							emit headingChanged(heading);
+							emit latitudeChanged((int)lat);
+							emit longitudeChanged((int)lng); /// 숫자가 너무 커서 나눴음
+							emit headingChanged(atof(vec[8].c_str()));
 
 							//cout << lat << "    " << lng << endl;
 						}

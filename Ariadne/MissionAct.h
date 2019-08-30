@@ -14,10 +14,11 @@
 #define itvLane	20 //400*400
 
 //Tuning point in getGpsData
-#define GPSscoreStep 60
+#define GPSscoreStep 20
 ///#define itvGPS 30 //600*600
 #define itvGPS 20 //400*400
 #define numGPS 500
+#define numGPSMAP 100
 
 #define steerRatio  1.0
 #define speedHigh	13.0

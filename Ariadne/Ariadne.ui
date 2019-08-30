@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1920</width>
+    <width>1885</width>
     <height>1030</height>
    </rect>
   </property>
@@ -985,9 +985,9 @@
     <widget class="QLCDNumber" name="lcdNumber_10">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>169</x>
        <y>80</y>
-       <width>70</width>
+       <width>81</width>
        <height>23</height>
       </rect>
      </property>
@@ -1027,9 +1027,9 @@
     <widget class="QLCDNumber" name="lcdNumber_8">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>169</x>
        <y>20</y>
-       <width>70</width>
+       <width>81</width>
        <height>23</height>
       </rect>
      </property>
@@ -1043,9 +1043,9 @@
     <widget class="QLCDNumber" name="lcdNumber_9">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>169</x>
        <y>50</y>
-       <width>70</width>
+       <width>81</width>
        <height>23</height>
       </rect>
      </property>
@@ -1495,7 +1495,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1920</width>
+     <width>1885</width>
      <height>21</height>
     </rect>
    </property>

@@ -236,7 +236,7 @@ void DataContainer::setValue_gps_latitude_shift(double value) { mtx_gps_latitude
 void DataContainer::setValue_gps_longitude(double value) { mtx_gps_longitude.lock(); m_gps_longitude = value; mtx_gps_longitude.unlock(); }
 void DataContainer::setValue_gps_longitude_shift(double value) { mtx_gps_longitude_shift.lock(); m_gps_longitude_shift = value; mtx_gps_longitude_shift.unlock(); }
 void DataContainer::setValue_gps_velocity(double value) { mtx_gps_velocity.lock(); m_gps_velocity = value; mtx_gps_velocity.unlock(); }
-void DataContainer::setValue_gps_heading(double value) { mtx_gps_heading.lock(); m_gps_heading = value; mtx_gps_heading.unlock(); }
+void DataContainer::setValue_gps_heading(double value) { mtx_gps_heading.lock(); if(value) m_gps_heading = value; mtx_gps_heading.unlock(); }
 
 void DataContainer::setValue_flted_x(double value) { mtx_gps_flted_x.lock(); m_gps_flted_x = value; mtx_gps_flted_x.unlock(); }
 void DataContainer::setValue_flted_y(double value) { mtx_gps_flted_y.lock(); m_gps_flted_y = value; mtx_gps_flted_y.unlock(); }

@@ -47,8 +47,8 @@ private:
 
 signals:
 	void GPSExit();
-	void latitudeChanged(double);
-	void longitudeChanged(double);
+	void latitudeChanged(int);
+	void longitudeChanged(int);
 	void headingChanged(double);
 
 public slots:
@@ -166,8 +166,8 @@ public slots:
 	void onSteerChanged(int);
 	void onEncChanged(int);
 
-	void onLatitudeChanged(double);
-	void onLongitudeChanged(double);
+	void onLatitudeChanged(int);
+	void onLongitudeChanged(int);
 	void onHeadingChanged(double);
 	void onCurrentMission(int);
 	void onExitMission(int);

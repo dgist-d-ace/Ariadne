@@ -154,22 +154,30 @@ vector<Point2d> Driving::forPASIV_path(double x_p, double y_p, vector<Point2d> p
 	//}
 
 	vector<Point2d> result;
-	for (int i = min; i < std::min(min + numGPS, (int)path.size()); i++) {
+	for (int i = min; i < std::min(min + numGPSMAP, (int)path.size()); i++) {
 		result.push_back(path[i]);
 	}
+
 	presentGPSpoint = min;
+
 	return result;
 }
 
 vector<Point2d> Driving::getWaypoint(double x_p, double y_p, double heading, vector<Point2d>forPASIV_path) {
-	double theta =  - heading;
+	double theta = - heading;
+
 	//cout << "getWayPoint" << endl;
 	vector<Point2d> gpsWayPoint;
+	double imgPX;
+	double imgPY;
 	if (forPASIV_path.size() == 0) {
 	}
 	else {
 		for (int i = 0; i < forPASIV_path.size(); i++) {
-			Point2d temp = Point2d(200 / 3 * ((forPASIV_path[i].x - x_p) * cos(theta) + (forPASIV_path[i].y - y_p ) * sin(theta) + 3), 200 / 3 * ((forPASIV_path[i].x - x_p) * sin(theta) - (forPASIV_path[i].y - y_p ) * cos(theta) + 6 ));
+			imgPX = ((forPASIV_path[i].x - x_p) * cos(theta) + (forPASIV_path[i].y - y_p) * sin(theta) + 3.0)*200.0 / 3.0;
+			imgPY = ((forPASIV_path[i].x - x_p) * sin(theta) - (forPASIV_path[i].y - y_p) * cos(theta) + 6.0)*200.0 / 3.0;
+			Point2d temp = Point2d(imgPX, imgPY);
+			//Point2d temp = Point2d(200.0 / 3.0 * ((forPASIV_path[i].x - x_p) * cos(theta) + (forPASIV_path[i].y - y_p ) * sin(theta) + 3.0), 200.0 / 3.0 * ((forPASIV_path[i].x - x_p) * sin(theta) - (forPASIV_path[i].y - y_p ) * cos(theta) + 6.0 ));
 			//Point2d temp = Point2d(200 / 3 * (forPASIV_path[i].x - x_p + 3), -200 / 3 * (forPASIV_path[i].y - y_p + 6));
 			//vector<double> temp{ 200/3*(forPASIV_path[i].x - x_p + 3), -200/3* (forPASIV_path[i].y - y_p + 6)};
 			gpsWayPoint.push_back(temp);
@@ -266,7 +274,7 @@ Mat Driving::getLaneData(int scorestep)
 				fillPoly(bufferImgL, &pts4, &ptNum, 1, Scalar::all(scorestep * 4));
 				fillPoly(bufferImgL, &pts3, &ptNum, 1, Scalar::all(scorestep * 6));
 				fillPoly(bufferImgL, &pts2, &ptNum, 1, Scalar::all(scorestep * 8));
-				fillPoly(bufferImgL, &pts1, &ptNum, 1, Scalar::all(scorestep * (15 * idLane[i])));
+				fillPoly(bufferImgL, &pts1, &ptNum, 1, Scalar::all(scorestep * (14 * idLane[i])));
 				
 				if (idLane[2]==0)
 				{
@@ -342,7 +350,7 @@ Mat Driving::getLaneData(int scorestep)
 				fillPoly(bufferImgR, &pts4, &ptNum, 1, Scalar::all(scorestep * 4));
 				fillPoly(bufferImgR, &pts3, &ptNum, 1, Scalar::all(scorestep * 6));
 				fillPoly(bufferImgR, &pts2, &ptNum, 1, Scalar::all(scorestep * 8));
-				fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar::all(scorestep * (15 * id)));
+				fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar::all(scorestep * (14 * id)));
 
 				if (idLane[1] == 0)
 				{
@@ -378,22 +386,26 @@ Mat Driving::getGpsData(int scorestep)
 	double gps_H = dataContainer->getValue_gps_heading();
 
 	wayPoints = getWaypoint(gps_X, gps_Y, gps_H, forPASIV_path(gps_X, gps_Y, path));
+
 	Mat gpsMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
-	gpsMap = Scalar::all(scorestep*stepNum);
+	gpsMap = Scalar::all(scorestep*stepNum);//80
 
 	//Function
 	Mat buffer = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 	Point2d getPoint;
-	for (int i = 1; i < stepNum; i++){
+	for (int i = 1; i < stepNum+1; i++){
 		buffer = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 		for (int j = 0; j < wayPoints.size(); j++){
 			getPoint = Point2d(wayPoints.at(j).x , wayPoints.at(j).y);
+
 			cout << i << "th Map - " << j << "th point: " << "wayPoint x-> " << wayPoints.at(j).x << "y-> " << wayPoints.at(j).y << endl;
-			circle(buffer, getPoint, itvGPS * (stepNum-i), Scalar::all(30), -1, CV_AA, 0);
+			
+			circle(buffer, getPoint, itvGPS * (stepNum+1-i), Scalar::all(scorestep), -1, CV_AA, 0);
 		}
 		gpsMap -= buffer;
 		//cout << "========================================================\n\n" << endl;
 	}
+	//gpsMap: GPS points: 0 -> 20 -> 40 -> 60 -> 80(background)
 	//imshow("GPSmap", gpsMap);
 	return gpsMap;
 }
@@ -554,6 +566,8 @@ void Driving::Basic(int missionId) {
 			scoreMap += stepVot2;
 		}
 
+		//scoreMap: 160 , Max value of imgPath: 160 
+	
 		////Apply the lane data to the locLidar data
 		Mat laneImg = getLaneData(LanescoreStep);
 		scoreMap -= laneImg;

@@ -133,7 +133,7 @@ public:
         if (AriadneClass->objectName().isEmpty())
             AriadneClass->setObjectName(QString::fromUtf8("AriadneClass"));
         AriadneClass->setEnabled(true);
-        AriadneClass->resize(1920, 1030);
+        AriadneClass->resize(1885, 1030);
         centralWidget = new QWidget(AriadneClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         groupBox = new QGroupBox(centralWidget);
@@ -391,7 +391,7 @@ public:
         groupBox_2->setGeometry(QRect(1590, 280, 301, 171));
         lcdNumber_10 = new QLCDNumber(groupBox_2);
         lcdNumber_10->setObjectName(QString::fromUtf8("lcdNumber_10"));
-        lcdNumber_10->setGeometry(QRect(180, 80, 70, 23));
+        lcdNumber_10->setGeometry(QRect(169, 80, 81, 23));
         lcdNumber_10->setFrameShadow(QFrame::Plain);
         lcdNumber_10->setSegmentStyle(QLCDNumber::Flat);
         label_14 = new QLabel(groupBox_2);
@@ -402,12 +402,12 @@ public:
         label_15->setGeometry(QRect(50, 85, 101, 16));
         lcdNumber_8 = new QLCDNumber(groupBox_2);
         lcdNumber_8->setObjectName(QString::fromUtf8("lcdNumber_8"));
-        lcdNumber_8->setGeometry(QRect(180, 20, 70, 23));
+        lcdNumber_8->setGeometry(QRect(169, 20, 81, 23));
         lcdNumber_8->setFrameShadow(QFrame::Plain);
         lcdNumber_8->setSegmentStyle(QLCDNumber::Flat);
         lcdNumber_9 = new QLCDNumber(groupBox_2);
         lcdNumber_9->setObjectName(QString::fromUtf8("lcdNumber_9"));
-        lcdNumber_9->setGeometry(QRect(180, 50, 70, 23));
+        lcdNumber_9->setGeometry(QRect(169, 50, 81, 23));
         lcdNumber_9->setFrameShadow(QFrame::Plain);
         lcdNumber_9->setSegmentStyle(QLCDNumber::Flat);
         label_5 = new QLabel(groupBox_2);
@@ -523,7 +523,7 @@ public:
         AriadneClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AriadneClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1920, 21));
+        menuBar->setGeometry(QRect(0, 0, 1885, 21));
         AriadneClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(AriadneClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
