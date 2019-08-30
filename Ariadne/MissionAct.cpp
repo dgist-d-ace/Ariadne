@@ -72,50 +72,10 @@ Driving::Driving() {
 	fillPoly(outRange, pnts, npt2, 1, Scalar::all(255));
 	fillPoly(outRange, pnts2, npt2, 1, Scalar::all(255));
 
-	cout << "=======================================================" << endl;
-	//cout << "start setPath" << endl;
-	//void setPath();
-	//cout << "in setPath" << endl;
-	double path_x;
-	double path_y;
-
-	//경로 설정 바꿔야함
-	ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\k_city_rtk_10Hz_2_1.txt");
-	//k_city_rtk_10Hz_1
-
-	char line[200];
-	string tap;
-	vector<string> vec;
-	//vector<double> temp;
-	//cout << "in setPath2" << endl;
-
-	if (gpsfile.is_open()) {
-		//cout << "in setPath3" << endl;
-
-		while (gpsfile.getline(line, sizeof(line), '\n')) {
-			stringstream str(line);
-			//cout << "in setPath4" << endl;
-
-			while (getline(str, tap, ',')) {
-				vec.push_back(tap);
-			}
-
-			path_x = (atof(vec[0].c_str()));
-			path_y = (atof(vec[1].c_str()));
-			//temp.push_back(path_x);
-			//temp.push_back(path_y);
-			Point2d pathPoint = Point2d(path_x, path_y);
-			path.push_back(pathPoint);
-
-			vec.clear();
-			//temp.clear();
-		}
-	}
-	//cout << "in setPath5" << endl;
+	setPath();
 }
 
 void Driving::setPath() {
-	cout<<"in setPath"<<endl;
 	double path_x;
 	double path_y;
 
@@ -127,14 +87,11 @@ void Driving::setPath() {
 	string tap;
 	vector<string> vec;
 	//vector<double> temp;
-	//cout << "in setPath2" << endl;
 
 	if (gpsfile.is_open()) {
-		//cout << "in setPath3" << endl;
 
 		while (gpsfile.getline(line, sizeof(line), '\n')) {
 			stringstream str(line);
-			//cout << "in setPath4" << endl;
 
 			while (getline(str, tap, ',')) {
 				vec.push_back(tap);
@@ -151,8 +108,6 @@ void Driving::setPath() {
 			//temp.clear();
 		}
 	}
-	//cout << "in setPath5" << endl;
-
 }
 
 //set the "presentGPSpoint" which mean the mission strat point.
