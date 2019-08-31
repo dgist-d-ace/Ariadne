@@ -120,6 +120,7 @@ public:
 	void practice(double parkDis);
 	int ParkingMission();
 
+	bool parking = true;
 	Planner *aster;
 signals:
 	void send2View(int id);

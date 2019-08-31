@@ -1306,7 +1306,7 @@ void Driving::autoMode() {
 	//emit(send2View(7));
 	while (1) {
 		cout << dataContainer->getValue_yolo_missionID() << endl;
-		if (dataContainer->getValue_yolo_missionID() == PARKING) { emit(currentMission(PARKING)); MissionParking(); emit(exitMission(PARKING)); }
+		if (parking && dataContainer->getValue_yolo_missionID() == PARKING) { emit(currentMission(PARKING)); parking = false; MissionParking(); emit(exitMission(PARKING)); }
 		else if (dataContainer->getValue_yolo_missionID() == INTER_LEFT) { emit(currentMission(INTER_LEFT)); emit(send2View(2)); MissionIntLeft(); }
 		else if (dataContainer->getValue_yolo_missionID() == INTER_RIGHT) { emit(currentMission(INTER_RIGHT)); emit(send2View(3)); MissionIntRight(); }
 		else if (dataContainer->getValue_yolo_missionID() == INTER_STRAIGHT) { emit(currentMission(INTER_STRAIGHT)); MissionIntStraight(); }

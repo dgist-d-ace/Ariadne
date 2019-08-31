@@ -124,7 +124,7 @@ public:
 
 	static Ui::AriadneClass* getUI();
 
-	bool parkingOn = false;
+	bool parkingOn = 0;
 	
 private:
 	static Ui::AriadneClass* ui;
