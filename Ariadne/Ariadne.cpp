@@ -250,13 +250,13 @@ void Ariadne::clicked_btn_sensor() {
 
 	AutoPortFinder();
 
-	if (!scnnThread->isRunning()) { ui->pushButton_3->setEnabled(false); scnnThread->start(); }
+	//if (!scnnThread->isRunning()) { ui->pushButton_3->setEnabled(false); scnnThread->start(); }
 
-	//if (!yoloThread->isRunning()){ yoloThread->start(); }
+	if (!yoloThread->isRunning()){ yoloThread->start(); }
 
 	//if (!platformThread->isRunning()) { platformThread->start(); }
 	
-	if (!lidarThread->isRunning()) { lidarThread->start(); }
+	//if (!lidarThread->isRunning()) { lidarThread->start(); }
 
 	//if (!gpsThread->isRunning()) { gpsThread->start(); }
 
