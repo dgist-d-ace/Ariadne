@@ -1,6 +1,5 @@
 
 #include "DataContainer.h"
-#include "Planner.hpp"
 #include <iostream>
 // header for GPS
 #include <string> 
@@ -11,17 +10,17 @@
 //Tuning point in getLanedata
 #define LanescoreStep 5
 ///#define itvLane	20 //600*600
-#define itvLane	20 //400*400
+#define itvLane	17 //400*400
 
 //Tuning point in getGpsData
-#define GPSscoreStep 20
+#define GPSscoreStep 30
 ///#define itvGPS 30 //600*600
 #define itvGPS 20 //400*400
-#define numGPS 500
-#define numGPSMAP 100
+#define numGPS 300
+#define numGPSMAP 40
 
 #define steerRatio  1.0
-#define speedHigh	13.0
+#define speedHigh	10.0
 #define speedLow	5.0
 
 //Tuning points in Dynamic Mission
@@ -70,7 +69,7 @@ protected:
 	double cenX = (double)imgPath.cols * 0.5, cenY = (double)imgPath.rows *1.0; //the location of LiDAR in the map.
 	double scale = cenY / (SICK_SCAN_ROI_Y + 50);
 	double carW = CAR_WIDTH * scale, carH = CAR_HEIGH * scale;
-	uchar onestep = (CAR_HEIGH)* scale;
+	uchar onestep = (1500)* scale;
 
 	//ROI AREA in the maps
 	double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
@@ -80,8 +79,8 @@ protected:
 	//double bottomEndY = cenY + SICK_SCAN_ROI_Y * scale;
 
 	vector<Mat> checkImgs;
-	vector<int> checkTheta = { 0, -6, 6, -4, 4, -2, 2, -8, 8, -14, 14, -11, 11, -20, 20, -17, 17, -28, 28, -24, 24 };
-	vector<int> checkTheta2 = { 0, -4,4,     -8,8,     -12,12,       -16,16 }; //9
+	vector<int> checkTheta = { 0, -1,1-2, 2, -4, 4, -6, 6, -8, 8, -11, 11, -14, 14, -17, 17, -20, 20, -24, 24, -28, 28,-32, 32 }; //25
+	vector<int> checkTheta2 = { 0, -3,3,     -6,6,     -9,9,     -12,12  }; //9
 
 	//////////////////////////////////////////////
 	//////////////////////////////////////////////
@@ -97,6 +96,7 @@ protected:
 	void controlSpeed(int speed);
 	void brakeTime(double second);
 	void controlENC(int gear, int speed, double dist, int steer = 0);
+	int parkingNum = 0;
 
 public:
 	DataContainer *dataContainer;
@@ -120,7 +120,6 @@ public:
 	void practice(double parkDis);
 	int ParkingMission();
 
-	Planner *aster;
 signals:
 	void send2View(int id);
 	void currentMission(int id);

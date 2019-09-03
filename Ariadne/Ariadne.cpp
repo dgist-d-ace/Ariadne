@@ -19,6 +19,8 @@ Ariadne::Ariadne(QWidget *parent)
 	ui->setupUi(this);
 
 	dataContainer = DataContainer::getInstance();
+	
+	QSystemTrayIcon TrayIcon(QIcon("C:/Users/D-Ace/Documents/DYibre/temp.ico"));
 
 	QPixmap pix("C:/Users/D-Ace/Documents/DYibre/temp.png");
 	ui->AriadneLogo->setPixmap(pix);
@@ -89,6 +91,7 @@ Ariadne::Ariadne(QWidget *parent)
 	QObject::connect(ui->Btn_mission7, SIGNAL(clicked()), this, SLOT(clicked_btn_mission7()));
 	QObject::connect(ui->Btn_mission8, SIGNAL(clicked()), this, SLOT(clicked_btn_mission8()));
 	QObject::connect(ui->Btn_mission9, SIGNAL(clicked()), this, SLOT(clicked_btn_mission9()));
+	QObject::connect(ui->btn_mission_exit, SIGNAL(clicked()), this, SLOT(clicked_btn_missionExit()));
 
 	QObject::connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_btn_sensor()));
 	QObject::connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(clicked_btn_driving()));
@@ -139,7 +142,6 @@ void Ariadne::closeEvent(QCloseEvent *e) {
 	delete yolo;
 	//delete view;
 }
-
 // This function is to change comport numbers from CString to QString.
 CString ConvertQstringtoCString(QString qs)
 {
@@ -156,11 +158,12 @@ void Ariadne::clicked_manual() {
 }
 
 void Ariadne::onDrivingEnabled() {
-	Sleep(1000);
+	Sleep(1500);
 	ui->pushButton_3->setEnabled(true);
 }
 
 void Ariadne::onCurrentMission(int id) {
+	ui->btn_mission_exit->setEnabled(true);
 	ui->Btn_mission1->setEnabled(true);
 	ui->Btn_mission3->setEnabled(true);
 	ui->Btn_mission4->setEnabled(true);
@@ -171,39 +174,42 @@ void Ariadne::onCurrentMission(int id) {
 	ui->Btn_mission9->setEnabled(true);
 
 	switch (id) {
+	case 0:
+		ui->btn_mission_exit->setEnabled(false);
+		//ui->plainTextEdit->appendPlainText("Mission Exit");
 	case PARKING:
 		//ui->Btn_mission1->setStyleSheet("background-color: rgb()");
 		ui->Btn_mission1->setEnabled(false);
-		ui->plainTextEdit->appendPlainText("Parking Mission Start");
+		//ui->plainTextEdit->appendPlainText("Parking Mission Start");
 		parkingOn = true;
 		break;
 	case INTER_LEFT:
 		ui->Btn_mission3->setEnabled(false);
-		ui->plainTextEdit->appendPlainText("Intersection left mission start");
+		//ui->plainTextEdit->appendPlainText("Intersection left mission start");
 		break;
 	case INTER_RIGHT:
 		ui->Btn_mission4->setEnabled(false);
-		ui->plainTextEdit->appendPlainText("Intersection right mission start");
+		//ui->plainTextEdit->appendPlainText("Intersection right mission start");
 		break;
 	case INTER_STRAIGHT:
 		ui->Btn_mission5->setEnabled(false);
-		ui->plainTextEdit->appendPlainText("intersection straight mission start");
+		//ui->plainTextEdit->appendPlainText("intersection straight mission start");
 		break;
 	case INTER_STOP:
 		ui->Btn_mission6->setEnabled(false);
-		ui->plainTextEdit->appendPlainText("intersection stop mission start");
+		//ui->plainTextEdit->appendPlainText("intersection stop mission start");
 		break;
 	case STATIC_OBSTACLE:
 		ui->Btn_mission7->setEnabled(false);
-		ui->plainTextEdit->appendPlainText("Static Obstacle Mission Start");
+		//ui->plainTextEdit->appendPlainText("Static Obstacle Mission Start");
 		break;
 	case DYNAMIC_OBSTACLE:
 		ui->Btn_mission8->setEnabled(false);
-		ui->plainTextEdit->appendPlainText("Dynamic Obstacle Mission Start");
+		//ui->plainTextEdit->appendPlainText("Dynamic Obstacle Mission Start");
 		break;
 	case BASIC:
 		ui->Btn_mission9->setEnabled(false);
-		ui->plainTextEdit->appendPlainText("Basic PASIV algorithm start");
+		//ui->plainTextEdit->appendPlainText("Basic PASIV algorithm start");
 		break;
 	}
 
@@ -250,7 +256,8 @@ void Ariadne::clicked_btn_sensor() {
 
 	AutoPortFinder();
 
-	//if (!scnnThread->isRunning()) { ui->pushButton_3->setEnabled(false); scnnThread->start(); }
+	
+	if (!scnnThread->isRunning()) { ui->pushButton_3->setEnabled(false); scnnThread->start(); }
 
 	if (!yoloThread->isRunning()){ yoloThread->start(); }
 
@@ -289,16 +296,13 @@ void Ariadne::clicked_btn_kidsafe(bool kidsafe) {
 
 // This function is to start driving
 void Ariadne::clicked_btn_driving() {
-
+	
 	//lidar, scnn 켰을 때만 실행
 	if (!drivingThread->isRunning())
 		drivingThread->start();
 
-	/// 0829 오전 6시 46분 DY: 하단 TimerUIUpdate를 clicked_btn_sensors() 에 옮겨서 테스트해보니 여기서 에러가 남.
-	/// 하지만 데이터파싱은 잘 됨을 확인함.( sensorstatus.cpp 파일 430줄 ) 
-	/// 우선 케이시티가서 디버깅할때 에러나지 말라고 여기 주석처리 해둘게 보경 UI update는 나중에 시간날때 천천히 살펴봐
-	
-	TimerUIUpdate->start(100);
+	if(!TimerUIUpdate->isActive())    
+		TimerUIUpdate->start(20);
 }
 
 void Ariadne::updateUI() {
@@ -316,11 +320,11 @@ void Ariadne::updateUI() {
 
 		ui->label_28->setText(str);
 		ui->lcdNumber_16->display(arr[1]);
-		ui->lcdNumber_18->display(arr[2]);
-		ui->lcdNumber_19->display(arr[3]);
-		ui->lcdNumber_20->display(arr[4]);
-		ui->lcdNumber_21->display(arr[5]);
-		ui->lcdNumber_22->display(arr[6]);
+		ui->lcdNumber_18->display(arr[3]);
+		ui->lcdNumber_19->display(arr[5]);
+		ui->lcdNumber_20->display(arr[6]);
+		ui->lcdNumber_21->display(arr[7]);
+		ui->lcdNumber_22->display(arr[8]);
 	}
 	
 	if (scnnThread->isRunning()) {
@@ -396,6 +400,10 @@ void Ariadne::clicked_btn_mission9() {
 	dataContainer->setValue_yolo_missionID(BASIC);
 }
 
+void Ariadne::clicked_btn_missionExit() {
+	dataContainer->setValue_yolo_missionID(0);
+}
+
 void Ariadne::clicked_btn_shift() {
 	bool ok;
 	double shift;
@@ -406,6 +414,7 @@ void Ariadne::clicked_btn_shift() {
 	if(ok) 	dataContainer->setValue_gps_longitude_shift(shift);
 	ui->plainTextEdit->appendPlainText(QString::number(shift));
 	ui->plainTextEdit->appendPlainText("gps shift");
+	
 }
 
 // These functions is to control gplatform
@@ -512,8 +521,8 @@ void Ariadne::AutoPortFinder() {
 					dataContainer->setValue_gps_port(port);
 				}
 				else if (hwID == "USB\\VID_067B&PID_2303&REV_0300") {
-					dataContainer->setValue_platform_port(port);
 				}
+				dataContainer->setValue_platform_port(L"COM3");
 			}
 			// use friendlyName here
 			delete[] friendlyName;
@@ -527,7 +536,7 @@ void Ariadne::AutoPortFinder() {
 void Ariadne::updateSensorStatus()
 {
 	// Platform communication
-	if (dataContainer->getValue_platform_status() > 5) {
+	if (dataContainer->getValue_platform_status() > 10) {
 		ui->statusPlatform->setStyleSheet("background-color: rgb(0, 204, 102);");
 		ui->statusPlatform->setFixedWidth(60);
 	}
@@ -616,7 +625,6 @@ PlatformCom::PlatformCom()
 void PlatformCom::comPlatform() {
 	cout << "platform start" << endl;
 
-	/// dataContainer->getValue_platform_port()
 	if (_platform.OpenPort(dataContainer->getValue_platform_port()))
 	{
 		_platform.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
@@ -641,7 +649,8 @@ void PlatformCom::comPlatform() {
 			emit(BreakChanged(dataContainer->getValue_PtoU_BRAKE()));
 			emit(EncChanged(dataContainer->getValue_PtoU_ENC()));
 
-			Sleep(100);
+			cout << "platform communication" << endl;
+			//Sleep(20);
 		}
 	}
 	else {
@@ -794,134 +803,3 @@ vector <double>UTM(double lat, double lng) { /// This function is to calculate U
 	return utm;
 }
 
-double L1Distance(vector<double> coor1, vector<double> coor2) {
-	double L1 = 0;
-	L1 = abs(coor1[0] - coor2[0]) + abs(coor1[1] - coor2[1]);
-
-	return L1;
-}
-
-double L2Distance(double x2, double y2, double x1 = 0, double y1 = 0) {
-	double L2 = 0;
-	L2 = pow(pow(x2 - x1, 2) + pow(y2 - y1, 2), 0.5);
-
-	return L2;
-}
-
-vector<int> mins(double x, double y, vector<vector<double>> map_link_cut, vector<double> unitHeading) {
-
-	int min = 0;
-	int smin = 0;
-	int ssmin = 0;
-	int sssmin = 0;
-	vector <double> rt_postion{ x,y };
-	double temp = 1000000000;
-
-	for (int i = 0; i < map_link_cut.size(); i++) {
-		double ref = L1Distance(rt_postion, map_link_cut[i]);
-		if (ref <= temp) {
-			sssmin = ssmin;
-			ssmin = smin;
-			smin = min;
-			min = i;
-			temp = ref;
-		}
-	}
-	int lastPoint = 0;
-
-	if ((unitHeading[0] * (map_link_cut[ssmin][0] - x) + unitHeading[1] * (map_link_cut[ssmin][1]) - y) >= 0) {
-		lastPoint = ssmin;
-	}
-	if ((unitHeading[0] * (map_link_cut[ssmin][0] - x) + unitHeading[1] * (map_link_cut[ssmin][1]) - y) < 0) {
-		if ((unitHeading[0] * (map_link_cut[sssmin][0] - x) + unitHeading[1] * (map_link_cut[sssmin][1]) - y) >= 0) {
-			lastPoint = sssmin;
-		}
-		else {
-			lastPoint = ssmin;
-		}
-	}
-
-	vector<int> temp2{ lastPoint, smin, min };
-	return temp2;
-}
-
-
-//�������� ���͸� ����
-vector<double> makeVector(double x1, double y1, double x2, double y2) {
-	double _x = x1 - x2;
-	double _y = y1 - y2;
-	vector<double> temp{ _x,_y };
-
-	return temp;
-}
-
-//���� ����
-double outerProduct(double x1, double y1, double x2, double y2) {
-	double temp = x1 * y2 - y1 * x2; // 2���� ��������
-
-	// �����̸� ������ �߾��� �����ʹ���, �����̸� ���ʹ���
-	return temp;
-}
-
-//������ �̿��ؼ� �Ÿ����ϴ� �˰���������
-double getDistance(vector<double> a, vector<double> h) {
-	vector<double> _d;
-
-	_d.push_back(a[0] - (a[0] * h[0] + a[1] * h[1])*h[0]);
-	_d.push_back(a[1] - (a[0] * h[0] + a[1] * h[1])*h[1]);
-	//(unitHeading[0], unitHeading[1], vec1[0], vec1[1]);
-	double d = outerProduct(h[0], h[1], a[0], a[1]);
-	return d;
-}
-
-double getError(double x, double y, vector<vector<double>> map_link, vector<double> unitHeading) {
-
-	vector<vector<double>> map_link_cut;
-
-	//map_link���� ������ǥ�� �������� �ȿ� �����ִ� ��ǥ���� ���� ����
-	//��, ������ġ�� ���� ����������ŭ �ڸ��� ����
-	for (int i = 0; i < map_link.size(); i++) {
-		if ((map_link[i][0] >= x - 50 && map_link[i][0] <= x + 50) && (map_link[i][1] >= y - 50 && map_link[i][1] <= y + 50)) {
-			map_link_cut.push_back(map_link[i]);
-		}
-	}
-
-	vector<int> _mins = mins(x, y, map_link_cut, unitHeading); // return {min , smin, ssmin} �ε��� �ѹ�
-
-	//������ ���� ������ ���� ���ͻ���
-	vector<double> vec1 = makeVector(map_link_cut[_mins[0]][0], map_link_cut[_mins[0]][1], x, y);
-	vector<double> vec2 = makeVector(map_link_cut[_mins[1]][0], map_link_cut[_mins[1]][1], x, y);
-	vector<double> vec3 = makeVector(map_link_cut[_mins[2]][0], map_link_cut[_mins[2]][1], x, y);
-
-	//������ ���鿡 ���� �Ÿ�
-	double d1 = getDistance(vec1, unitHeading);
-	double d2 = getDistance(vec2, unitHeading);
-	double d3 = getDistance(vec3, unitHeading);
-
-	double Error = (abs(d1) + abs(d2) + abs(d3)) / 3;
-
-	return Error;
-}
-
-// threshole�� 0.9���� ���Ƿ� ����, ���������� �ϴ� 0.9���� ������(�ʿ信 ���� �ٲ� �� ����)
-// threshold = 0.9
-// if Error > threshold , GEOFENCE = True
-// else GEOFENCE = FALUSE
-bool GEOFENCE(double x, double y, vector<vector<double>> map_link, double heading) {
-
-	vector<double> unitHeading{ sin(heading*(PI / 180)),cos(heading*(PI / 180)) }; // ������ ���ֺ��� ����
-
-	double Error = getError(x, y, map_link, unitHeading);
-	if (Error > 0) {
-		sign = true;
-	}
-	else {
-		sign = false;
-	}
-	if (abs(Error) >= threshold) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}

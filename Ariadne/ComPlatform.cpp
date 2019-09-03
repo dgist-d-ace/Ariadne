@@ -84,6 +84,7 @@ void ComPlatform::MyCommWrite()
 	{
 		WriteByte(writeBuffer[i]);
 	}
+
 }
 
 void ComPlatform::setWritePram(BYTE* writeBuffer)
@@ -102,57 +103,43 @@ void ComPlatform::setWritePram(BYTE* writeBuffer)
 	writeBuffer[7] = upper(setData_speed(dataContainer->getValue_UtoP_SPEED()));
 	writeBuffer[8] = lower(setData_steering(dataContainer->getValue_UtoP_STEER()));
 	writeBuffer[9] = upper(setData_steering(dataContainer->getValue_UtoP_STEER()));
+	//cout << "set" << setData_steering(dataContainer->getValue_UtoP_STEER()) << endl;
+
 	writeBuffer[10] = (BYTE)(setData_brake(dataContainer->getValue_UtoP_BRAKE())); 
 	writeBuffer[11] = (BYTE)(dataContainer->getValue_UtoP_ALIVE());
 	writeBuffer[12] = 0x0d;
 	writeBuffer[13] = 0x0a;
 }
 
-#define steeringKP  1.0
-#define speedKP		1.0
-#define brakeKP		1.0
-#define steerRatio  1.0
 
 int ComPlatform::setData_steering(double desired_steering)
 {
-	double present_steering = dataContainer->getValue_PtoU_STEER(); //-2000~2000
-	desired_steering *= -71;
-
-	//Non-control
-	desired_steering = desired_steering*steeringKP;
-	//P-control
-	//desired_steering = (desired_steering - present_steering) * steeringKP;
+	/*double desired_speed = dataContainer->getValue_UtoP_SPEED();
+	desired_steering *= -71.0;
 
 	if (desired_steering > 2000) {
 		desired_steering = 2000;
 	}
 	else if (desired_steering < -2000) {
 		desired_steering = -2000;
-	}
+	}*/
 	//cout << "desired_angle: " << desired_steering << ", real_angle: " << present_steering << endl;
-
 	return desired_steering;
 	//dataContainer->setValue_UtoP_STEER(desired_steering);
 }
 
 int ComPlatform::setData_speed(double desired_speed)
 {
-	double present_speed = dataContainer->getValue_PtoU_SPEED(); //0~200
-	desired_speed *= 10;
-	//Non_control
-	desired_speed = (double)desired_speed*speedKP* (dataContainer->getValue_speed_ratio_bust()) * (dataContainer->getValue_speed_ratio_kid());
-	//desired_speed = desired_speed*speedKP;
-
-	//P-control
-	//desired_speed = (desired_speed - present_speed)*speedKP;
-
-	if (desired_speed > 200) {
-		desired_speed = 200;
-	}
-	else if (desired_speed < 0) {
-		desired_speed = 0;
-	}
-	// cout << "desired_speed: " << desired_speed << ", real_speed: " << present_speed << endl;
+	//double present_speed = dataContainer->getValue_PtoU_SPEED(); //0~200
+	//desired_speed *= 10.0;
+	//
+	//if (desired_speed > 200) {
+	//	desired_speed = 200;
+	//}
+	//else if (desired_speed < 0) {
+	//	desired_speed = 0;
+	//}
+	//// cout << "desired_speed: " << desired_speed << ", real_speed: " << present_speed << endl;
 
 	return desired_speed;
 	//dataContainer->setValue_UtoP_SPEED(desired_speed);
@@ -160,11 +147,7 @@ int ComPlatform::setData_speed(double desired_speed)
 
 int ComPlatform::setData_brake(double desired_brake) 
 {
-	double present_brake = dataContainer->getValue_PtoU_BRAKE();
-	//Non-control
-	desired_brake = desired_brake * brakeKP;
-	//P-control
-	//desired_brake = (desired_brake - present_brake)*brakeKP;
+	/*double present_brake = dataContainer->getValue_PtoU_BRAKE();
 
 	if (desired_brake > 200) {
 		desired_brake = 200;
@@ -173,6 +156,6 @@ int ComPlatform::setData_brake(double desired_brake)
 		desired_brake = 0;
 	}
 	cout << "desired_brake: " << desired_brake << ", real_brake: " << present_brake << endl;
-
+*/
 	return desired_brake;
 }

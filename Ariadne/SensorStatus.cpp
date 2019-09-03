@@ -2,6 +2,7 @@
 #include "ScnnFunc.h"
 #include <tchar.h>
 #include "missionTrigger.h"
+#include "Utils.hpp"
 
 #define UPDATE_PLATFORM_STATUS 100
 #define UPDATE_SENSOR_CONNECTION 101
@@ -34,24 +35,6 @@ LidarCom::LidarCom() {
 	dataContainer = DataContainer::getInstance();
 }
 
-
-State getStartState(int startX, int startY, int startTheta, int startSteer, int startSpeed) {
-	//to do: read from yml file
-	//start point: center of bottom, theta: always 18.
-	return State(startX, startY, startTheta, startSteer, startSpeed);
-}
-
-State getTargetState(int targetX, int targetY, int targetTheta, int targetSteer, int targetSpeed) {
-	//to do: read from yml file
-	//target point: center of top, alpha: random
-	return State(targetX, targetY, targetTheta, targetSteer, targetSpeed);
-}
-
-Map getMatMap(Mat &imgLiDAR) {
-	//to do: read from yml file
-	//start point: center of bottom, theta: always 18.
-	return Map(imgLiDAR);
-}
 
 int LidarCom::comLidar() {
 	LastOfLiDAR lol;
@@ -113,35 +96,6 @@ int LidarCom::comLidar() {
 
 Scnn::Scnn() {
 	dataContainer = DataContainer::getInstance();
-	//ZeroMemory(&si, sizeof(si));
-	//si.cb = sizeof(si);
-	//ZeroMemory(&pi, sizeof(pi)); // assign program memory
-
-	////change webcam or video here
-	////TCHAR commandLine[] = TEXT("C:\\ProgramData\\Anaconda3\\Scripts\\activate_torch.bat");
-	//TCHAR commandLine[] = TEXT("C:\\ProgramData\\Anaconda3\\Scripts\\activate_torch_cam.bat");
-	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
-	//}
-	//else {
-	//	tid = pi.hThread;
-	//	SuspendThread(tid);
-	//}
-
-	//WSADATA wsa;
-	//if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-	//	cout << "error\n";
-
-	//server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-	//sockaddr_in addr = { 0 };
-	//addr.sin_family = AF_INET;
-	//addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	//addr.sin_port = htons(2222);
-
-	//if (::bind(server, (sockaddr*)&addr, sizeof(addr))==SOCKET_ERROR)
-	//	cout<<"binding fail\n";
-
-	//if (listen(server, SOMAXCONN) == SOCKET_ERROR)
-	//	cout << "listening fail\n";
 }
 
 /// this function is for ruuning python scnn program in Ariadne
@@ -166,7 +120,9 @@ int Scnn::boostScnn() {
 
 
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/exp1_kcity_best_50.pth", 0, true);
-	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_big_crop_pass4_best.pth", 1, true);
+	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_aug2_crop_pass4.pth", 0, true);
+	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_aug2_crop_pass4.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test2.mp4", true);
+	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_big_crop_pass4_best.pth", 0, true);
 	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_big_crop_pass4_best.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test2.mp4", true);
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_aug_crop_pass4.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test2.mp4", true);
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", "C:/Users/D-Ace/Pictures/Camera Roll/4.mp4", true);
@@ -309,11 +265,11 @@ Yolo::Yolo() {
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi)); // assign program memory
 
-	TCHAR commandLine[] = TEXT("darknet.exe detector demo data\\obj.data cfg\\yolov3_please.cfg yolov3_54000_fuck.weights data\\middle3.mp4");
+	TCHAR commandLine[] = TEXT("darknet.exe detector demo data\\obj.data cfg\\yolov3_please.cfg yolov3_22000_0903.weights data\\middle0831.mp4");
 	SetCurrentDirectory(_T("C:\\Users\\D-Ace\\darknet-master\\build\\darknet\\x64")); // Darknet program start command
 	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi)) {
 	//}
-	if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi)) {
+	if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
 		cout << "yolo create fail\n";
 	}
 	else {
@@ -391,12 +347,13 @@ void Yolo::comYolo() {
 
 			}
 		}
-		else if (trigger[3] && trigger[3] < 4) { //parking
+		else if (trigger[3] == 0) { //parking
 			dataContainer->setValue_yolo_missionID(PARKING);
 		}
 		else {
 			dataContainer->setValue_yolo_missionID(BASIC);
 		}
+
 		vector<int> mission; 
 
 		for (int i = 0; i < 9; i++) {
@@ -413,7 +370,7 @@ void Yolo::comYolo() {
 			emit(BustExist(true));
 		}
 
-		if (!bustCon && clock() - bustCon > 2000) {
+		if (bustCon && clock() - bustCon > 1000) {
 			dataContainer->setValue_speed_ratio_bust(1);
 			bustCon = 0;
 			emit(BustExist(false));
@@ -427,7 +384,7 @@ void Yolo::comYolo() {
 			dataContainer->setValue_speed_ratio_kid(1);
 			emit(KidsafeExist(false));
 		}
-		/// cout << trigger[0] << " " << trigger[1] << " " << trigger[2] << " " << trigger[3] << " " << trigger[4] << " " << trigger[5] << " " << trigger[6] << " " << trigger[7] << " " << trigger[8] << " " << endl;
+		cout << trigger[0] << " " << trigger[1] << " " << trigger[2] << " " << trigger[3] << " " << trigger[4] << " " << trigger[5] << " " << trigger[6] << " " << trigger[7] << " " << trigger[8] << " " << endl;
 	}
 
 	closesocket(client);
@@ -505,22 +462,3 @@ void View::SuspendView() {
 void View::ResumeView() {
 	ResumeThread(tid);
 }
-
-/// ///// 통합 프로그램 작성자 최도연
-
-/// SCNN은 차선 검출을 위한 딥러닝 알고리즘으로 사용한 라이브러리는 파이토치이며 파이썬으로 작성되었습니다. (파이썬 SCNN 개발자: 배인환)
-/// 하지만 파이토치를 c++에서 쓸 수 없어 C++용 라이브러리인 리브토치를 사용하려고 했습니다.
-/// 그러나 리브토치는 현시점(2019.08)에 개발된 지 얼마 안되는 라이브러리로 파이토치를 이용한 함수 계산 결과와
-/// 리브토치를 이용한 함수 계산 결과가 다르다는 문제가 있었습니다. 
-/// 통합 프로그램 아리아드네에서 scnn, lidar, yolo, platform, drive thread를 돌리기 위해서는 scnn에서 검출한 차선 정보가 필요했습니다
-/// 그럼에도 위에서 서술한 문제를 해결하지 못해 처음에는 Ariadne.exe 파일과 scnn.exe 파일을 TCP/IP 통신으로 정보를 주고받는 방법으로 해결하고자 했습니다.
-/// 해당 코드가 comScnn()입니다.
-/// 그러나 파이썬 부스트를 c++에서 import하여 쓸 수 있는 방법이 성공하여 기존의 TCP/IP 통신 방법을 쓰지 않고 아리아드네 내부에서 SCNN을 돌리게 되었습니다.
-/// 해당 코드는 boostScnn() 입니다.
-/// boostSCNN()은 SCNN에서 검출한 차선 정보를 std::vector로 담아서 쓰는 함수입니다.
-/// 
-///
-///
-///
-///
-///

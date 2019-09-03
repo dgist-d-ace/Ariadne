@@ -2,7 +2,6 @@
 
 #include "ComPlatform.h"
 #include "atlstr.h"
-#include "Planner.hpp"
 
 #include <QObject>
 #include <QThread>

@@ -25,7 +25,7 @@ private:
 	int setData_steering(double desired_steering);
 	int setData_speed(double desired_speed);
 	int setData_brake(double desired_brake);
-
+	double previous_steering;
 public:
 	ComPlatform();
 	~ComPlatform();

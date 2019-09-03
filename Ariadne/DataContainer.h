@@ -100,10 +100,10 @@ private:
 	//
 	// 라이다
 	//
-	vector<cv::Point2d> m_lidar_VecXY; //최종 좌표 집합 - 1프레임
-	queue<vector<vector<double> > > m_lidar_Data; //최종 데이터 집합 - 2프레임
-	vector<cv::Point2d> m_lidar_VecData; //물체의 벡터 집합 - 1프레임
-	vector<bool> m_lidar_BoolData; //물체의 동정적 여부 집합 - 1프레임
+	vector<cv::Point2d> m_lidar_VecXY = {}; //최종 좌표 집합 - 1프레임
+	queue<vector<vector<double> > > m_lidar_Data = {}; //최종 데이터 집합 - 2프레임
+	vector<cv::Point2d> m_lidar_VecData = {}; //물체의 벡터 집합 - 1프레임
+	vector<bool> m_lidar_BoolData = {}; //물체의 동정적 여부 집합 - 1프레임
 	cv::Mat m_lidar_imgData; //최종 이미지
 
 	QMutex mtx_lidar_VecXY;
@@ -115,9 +115,9 @@ private:
 	//
 	// 카메라1: 주행용 (차선 인식) 
 	//
-	vector<vector<cv::Point2i>> m_scnn_lanes;
+	vector<vector<cv::Point2i>> m_scnn_lanes = {};
 	// 0: no lane 1: white lane 2: blue lane 3: yellow lane 
-	vector<int> m_scnn_existLanes; 
+	vector<int> m_scnn_existLanes = { 0, 0, 0, 0 };
 
 	QMutex mtx_scnn_lanes;
 	QMutex mtx_scnn_existLanes;
@@ -125,7 +125,7 @@ private:
 	//
 	//카메라2: YOLO용
 	//
-	vector<int> m_yolo_missions;
+	vector<int> m_yolo_missions = {1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000};
 	double m_speed_ratio = 1;
 	int m_yolo_missionID = BASIC;
 
@@ -324,6 +324,8 @@ public:
 	//
 	// 카메라 2 YOLO용
 	//
+	//yolo에서 mission들의 distance 저장
+	//{ "intersectionState", "intersectionDistance", "crossWalk", "parking", "busLane", "staticObstacle", "dynamicObstacle", "kidSafe", "bust" };
 	vector<int> getValue_yolo_missions();
 	void setValue_yolo_missions(vector<int> temp);
 
@@ -334,6 +336,7 @@ public:
 	void setValue_speed_ratio_kid(double);
 	double getValue_speed_ratio_kid();
 
+	//현재 mission ID
 	int getValue_yolo_missionID();
 	void setValue_yolo_missionID(int ID);
 

@@ -13,11 +13,13 @@ using namespace cv;
 //
 
 Driving::Driving() {
-	cout << "===================DRIVING initialization=========================\n" << endl;
 	dataContainer = DataContainer::getInstance();
+
 	int initialGPSpoint = 0;
 
-	////////////////////////////////////////////
+	//////////////////////////////
+	////Score Validataion Mat.////
+	//////////////////////////////
 	Mat cirGray, cirGray2, temp, buffer;
 	uint Theta, Theta2;
 
@@ -27,24 +29,24 @@ Driving::Driving() {
 		Point2d center(cenX, cenY);
 		Point2d step1(cenX + onestep * cos(CV_PI*Theta / 180), cenY - onestep * sin(CV_PI*Theta / 180));
 		//Point2d step15(cenX + onestep*1.5 * cos(CV_PI*Theta / 180), cenY - onestep*1.5 * sin(CV_PI*Theta / 180));
-		Point2d step05(cenX + onestep * cos(CV_PI*Theta / 180) / 2, cenY - onestep * sin(CV_PI*Theta / 180) / 2);
-		circle(cirGray, step1, (onestep*0.8), Scalar::all(40), -1, CV_AA, 0);
+		Point2d step05(cenX + onestep * cos(CV_PI*Theta / 180) / 2.5, cenY - onestep * sin(CV_PI*Theta / 180) / 2.5);
+		circle(cirGray, step1, (onestep*0.5), Scalar::all(30), -1, CV_AA, 0);
+		circle(cirGray, step05, (onestep*0.35), Scalar::all(50), -1, CV_AA, 0);
+
 		for (int j = 0; j < checkTheta2.size(); j++)
 		{
 			temp = cirGray.clone();
 			cirGray2 = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 			Theta2 = 90 + checkTheta2.at(j);
 			Point2d step2(step1.x + onestep * cos(CV_PI*Theta2 / 180), step1.y - onestep * sin(CV_PI*Theta2 / 180));
-			circle(cirGray2, step1, (onestep*0.4), Scalar::all(40), -1, CV_AA, 0);
-			circle(temp, step2, (onestep*0.6), Scalar::all(20), -1, CV_AA, 0);
-			circle(cirGray2, center, (onestep*0.8), Scalar::all(40), -1, CV_AA, 0);
-
-			//circle(cirGray2, Point2d(cenX, cenY), (onestep*0.8), Scalar::all(15), -1, CV_AA, 0);
+			circle(cirGray2, step1, (onestep*0.2), Scalar::all(30), -1, CV_AA, 0);
+			//circle(cirGray2, center, (onestep*0.5), Scalar::all(30), -1, CV_AA, 0);
+			circle(temp, step2, (onestep*0.5), Scalar::all(10), -1, CV_AA, 0);
 			cirGray2 += temp;
 			buffer = cirGray2.clone();
 			checkImgs.push_back(buffer);
 			//imshow("CHECK", buffer);
-			//waitKey(10);
+			//waitKey(100);
 		}
 	}
 
@@ -54,18 +56,18 @@ Driving::Driving() {
 	int npt2[] = { 4 };
 	//Left area where platform can not go (left 60degrees)
 	Point points[1][4];
-	points[0][0] = Point(cenX - carW, cenY);
-	points[0][1] = Point(leftEndX, cenY);
-	points[0][2] = Point(leftEndX, cenY - (SICK_SCAN_ROI_X*scale - carW) * sqrt(3) / 2);
-	points[0][3] = Point(cenX - (SICK_SCAN_ROI_X*scale + carW) / 2, cenY - (SICK_SCAN_ROI_X*scale - carW) * sqrt(3) / 2);
+	points[0][0] = Point(leftEndX, cenY);
+	points[0][1] = Point(leftEndX+6, cenY);
+	points[0][2] = Point(leftEndX+6,0);
+	points[0][3] = Point(leftEndX, 0);
 	const Point* pnts[1] = { points[0] };
 
 	//Right area where platform can not go (right 60degrees)
 	Point points2[1][4];
-	points2[0][0] = Point(cenX + carW, cenY);
-	points2[0][1] = Point(rightEndX, cenY);
-	points2[0][2] = Point(rightEndX, cenY - (SICK_SCAN_ROI_X*scale - carW) * sqrt(3) / 2);
-	points2[0][3] = Point(cenX + (SICK_SCAN_ROI_X*scale + carW) / 2, cenY - (SICK_SCAN_ROI_X*scale - carW) * sqrt(3) / 2);
+	points2[0][0] = Point(rightEndX, cenY);
+	points2[0][1] = Point(rightEndX-6, cenY);
+	points2[0][2] = Point(rightEndX-6, 0);
+	points2[0][3] = Point(rightEndX, 0);
 	const Point* pnts2[1] = { points2[0] };
 
 	//Drawing
@@ -80,7 +82,18 @@ void Driving::setPath() {
 	double path_y;
 
 	//경로 설정 바꿔야함
-	ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\k_city_rtk_10Hz_2_1.txt"); 
+	//
+	//ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_k_city_middle_2_final.txt"); 
+	
+	//DGIST test
+	ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_dgist_test_1.txt"); 
+	
+	//First GPS map
+	//ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_k_city_middle_1_final.txt");
+	
+	//Second GPS map
+	//ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_k_city_middle_2_final.txt");
+
 	//k_city_rtk_10Hz_1
 
 	char line[200];
@@ -99,13 +112,9 @@ void Driving::setPath() {
 
 			path_x = (atof(vec[0].c_str()));
 			path_y = (atof(vec[1].c_str()));
-			//temp.push_back(path_x);
-			//temp.push_back(path_y);
 			Point2d pathPoint = Point2d(path_x, path_y);
 			path.push_back(pathPoint);
-
 			vec.clear();
-			//temp.clear();
 		}
 	}
 }
@@ -116,7 +125,7 @@ void Driving::getGPSinitial(double x_p, double y_p, vector<Point2d> path) {
 	double temp = 10000000;
 	double ref;
 	//cout << "getGPSinitial" << endl;
-	for (int i = initialGPSpoint; i <(path.size()); i++) {
+	for (int i = initialGPSpoint; i <(path.size()/2); i++) {
 		ref = pow(pow(x_p - path[i].x, 2) + pow(y_p - path[i].y, 2), 0.5);
 
 		if (ref <= temp) {
@@ -139,7 +148,7 @@ vector<Point2d> Driving::forPASIV_path(double x_p, double y_p, vector<Point2d> p
 	int smin = 0;
 	double temp = 10000000;
 
-	for (int i = initialGPSpoint; i < (path.size()); i++) {
+	for (int i = initialGPSpoint; i < (path.size()/2); i++) {
 		double ref = pow(pow(x_p - path[i].x, 2) + pow(y_p - path[i].y, 2), 0.5);
 
 		if (ref <= temp) {
@@ -266,21 +275,21 @@ Mat Driving::getLaneData(int scorestep)
 				const Point2i *pts9 = (const Point2i*)Mat(lineContour9).data;
 
 				int ptNum = Mat(lineContour1).rows;
-				fillPoly(bufferImgL, &pts9, &ptNum, 1, Scalar::all(scorestep * 3));
-				fillPoly(bufferImgL, &pts8, &ptNum, 1, Scalar::all(scorestep * 2));
-				fillPoly(bufferImgL, &pts7, &ptNum, 1, Scalar::all(scorestep * 1));
+				fillPoly(bufferImgL, &pts9, &ptNum, 1, Scalar::all(scorestep * 6));
+				fillPoly(bufferImgL, &pts8, &ptNum, 1, Scalar::all(scorestep * 4));
+				fillPoly(bufferImgL, &pts7, &ptNum, 1, Scalar::all(scorestep * 0));
 				fillPoly(bufferImgL, &pts6, &ptNum, 1, Scalar::all(scorestep * 0));
 				fillPoly(bufferImgL, &pts5, &ptNum, 1, Scalar::all(scorestep * 2));
 				fillPoly(bufferImgL, &pts4, &ptNum, 1, Scalar::all(scorestep * 4));
 				fillPoly(bufferImgL, &pts3, &ptNum, 1, Scalar::all(scorestep * 6));
 				fillPoly(bufferImgL, &pts2, &ptNum, 1, Scalar::all(scorestep * 8));
-				fillPoly(bufferImgL, &pts1, &ptNum, 1, Scalar::all(scorestep * (14 * idLane[i])));
+				fillPoly(bufferImgL, &pts1, &ptNum, 1, Scalar::all(scorestep * (30 * idLane[i])));
 				
 				if (idLane[2]==0)
 				{
 					Mat bufferIv = Mat::zeros(800, 800, CV_8UC1);
 					fillPoly(bufferIv, &pts9, &ptNum, 1, Scalar(scorestep, scorestep, scorestep));
-					threshold(bufferIv, bufferIv, 1, scorestep * 7, THRESH_BINARY_INV);
+					threshold(bufferIv, bufferIv, 1, scorestep * 15, THRESH_BINARY_INV);
 					bufferImgL += bufferIv;
 				}
 				break;
@@ -342,21 +351,21 @@ Mat Driving::getLaneData(int scorestep)
 
 				int ptNum = Mat(lineContour1).rows;
 
-				fillPoly(bufferImgR, &pts9, &ptNum, 1, Scalar::all(scorestep * 3));
-				fillPoly(bufferImgR, &pts8, &ptNum, 1, Scalar::all(scorestep * 2));
-				fillPoly(bufferImgR, &pts7, &ptNum, 1, Scalar::all(scorestep * 1));
+				fillPoly(bufferImgR, &pts9, &ptNum, 1, Scalar::all(scorestep * 6));
+				fillPoly(bufferImgR, &pts8, &ptNum, 1, Scalar::all(scorestep * 4));
+				fillPoly(bufferImgR, &pts7, &ptNum, 1, Scalar::all(scorestep * 0));
 				fillPoly(bufferImgR, &pts6, &ptNum, 1, Scalar::all(scorestep * 0));
 				fillPoly(bufferImgR, &pts5, &ptNum, 1, Scalar::all(scorestep * 2));
 				fillPoly(bufferImgR, &pts4, &ptNum, 1, Scalar::all(scorestep * 4));
 				fillPoly(bufferImgR, &pts3, &ptNum, 1, Scalar::all(scorestep * 6));
 				fillPoly(bufferImgR, &pts2, &ptNum, 1, Scalar::all(scorestep * 8));
-				fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar::all(scorestep * (14 * id)));
+				fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar::all(scorestep * (30 * id)));
 
 				if (idLane[1] == 0)
 				{
 					Mat bufferIv = Mat::zeros(800, 800, CV_8UC1);
 					fillPoly(bufferIv, &pts9, &ptNum, 1, Scalar(scorestep, scorestep, scorestep));
-					threshold(bufferIv, bufferIv, 1, scorestep * 7, THRESH_BINARY_INV);
+					threshold(bufferIv, bufferIv, 1, scorestep * 15, THRESH_BINARY_INV);
 					bufferImgR += bufferIv;
 				}
 
@@ -388,7 +397,7 @@ Mat Driving::getGpsData(int scorestep)
 	wayPoints = getWaypoint(gps_X, gps_Y, gps_H, forPASIV_path(gps_X, gps_Y, path));
 
 	Mat gpsMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
-	gpsMap = Scalar::all(scorestep*stepNum);//80
+	gpsMap = Scalar::all(scorestep*stepNum);//100
 
 	//Function
 	Mat buffer = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
@@ -413,41 +422,75 @@ Mat Driving::getGpsData(int scorestep)
 void Driving::PASIVcontrol(Mat imgPath, double desired_speed, double steer1, double steer2, double desired_brake)
 {
 	//function
+	double present_steer = (double)dataContainer->getValue_PtoU_STEER()/(-71.0);
+	double present_speed = (double)dataContainer->getValue_PtoU_SPEED()/(10.0);
+	double present_brake = (double)dataContainer->getValue_PtoU_BRAKE();
 
-	//1. steering angle with speicific condition(success!!)
-	if (steer2 == 0 ||steer1*steer2<0) {
-		if (abs(steer1 > 6)) {
-			if (steer1 > 0) steer1 += 2;
-			else if (steer1 < 0) steer1-=2;
-		}
-		else {
-			steer1 = steer1;
-		}
+	double steer_ratio;
+	double steerKp;
+	double bustNkid = (dataContainer->getValue_speed_ratio_bust())*(dataContainer->getValue_speed_ratio_kid());
+	
+	//SPEED control with steering angle
+	steer_ratio = (1.0 - abs(steer2) / 150.0) * (1.0 - abs(steer1) / 150.0);
+	//cout << "steer_ratio: " << steer_ratio << endl;
+	desired_speed *= steer_ratio;
+	desired_speed = desired_speed * bustNkid;
+
+	//SPEED control with comparing the present_speed;(decide the brake and speed)
+	double speed_ratio = (double)present_speed / desired_speed; //0.925 * 0.84 = 0.777 ~ 1.0
+	if (desired_speed == 0){
+		desired_brake = 200;
+		desired_speed = 0;
+	} 
+	else if (speed_ratio < 0.85) {
+		desired_brake = 0;
+		desired_speed += (desired_speed - present_speed)*0.5;
 	}
-	double desired_steering = steer1;
+	else if (speed_ratio > 1.15) {
+		desired_brake = 25;
+		desired_speed = desired_speed;
+	}
+	else {
+		desired_brake = 0;
+		desired_speed = desired_speed;
+	}
 
-	//2. steering angle with ratio
-	//double desired_steering = steer1 * steerRatio + steer2 * (1 - steerRatio);
+	if (desired_speed < speedLow) desired_speed = speedLow;
+	else if (desired_speed > speedHigh) desired_speed = speedHigh;
+
+	//Decide the Kp of steering and control steering angle
+	//minimum speed = 5-> 1.0, 15-> 0.3
+	steerKp = 1.35 - 0.07*desired_speed;
+	//cout << "steerKp: " << steerKp << endl;
+	double desired_steering = steer1 * steerKp;
+	if (abs(steer1) > 10 && abs(steer2) >= 4 ) {
+		desired_steering *= 1.2;
+	}
+	else if (abs(steer1) > 15) {
+		desired_steering*=1.3 ;
+	}
 
 	Point2d locLidar(cenX, cenY);
-	Point2d pntF(cenX + onestep * 1.5 * cos(CV_PI*(90 + desired_steering) / 180), cenY - onestep * 1.5*sin(CV_PI*(90 + desired_steering) / 180));
+	Point2d pntF(cenX + onestep * 2.0* (desired_speed/speedHigh) * cos(CV_PI*(90 + desired_steering) / 180), cenY - onestep * 2.0* (desired_speed / speedHigh)*sin(CV_PI*(90 + desired_steering) / 180));
+	Point2d pntF_(cenX + onestep * 2.0* (desired_speed / speedHigh) * cos(CV_PI*(90 + present_steer) / 180), cenY - onestep * 2.0* (desired_speed / speedHigh)*sin(CV_PI*(90 + present_steer) / 180));
 
-	if (desired_speed > 0) {
-		desired_brake = 0;
-		arrowedLine(imgPath, locLidar, pntF, Scalar::all(200), 2);
+	arrowedLine(imgPath, locLidar, pntF, Scalar::all(200), 3);
+	arrowedLine(imgPath, locLidar, pntF_, Scalar::all(100), 3);
+
+	if (desired_brake>150) { 
+		desired_steering = 0; 
 	}
-	else if (desired_brake > 0) { 
-		desired_speed = 0; desired_steering = 0; 
-	}
 
-	//cout << "desired_speed = " << desired_speed << endl;
-	//cout << "desired_steer = " << desired_steering << endl;
-	//cout << "desired_brake = " << desired_brake << endl;
-
+	//cout << "desired_speed = " << (double)desired_speed << "   present_speed: "<< (double)present_speed<< endl;
+	cout <<"desired_steer = " << (double)desired_steering << "   present_steer: " << (double)present_steer << endl;
+	//cout << "desired_brake = " << (double)desired_brake << "   present_brake: " << (double)present_brake << endl;
+	
 	//Return
-	dataContainer->setValue_UtoP_SPEED(desired_speed);
-	dataContainer->setValue_UtoP_STEER(desired_steering);
+	//dataContainer->setValue_UtoP_SPEED(desired_speed*10.0);
+	dataContainer->setValue_UtoP_SPEED(desired_speed*10.0);
+	dataContainer->setValue_UtoP_STEER(desired_steering*(-71.0)); // [deg]
 	dataContainer->setValue_UtoP_BRAKE(desired_brake);
+
 }
 
 //PASIV (Pointcloud-based Auto-driving with Score Implemented Voronoi field)
@@ -467,7 +510,6 @@ void Driving::Basic(int missionId) {
 			cout << "called in PASIV but wrong mission ID : " << mission << endl;
 			break;
 		}
-		//cout << "in PASIV while" << endl;
 		///////////////////////////////////////////
 		imgPath = cv::Mat::zeros(400, 400, CV_8UC1);				//path made with lanes and objs
 		scoreMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1); //lane map without objs
@@ -544,11 +586,10 @@ void Driving::Basic(int missionId) {
 		///////////////////////////////////////			
 		////Make the Score Implemented map.////
 		///////////////////////////////////////		//BIG change 0823
-		//cv::cvtColor(imgPath, imgPath, CV_BGR2GRAY);
-		threshold(imgPath, imgPath, 1, 20, THRESH_BINARY_INV);
-		threshold(scoreMap, scoreMap, 1, 20, THRESH_BINARY_INV);
+		threshold(imgPath, imgPath, 1, 25, THRESH_BINARY_INV);
+		threshold(scoreMap, scoreMap, 1, 25, THRESH_BINARY_INV);
 
-		Mat _window = Mat::ones(10, 10, CV_8UC1);
+		Mat _window = Mat::ones(15, 15, CV_8UC1);
 		morphologyEx(imgPath, imgPath, MORPH_ERODE, _window);
 
 		//SCORE IMPLEMENTED VORONOI FIELD
@@ -558,7 +599,7 @@ void Driving::Basic(int missionId) {
 		Mat stepVot2 = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
 		for (int i = 1; i < 4; i++)
 		{
-			kerSize = 15 * i;
+			kerSize = 17 * i;
 			kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
 			morphologyEx(scoreMap, stepVot2, MORPH_ERODE, kernel);
 			morphologyEx(imgPath, stepVot, MORPH_ERODE, kernel);
@@ -573,9 +614,37 @@ void Driving::Basic(int missionId) {
 		scoreMap -= laneImg;
 		imgPath -= laneImg;
 
-		////Apply the out of range of steering angle
-		scoreMap -= outRange;
-		imgPath -= outRange;
+		/////////////////////////////////////////////////////////////////////
+		////Determine the desired Speed in Score System with Vornoi Field////
+		/////////////////////////////////////////////////////////////////////
+		//Add the line data in the scoreMap and img Path.
+		double scoreofMap = 0; //total sum of scoreMap
+		double scoreofPath = 0;//total sum of imgPath
+		uchar *map = scoreMap.data;
+		uchar *path = imgPath.data;
+		int mapH = imgPath.rows;
+		int mapW = imgPath.cols;
+		for (int i = 0; i < mapH; i++) {
+			for (int j = 0; j < mapW; j++) {
+				scoreofMap += map[i*mapW + j];
+				scoreofPath += path[i*mapW + j];
+			}
+		}
+		double scoreRatio = scoreofPath / scoreofMap;
+		double desired_speed;
+		desired_speed = speedHigh * scoreRatio;
+		//imshow("scoremap", imgPath);
+		
+		//Mat BAEEEEEEEEE;
+		//= imgPath.clone();
+		/*imgPath -= outRange;
+		distanceTransform(imgPath, BAEEEEEEEEE, CV_DIST_L2, 5);
+		normalize(BAEEEEEEEEE, imgPath, 0, 255, NORM_MINMAX, CV_8UC1);
+		*/
+		//imshow("CHECK", BAEEEEEEEEE);
+		//////Apply the out of range of steering angle
+		//scoreMap -= outRange;
+		//imgPath -= outRange;
 
 		//////////////////////////////////////////////////////////////////////////////
 		////Determine the desired Steering Angle in Score System with Vornoi Field////
@@ -610,31 +679,12 @@ void Driving::Basic(int missionId) {
 		arrowedLine(imgPath, locLidar, stepFirst, Scalar::all(50), 5);
 		arrowedLine(imgPath, stepFirst, stepSecond, Scalar::all(50), 5);
 
-		/////////////////////////////////////////////////////////////////////
-		////Determine the desired Speed in Score System with Vornoi Field////
-		/////////////////////////////////////////////////////////////////////
-		//Add the line data in the scoreMap and img Path.
-		double scoreofMap = 0; //total sum of scoreMap
-		double scoreofPath = 0;//total sum of imgPath
-		uchar *map = scoreMap.data;
-		uchar *path = imgPath.data;
-		int mapH = imgPath.rows;
-		int mapW = imgPath.cols;
-		for (int i = 0; i < mapH; i++) {
-			for (int j = 0; j < mapW; j++) {
-				scoreofMap += map[i*mapW + j];
-				scoreofPath += path[i*mapW + j];
-			}
-		}
-		double scoreRatio = scoreofPath / scoreofMap;
-		double desired_speed;
-		desired_speed = speedHigh * scoreRatio;
-		/*if (scoreRatio > 0.8) { desired_speed = speedHigh; }
-		else {
-			desired_speed = speedHigh * scoreRatio/ 0.8;
+		//if (scoreRatio > 0.8) { desired_speed = speedHigh; }
+		//else {
+		//	desired_speed = speedHigh * scoreRatio/ 0.8;
 
-		}
-*/
+		//}
+
 			///////////////////////
 			////Extra Condition////
 			///////////////////////
@@ -652,12 +702,12 @@ void Driving::Basic(int missionId) {
 				//similary to Emergency Stop
 				desired_speed = 0;
 				desired_brake = 200;
-				cout << "STOP!!!!!!!TOO CLOSE!!!!" << endl;
+				//cout << "STOP!!!!!!!TOO CLOSE!!!!" << endl;
 			}
 			else if (desired_speed < speedLow) {
 				//limit the speed
 				desired_brake = 0;
-				desired_speed = speedLow; cout << "LOW SCORE!!" << endl;
+				//desired_speed = speedLow; cout << "LOW SCORE!!" << endl;
 			}
 			else {
 				desired_brake = 0;
@@ -665,15 +715,12 @@ void Driving::Basic(int missionId) {
 			}
 		}
 
-		//imshow("Map", scoreMap);
 		PASIVcontrol(imgPath, desired_speed, goTheta1, goTheta2, desired_brake);
-		//imshow("Path", imgPath);
-		//cout << "=====================" << imgPath.step << endl;
 		QImage image1 = QImage((uchar*)imgPath.data, imgPath.cols, imgPath.rows, imgPath.step, QImage::Format_Grayscale8);
 		dataContainer->setValue_ui_pathmap(image1);
 
 		end = clock();
-		//cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl;
+		cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl;
 		int key = cv::waitKey(1);
 		if (key == 27) {
 			break;
@@ -695,10 +742,12 @@ void Driving::BasicGPS(int missionId) {
 		////Break the PASIV for another mission////
 		///////////////////////////////////////////
 		int mission = dataContainer->getValue_yolo_missionID();
-		if (mission != missionId)
-		{
-			cout << "called in PASIV but wrong mission ID : " << mission << endl;
-			break;
+
+		if (!mission) break;
+		if (mission == INTER_STOP) {
+			MissionIntStop();
+			while (dataContainer->getValue_yolo_missionID() == INTER_STOP) {}
+			dataContainer->setValue_UtoP_BRAKE(1);
 		}
 		if (initialGPSpoint + numGPS <= presentGPSpoint)
 		{
@@ -706,8 +755,8 @@ void Driving::BasicGPS(int missionId) {
 			cout << "EXIT INTERSECTION" << endl;
 			break;
 		}
-		cout << "initial Point: " << initialGPSpoint << endl;
-		cout << "present Point: " << presentGPSpoint << endl;
+		//cout << "initial Point: " << initialGPSpoint << endl;
+		//cout << "present Point: " << presentGPSpoint << endl;
 		///////////////////////////////////////////
 		imgPath = cv::Mat::zeros(400, 400, CV_8UC1);				//path made with lanes and objs
 		scoreMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1); //lane map without objs
@@ -782,11 +831,9 @@ void Driving::BasicGPS(int missionId) {
 		///////////////////////////////////////			
 		////Make the Score Implemented map.////
 		///////////////////////////////////////		//BIG change 0823
-		//cv::cvtColor(imgPath, imgPath, CV_BGR2GRAY);
 		threshold(imgPath, imgPath, 1, 20, THRESH_BINARY_INV);
 		threshold(scoreMap, scoreMap, 1, 20, THRESH_BINARY_INV);
 
-		///Mat _window = Mat::ones(15, 15, CV_8UC1);
 		Mat _window = Mat::ones(10, 10, CV_8UC1);
 		morphologyEx(imgPath, imgPath, MORPH_ERODE, _window);
 		//morphologyEx(scoreMap, scoreMap, MORPH_ERODE, _window);
@@ -802,12 +849,10 @@ void Driving::BasicGPS(int missionId) {
 			//kerSize = 25 * i;
 			kernel = Mat::ones(kerSize, kerSize, CV_8UC1);
 			morphologyEx(scoreMap, stepVot2, MORPH_ERODE, kernel);
-			morphologyEx(imgPath, stepVot, MORPH_ERODE, kernel);
+			morphologyEx(imgPath, stepVot, MORPH_ERODE, kernel); 
 			imgPath += stepVot;
 			scoreMap += stepVot2;
 		}
-		//cout << imgPath.col(300) << endl;
-		//scoreMap = Scalar::all(160);
 
 		////Apply the lane data to the locLidar data
 		Mat laneImg = getLaneData(LanescoreStep);
@@ -820,9 +865,9 @@ void Driving::BasicGPS(int missionId) {
 		scoreMap -= gpsMap;
 		imgPath -= gpsMap;
 
-		////Apply the out of range of steering angle
-		scoreMap -= outRange;
-		imgPath -= outRange;
+		//////Apply the out of range of steering angle
+		//scoreMap -= outRange;
+		//imgPath -= outRange;
 
 		//////////////////////////////////////////////////////////////////////////////
 		////Determine the desired Steering Angle in Score System with Vornoi Field////
@@ -1306,14 +1351,44 @@ void Driving::autoMode() {
 	//emit(send2View(7));
 	while (1) {
 		cout << dataContainer->getValue_yolo_missionID() << endl;
-		if (dataContainer->getValue_yolo_missionID() == PARKING) { emit(currentMission(PARKING)); MissionParking(); emit(exitMission(PARKING)); }
-		else if (dataContainer->getValue_yolo_missionID() == INTER_LEFT) { emit(currentMission(INTER_LEFT)); emit(send2View(2)); MissionIntLeft(); }
-		else if (dataContainer->getValue_yolo_missionID() == INTER_RIGHT) { emit(currentMission(INTER_RIGHT)); emit(send2View(3)); MissionIntRight(); }
-		else if (dataContainer->getValue_yolo_missionID() == INTER_STRAIGHT) { emit(currentMission(INTER_STRAIGHT)); MissionIntStraight(); }
-		else if (dataContainer->getValue_yolo_missionID() == STATIC_OBSTACLE) { emit(currentMission(STATIC_OBSTACLE)); MissionStaticObs(); }
-		else if (dataContainer->getValue_yolo_missionID() == DYNAMIC_OBSTACLE) { emit(currentMission(DYNAMIC_OBSTACLE)); MissionDynamicObs(); }
-		else if (dataContainer->getValue_yolo_missionID() == INTER_STOP) { emit(currentMission(INTER_STOP)); MissionIntStop(); }
-		else { emit(currentMission(BASIC)); emit(send2View(1)); Basic(BASIC); }
+		if (dataContainer->getValue_yolo_missionID() == 0) { emit(currentMission(0)); Sleep(1000);	}
+		else if (parkingNum == 0 && dataContainer->getValue_yolo_missionID() == PARKING) { 
+			emit(currentMission(PARKING)); 
+			parkingNum++;
+			//MissionParking(); 
+			emit(exitMission(PARKING)); 
+		}
+		else if (dataContainer->getValue_yolo_missionID() == INTER_LEFT) { 
+			emit(currentMission(INTER_LEFT)); 
+			emit(send2View(2)); 
+			//MissionIntLeft(); 
+		}
+		else if (dataContainer->getValue_yolo_missionID() == INTER_RIGHT) { 
+			emit(currentMission(INTER_RIGHT)); 
+			emit(send2View(3)); 
+			//MissionIntRight(); 
+		}
+		else if (dataContainer->getValue_yolo_missionID() == INTER_STRAIGHT) { 
+			(currentMission(INTER_STRAIGHT)); 
+			//MissionIntStraight(); 
+		}
+		else if (dataContainer->getValue_yolo_missionID() == STATIC_OBSTACLE) { 
+			emit(currentMission(STATIC_OBSTACLE)); 
+			//MissionStaticObs(); 
+		}
+		else if (dataContainer->getValue_yolo_missionID() == DYNAMIC_OBSTACLE) { 
+			emit(currentMission(DYNAMIC_OBSTACLE)); 
+			//MissionDynamicObs(); 
+		}
+		else if (dataContainer->getValue_yolo_missionID() == INTER_STOP) { 
+			emit(currentMission(INTER_STOP)); 
+			//MissionIntStop(); 
+		}
+		else { 
+			emit(currentMission(BASIC)); 
+			emit(send2View(1)); 
+			//Basic(BASIC); 
+		}
 
 	}
 }
@@ -1423,7 +1498,6 @@ void Driving::DrawData()
 }
 
 void Driving::LOS() {
-	aster = new Planner;
 	/*
 	dataContainer->setValue_UtoP_AorM(1);
 	Planner astar;
@@ -1772,6 +1846,7 @@ int Driving::ParkingMission() {
 
 	while (1)
 	{
+		if (!dataContainer->getValue_yolo_missionID()) break;
 		double distParking= 0;
 		// 카메라로부터 캡쳐한 영상을 frame에 저장합니다.
 		cap >> img_camera;

@@ -20,6 +20,7 @@
 #include "atlstr.h"
 #include <QString>
 #include <QTimer>
+#include <QSystemTrayIcon>
 
 class GPSCom : public QObject
 {
@@ -70,7 +71,7 @@ public:
 	bool loopStatusPlatform = true;
 	PlatformCom();
 	//void run();
-
+	
 private:
 	ComPlatform _platform;
 
@@ -131,6 +132,7 @@ private:
 	void updateSensorStatus();
 	void keyPressEvent(QKeyEvent *);
 	void closeEvent(QCloseEvent *event);
+	void reset();
 
 public slots:
 	void clicked_btn_mission1();
@@ -142,6 +144,7 @@ public slots:
 	void clicked_btn_mission7();
 	void clicked_btn_mission8();
 	void clicked_btn_mission9();
+	void clicked_btn_missionExit();
 	void clicked_btn_bust(bool);
 	void clicked_btn_kidsafe(bool);
 	void clicked_btn_shift();
