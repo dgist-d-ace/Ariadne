@@ -27,21 +27,47 @@ Driving::Driving() {
 		cirGray = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 		Theta = 90 + checkTheta.at(i);
 		Point2d center(cenX, cenY);
+
+		Point2d step101(cenX + onestep * cos(CV_PI*Theta / 180)*1.15 / 5, cenY - onestep  * sin(CV_PI*Theta / 180) *1.15/ 5);
+		Point2d step102(cenX + onestep * cos(CV_PI*Theta / 180) * 2 / 5, cenY - onestep * sin(CV_PI*Theta / 180) * 2 / 5);
+		Point2d step103(cenX + onestep * cos(CV_PI*Theta / 180) * 3 / 5, cenY - onestep * sin(CV_PI*Theta / 180) * 3 / 5);
+		Point2d step104(cenX + onestep * cos(CV_PI*Theta / 180) * 4 / 5, cenY - onestep * sin(CV_PI*Theta / 180) * 4 / 5);
 		Point2d step1(cenX + onestep * cos(CV_PI*Theta / 180), cenY - onestep * sin(CV_PI*Theta / 180));
 		//Point2d step15(cenX + onestep*1.5 * cos(CV_PI*Theta / 180), cenY - onestep*1.5 * sin(CV_PI*Theta / 180));
-		Point2d step05(cenX + onestep * cos(CV_PI*Theta / 180) / 2.5, cenY - onestep * sin(CV_PI*Theta / 180) / 2.5);
-		circle(cirGray, step1, (onestep*0.5), Scalar::all(30), -1, CV_AA, 0);
-		circle(cirGray, step05, (onestep*0.35), Scalar::all(50), -1, CV_AA, 0);
+		Point2d step05(cenX + onestep * cos(CV_PI*Theta / 180) / 2, cenY - onestep * sin(CV_PI*Theta / 180) / 2);
+		circle(cirGray, step05, (onestep *0.42), Scalar::all(1), -1, CV_AA, 0);
+		line(cirGray, step101, step1, Scalar::all(2), 80);
+		//circle(cirGray, step1, (onestep / 3), Scalar::all(4), -1, CV_AA, 0);
+
+		/*circle(cirGray, step05, (onestep*0.4), Scalar::all(20), -1, CV_AA, 0);
+		circle(cirGray, step104, (onestep/3), Scalar::all(40), -1, CV_AA, 0);
+		circle(cirGray, step103, (onestep/3), Scalar::all(20), -1, CV_AA, 0);
+		circle(cirGray, step102, (onestep/3), Scalar::all(40), -1, CV_AA, 0);
+		circle(cirGray, step101, (onestep/3), Scalar::all(40), -1, CV_AA, 0);
+		circle(cirGray, step1, (onestep /3), Scalar::all(40), -1, CV_AA, 0);*/
+
+		//circle(cirGray, step1, (onestep*0.5), Scalar::all(30), -1, CV_AA, 0);
 
 		for (int j = 0; j < checkTheta2.size(); j++)
 		{
 			temp = cirGray.clone();
 			cirGray2 = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
 			Theta2 = 90 + checkTheta2.at(j);
+			Point2d step201(step1.x + onestep * cos(CV_PI*Theta2 / 180)/5, step1.y - onestep * sin(CV_PI*Theta2 / 180)/5);
+			Point2d step202(step1.x + onestep * cos(CV_PI*Theta2 / 180)*2/5, step1.y - onestep * sin(CV_PI*Theta2 / 180)*2/5);
+			Point2d step203(step1.x + onestep * cos(CV_PI*Theta2 / 180)*3/5, step1.y - onestep * sin(CV_PI*Theta2 / 180)*3/5);
+			Point2d step204(step1.x + onestep * cos(CV_PI*Theta2 / 180) * 4 / 5, step1.y - onestep * sin(CV_PI*Theta2 / 180) * 4 / 5);
 			Point2d step2(step1.x + onestep * cos(CV_PI*Theta2 / 180), step1.y - onestep * sin(CV_PI*Theta2 / 180));
-			circle(cirGray2, step1, (onestep*0.2), Scalar::all(30), -1, CV_AA, 0);
-			//circle(cirGray2, center, (onestep*0.5), Scalar::all(30), -1, CV_AA, 0);
-			circle(temp, step2, (onestep*0.5), Scalar::all(10), -1, CV_AA, 0);
+			
+			circle(cirGray2, center, (onestep*0.5), Scalar::all(2), -1, CV_AA, 0);
+			line(cirGray2, step1, step203, Scalar::all(1), 40);
+
+			//circle(temp, step204, (onestep*0.3), Scalar::all(15), -1, CV_AA, 0);
+			//circle(cirGray2, step203, (onestep/3), Scalar::all(20), -1, CV_AA, 0);
+			//circle(cirGray2, step202, (onestep/3), Scalar::all(20), -1, CV_AA, 0);
+			//circle(cirGray2, step201, (onestep/3), Scalar::all(20), -1, CV_AA, 0);
+
+			//circle(temp, step2, (onestep*0.5), Scalar::all(10), -1, CV_AA, 0);
 			cirGray2 += temp;
 			buffer = cirGray2.clone();
 			checkImgs.push_back(buffer);
@@ -86,10 +112,10 @@ void Driving::setPath() {
 	//ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_k_city_middle_2_final.txt"); 
 	
 	//DGIST test
-	ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_dgist_test_1.txt"); 
+	//ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_dgist_test_1.txt"); 
 	
 	//First GPS map
-	//ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_k_city_middle_1_final.txt");
+	ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_k_city_middle_1_final.txt");
 	
 	//Second GPS map
 	//ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_k_city_middle_2_final.txt");
@@ -275,8 +301,8 @@ Mat Driving::getLaneData(int scorestep)
 				const Point2i *pts9 = (const Point2i*)Mat(lineContour9).data;
 
 				int ptNum = Mat(lineContour1).rows;
-				fillPoly(bufferImgL, &pts9, &ptNum, 1, Scalar::all(scorestep * 6));
-				fillPoly(bufferImgL, &pts8, &ptNum, 1, Scalar::all(scorestep * 4));
+				fillPoly(bufferImgL, &pts9, &ptNum, 1, Scalar::all(scorestep * 2));
+				fillPoly(bufferImgL, &pts8, &ptNum, 1, Scalar::all(scorestep * 1));
 				fillPoly(bufferImgL, &pts7, &ptNum, 1, Scalar::all(scorestep * 0));
 				fillPoly(bufferImgL, &pts6, &ptNum, 1, Scalar::all(scorestep * 0));
 				fillPoly(bufferImgL, &pts5, &ptNum, 1, Scalar::all(scorestep * 2));
@@ -351,8 +377,8 @@ Mat Driving::getLaneData(int scorestep)
 
 				int ptNum = Mat(lineContour1).rows;
 
-				fillPoly(bufferImgR, &pts9, &ptNum, 1, Scalar::all(scorestep * 6));
-				fillPoly(bufferImgR, &pts8, &ptNum, 1, Scalar::all(scorestep * 4));
+				fillPoly(bufferImgR, &pts9, &ptNum, 1, Scalar::all(scorestep * 2));
+				fillPoly(bufferImgR, &pts8, &ptNum, 1, Scalar::all(scorestep * 1));
 				fillPoly(bufferImgR, &pts7, &ptNum, 1, Scalar::all(scorestep * 0));
 				fillPoly(bufferImgR, &pts6, &ptNum, 1, Scalar::all(scorestep * 0));
 				fillPoly(bufferImgR, &pts5, &ptNum, 1, Scalar::all(scorestep * 2));
@@ -431,7 +457,7 @@ void Driving::PASIVcontrol(Mat imgPath, double desired_speed, double steer1, dou
 	double bustNkid = (dataContainer->getValue_speed_ratio_bust())*(dataContainer->getValue_speed_ratio_kid());
 	
 	//SPEED control with steering angle
-	steer_ratio = (1.0 - abs(steer2) / 150.0) * (1.0 - abs(steer1) / 150.0);
+	steer_ratio = (1.0 - abs(steer2) / 100.0) * (1.0 - abs(steer1) / 100.0);
 	//cout << "steer_ratio: " << steer_ratio << endl;
 	desired_speed *= steer_ratio;
 	desired_speed = desired_speed * bustNkid;
@@ -460,15 +486,27 @@ void Driving::PASIVcontrol(Mat imgPath, double desired_speed, double steer1, dou
 
 	//Decide the Kp of steering and control steering angle
 	//minimum speed = 5-> 1.0, 15-> 0.3
-	steerKp = 1.25 - 0.07*desired_speed;
-	//cout << "steerKp: " << steerKp << endl;
-	double desired_steering = steer1 * steerKp;
-	if (abs(steer1) > 10 && abs(steer2) >= 4 ) {
+	double desired_steering;
+	if (objflag == 0){
+		steerKp = 1.05 - 0.06*desired_speed;
+		desired_steering = steer1 * steerKp;
+		cout << "NOOOO near object" << endl;
+	}
+	else if (objflag > 0) {
+		steerKp = 1;
+		desired_steering = steer1 * steerKp;
+		desired_steering *= 1.1;
+		cout << "YESSSSSSSSSSSSSS NEAR obj" << endl;
+	}
+	cout << "KP: " << steerKp << " desired_speed: " << desired_speed << endl;
+	
+	
+	/*if (abs(steer1) > 10 && abs(steer2) >= 4 ) {
 		desired_steering *= 1.2;
 	}
 	else if (abs(steer1) > 15) {
 		desired_steering*=1.3 ;
-	}
+	}*/
 
 	Point2d locLidar(cenX, cenY);
 	Point2d pntF(cenX + onestep * 2.0* (desired_speed/speedHigh) * cos(CV_PI*(90 + desired_steering) / 180), cenY - onestep * 2.0* (desired_speed / speedHigh)*sin(CV_PI*(90 + desired_steering) / 180));
@@ -519,7 +557,8 @@ void Driving::Basic(int missionId) {
 
 		//Localization of LiDAR in the ROI
 		Point2d locLidar(cenX, cenY);
-
+		cout << "fuck1" << endl;
+		/*
 		//////////////////////////////////////////////////////////////////
 		////Because Of Obstacles, Fill the Regions where cannot go in.////
 		//////////////////////////////////////////////////////////////////
@@ -539,6 +578,7 @@ void Driving::Basic(int missionId) {
 				}
 			}
 		}
+		cout << "fuck2" << endl;
 
 		vector<vector<double> > objDataSet = dataContainer->getValue_lidar_Data().back();
 		Point polypts[1][4];
@@ -546,12 +586,20 @@ void Driving::Basic(int missionId) {
 		double cenDist, touchDist, theta_s, theta_l;
 		vector<double>objdist;
 		int polyX1, polyY1, polyX2, polyY2, polyX3, polyY3, polyX4, polyY4;
+		objflag = 0;
+		cout << "fuck3" << endl;
+
 		for (int i = 0; i < objDataSet.size(); i++) {
 			cirCenX = locLidar.x + objDataSet[i][0] * scale;
 			cirCenY = locLidar.y - objDataSet[i][1] * scale;
 			cirCenR = objDataSet[i][2] * scale;
 			Point2d cirCen(cirCenX, cirCenY); //locLidar of objs.
 			cenDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2));
+			
+			//distance < 1.2m or (x: -0.8~0.8m and y: 2m)
+			if (cenDist < 1200 * scale || (cirCenX > (cenX - 800 * scale) && cirCenX < (cenX + 800 * scale) && cirCenY >(cenY-2000 * scale))) {
+				objflag++;
+			}
 
 			objdist.push_back(cenDist - cirCenR);
 			touchDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2) - pow(cirCenR, 2));
@@ -582,6 +630,7 @@ void Driving::Basic(int missionId) {
 			fillPoly(imgPath, ppt, npt, 1, CV_RGB(200, 200, 200));
 			circle(imgPath, cirCen, cirCenR, CV_RGB(255, 255, 255), -1, CV_AA);
 		}
+		cout << "fuck4" << endl;
 
 		///////////////////////////////////////			
 		////Make the Score Implemented map.////
@@ -608,9 +657,11 @@ void Driving::Basic(int missionId) {
 		}
 
 		//scoreMap: 160 , Max value of imgPath: 160 
-	
+	*/
 		////Apply the lane data to the locLidar data
 		Mat laneImg = getLaneData(LanescoreStep);
+		scoreMap = Scalar::all(200);
+		imgPath = Scalar::all(200);
 		scoreMap -= laneImg;
 		imgPath -= laneImg;
 
@@ -633,6 +684,8 @@ void Driving::Basic(int missionId) {
 		double scoreRatio = scoreofPath / scoreofMap;
 		double desired_speed;
 		desired_speed = speedHigh * scoreRatio;
+		cout << "fuck6" << endl;
+
 		//imshow("scoremap", imgPath);
 		
 		//Mat BAEEEEEEEEE;
@@ -667,6 +720,8 @@ void Driving::Basic(int missionId) {
 			}
 			score.push_back(sum);
 		}
+		cout << "fuck7" << endl;
+
 		uint scoreMax = distance(score.begin(), max_element(score.begin(), score.end()));
 		uint scoreMin = distance(score.begin(), min_element(score.begin(), score.end()));
 		int goTheta1 = checkTheta.at(scoreMax / checkTheta2.size());
@@ -674,7 +729,7 @@ void Driving::Basic(int missionId) {
 		int dangerTheta = checkTheta.at(scoreMin / checkTheta2.size());
 
 		Point2d stepFirst(cenX + onestep * cos(CV_PI*(90 + goTheta1) / 180), cenY - (onestep*sin(CV_PI*(90 + goTheta1) / 180)));
-		Point2d stepSecond(stepFirst.x + onestep * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*sin(CV_PI*(90 + goTheta2) / 180)));
+		Point2d stepSecond(stepFirst.x + onestep * 3.0 / 5.0 * cos(CV_PI*(90 + goTheta2) / 180), stepFirst.y - (onestep*3.0 / 5.0*sin(CV_PI*(90 + goTheta2) / 180)));
 
 		arrowedLine(imgPath, locLidar, stepFirst, Scalar::all(50), 5);
 		arrowedLine(imgPath, stepFirst, stepSecond, Scalar::all(50), 5);
@@ -684,10 +739,12 @@ void Driving::Basic(int missionId) {
 		//	desired_speed = speedHigh * scoreRatio/ 0.8;
 
 		//}
+		cout << "fuck8" << endl;
 
 			///////////////////////
 			////Extra Condition////
 			///////////////////////
+		/*
 		double desired_brake;
 		if (objdist.size() == 0) {
 			desired_brake = 0;
@@ -714,10 +771,13 @@ void Driving::Basic(int missionId) {
 				desired_speed = desired_speed;
 			}
 		}
-
+		cout << "fuck9" << endl;
+		*/
+		double desired_brake = 0;
 		PASIVcontrol(imgPath, desired_speed, goTheta1, goTheta2, desired_brake);
 		QImage image1 = QImage((uchar*)imgPath.data, imgPath.cols, imgPath.rows, imgPath.step, QImage::Format_Grayscale8);
 		dataContainer->setValue_ui_pathmap(image1);
+		cout << "fuck10" << endl;
 
 		end = clock();
 		cout << "lidar time: " << (double)(end - start) / 1000 << "sec" << endl;
@@ -743,7 +803,7 @@ void Driving::BasicGPS(int missionId) {
 		///////////////////////////////////////////
 		int mission = dataContainer->getValue_yolo_missionID();
 
-		if (!mission) break;
+		if (mission == 0) break;
 		if (mission == INTER_STOP) {
 			MissionIntStop();
 			while (dataContainer->getValue_yolo_missionID() == INTER_STOP) {}
@@ -873,10 +933,10 @@ void Driving::BasicGPS(int missionId) {
 		////Determine the desired Steering Angle in Score System with Vornoi Field////
 		//////////////////////////////////////////////////////////////////////////////
 		uint scoresize = checkTheta.size()*checkTheta2.size();
-		vector<uint> score;
+		vector<double> score;
 		score.reserve(scoresize);
 		Mat scresult;
-		uint sum;
+		double sum;
 		for (int i = 0; i < checkImgs.size(); i++) {
 			scresult = checkImgs[i].mul(imgPath);
 			uchar *sumData = scresult.data;
@@ -885,7 +945,7 @@ void Driving::BasicGPS(int missionId) {
 			sum = 0;
 			for (int h = 0; h < scHeight; h++) {
 				for (int w = 0; w < scWidth; w++) {
-					sum += sumData[w*scHeight + h];
+					sum += sumData[w*scHeight + h]/100.0;
 				}
 			}
 			score.push_back(sum);
@@ -1087,11 +1147,13 @@ void Driving::MissionDynamicObs() {
 	dataContainer->setValue_UtoP_BRAKE(0);
 	while (1) {
 		//dynamic obstacle 미션 중 yolo에서 다른 mission trigger가 들어오면 그 mission으로 넘어감
+		/*
 		if (dataContainer->getValue_yolo_missionID() != DYNAMIC_OBSTACLE)
 		{
 			cout << "mission 8 was called but ended long mission ID : " << dataContainer->getValue_yolo_missionID() << endl;
 			break;
 		}
+		*/
 
 		imgPath = cv::Mat::zeros(400, 400, CV_8UC1);
 		vector<Point2d> vecXY = dataContainer->getValue_lidar_VecXY();
@@ -1356,39 +1418,39 @@ void Driving::autoMode() {
 		else if (parkingNum == 0 && dataContainer->getValue_yolo_missionID() == PARKING) { 
 			emit(currentMission(PARKING)); 
 			parkingNum++;
-			//MissionParking(); 
+			MissionParking(); 
 			emit(exitMission(PARKING)); 
 		}
 		else if (dataContainer->getValue_yolo_missionID() == INTER_LEFT) { 
 			emit(currentMission(INTER_LEFT)); 
 			emit(send2View(2)); 
-			//MissionIntLeft(); 
+			MissionIntLeft(); 
 		}
 		else if (dataContainer->getValue_yolo_missionID() == INTER_RIGHT) { 
 			emit(currentMission(INTER_RIGHT)); 
 			emit(send2View(3)); 
-			//MissionIntRight(); 
+			MissionIntRight(); 
 		}
 		else if (dataContainer->getValue_yolo_missionID() == INTER_STRAIGHT) { 
 			(currentMission(INTER_STRAIGHT)); 
-			//MissionIntStraight(); 
+			MissionIntStraight(); 
 		}
 		else if (dataContainer->getValue_yolo_missionID() == STATIC_OBSTACLE) { 
 			emit(currentMission(STATIC_OBSTACLE)); 
-			//MissionStaticObs(); 
+			MissionStaticObs(); 
 		}
 		else if (dataContainer->getValue_yolo_missionID() == DYNAMIC_OBSTACLE) { 
 			emit(currentMission(DYNAMIC_OBSTACLE)); 
-			//MissionDynamicObs(); 
+			MissionDynamicObs(); 
 		}
 		else if (dataContainer->getValue_yolo_missionID() == INTER_STOP) { 
 			emit(currentMission(INTER_STOP)); 
-			//MissionIntStop(); 
+			MissionIntStop(); 
 		}
 		else { 
 			emit(currentMission(BASIC)); 
 			emit(send2View(1)); 
-			//Basic(BASIC); 
+			Basic(BASIC); 
 		}
 	}
 }

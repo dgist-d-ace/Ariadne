@@ -49,6 +49,7 @@ Ariadne::Ariadne(QWidget *parent)
 	scnnThread = new QThread;
 	scnn->moveToThread(scnnThread);
 	connect(scnnThread, SIGNAL(started()), scnn, SLOT(boostScnn()));
+	//connect(yolo, SIGNAL(yoloStarted()), this, SLOT(scnnStart()));
 	connect(scnn, SIGNAL(drivingEnabled()), this, SLOT(onDrivingEnabled()));
 
 	yolo = new Yolo;
@@ -61,8 +62,6 @@ Ariadne::Ariadne(QWidget *parent)
 	driving = new Driving;
 	drivingThread = new QThread;
 	driving->moveToThread(drivingThread);
-
-	//SWITCH LIDAR CONTROLING.
 	connect(drivingThread, SIGNAL(started()), driving, SLOT(autoMode()));
 
 	view = new View;
@@ -94,7 +93,8 @@ Ariadne::Ariadne(QWidget *parent)
 	QObject::connect(ui->btn_mission_exit, SIGNAL(clicked()), this, SLOT(clicked_btn_missionExit()));
 
 	QObject::connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_btn_sensor()));
-	QObject::connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(clicked_btn_driving()));
+	QObject::connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(clicked_btn_driving_mid()));
+	QObject::connect(ui->pushButton_4, SIGNAL(clicked()), this, SLOT(clicked_btn_driving_fin()));
 	QObject::connect(ui->Btn_gearInput, SIGNAL(clicked()), this, SLOT(gear_input()));
 	QObject::connect(ui->Btn_up, SIGNAL(clicked()), this, SLOT(clicked_speed_up()));
 	QObject::connect(ui->Btn_down, SIGNAL(clicked()), this, SLOT(clicked_speed_down()));
@@ -157,6 +157,13 @@ void Ariadne::clicked_manual() {
 	dataContainer->setValue_UtoP_AorM(0);
 }
 
+void Ariadne::scnnStart() {
+	if (!scnnThread->isRunning()) {
+		ui->pushButton_3->setEnabled(false); 
+		scnnThread->start();
+	}
+}
+
 void Ariadne::onDrivingEnabled() {
 	Sleep(1500);
 	ui->pushButton_3->setEnabled(true);
@@ -176,40 +183,40 @@ void Ariadne::onCurrentMission(int id) {
 	switch (id) {
 	case 0:
 		ui->btn_mission_exit->setEnabled(false);
-		//ui->plainTextEdit->appendPlainText("Mission Exit");
+		ui->plainTextEdit->appendPlainText("Mission Exit");
+		break;
 	case PARKING:
-		//ui->Btn_mission1->setStyleSheet("background-color: rgb()");
 		ui->Btn_mission1->setEnabled(false);
-		//ui->plainTextEdit->appendPlainText("Parking Mission Start");
+		ui->plainTextEdit->appendPlainText("Parking Mission Start");
 		parkingOn = true;
 		break;
 	case INTER_LEFT:
 		ui->Btn_mission3->setEnabled(false);
-		//ui->plainTextEdit->appendPlainText("Intersection left mission start");
+		ui->plainTextEdit->appendPlainText("Intersection left mission start");
 		break;
 	case INTER_RIGHT:
 		ui->Btn_mission4->setEnabled(false);
-		//ui->plainTextEdit->appendPlainText("Intersection right mission start");
+		ui->plainTextEdit->appendPlainText("Intersection right mission start");
 		break;
 	case INTER_STRAIGHT:
 		ui->Btn_mission5->setEnabled(false);
-		//ui->plainTextEdit->appendPlainText("intersection straight mission start");
+		ui->plainTextEdit->appendPlainText("intersection straight mission start");
 		break;
 	case INTER_STOP:
 		ui->Btn_mission6->setEnabled(false);
-		//ui->plainTextEdit->appendPlainText("intersection stop mission start");
+		ui->plainTextEdit->appendPlainText("intersection stop mission start");
 		break;
 	case STATIC_OBSTACLE:
 		ui->Btn_mission7->setEnabled(false);
-		//ui->plainTextEdit->appendPlainText("Static Obstacle Mission Start");
+		ui->plainTextEdit->appendPlainText("Static Obstacle Mission Start");
 		break;
 	case DYNAMIC_OBSTACLE:
 		ui->Btn_mission8->setEnabled(false);
-		//ui->plainTextEdit->appendPlainText("Dynamic Obstacle Mission Start");
+		ui->plainTextEdit->appendPlainText("Dynamic Obstacle Mission Start");
 		break;
 	case BASIC:
 		ui->Btn_mission9->setEnabled(false);
-		//ui->plainTextEdit->appendPlainText("Basic PASIV algorithm start");
+		ui->plainTextEdit->appendPlainText("Basic PASIV algorithm start");
 		break;
 	}
 
@@ -256,10 +263,9 @@ void Ariadne::clicked_btn_sensor() {
 
 	AutoPortFinder();
 
-	
-	if (!scnnThread->isRunning()) { ui->pushButton_3->setEnabled(false); scnnThread->start(); }
+	if (!yoloThread->isRunning()) { yoloThread->start(); }
 
-	if (!yoloThread->isRunning()){ yoloThread->start(); }
+	if (!scnnThread->isRunning()) { ui->pushButton_3->setEnabled(false); scnnThread->start(); }
 
 	//if (!platformThread->isRunning()) { platformThread->start(); }
 	
@@ -295,14 +301,29 @@ void Ariadne::clicked_btn_kidsafe(bool kidsafe) {
 
 
 // This function is to start driving
-void Ariadne::clicked_btn_driving() {
+void Ariadne::clicked_btn_driving_mid() {
 	
 	//lidar, scnn 켰을 때만 실행
-	if (!drivingThread->isRunning())
+	if (!drivingThread->isRunning()) {
+		driving->parkingNum = 1;
 		drivingThread->start();
+	}
 
 	if(!TimerUIUpdate->isActive())    
 		TimerUIUpdate->start(20);
+}
+
+void Ariadne::clicked_btn_driving_fin() {
+
+	//lidar, scnn 켰을 때만 실행
+	if (!drivingThread->isRunning()) {
+		driving->parkingNum = 0;
+		drivingThread->start();
+	}
+
+	if (!TimerUIUpdate->isActive())
+		TimerUIUpdate->start(20);
+	
 }
 
 void Ariadne::updateUI() {
@@ -522,7 +543,7 @@ void Ariadne::AutoPortFinder() {
 				}
 				else if (hwID == "USB\\VID_067B&PID_2303&REV_0300") {
 				}
-				dataContainer->setValue_platform_port(L"COM3");
+				dataContainer->setValue_platform_port(L"COM1");
 			}
 			// use friendlyName here
 			delete[] friendlyName;
@@ -609,7 +630,6 @@ void Ariadne::updateSensorStatus()
 		ui->statusYolo->setFixedWidth(20);
 	}
 	dataContainer->setValue_yolo_status(0);
-
 }
 
 Ui::AriadneClass* Ariadne::getUI() { return ui; }
@@ -625,7 +645,7 @@ PlatformCom::PlatformCom()
 void PlatformCom::comPlatform() {
 	cout << "platform start" << endl;
 
-	if (_platform.OpenPort(dataContainer->getValue_platform_port()))
+	if (_platform.OpenPort(L"COM3"))
 	{
 		_platform.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
 		_platform.SetCommunicationTimeouts(0, 0, 0, 0, 0);

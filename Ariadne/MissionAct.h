@@ -10,7 +10,7 @@
 //Tuning point in getLanedata
 #define LanescoreStep 5
 ///#define itvLane	20 //600*600
-#define itvLane	17 //400*400
+#define itvLane	25 //400*400
 
 //Tuning point in getGpsData
 #define GPSscoreStep 30
@@ -20,7 +20,7 @@
 #define numGPSMAP 40
 
 #define steerRatio  1.0
-#define speedHigh	8.0
+#define speedHigh	10.0
 #define speedLow	5.0
 
 //Tuning points in Dynamic Mission
@@ -69,7 +69,7 @@ protected:
 	double cenX = (double)imgPath.cols * 0.5, cenY = (double)imgPath.rows *1.0; //the location of LiDAR in the map.
 	double scale = cenY / (SICK_SCAN_ROI_Y + 50);
 	double carW = CAR_WIDTH * scale, carH = CAR_HEIGH * scale;
-	uchar onestep = (1500)* scale;
+	uchar onestep = (3000)* scale;
 
 	//ROI AREA in the maps
 	double leftEndX = cenX - SICK_SCAN_ROI_X * scale;
@@ -96,7 +96,6 @@ protected:
 	void controlSpeed(int speed);
 	void brakeTime(double second);
 	void controlENC(int gear, int speed, double dist, int steer = 0);
-	int parkingNum = 0;
 
 public:
 	DataContainer *dataContainer;
@@ -119,6 +118,8 @@ public:
 	vector<Point2d> WaySimul_turn();
 	void practice(double parkDis);
 	int ParkingMission();
+	int parkingNum = 0;
+	int objflag = 0;
 
 signals:
 	void send2View(int id);

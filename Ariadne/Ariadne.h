@@ -150,7 +150,8 @@ public slots:
 	void clicked_btn_shift();
 
 	void clicked_btn_sensor();
-	void clicked_btn_driving();
+	void clicked_btn_driving_mid();
+	void clicked_btn_driving_fin();
 
 	void clicked_speed_up();
 	void clicked_speed_down();
@@ -181,6 +182,8 @@ public slots:
 	void AutoPortFinder();
 
 	void updateUI();
+
+	void scnnStart();
 
 };
 

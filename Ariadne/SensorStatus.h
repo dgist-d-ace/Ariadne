@@ -51,7 +51,6 @@ public:
 	SOCKET client;
 
 	Scnn();
-
 private:
 
 signals: /// thread�� ���� broadcast �Լ���
@@ -81,13 +80,14 @@ public:
 	SOCKET client;
 	Yolo();
 	virtual ~Yolo();
-	bool Yolo_Com = true;
+	bool Yolo_first = true;
 
 private:
 
 signals:
 	void BustExist(bool);
 	void KidsafeExist(bool);
+	void yoloStarted();
 
 public slots:
 	void comYolo();

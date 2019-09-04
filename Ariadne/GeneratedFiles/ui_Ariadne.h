@@ -125,6 +125,7 @@ public:
     QLabel *label_25;
     QLabel *label_26;
     QLabel *label_29;
+    QPushButton *pushButton_4;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -223,8 +224,8 @@ public:
         Btn_kidsafe->setObjectName(QString::fromUtf8("Btn_kidsafe"));
         Btn_kidsafe->setGeometry(QRect(160, 190, 120, 31));
         QIcon icon;
-        icon.addFile(QString::fromUtf8("C:/Users/D-Ace/Documents/DYibre/Checkbox_Off.png"), QSize(), QIcon::Normal, QIcon::Off);
-        icon.addFile(QString::fromUtf8("C:/Users/D-Ace/Documents/DYibre/Checkbox_On.png"), QSize(), QIcon::Normal, QIcon::On);
+		icon.addFile(QString::fromUtf8("C:/Users/D-Ace/Documents/DYibre/Checkbox_Off.png"), QSize(), QIcon::Normal, QIcon::Off);
+		icon.addFile(QString::fromUtf8("C:/Users/D-Ace/Documents/DYibre/Checkbox_On.png"), QSize(), QIcon::Normal, QIcon::On);
         Btn_kidsafe->setIcon(icon);
         Btn_kidsafe->setIconSize(QSize(120, 55));
         Btn_kidsafe->setCheckable(true);
@@ -376,11 +377,11 @@ public:
         AriadneLogo->setGeometry(QRect(30, 20, 241, 71));
         pushButton_2 = new QPushButton(centralWidget);
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-        pushButton_2->setGeometry(QRect(200, 170, 100, 35));
+        pushButton_2->setGeometry(QRect(200, 160, 100, 35));
         pushButton_3 = new QPushButton(centralWidget);
         pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
         pushButton_3->setEnabled(true);
-        pushButton_3->setGeometry(QRect(200, 210, 100, 35));
+        pushButton_3->setGeometry(QRect(200, 200, 100, 35));
         pathmap = new QLabel(centralWidget);
         pathmap->setObjectName(QString::fromUtf8("pathmap"));
         pathmap->setGeometry(QRect(460, 150, 500, 500));
@@ -525,10 +526,14 @@ public:
         label_29 = new QLabel(groupBox_6);
         label_29->setObjectName(QString::fromUtf8("label_29"));
         label_29->setGeometry(QRect(20, 180, 170, 16));
+        pushButton_4 = new QPushButton(centralWidget);
+        pushButton_4->setObjectName(QString::fromUtf8("pushButton_4"));
+        pushButton_4->setEnabled(true);
+        pushButton_4->setGeometry(QRect(200, 240, 100, 35));
         AriadneClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AriadneClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1885, 21));
+        menuBar->setGeometry(QRect(0, 0, 1885, 18));
         AriadneClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(AriadneClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -594,7 +599,7 @@ public:
         label_8->setText(QApplication::translate("AriadneClass", "SPEED", nullptr));
         AriadneLogo->setText(QString());
         pushButton_2->setText(QApplication::translate("AriadneClass", "\354\204\274\354\204\234 \355\206\265\354\213\240", nullptr));
-        pushButton_3->setText(QApplication::translate("AriadneClass", "\354\243\274\355\226\211 \354\213\234\354\236\221", nullptr));
+        pushButton_3->setText(QApplication::translate("AriadneClass", "\354\230\210\354\204\240 \354\243\274\355\226\211 \354\213\234\354\236\221", nullptr));
         pathmap->setText(QString());
         parking->setText(QString());
         groupBox_2->setTitle(QApplication::translate("AriadneClass", "GPS", nullptr));
@@ -624,6 +629,7 @@ public:
         label_25->setText(QApplication::translate("AriadneClass", "Parking (m)", nullptr));
         label_26->setText(QApplication::translate("AriadneClass", "Static Obstacle (m)", nullptr));
         label_29->setText(QApplication::translate("AriadneClass", "Kidsafe (m)", nullptr));
+        pushButton_4->setText(QApplication::translate("AriadneClass", "\353\263\270\354\204\240 \354\243\274\355\226\211 \354\213\234\354\236\221", nullptr));
     } // retranslateUi
 
 };

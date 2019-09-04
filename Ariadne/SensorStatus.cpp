@@ -103,6 +103,8 @@ int Scnn::boostScnn() {
 
 	using namespace std;
 
+	while (dataContainer->getValue_yolo_status() == 0) { cout << "yolo not start\n";  Sleep(500); }
+
 	Py_SetPythonHome(L"C:/Users/D-Ace/.conda/envs/py35");
 
 	Py_Initialize();
@@ -121,9 +123,9 @@ int Scnn::boostScnn() {
 
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/exp1_kcity_best_50.pth", 0, true);
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_aug2_crop_pass4.pth", 0, true);
-	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_aug2_crop_pass4.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test2.mp4", true);
+	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_aug2_crop_pass4.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test2.mp4", true);
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_big_crop_pass4_best.pth", 0, true);
-	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_big_crop_pass4_best.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test2.mp4", true);
+	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_big_crop_pass4_best.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test2.mp4", true);
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_aug_crop_pass4.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test2.mp4", true);
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/k_city_crop_exp1_best_pass4.pth", "C:/Users/D-Ace/Pictures/Camera Roll/4.mp4", true);
 
@@ -265,10 +267,11 @@ Yolo::Yolo() {
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi)); // assign program memory
 
-	TCHAR commandLine[] = TEXT("darknet.exe detector demo data\\obj.data cfg\\yolov3_please.cfg yolov3_22000_0903.weights data\\middle0831.mp4");
+	TCHAR commandLine[] = TEXT("darknet.exe detector demo data\\obj.data cfg\\yolov3_please.cfg yolov3_22000_0903.weights");
 	SetCurrentDirectory(_T("C:\\Users\\D-Ace\\darknet-master\\build\\darknet\\x64")); // Darknet program start command
 	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi)) {
 	//}
+	
 	if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
 		cout << "yolo create fail\n";
 	}
@@ -277,6 +280,7 @@ Yolo::Yolo() {
 		tid = pi.hThread;
 		SuspendThread(tid);
 	}
+	
 
 	server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	sockaddr_in addr = { 0 };
@@ -299,7 +303,6 @@ void Yolo::comYolo() {
 	//SuspendThread(tid);
 	ResumeThread(tid);
 
-	Sleep(5000);
 	client = accept(server, NULL, NULL);
 	if (client == INVALID_SOCKET)
 		cout << "invalid socket\n";
@@ -312,7 +315,7 @@ void Yolo::comYolo() {
 	static MissionContainer trigger;
 
 	/// TODO: control yolo flag in Ariadne.cpp
-	while (Yolo_Com) {
+	while (1) {
 
 
 		strLen = recv(client, message, 50, 0);
@@ -384,7 +387,7 @@ void Yolo::comYolo() {
 			dataContainer->setValue_speed_ratio_kid(1);
 			emit(KidsafeExist(false));
 		}
-		cout << trigger[0] << " " << trigger[1] << " " << trigger[2] << " " << trigger[3] << " " << trigger[4] << " " << trigger[5] << " " << trigger[6] << " " << trigger[7] << " " << trigger[8] << " " << endl;
+		//cout << trigger[0] << " " << trigger[1] << " " << trigger[2] << " " << trigger[3] << " " << trigger[4] << " " << trigger[5] << " " << trigger[6] << " " << trigger[7] << " " << trigger[8] << " " << endl;
 	}
 
 	closesocket(client);
