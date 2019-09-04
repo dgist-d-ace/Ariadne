@@ -83,6 +83,7 @@ Ariadne::Ariadne(QWidget *parent)
 	// --------------------- Platform control Using UI ---------------------------------//
 
 	QObject::connect(ui->Btn_mission1, SIGNAL(clicked()), this, SLOT(clicked_btn_mission1()));
+	QObject::connect(ui->Btn_mission9_2, SIGNAL(clicked()), this, SLOT(clicked_btn_mission2()));
 	QObject::connect(ui->Btn_mission3, SIGNAL(clicked()), this, SLOT(clicked_btn_mission3()));
 	QObject::connect(ui->Btn_mission4, SIGNAL(clicked()), this, SLOT(clicked_btn_mission4()));
 	QObject::connect(ui->Btn_mission5, SIGNAL(clicked()), this, SLOT(clicked_btn_mission5()));
@@ -179,6 +180,7 @@ void Ariadne::onCurrentMission(int id) {
 	ui->Btn_mission7->setEnabled(true);
 	ui->Btn_mission8->setEnabled(true);
 	ui->Btn_mission9->setEnabled(true);
+	ui->Btn_mission9_2->setEnabled(true);
 
 	switch (id) {
 	case 0:
@@ -189,6 +191,10 @@ void Ariadne::onCurrentMission(int id) {
 		ui->Btn_mission1->setEnabled(false);
 		ui->plainTextEdit->appendPlainText("Parking Mission Start");
 		parkingOn = true;
+		break;
+	case BUSLANE:
+		ui->Btn_mission9_2->setEnabled(false);
+		ui->plainTextEdit->appendPlainText("BusLane Mission Start");
 		break;
 	case INTER_LEFT:
 		ui->Btn_mission3->setEnabled(false);
@@ -346,6 +352,7 @@ void Ariadne::updateUI() {
 		ui->lcdNumber_20->display(arr[6]);
 		ui->lcdNumber_21->display(arr[7]);
 		ui->lcdNumber_22->display(arr[8]);
+		ui->lcdNumber_22->display(arr[8]);
 	}
 	
 	if (scnnThread->isRunning()) {
@@ -390,7 +397,7 @@ void Ariadne::clicked_btn_mission1() {
 }
 
 void Ariadne::clicked_btn_mission2() {
-	dataContainer->setValue_yolo_missionID(INTER_READY);
+	dataContainer->setValue_yolo_missionID(BUSLANE);
 }
 
 void Ariadne::clicked_btn_mission3() {

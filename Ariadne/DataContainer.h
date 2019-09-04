@@ -8,7 +8,7 @@
 
 
 #define PARKING 1
-#define INTER_READY 2 //ready 필요 x
+#define BUSLANE 2 //ready 필요 x
 #define INTER_LEFT 3
 #define INTER_RIGHT 4
 #define INTER_STRAIGHT 5

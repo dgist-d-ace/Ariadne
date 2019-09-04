@@ -349,6 +349,9 @@ void Yolo::comYolo() {
 				dataContainer->setValue_yolo_missionID(INTER_RIGHT);
 
 			}
+			else if (trigger[3] == 0) {
+				dataContainer->setValue_yolo_missionID(BUSLANE);
+			}
 		}
 		else if (trigger[3] == 0) { //parking
 			dataContainer->setValue_yolo_missionID(PARKING);

@@ -118,6 +118,7 @@ public:
 	vector<Point2d> WaySimul_turn();
 	void practice(double parkDis);
 	int ParkingMission();
+	int busNum = 0;
 	int parkingNum = 0;
 	int objflag = 0;
 
@@ -135,7 +136,7 @@ public slots:
 	void Basic(int missionId);
 	void BasicGPS(int missionId);
 	void MissionParking(); // ÁÖÂ÷
-	void MissionIntReady(); // intersection ready
+	void MissionBusLane(); // intersection ready
 	void MissionIntLeft(); // intersectin left
 	void MissionIntRight(); // intersection right
 	void MissionIntStraight(); // intersection straight

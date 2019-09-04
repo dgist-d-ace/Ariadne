@@ -1042,16 +1042,16 @@ void Driving::MissionParking() {
 }
 
 //Mission No.2: Intersection Ready
-void Driving::MissionIntReady() {
+void Driving::MissionBusLane() {
 	cout << "mission 2" << endl;
 
 	//
 	//mission code
 	//
-	BasicGPS(INTER_READY);
+	BasicGPS(BUSLANE);
 
 	//미션이 끝났을 시, yolo에서 다른 mission trigger를 주지 않으면 basic으로 넘어감
-	if (dataContainer->getValue_yolo_missionID() == INTER_READY)
+	if (dataContainer->getValue_yolo_missionID() == BUSLANE)
 		dataContainer->setValue_yolo_missionID(BASIC);
 }
 
@@ -1415,11 +1415,19 @@ void Driving::autoMode() {
 		cout << dataContainer->getValue_yolo_missionID() << endl;
 
 		if (dataContainer->getValue_yolo_missionID() == 0) { emit(currentMission(0)); Sleep(1000);	}
-		else if (parkingNum == 0 && dataContainer->getValue_yolo_missionID() == PARKING) { 
-			emit(currentMission(PARKING)); 
+		else if (parkingNum == 0 && dataContainer->getValue_yolo_missionID() == PARKING) {
+			emit(currentMission(PARKING));
 			parkingNum++;
-			MissionParking(); 
-			emit(exitMission(PARKING)); 
+			MissionParking();
+			emit(exitMission(PARKING));
+		}
+		else if (dataContainer->getValue_yolo_missionID() == BUSLANE) {
+			if (++busNum > 0) {
+				emit(currentMission(BUSLANE));
+				emit(send2View(2));
+				MissionBusLane();
+				emit(exitMission(BUSLANE));
+			}
 		}
 		else if (dataContainer->getValue_yolo_missionID() == INTER_LEFT) { 
 			emit(currentMission(INTER_LEFT)); 
