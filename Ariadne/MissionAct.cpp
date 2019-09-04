@@ -460,7 +460,7 @@ void Driving::PASIVcontrol(Mat imgPath, double desired_speed, double steer1, dou
 
 	//Decide the Kp of steering and control steering angle
 	//minimum speed = 5-> 1.0, 15-> 0.3
-	steerKp = 1.35 - 0.07*desired_speed;
+	steerKp = 1.25 - 0.07*desired_speed;
 	//cout << "steerKp: " << steerKp << endl;
 	double desired_steering = steer1 * steerKp;
 	if (abs(steer1) > 10 && abs(steer2) >= 4 ) {
@@ -1351,6 +1351,7 @@ void Driving::autoMode() {
 	//emit(send2View(7));
 	while (1) {
 		cout << dataContainer->getValue_yolo_missionID() << endl;
+
 		if (dataContainer->getValue_yolo_missionID() == 0) { emit(currentMission(0)); Sleep(1000);	}
 		else if (parkingNum == 0 && dataContainer->getValue_yolo_missionID() == PARKING) { 
 			emit(currentMission(PARKING)); 
@@ -1389,7 +1390,6 @@ void Driving::autoMode() {
 			emit(send2View(1)); 
 			//Basic(BASIC); 
 		}
-
 	}
 }
 
@@ -1829,12 +1829,12 @@ void Driving::practice(double parkDis) { // 후진 후 좌회전
 
 int Driving::ParkingMission() {
 	//실시간 카메라 불러오기
-	VideoCapture cap(0 + CAP_DSHOW);
+	/*VideoCapture cap(0 + CAP_DSHOW);
 	cap.set(CV_CAP_PROP_FRAME_WIDTH, CAMERA_X);
-	cap.set(CV_CAP_PROP_FRAME_HEIGHT, CAMERA_Y);
+	cap.set(CV_CAP_PROP_FRAME_HEIGHT, CAMERA_Y);*/
 
 	//저장된 동영상 불러오기
-	//VideoCapture cap("Picture/Track1.mp4");
+	VideoCapture cap("Picture/Track1.mp4");
 
 	if (!cap.isOpened()) {
 		cerr << "Error to open the video.\n";

@@ -20,7 +20,7 @@
 #define numGPSMAP 40
 
 #define steerRatio  1.0
-#define speedHigh	10.0
+#define speedHigh	8.0
 #define speedLow	5.0
 
 //Tuning points in Dynamic Mission
