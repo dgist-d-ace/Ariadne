@@ -16,24 +16,24 @@
 #define GPSscoreStep 30
 ///#define itvGPS 30 //600*600
 #define itvGPS 20 //400*400
-#define numGPS 300
+#define numGPS 200
 #define numGPSMAP 40
 
 #define steerRatio  1.0
-#define speedHigh	10.0
+#define speedHigh	15.0
 #define speedLow	5.0
 
 //Tuning points in Dynamic Mission
-#define stopDist 1200.0 //for Dynamic Obstacle mission
+#define stopDist 1400.0 //for Dynamic Obstacle mission
 #define DynamicMaxSpeed 12.0
 
 //Tuning points for GPS
 #define rate (1/60)
 #define K 0.7
 #define desired_road_length 3
-#define parking_speed  3
-#define park_y 4
-#define park_x 2
+#define parking_speed 50
+#define park_y 4.0
+#define park_x 2.0
 #define circle_path 4.5
 #define speed_error 19
 #define dis_error_rate 0.9
@@ -46,7 +46,7 @@
 #define CAMERA_Y 720
 #define CAMERA_H 1.0
 #define CAMERA_ANGLE 78.0
-#define CAMERA_TILT 20.0
+#define CAMERA_TILT 10.0
 #define CAMERA_TOP_ANGLE 15.0
 #define CAMERA_SIDE_ANGLE 24.0
 #define CAMERA_AREA_MIN 50000
@@ -118,7 +118,6 @@ public:
 	vector<Point2d> WaySimul_turn();
 	void practice(double parkDis);
 	int ParkingMission();
-	int busNum = 0;
 	int parkingNum = 0;
 	int objflag = 0;
 

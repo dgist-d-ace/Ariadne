@@ -231,7 +231,7 @@ void Ariadne::onExitMission(int id) {
 	switch (id) {
 	case PARKING:
 		parkingOn = false;
-		ui->parking->clear();
+		//ui->parking->clear();
 		break;
 	case INTER_LEFT:
 		break;
@@ -273,11 +273,11 @@ void Ariadne::clicked_btn_sensor() {
 
 	if (!scnnThread->isRunning()) { ui->pushButton_3->setEnabled(false); scnnThread->start(); }
 
-	//if (!platformThread->isRunning()) { platformThread->start(); }
+	if (!platformThread->isRunning()) { platformThread->start(); }
 	
-	//if (!lidarThread->isRunning()) { lidarThread->start(); }
+	if (!lidarThread->isRunning()) { lidarThread->start(); }
 
-	//if (!gpsThread->isRunning()) { gpsThread->start(); }
+	if (!gpsThread->isRunning()) { gpsThread->start(); }
 
 	if (!TimerSensorStatus->isActive()) {
 		TimerSensorStatus->start(1000);
@@ -323,8 +323,8 @@ void Ariadne::clicked_btn_driving_fin() {
 
 	//lidar, scnn 켰을 때만 실행
 	if (!drivingThread->isRunning()) {
-		driving->parkingNum = 0;
 		drivingThread->start();
+		
 	}
 
 	if (!TimerUIUpdate->isActive())
@@ -352,7 +352,7 @@ void Ariadne::updateUI() {
 		ui->lcdNumber_20->display(arr[6]);
 		ui->lcdNumber_21->display(arr[7]);
 		ui->lcdNumber_22->display(arr[8]);
-		ui->lcdNumber_22->display(arr[8]);
+		ui->lcdNumber_23->display(arr[4]);
 	}
 	
 	if (scnnThread->isRunning()) {
@@ -761,9 +761,9 @@ void GPSCom::comGPS() { // rt ; Real Time
 							dataContainer->setValue_gps_latitude(lat);
 							dataContainer->setValue_gps_longitude(lng);
 
-							emit latitudeChanged((int)lat);
-							emit longitudeChanged((int)lng); /// 숫자가 너무 커서 나눴음
-							emit headingChanged(atof(vec[8].c_str()));
+							emit latitudeChanged(dataContainer->getValue_gps_latitude());
+							emit longitudeChanged(dataContainer->getValue_gps_longitude()); /// 숫자가 너무 커서 나눴음
+							emit headingChanged(dataContainer->getValue_gps_heading());
 
 							//cout << lat << "    " << lng << endl;
 						}

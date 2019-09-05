@@ -100,11 +100,11 @@ private:
 	//
 	// 라이다
 	//
-	vector<cv::Point2d> m_lidar_VecXY = {}; //최종 좌표 집합 - 1프레임
-	queue<vector<vector<double> > > m_lidar_Data = {}; //최종 데이터 집합 - 2프레임
-	vector<cv::Point2d> m_lidar_VecData = {}; //물체의 벡터 집합 - 1프레임
-	vector<bool> m_lidar_BoolData = {}; //물체의 동정적 여부 집합 - 1프레임
-	cv::Mat m_lidar_imgData = cv::Mat::zeros(400, 400, CV_8UC1); //최종 이미지
+	vector<cv::Point2d> m_lidar_VecXY; //최종 좌표 집합 - 1프레임
+	queue<vector<vector<double> > > m_lidar_Data; //최종 데이터 집합 - 2프레임
+	vector<cv::Point2d> m_lidar_VecData; //물체의 벡터 집합 - 1프레임
+	vector<bool> m_lidar_BoolData; //물체의 동정적 여부 집합 - 1프레임
+	cv::Mat m_lidar_imgData; //최종 이미지
 
 	QMutex mtx_lidar_VecXY;
 	QMutex mtx_lidar_data;

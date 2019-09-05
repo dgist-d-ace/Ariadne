@@ -122,8 +122,8 @@ int Scnn::boostScnn() {
 
 
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/exp1_kcity_best_50.pth", 0, true);
-	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_aug2_crop_pass4.pth", 0, true);
-	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_aug2_crop_pass4.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test2.mp4", true);
+	scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_aug2_crop_pass4.pth", 1, true);
+	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_aug2_crop_pass4.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test2.mp4", true);
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_big_crop_pass4_best.pth", 0, true);
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_big_crop_pass4_best.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test2.mp4", true);
 	//scnn.attr("scnn_init")("C:/Users/D-Ace/Documents/Ariadne/Ariadne/kcity_aug_crop_pass4.pth", "C:/Users/D-Ace/Documents/Ariadne/Ariadne/test2.mp4", true);
@@ -135,6 +135,7 @@ int Scnn::boostScnn() {
 	while (1)
 	{
 		dataContainer->updateValue_scnn_status();
+
 		py::object params = scnn.attr("scnn_run")();
 		vector<int> lists = to_std_vector<int>(params);
 		vector<int> existLanes;
@@ -194,7 +195,6 @@ int Scnn::boostScnn() {
 		}*/
 		existLanes.clear();
 		lanes.clear();
-
 	}
 
 	scnn.attr("scnn_destroy")();
@@ -267,7 +267,8 @@ Yolo::Yolo() {
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi)); // assign program memory
 
-	TCHAR commandLine[] = TEXT("darknet.exe detector demo data\\obj.data cfg\\yolov3_please.cfg yolov3_22000_0903.weights");
+	//TCHAR commandLine[] = TEXT("darknet.exe detector demo data\\obj.data cfg\\yolov3_please.cfg yolov3_53000_0905_2.weights");
+	TCHAR commandLine[] = TEXT("darknet.exe detector demo data\\obj.data cfg\\yolov3_please.cfg yolov3_53000_0905_2.weights");
 	SetCurrentDirectory(_T("C:\\Users\\D-Ace\\darknet-master\\build\\darknet\\x64")); // Darknet program start command
 	//if (!CreateProcess(NULL, commandLine, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi)) {
 	//}
@@ -325,6 +326,7 @@ void Yolo::comYolo() {
 		trigger = (int*)message;
 
 
+//{ "intersectionState", "intersectionDistance", "crossWalk", "parking", "busLane", "staticObstacle", "dynamicObstacle", "kidSafe", "bust" };
 		/*if (trigger[5] && trigger[5] < 4) {
 			dataContainer->setValue_yolo_missionID(STATIC_OBSTACLE);
 		}*/
@@ -333,7 +335,7 @@ void Yolo::comYolo() {
 		}
 		// tigger[1] == 0 일 땐, 플랫폼으로부터 정지선까지 2m 남았음
 		// INTER_STOP 에서 천천히 멈춰주는게 구현되어 있으면 됨
-		else if (trigger[1] == 0) {
+		else if (trigger[1] < 2) {
 			if (trigger[0] == 0) {
 				dataContainer->setValue_yolo_missionID(INTER_STOP);
 			}
@@ -349,9 +351,9 @@ void Yolo::comYolo() {
 				dataContainer->setValue_yolo_missionID(INTER_RIGHT);
 
 			}
-			else if (trigger[3] == 0) {
-				dataContainer->setValue_yolo_missionID(BUSLANE);
-			}
+		}
+		else if (trigger[4] == 0) {
+			dataContainer->setValue_yolo_missionID(BUSLANE);
 		}
 		else if (trigger[3] == 0) { //parking
 			dataContainer->setValue_yolo_missionID(PARKING);
