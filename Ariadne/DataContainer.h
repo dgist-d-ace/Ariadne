@@ -17,6 +17,14 @@
 #define DYNAMIC_OBSTACLE 8
 #define BASIC 9
 
+
+#define GREEN 0
+#define GREEN_LEFT 1
+#define RED 2
+#define RED_LEFT 3
+#define RED_YELLOW 4
+#define YELLOW 5
+
 #define SPEED_RATIO_LOW 0.7
 
 
@@ -128,10 +136,12 @@ private:
 	vector<int> m_yolo_missions = {1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000};
 	double m_speed_ratio = 1;
 	int m_yolo_missionID = BASIC;
+	int m_yolo_trafficID = GREEN;
 
 	QMutex mtx_yolo_missions;
 	QMutex mtx_speed_ratio;
 	QMutex mtx_yolo_missionID;
+	QMutex mtx_yolo_trafficID;
 
 	//
 	//gps:
@@ -339,6 +349,11 @@ public:
 	//현재 mission ID
 	int getValue_yolo_missionID();
 	void setValue_yolo_missionID(int ID);
+
+	//현재 traffic ID
+	int getValue_yolo_trafficID();
+	void setValue_yolo_trafficID(int ID);
+	void setValue_yolo_trafficID(int ID);
 
 	//
 	//	GPS

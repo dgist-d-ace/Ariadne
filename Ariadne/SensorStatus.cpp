@@ -325,74 +325,30 @@ void Yolo::comYolo() {
 		int* trigger = new int;
 		trigger = (int*)message;
 
+		// 0: green
+		// 1: green left
+		// 2: red
+		// 3: red left
+		// 4: red yellow
+		// 5: yellow
+
 
 //{ "intersectionState", "intersectionDistance", "crossWalk", "parking", "busLane", "staticObstacle", "dynamicObstacle", "kidSafe", "bust" };
 		/*if (trigger[5] && trigger[5] < 4) {
 			dataContainer->setValue_yolo_missionID(STATIC_OBSTACLE);
 		}*/
-		if (trigger[6] < 4) {
-			dataContainer->setValue_yolo_missionID(DYNAMIC_OBSTACLE);
-		}
-		// tigger[1] == 0 일 땐, 플랫폼으로부터 정지선까지 2m 남았음
-		// INTER_STOP 에서 천천히 멈춰주는게 구현되어 있으면 됨
-		else if (trigger[1] < 2) {
-			if (trigger[0] == 0) {
-				dataContainer->setValue_yolo_missionID(INTER_STOP);
-			}
-			else if (trigger[0] == 1) {
-				dataContainer->setValue_yolo_missionID(INTER_LEFT);
 
-			}
-			else if (trigger[0] == 2) {
-				dataContainer->setValue_yolo_missionID(INTER_STRAIGHT);
+		dataContainer->setValue_yolo_trafficID(trigger[0]);
 
-			}
-			else if (trigger[0] == 3) {
-				dataContainer->setValue_yolo_missionID(INTER_RIGHT);
-
-			}
-		}
-		else if (trigger[4] == 0) {
-			dataContainer->setValue_yolo_missionID(BUSLANE);
-		}
-		else if (trigger[3] == 0) { //parking
+		if (trigger[3] == 0) { //parking
 			dataContainer->setValue_yolo_missionID(PARKING);
 		}
 		else {
 			dataContainer->setValue_yolo_missionID(BASIC);
 		}
 
-		vector<int> mission; 
-
-		for (int i = 0; i < 9; i++) {
-			mission.push_back(trigger[i]);
-		}
-
-		dataContainer->setValue_yolo_missions(mission);
-
 		dataContainer->updateValue_yolo_status();
 
-		if (!trigger[8]) {
-			dataContainer->setValue_speed_ratio_bust(SPEED_RATIO_LOW);
-			bustCon = clock();
-			emit(BustExist(true));
-		}
-
-		if (bustCon && clock() - bustCon > 1000) {
-			dataContainer->setValue_speed_ratio_bust(1);
-			bustCon = 0;
-			emit(BustExist(false));
-		}
-
-		if (!trigger[7]) {
-			dataContainer->setValue_speed_ratio_kid(SPEED_RATIO_LOW);
-			emit(KidsafeExist(true));
-		}
-		else {
-			dataContainer->setValue_speed_ratio_kid(1);
-			emit(KidsafeExist(false));
-		}
-		//cout << trigger[0] << " " << trigger[1] << " " << trigger[2] << " " << trigger[3] << " " << trigger[4] << " " << trigger[5] << " " << trigger[6] << " " << trigger[7] << " " << trigger[8] << " " << endl;
 	}
 
 	closesocket(client);

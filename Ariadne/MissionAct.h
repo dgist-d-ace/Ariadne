@@ -82,6 +82,7 @@ protected:
 	vector<int> checkTheta = { 0, -1,1-2, 2, -4, 4, -6, 6, -8, 8, -11, 11, -14, 14, -17, 17, -20, 20, -24, 24, -28, 28,-32, 32 }; //25
 	vector<int> checkTheta2 = { 0, -3,3,     -6,6,     -9,9,     -12,12  }; //9
 
+	vector<vector<int>> crossIdx = { {386, 465} ,{698,789},{841,969}, {1081,1103},{1449,1537},{1811,1984},{2083,2209},{2687,2775},{3106,3206},{3257,3379},{3448,3533} };
 	//////////////////////////////////////////////
 	//////////////////////////////////////////////
 
@@ -96,6 +97,8 @@ protected:
 	void controlSpeed(int speed);
 	void brakeTime(double second);
 	void controlENC(int gear, int speed, double dist, int steer = 0);
+
+	double prevIdx = 0;
 
 public:
 	DataContainer *dataContainer;

@@ -138,7 +138,9 @@ void Driving::getGPSinitial(double x_p, double y_p, vector<Point2d> path) {
 	double temp = 10000000;
 	double ref;
 	//cout << "getGPSinitial" << endl;
-	for (int i = initialGPSpoint; i <(path.size()/2); i++) {
+
+	//민호님.. i < path.size()/2로 돼있길래 바꿨습니당
+	for (int i = initialGPSpoint; i < std::min(path.size(),(initialGPSpoint + path.size()/2)); i++) {
 		ref = pow(pow(x_p - path[i].x, 2) + pow(y_p - path[i].y, 2), 0.5);
 
 		if (ref <= temp) {
@@ -163,7 +165,6 @@ vector<Point2d> Driving::forPASIV_path(double x_p, double y_p, vector<Point2d> p
 
 	for (int i = 0; i < path.size(); i++) {
 		double ref = pow(pow(x_p - path[i].x, 2) + pow(y_p - path[i].y, 2), 0.5);
-
 		if (ref <= temp) {
 			smin = min; 
 			min = i;
@@ -171,6 +172,67 @@ vector<Point2d> Driving::forPASIV_path(double x_p, double y_p, vector<Point2d> p
 		}
 	}
 
+	if (abs(min - prevIdx) > numGPSMAP / 2) {
+		min = prevIdx;
+		cout << "index is too far\n";
+	}
+
+	/////////////////////need to debug////////////////////
+	// 신호등 봐야 하는 교차로 : 2: 좌 , 3 : 직, 4 : 직, 5 : 좌, 6 : 좌, 8 : 직, 9 : 직 번째
+	for (int i = 2; i < 10; i++) {
+		if( i == 2 || i == 5|| i == 6 ){
+			//좌회전
+			if (  crossIdx[i][0] - 20 <= min && min <= crossIdx[i][0] ) {
+				cout << "present cross is  " << i << "  th cross" << endl;
+				int trafficID = dataContainer->getValue_yolo_trafficID();
+				if (trafficID == RED || trafficID == RED_YELLOW || trafficID == YELLOW || trafficID == GREEN){
+					dataContainer->setValue_UtoP_SPEED(0);
+
+					dataContainer->setValue_UtoP_BRAKE(50);
+					Sleep(300);
+					dataContainer->setValue_UtoP_BRAKE(100);
+					Sleep(300);
+					dataContainer->setValue_UtoP_BRAKE(150);
+					Sleep(300);
+					dataContainer->setValue_UtoP_BRAKE(200);
+
+					while (trafficID == RED || trafficID == RED_YELLOW || trafficID == YELLOW || trafficID == GREEN) {
+						trafficID = dataContainer->getValue_yolo_trafficID();
+						Sleep(50);
+					}
+					dataContainer->setValue_UtoP_BRAKE(1);
+					////민호님?
+				}
+				break;
+			}
+		}
+		else if (i == 3 || i == 4 || i == 8 || i == 9){
+			//직진
+			if ( crossIdx[i][0] - 20 <= min && min <= crossIdx[i][0]) {
+				int trafficID = dataContainer->getValue_yolo_trafficID();
+				if (trafficID == RED || trafficID == RED_YELLOW || trafficID == RED_LEFT || trafficID == YELLOW ) {
+					dataContainer->setValue_UtoP_SPEED(0);
+
+					dataContainer->setValue_UtoP_BRAKE(50);
+					Sleep(300);
+					dataContainer->setValue_UtoP_BRAKE(100);
+					Sleep(300);
+					dataContainer->setValue_UtoP_BRAKE(150);
+					Sleep(300);
+					dataContainer->setValue_UtoP_BRAKE(200);
+
+					while (trafficID == RED || trafficID == RED_YELLOW || trafficID == RED_LEFT || trafficID == YELLOW) {
+						trafficID = dataContainer->getValue_yolo_trafficID();
+						Sleep(50);
+					}
+					dataContainer->setValue_UtoP_BRAKE(1);
+					////민호님? 스피드 어쩌죠?
+				}
+				break;
+			}
+		}
+		
+	}
 	//if (sqrt(pow(x_p - path[presentGPSpoint].x, 2) + pow(y_p - path[presentGPSpoint].y, 2) > 10 )) {
 	//	min = presentGPSpoint + 5;
 	//}

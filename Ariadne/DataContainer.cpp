@@ -193,6 +193,9 @@ void DataContainer::setValue_speed_ratio_kid(double temp) { mtx_speed_ratio_kid.
 int DataContainer::getValue_yolo_missionID() { mtx_yolo_missionID.lock(); int temp = m_yolo_missionID; mtx_yolo_missionID.unlock(); return temp; }
 void DataContainer::setValue_yolo_missionID(int ID) { mtx_yolo_missionID.lock(); m_yolo_missionID = ID; mtx_yolo_missionID.unlock(); }
 
+int DataContainer::getValue_yolo_trafficID() { mtx_yolo_trafficID.lock(); int temp = m_yolo_trafficID; mtx_yolo_trafficID.unlock(); return temp; }
+void DataContainer::setValue_yolo_trafficID(int ID) { mtx_yolo_trafficID.lock(); m_yolo_trafficID = ID; mtx_yolo_trafficID.unlock(); }
+
 //
 // SCNN
 //

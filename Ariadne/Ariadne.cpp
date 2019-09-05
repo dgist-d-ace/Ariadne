@@ -324,7 +324,6 @@ void Ariadne::clicked_btn_driving_fin() {
 	//lidar, scnn 켰을 때만 실행
 	if (!drivingThread->isRunning()) {
 		drivingThread->start();
-		
 	}
 
 	if (!TimerUIUpdate->isActive())
@@ -339,10 +338,12 @@ void Ariadne::updateUI() {
 
 	if (yoloThread->isRunning()) {
 		arr = dataContainer->getValue_yolo_missions();
-		if (arr[0] == 0) str = QString("STOP");
-		else if (arr[0] == 1) str = QString("LEFT");
-		else if (arr[0] == 2) str = QString("STRAIGHT");
-		else if (arr[0] == 3) str = QString("RIGHT");
+		if (arr[0] == GREEN) str = QString("GREEN");
+		else if (arr[0] == GREEN_LEFT) str = QString("GREEN LEFT");
+		else if (arr[0] == RED) str = QString("RED");
+		else if (arr[0] == RED_LEFT) str = QString("RED LEFT");
+		else if (arr[0] == RED_YELLOW) str = QString("RED YELLOW");
+		else if (arr[0] == YELLOW) str = QString("YELLOW");
 		else str = QString("None");
 
 		ui->label_28->setText(str);
@@ -390,6 +391,7 @@ void Ariadne::updateUI() {
 		ui->parking->setPixmap(QPixmap::fromImage(dataContainer->getValue_ui_parking()));
 	}
 }
+
 
 void Ariadne::clicked_btn_mission1() {
 	AutoPortFinder();
