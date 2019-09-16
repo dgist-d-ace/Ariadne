@@ -105,10 +105,12 @@ void Driving::setPath() {
 	//ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_k_city_middle_1_final.txt");
 	
 	//Second GPS map
-	ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_k_city_middle_2_final.txt");
+	//ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_k_city_middle_2_final.txt");
 
+	//Final GPS map data**
+	ifstream gpsfile("C:\\Users\\D-Ace\\Documents\\Ariadne\\Ariadne\\p_k_city_middle_2_final_real_final.txt");
 	//k_city_rtk_10Hz_1
-
+	
 	char line[200];
 	string tap;
 	vector<string> vec;
@@ -139,8 +141,7 @@ void Driving::getGPSinitial(double x_p, double y_p, vector<Point2d> path) {
 	double ref;
 	//cout << "getGPSinitial" << endl;
 
-	//민호님.. i < path.size()/2로 돼있길래 바꿨습니당
-	for (int i = initialGPSpoint; i < std::min(path.size(),(initialGPSpoint + path.size()/2)); i++) {
+	for (int i = 0; i < path.size(); i++) {
 		ref = pow(pow(x_p - path[i].x, 2) + pow(y_p - path[i].y, 2), 0.5);
 
 		if (ref <= temp) {
@@ -171,18 +172,18 @@ vector<Point2d> Driving::forPASIV_path(double x_p, double y_p, vector<Point2d> p
 			temp = ref;
 		}
 	}
-
-	if (abs(min - prevIdx) > numGPSMAP / 2) {
+/*
+	if (abs(min - prevIdx) > numGPSMAP) {
 		min = prevIdx;
 		cout << "index is too far\n";
-	}
-
+	}*/
+	prevIdx = min;
 	/////////////////////need to debug////////////////////
 	// 신호등 봐야 하는 교차로 : 2: 좌 , 3 : 직, 4 : 직, 5 : 좌, 6 : 좌, 8 : 직, 9 : 직 번째
 	for (int i = 2; i < 10; i++) {
 		if( i == 2 || i == 5|| i == 6 ){
 			//좌회전
-			if (  crossIdx[i][0] - 20 <= min && min <= crossIdx[i][0] ) {
+			if (  crossIdx[i][0] - 30 <= min && min <= crossIdx[i][0] -15) {
 				cout << "present cross is  " << i << "  th cross" << endl;
 				int trafficID = dataContainer->getValue_yolo_trafficID();
 				if (trafficID == RED || trafficID == RED_YELLOW || trafficID == YELLOW || trafficID == GREEN){
@@ -196,19 +197,19 @@ vector<Point2d> Driving::forPASIV_path(double x_p, double y_p, vector<Point2d> p
 					Sleep(300);
 					dataContainer->setValue_UtoP_BRAKE(200);
 
-					while (trafficID == RED || trafficID == RED_YELLOW || trafficID == YELLOW || trafficID == GREEN) {
+					while (trafficID == RED || trafficID == RED_YELLOW || trafficID == YELLOW || trafficID == GREEN || trafficID == 6) {
 						trafficID = dataContainer->getValue_yolo_trafficID();
 						Sleep(50);
 					}
 					dataContainer->setValue_UtoP_BRAKE(1);
-					////민호님?
+					
 				}
 				break;
 			}
 		}
 		else if (i == 3 || i == 4 || i == 8 || i == 9){
 			//직진
-			if ( crossIdx[i][0] - 20 <= min && min <= crossIdx[i][0]) {
+			if ( crossIdx[i][0] - 30 <= min && min <= crossIdx[i][0]-15) {
 				int trafficID = dataContainer->getValue_yolo_trafficID();
 				if (trafficID == RED || trafficID == RED_YELLOW || trafficID == RED_LEFT || trafficID == YELLOW ) {
 					dataContainer->setValue_UtoP_SPEED(0);
@@ -221,12 +222,11 @@ vector<Point2d> Driving::forPASIV_path(double x_p, double y_p, vector<Point2d> p
 					Sleep(300);
 					dataContainer->setValue_UtoP_BRAKE(200);
 
-					while (trafficID == RED || trafficID == RED_YELLOW || trafficID == RED_LEFT || trafficID == YELLOW) {
+					while (trafficID == RED || trafficID == RED_YELLOW || trafficID == RED_LEFT || trafficID == YELLOW || trafficID == 6) {
 						trafficID = dataContainer->getValue_yolo_trafficID();
 						Sleep(50);
 					}
 					dataContainer->setValue_UtoP_BRAKE(1);
-					////민호님? 스피드 어쩌죠?
 				}
 				break;
 			}
@@ -308,65 +308,65 @@ Mat Driving::getLaneData(int scorestep)
 				endDown = Point(0, bufferImg.rows);
 				vector<Point2i> lineContour1, lineContour2, lineContour3, lineContour4, lineContour5, lineContour6, lineContour7, lineContour8, lineContour9;
 				lineContour1.push_back(endDown);
-				lineContour2.push_back(endDown);
-				lineContour3.push_back(endDown);
-				lineContour4.push_back(endDown);
-				lineContour5.push_back(endDown);
-				lineContour6.push_back(endDown);
-				lineContour7.push_back(endDown);
-				lineContour8.push_back(endDown);
-				lineContour9.push_back(endDown);
+				//lineContour2.push_back(endDown);
+				//lineContour3.push_back(endDown);
+				//lineContour4.push_back(endDown);
+				//lineContour5.push_back(endDown);
+				//lineContour6.push_back(endDown);
+				//lineContour7.push_back(endDown);
+				//lineContour8.push_back(endDown);
+				//lineContour9.push_back(endDown);
 				for (int j = 0; j < Lanes.at(i).size(); j++)
 				{
 					lineContour1.push_back(Lanes.at(i).at(j));
-					lineContour2.push_back(Point2i(Lanes.at(i).at(j).x + itvLane, Lanes.at(i).at(j).y));
-					lineContour3.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 2, Lanes.at(i).at(j).y));
-					lineContour4.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 3, Lanes.at(i).at(j).y));
-					lineContour5.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 4, Lanes.at(i).at(j).y));
-					lineContour6.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 5, Lanes.at(i).at(j).y));
-					lineContour7.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 6, Lanes.at(i).at(j).y));
-					lineContour8.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 7, Lanes.at(i).at(j).y));
-					lineContour9.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 8, Lanes.at(i).at(j).y));
+					//lineContour2.push_back(Point2i(Lanes.at(i).at(j).x + itvLane, Lanes.at(i).at(j).y));
+					//lineContour3.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 2, Lanes.at(i).at(j).y));
+					//lineContour4.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 3, Lanes.at(i).at(j).y));
+					//lineContour5.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 4, Lanes.at(i).at(j).y));
+					//lineContour6.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 5, Lanes.at(i).at(j).y));
+					//lineContour7.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 6, Lanes.at(i).at(j).y));
+					//lineContour8.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 7, Lanes.at(i).at(j).y));
+					//lineContour9.push_back(Point2i(Lanes.at(i).at(j).x + itvLane * 8, Lanes.at(i).at(j).y));
 
 				}
 				lineContour1.push_back(endUp);
-				lineContour2.push_back(endUp);
-				lineContour3.push_back(endUp);
-				lineContour4.push_back(endUp);
-				lineContour5.push_back(endUp);
-				lineContour6.push_back(endUp);
-				lineContour7.push_back(endUp);
-				lineContour8.push_back(endUp);
-				lineContour9.push_back(endUp);
+				//lineContour2.push_back(endUp);
+				//lineContour3.push_back(endUp);
+				//lineContour4.push_back(endUp);
+				//lineContour5.push_back(endUp);
+				//lineContour6.push_back(endUp);
+				//lineContour7.push_back(endUp);
+				//lineContour8.push_back(endUp);
+				//lineContour9.push_back(endUp);
 
 				const Point2i *pts1 = (const Point2i*)Mat(lineContour1).data;
-				const Point2i *pts2 = (const Point2i*)Mat(lineContour2).data;
-				const Point2i *pts3 = (const Point2i*)Mat(lineContour3).data;
-				const Point2i *pts4 = (const Point2i*)Mat(lineContour4).data;
-				const Point2i *pts5 = (const Point2i*)Mat(lineContour5).data;
-				const Point2i *pts6 = (const Point2i*)Mat(lineContour6).data;
-				const Point2i *pts7 = (const Point2i*)Mat(lineContour7).data;
-				const Point2i *pts8 = (const Point2i*)Mat(lineContour8).data;
-				const Point2i *pts9 = (const Point2i*)Mat(lineContour9).data;
+				//const Point2i *pts2 = (const Point2i*)Mat(lineContour2).data;
+				//const Point2i *pts3 = (const Point2i*)Mat(lineContour3).data;
+				//const Point2i *pts4 = (const Point2i*)Mat(lineContour4).data;
+				//const Point2i *pts5 = (const Point2i*)Mat(lineContour5).data;
+				//const Point2i *pts6 = (const Point2i*)Mat(lineContour6).data;
+				//const Point2i *pts7 = (const Point2i*)Mat(lineContour7).data;
+				//const Point2i *pts8 = (const Point2i*)Mat(lineContour8).data;
+				//const Point2i *pts9 = (const Point2i*)Mat(lineContour9).data;
 
 				int ptNum = Mat(lineContour1).rows;
-				fillPoly(bufferImgL, &pts9, &ptNum, 1, Scalar::all(scorestep * 2));
-				fillPoly(bufferImgL, &pts8, &ptNum, 1, Scalar::all(scorestep * 1));
-				fillPoly(bufferImgL, &pts7, &ptNum, 1, Scalar::all(scorestep * 0));
-				fillPoly(bufferImgL, &pts6, &ptNum, 1, Scalar::all(scorestep * 0));
-				fillPoly(bufferImgL, &pts5, &ptNum, 1, Scalar::all(scorestep * 2));
-				fillPoly(bufferImgL, &pts4, &ptNum, 1, Scalar::all(scorestep * 4));
-				fillPoly(bufferImgL, &pts3, &ptNum, 1, Scalar::all(scorestep * 6));
-				fillPoly(bufferImgL, &pts2, &ptNum, 1, Scalar::all(scorestep * 8));
-				fillPoly(bufferImgL, &pts1, &ptNum, 1, Scalar::all(scorestep * (20 * idLane[i])));
+				//fillPoly(bufferImgL, &pts9, &ptNum, 1, Scalar::all(scorestep * 2));
+				//fillPoly(bufferImgL, &pts8, &ptNum, 1, Scalar::all(scorestep * 1));
+				//fillPoly(bufferImgL, &pts7, &ptNum, 1, Scalar::all(scorestep * 0));
+				//fillPoly(bufferImgL, &pts6, &ptNum, 1, Scalar::all(scorestep * 0));
+				//fillPoly(bufferImgL, &pts5, &ptNum, 1, Scalar::all(scorestep * 2));
+				//fillPoly(bufferImgL, &pts4, &ptNum, 1, Scalar::all(scorestep * 4));
+				//fillPoly(bufferImgL, &pts3, &ptNum, 1, Scalar::all(scorestep * 6));
+				//fillPoly(bufferImgL, &pts2, &ptNum, 1, Scalar::all(scorestep * 8));
+				fillPoly(bufferImgL, &pts1, &ptNum, 1, Scalar::all(scorestep * (7 * idLane[i])));
 				
-				if (idLane[2]==0)
-				{
-					Mat bufferIv = Mat::zeros(800, 800, CV_8UC1);
-					fillPoly(bufferIv, &pts9, &ptNum, 1, Scalar(scorestep, scorestep, scorestep));
-					threshold(bufferIv, bufferIv, 1, scorestep * 15, THRESH_BINARY_INV);
-					bufferImgL += bufferIv;
-				}
+				//if (idLane[2]==0)
+				//{
+				//	Mat bufferIv = Mat::zeros(800, 800, CV_8UC1);
+				//	fillPoly(bufferIv, &pts9, &ptNum, 1, Scalar(scorestep, scorestep, scorestep));
+				//	threshold(bufferIv, bufferIv, 1, scorestep * 15, THRESH_BINARY_INV);
+				//	bufferImgL += bufferIv;
+				//}
 				break;
 			}
 		}
@@ -375,75 +375,71 @@ Mat Driving::getLaneData(int scorestep)
 		for (int i = 2; i < idLane.size(); i++) {
 			if (idLane[i] == 0) {}
 			else {
-				int id = idLane[i];
-				if (idLane[3] == 0) { id = 3; }
-				else { id = idLane[i]; }
 
 				endUp = Point(bufferImg.cols, 0);
 				endDown = Point(bufferImg.cols, bufferImg.rows);
 				vector<Point2i> lineContour1, lineContour2, lineContour3, lineContour4, lineContour5, lineContour6, lineContour7, lineContour8, lineContour9;
 				lineContour1.push_back(endDown);
-				lineContour2.push_back(endDown);
-				lineContour3.push_back(endDown);
-				lineContour4.push_back(endDown);
-				lineContour5.push_back(endDown);
-				lineContour6.push_back(endDown);
-				lineContour7.push_back(endDown);
-				lineContour8.push_back(endDown);
-				lineContour9.push_back(endDown);
+				//lineContour2.push_back(endDown);
+				//lineContour3.push_back(endDown);
+				//lineContour4.push_back(endDown);
+				//lineContour5.push_back(endDown);
+				//lineContour6.push_back(endDown);
+				//lineContour7.push_back(endDown);
+				//lineContour8.push_back(endDown);
+				//lineContour9.push_back(endDown);
 
 				for (int j = 0; j < Lanes.at(i).size(); j++)
 				{
 					lineContour1.push_back(Lanes.at(i).at(j));
-					lineContour2.push_back(Point2i(Lanes.at(i).at(j).x - itvLane, Lanes.at(i).at(j).y));
-					lineContour3.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 2, Lanes.at(i).at(j).y));
-					lineContour4.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 3, Lanes.at(i).at(j).y));
-					lineContour5.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 4, Lanes.at(i).at(j).y));
-					lineContour6.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 5, Lanes.at(i).at(j).y));
-					lineContour7.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 6, Lanes.at(i).at(j).y));
-					lineContour8.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 7, Lanes.at(i).at(j).y));
-					lineContour9.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 8, Lanes.at(i).at(j).y));
+					//lineContour2.push_back(Point2i(Lanes.at(i).at(j).x - itvLane, Lanes.at(i).at(j).y));
+					//lineContour3.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 2, Lanes.at(i).at(j).y));
+					//lineContour4.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 3, Lanes.at(i).at(j).y));
+					//lineContour5.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 4, Lanes.at(i).at(j).y));
+					//lineContour6.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 5, Lanes.at(i).at(j).y));
+					//lineContour7.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 6, Lanes.at(i).at(j).y));
+					//lineContour8.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 7, Lanes.at(i).at(j).y));
+					//lineContour9.push_back(Point2i(Lanes.at(i).at(j).x - itvLane * 8, Lanes.at(i).at(j).y));
 				}
 				lineContour1.push_back(endUp);
-				lineContour2.push_back(endUp);
-				lineContour3.push_back(endUp);
-				lineContour4.push_back(endUp);
-				lineContour5.push_back(endUp);
-				lineContour6.push_back(endUp);
-				lineContour7.push_back(endUp);
-				lineContour8.push_back(endUp);
-				lineContour9.push_back(endUp);
+				//lineContour2.push_back(endUp);
+				//lineContour3.push_back(endUp);
+				//lineContour4.push_back(endUp);
+				//lineContour5.push_back(endUp);
+				//lineContour6.push_back(endUp);
+				//lineContour7.push_back(endUp);
+				//lineContour8.push_back(endUp);
+				//lineContour9.push_back(endUp);
 
 				const Point2i *pts1 = (const Point2i*)Mat(lineContour1).data;
-				const Point2i *pts2 = (const Point2i*)Mat(lineContour2).data;
-				const Point2i *pts3 = (const Point2i*)Mat(lineContour3).data;
-				const Point2i *pts4 = (const Point2i*)Mat(lineContour4).data;
-				const Point2i *pts5 = (const Point2i*)Mat(lineContour5).data;
-				const Point2i *pts6 = (const Point2i*)Mat(lineContour6).data;
-				const Point2i *pts7 = (const Point2i*)Mat(lineContour7).data;
-				const Point2i *pts8 = (const Point2i*)Mat(lineContour8).data;
-				const Point2i *pts9 = (const Point2i*)Mat(lineContour9).data;
+				//const Point2i *pts2 = (const Point2i*)Mat(lineContour2).data;
+				//const Point2i *pts3 = (const Point2i*)Mat(lineContour3).data;
+				//const Point2i *pts4 = (const Point2i*)Mat(lineContour4).data;
+				//const Point2i *pts5 = (const Point2i*)Mat(lineContour5).data;
+				//const Point2i *pts6 = (const Point2i*)Mat(lineContour6).data;
+				//const Point2i *pts7 = (const Point2i*)Mat(lineContour7).data;
+				//const Point2i *pts8 = (const Point2i*)Mat(lineContour8).data;
+				//const Point2i *pts9 = (const Point2i*)Mat(lineContour9).data;
 
 				int ptNum = Mat(lineContour1).rows;
 
-				fillPoly(bufferImgR, &pts9, &ptNum, 1, Scalar::all(scorestep * 2));
-				fillPoly(bufferImgR, &pts8, &ptNum, 1, Scalar::all(scorestep * 1));
-				fillPoly(bufferImgR, &pts7, &ptNum, 1, Scalar::all(scorestep * 0));
-				fillPoly(bufferImgR, &pts6, &ptNum, 1, Scalar::all(scorestep * 0));
-				fillPoly(bufferImgR, &pts5, &ptNum, 1, Scalar::all(scorestep * 2));
-				fillPoly(bufferImgR, &pts4, &ptNum, 1, Scalar::all(scorestep * 4));
-				fillPoly(bufferImgR, &pts3, &ptNum, 1, Scalar::all(scorestep * 6));
-				fillPoly(bufferImgR, &pts2, &ptNum, 1, Scalar::all(scorestep * 8));
-				fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar::all(scorestep * (20 * id)));
+				//fillPoly(bufferImgR, &pts9, &ptNum, 1, Scalar::all(scorestep * 2));
+				//fillPoly(bufferImgR, &pts8, &ptNum, 1, Scalar::all(scorestep * 1));
+				//fillPoly(bufferImgR, &pts7, &ptNum, 1, Scalar::all(scorestep * 0));
+				//fillPoly(bufferImgR, &pts6, &ptNum, 1, Scalar::all(scorestep * 0));
+				//fillPoly(bufferImgR, &pts5, &ptNum, 1, Scalar::all(scorestep * 2));
+				//fillPoly(bufferImgR, &pts4, &ptNum, 1, Scalar::all(scorestep * 4));
+				//fillPoly(bufferImgR, &pts3, &ptNum, 1, Scalar::all(scorestep * 6));
+				//fillPoly(bufferImgR, &pts2, &ptNum, 1, Scalar::all(scorestep * 8));
+				fillPoly(bufferImgR, &pts1, &ptNum, 1, Scalar::all(scorestep * (7 * idLane[i])));
 
-				if (idLane[1] == 0)
-				{
-					Mat bufferIv = Mat::zeros(800, 800, CV_8UC1);
-					fillPoly(bufferIv, &pts9, &ptNum, 1, Scalar(scorestep, scorestep, scorestep));
-					threshold(bufferIv, bufferIv, 1, scorestep * 15, THRESH_BINARY_INV);
-					bufferImgR += bufferIv;
-				}
-
+				//if (idLane[1] == 0)
+				//{
+				//	Mat bufferIv = Mat::zeros(800, 800, CV_8UC1);
+				//	fillPoly(bufferIv, &pts9, &ptNum, 1, Scalar(scorestep, scorestep, scorestep));
+				//	threshold(bufferIv, bufferIv, 1, scorestep * 15, THRESH_BINARY_INV);
+				//	bufferImgR += bufferIv;
+				//}
 
 				break;
 			}
@@ -506,7 +502,7 @@ void Driving::PASIVcontrol(Mat imgPath, double desired_speed, double steer1, dou
 	double bustNkid = (dataContainer->getValue_speed_ratio_bust())*(dataContainer->getValue_speed_ratio_kid());
 	
 	//SPEED control with steering angle
-	steer_ratio = (1.0 - abs(steer2) / 140.0) * (1.0 - abs(steer1) / 140.0);
+	steer_ratio = (1.0 - abs(steer2) / 85.0) * (1.0 - abs(steer1) / 85.0);
 	//cout << "steer_ratio: " << steer_ratio << endl;
 	desired_speed *= steer_ratio;
 	desired_speed = desired_speed * bustNkid;
@@ -522,7 +518,7 @@ void Driving::PASIVcontrol(Mat imgPath, double desired_speed, double steer1, dou
 		desired_speed += (desired_speed - present_speed)*0.5;
 	}
 	else if (speed_ratio > 1.15) {
-		desired_brake = 25;
+		desired_brake = 40;
 		desired_speed = desired_speed;
 	}
 	else {
@@ -539,15 +535,16 @@ void Driving::PASIVcontrol(Mat imgPath, double desired_speed, double steer1, dou
 	if (objflag == 0){
 		steerKp = 1.00 - 0.05*desired_speed;
 		desired_steering = steer1 * steerKp;
-		cout << "NOOOO near object" << endl;
+		//cout << "NOOOO near object" << endl;
 	}
 	else if (objflag > 0) {
 		steerKp = 1;
 		desired_steering = steer1 * steerKp;
 		desired_steering *= 1.1;
-		cout << "YESSSSSSSSSSSSSS NEAR obj" << endl;
+		desired_speed *= 0.5;
+		//cout << "YESSSSSSSSSSSSSS NEAR obj" << endl;
 	}
-	cout << "KP: " << steerKp << " desired_speed: " << desired_speed << endl;
+	//cout << "KP: " << steerKp << " desired_speed: " << desired_speed << endl;
 	
 	
 	/*if (abs(steer1) > 10 && abs(steer2) >= 4 ) {
@@ -569,7 +566,7 @@ void Driving::PASIVcontrol(Mat imgPath, double desired_speed, double steer1, dou
 	}
 
 	//cout << "desired_speed = " << (double)desired_speed << "   present_speed: "<< (double)present_speed<< endl;
-	cout <<"desired_steer = " << (double)desired_steering << "   present_steer: " << (double)present_steer << endl;
+	//cout <<"desired_steer = " << (double)desired_steering << "   present_steer: " << (double)present_steer << endl;
 	//cout << "desired_brake = " << (double)desired_brake << "   present_brake: " << (double)present_brake << endl;
 	
 	//Return
@@ -881,7 +878,7 @@ void Driving::BasicGPS(int missionId) {
 			cenDist = sqrt(pow((cirCen.x - cenX), 2) + pow((cirCen.y - cenY), 2));
 
 			//distance < 1.2m or (x: -0.8~0.8m and y: 2m)
-			if (cenDist < 1200 * scale || (cirCenX > (cenX - 800 * scale) && cirCenX < (cenX + 800 * scale) && cirCenY >(cenY - 2000 * scale))) {
+			if (cenDist < 1200 * scale || (cirCenX > (cenX - 800 * scale) && cirCenX < (cenX + 800 * scale) && cirCenY >(cenY - 2500 * scale))) {
 				objflag++;
 			}
 
@@ -940,9 +937,9 @@ void Driving::BasicGPS(int missionId) {
 		}
 
 		//////Apply the lane data to the locLidar data
-		//Mat laneImg = getLaneData(LanescoreStep);
-		//scoreMap -= laneImg;
-		//imgPath -= laneImg;
+		Mat laneImg = getLaneData(LanescoreStep);
+		scoreMap -= laneImg;
+		imgPath -= laneImg;
 
 		//Apply GPS data.
 		Mat gpsMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
@@ -1061,8 +1058,10 @@ void Driving::MissionParking() {
 	//
 	//	mission code
 	//
-	
-	brakeTime(1.5);
+	dataContainer->setValue_UtoP_SPEED(0);
+	dataContainer->setValue_UtoP_BRAKE(200);
+	Sleep(1000);
+	dataContainer->setValue_UtoP_BRAKE(0);
 
 	if (ParkingMission()) {}
 	else cout << "Parking Fail" << endl;
@@ -1173,7 +1172,7 @@ void Driving::MissionDynamicObs() {
 	// 동적 장애물 미션
 	// PASIV for Dynamic Obstacle Mission
 
-	uint objflag = 0;
+	uint dynamicflag = 0;
 	Mat LaneMap = Mat::zeros(imgPath.cols, imgPath.rows, CV_8UC1);
 	dataContainer->setValue_UtoP_BRAKE(0);
 	while (1) {
@@ -1327,7 +1326,7 @@ void Driving::MissionDynamicObs() {
 			if (objClose > 0 && objClose < thDist) {
 				desired_brake = 200;
 				desired_speed = 0;
-				objflag = 1;
+				dynamicflag = 1;
 				cout << "STOP!!!!!!!!!!!!!!!!!!!!!!!" << endl;
 			}
 			else {
@@ -1344,9 +1343,9 @@ void Driving::MissionDynamicObs() {
 		///////////////////////////////////////////////////////
 		////Trigger for ending the Dynamic Obstacle Mission////
 		///////////////////////////////////////////////////////
-		if (objflag == 1) {
+		if (dynamicflag == 1) {
 			if (objClose > thDist || objdist.size() == 0) {
-				objflag = 0;
+				dynamicflag = 0;
 				dataContainer->setValue_UtoP_BRAKE(0);
 				dataContainer->setValue_yolo_missionID(BASIC);
 				break;
@@ -1442,6 +1441,7 @@ double Driving::deg2rad(double degree) { return degree * PI / 180; }
 
 void Driving::autoMode() {
 	//emit(send2View(7));
+	cout << "!!!!!!!!!!!!!!!!! parkingNum   =   " <<parkingNum << endl;
 	while (1) {
 		cout << dataContainer->getValue_yolo_missionID() << endl;
 
@@ -1815,7 +1815,7 @@ vector<float> Driving::FindParkingLot(Mat &img_camera) {
 	Point2f center = SetLotCenter(contours);
 	vector<float> position;
 
-	if (center.x >= (CAMERA_X * 2 / 8) && center.x <= (CAMERA_X * 6 / 8) && center.y >= (CAMERA_Y * 2 / 8) && center.y <= (CAMERA_Y * 6 / 8)) {
+	if (center.x >= (CAMERA_X * 3 / 8) && center.x <= (CAMERA_X * 5 / 8) && center.y >= (CAMERA_Y * 3 / 8) && center.y <= (CAMERA_Y * 5 / 8)) {
 		cout << center.x << " " << center.y << " can find" << endl;
 		position = PosFromCamera(center);
 	}
@@ -1875,6 +1875,7 @@ void Driving::controlENC(int gear, int speed, double dist, int steer) {
 	while (1) {
 		// 속도 제어하는 코드
 		//controlSpeed(speed);
+		if (dataContainer->getValue_yolo_missionID() == 0) break;
 
 		//거리 구하는 코드
 		double p_ENC1 = dataContainer->getValue_PtoU_ENC();
@@ -1884,7 +1885,11 @@ void Driving::controlENC(int gear, int speed, double dist, int steer) {
 
 		if (distance >= dist) {
 			cout << "moving distance : " << distance << endl;
-			brakeTime(1);
+			dataContainer->setValue_UtoP_SPEED(0);
+			dataContainer->setValue_UtoP_BRAKE(200);
+			Sleep(1000);
+			dataContainer->setValue_UtoP_BRAKE(0);
+
 			break;
 		}
 	}
@@ -1892,37 +1897,50 @@ void Driving::controlENC(int gear, int speed, double dist, int steer) {
 
 void Driving::practice(double parkDis) { // 후진 후 좌회전
 	double finDist;
-	brakeTime(1);
+	dataContainer->setValue_UtoP_SPEED(0);
+	dataContainer->setValue_UtoP_BRAKE(200);
+	dataContainer->setValue_UtoP_STEER(0);
+	Sleep(1000);
+	dataContainer->setValue_UtoP_BRAKE(0);
+
+	if (dataContainer->getValue_yolo_missionID() == 0) return;
 
 	finDist = 0.7 * (park_y - pow(abs(pow(parkDis, 2) - pow(park_x, 2)), 0.5));
 	//finDist = 1;
 	cout << "dghfhjfjhggjhghj    " << finDist << endl;
-	controlENC(2, parking_speed, finDist);
+	controlENC(2, parking_speed, finDist+0.8);
 
 	cout << "backward success" << endl;
+	if (dataContainer->getValue_yolo_missionID() == 0) return;
 
 	finDist = dis_error_rate * circle_path;
 	controlENC(0, parking_speed, finDist, -17);
 
 	cout << "turn success" << endl;
+	if (dataContainer->getValue_yolo_missionID() == 0) return;
 
 	finDist = 1.3;
 	controlENC(0, parking_speed, finDist);
+	if (dataContainer->getValue_yolo_missionID() == 0) return;
 
 	cout << "straight success" << endl;
 
 	dataContainer->setValue_UtoP_BRAKE(200);
 	//brakeTime(5);
-	Sleep(3000);
+	if (dataContainer->getValue_yolo_missionID() == 0) return;
+
+	Sleep(10000);
 	dataContainer->setValue_UtoP_BRAKE(0);
+	if (dataContainer->getValue_yolo_missionID() == 0) return;
 
 	finDist = 1.3;
 	controlENC(2, parking_speed, finDist);
-
+	if (dataContainer->getValue_yolo_missionID() == 0) return;
 	cout << "straight success" << endl;
 
 	finDist = dis_error_rate * circle_path;
 	controlENC(2, parking_speed, finDist, -17);
+	if (dataContainer->getValue_yolo_missionID() == 0) return;
 
 	cout << "parking the end" << endl;
 }
@@ -1966,8 +1984,10 @@ int Driving::ParkingMission() {
 		// 주차 전 직진 (PASIV)
 		imgPath = Mat::zeros(400, 400, CV_8UC1);
 		imgPath = Scalar::all(160);
-		Mat imgLane = getLaneData(LanescoreStep);
-		imgPath -= imgLane;
+		Mat gpsMap = Mat::zeros(imgPath.rows, imgPath.cols, CV_8UC1);
+		gpsMap = getGpsData(GPSscoreStep);
+		scoreMap -= gpsMap;
+		imgPath -= gpsMap;
 		//////////////////////////////////////////////////////////////////////////////
 		////Determine the desired Steering Angle in Score System with Vornoi Field////
 		//////////////////////////////////////////////////////////////////////////////
@@ -2018,7 +2038,7 @@ int Driving::ParkingMission() {
 			return 0;
 		}
 		else {
-			PASIVcontrol(imgPath, parking_speed, goTheta1, goTheta2, 0);
+			PASIVcontrol(imgPath, 20, goTheta1, goTheta2, 0);
 		}
 		if (dataContainer->getValue_yolo_missionID() == 0)
 		{

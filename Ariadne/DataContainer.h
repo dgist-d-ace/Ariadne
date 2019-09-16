@@ -353,7 +353,7 @@ public:
 	//ÇöÀç traffic ID
 	int getValue_yolo_trafficID();
 	void setValue_yolo_trafficID(int ID);
-	void setValue_yolo_trafficID(int ID);
+//	void setValue_yolo_trafficID(int ID);
 
 	//
 	//	GPS

@@ -322,6 +322,7 @@ void Ariadne::clicked_btn_driving_mid() {
 void Ariadne::clicked_btn_driving_fin() {
 
 	//lidar, scnn 켰을 때만 실행
+	driving->parkingNum = 0;
 	if (!drivingThread->isRunning()) {
 		drivingThread->start();
 	}
